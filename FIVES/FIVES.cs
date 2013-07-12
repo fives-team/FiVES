@@ -1,6 +1,6 @@
 using System;
 
-namespace Core
+namespace FIVES
 {
     public class MainClass
     {
