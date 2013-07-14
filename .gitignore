@@ -2,3 +2,4 @@
 */bin/Release
 *.userprefs
 *.pidb
+*test-results*
