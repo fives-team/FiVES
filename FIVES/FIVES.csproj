@@ -38,12 +38,21 @@
     <Reference Include="nunit.framework, Version=2.6.0.12051, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77">
       <Private>False</Private>
     </Reference>
+    <Reference Include="Newtonsoft.Json">
+      <HintPath>..\ThirdParty\Json50r6\Bin\Portable40\Newtonsoft.Json.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AssemblyInfo.cs" />
     <Compile Include="FIVES.cs" />
     <Compile Include="PluginManager.cs" />
     <Compile Include="PluginManagerTest.cs" />
+    <Compile Include="KIARA\Connection.cs" />
+    <Compile Include="KIARA\Context.cs" />
+    <Compile Include="KIARA\ConversionUtils.cs" />
+    <Compile Include="KIARA\Error.cs" />
+    <Compile Include="KIARA\FunctionCall.cs" />
+    <Compile Include="KIARA\IWebSocketJSONConnection.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -51,5 +60,8 @@
     <None Include="TestPlugins\invalid_plugin.dll" />
     <None Include="TestPlugins\valid_plugin.dll" />
     <None Include="TestPlugins\valid_plugin2.dll" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="KIARA\" />
   </ItemGroup>
 </Project>
