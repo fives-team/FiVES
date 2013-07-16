@@ -9,7 +9,7 @@ namespace FIVES
     public class PluginManagerTest
     {
         private PluginManager pm;
-        private string pathToPlugins = "../../";
+        private string pathToPlugins = "../../PluginManager/";
 
         [SetUp()]
         public void Init()
