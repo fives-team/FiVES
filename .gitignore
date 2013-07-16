@@ -1,5 +1,4 @@
-*/bin/Debug
-*/bin/Release
+bin/
 *.userprefs
 *.pidb
 *test-results*
