@@ -8,6 +8,8 @@ namespace FIVES
 {
     class PluginManager
     {
+        public static PluginManager Instance = new PluginManager();
+
         private static Logger logger = LogManager.GetCurrentClassLogger();
         private Dictionary<string, object> loadedPluginInitializers = new Dictionary<string, object>();
 
