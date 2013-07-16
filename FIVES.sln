@@ -3,6 +3,8 @@ Microsoft Visual Studio Solution File, Format Version 11.00
 # Visual Studio 2010
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FIVES", "FIVES\FIVES.csproj", "{2F7E0670-CA00-42FB-9158-89056784D122}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClientSync", "Plugins\ClientSync\ClientSync.csproj", "{E1955FF2-6109-4C71-9F13-486A48DE6C17}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x86 = Debug|x86
@@ -13,6 +15,10 @@ Global
 		{2F7E0670-CA00-42FB-9158-89056784D122}.Debug|x86.Build.0 = Debug|x86
 		{2F7E0670-CA00-42FB-9158-89056784D122}.Release|x86.ActiveCfg = Release|x86
 		{2F7E0670-CA00-42FB-9158-89056784D122}.Release|x86.Build.0 = Release|x86
+		{E1955FF2-6109-4C71-9F13-486A48DE6C17}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{E1955FF2-6109-4C71-9F13-486A48DE6C17}.Debug|x86.Build.0 = Debug|Any CPU
+		{E1955FF2-6109-4C71-9F13-486A48DE6C17}.Release|x86.ActiveCfg = Release|Any CPU
+		{E1955FF2-6109-4C71-9F13-486A48DE6C17}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(MonoDevelopProperties) = preSolution
 		StartupItem = FIVES\FIVES.csproj
