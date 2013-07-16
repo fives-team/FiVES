@@ -41,6 +41,7 @@
     <Reference Include="Newtonsoft.Json">
       <HintPath>..\ThirdParty\Json50r6\Bin\Portable40\Newtonsoft.Json.dll</HintPath>
     </Reference>
+    <Reference Include="System.Configuration" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AssemblyInfo.cs" />
@@ -64,5 +65,6 @@
     <None Include="PluginManager\TestPlugins\invalid_plugin.dll" />
     <None Include="PluginManager\TestPlugins\valid_plugin.dll" />
     <None Include="PluginManager\TestPlugins\valid_plugin2.dll" />
+    <None Include="app.config" />
   </ItemGroup>
 </Project>
