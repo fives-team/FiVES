@@ -19,7 +19,7 @@ namespace FIVES
                 else
                     PluginManager.Instance.LoadPluginsFrom(pluginDir);
             } catch (NullReferenceException) {
-                logger.Error("No plugins dir is not specified.");
+                logger.Error("Plugins dir is not specified.");
             } catch (ConfigurationErrorsException) {
                 logger.Error("Configuration is missing or corrupt.");
             }
