@@ -45,23 +45,24 @@
   <ItemGroup>
     <Compile Include="AssemblyInfo.cs" />
     <Compile Include="FIVES.cs" />
-    <Compile Include="PluginManager.cs" />
-    <Compile Include="PluginManagerTest.cs" />
     <Compile Include="KIARA\Connection.cs" />
     <Compile Include="KIARA\Context.cs" />
     <Compile Include="KIARA\ConversionUtils.cs" />
     <Compile Include="KIARA\Error.cs" />
     <Compile Include="KIARA\FunctionCall.cs" />
     <Compile Include="KIARA\IWebSocketJSONConnection.cs" />
+    <Compile Include="PluginManager\PluginManager.cs" />
+    <Compile Include="PluginManager\PluginManagerTest.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
-    <None Include="TestPlugins\invalid_assembly.dll" />
-    <None Include="TestPlugins\invalid_plugin.dll" />
-    <None Include="TestPlugins\valid_plugin.dll" />
-    <None Include="TestPlugins\valid_plugin2.dll" />
+    <Folder Include="KIARA\" />
+    <Folder Include="PluginManager\" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="KIARA\" />
+    <None Include="PluginManager\TestPlugins\invalid_assembly.dll" />
+    <None Include="PluginManager\TestPlugins\invalid_plugin.dll" />
+    <None Include="PluginManager\TestPlugins\valid_plugin.dll" />
+    <None Include="PluginManager\TestPlugins\valid_plugin2.dll" />
   </ItemGroup>
 </Project>
