@@ -10,10 +10,10 @@ namespace KIARA
     {
         public delegate void ClientHandler(Connection connection);
 
-        public void AcceptClient(string idlURL, ClientHandler handler)
+        public void AcceptClients(string service, ClientHandler handler)
         {
-            // TODO(rryk): Retrieve port number from the confiuration in idlURL.
-            int port = Int32.Parse(ConfigurationManager.AppSettings["ServerPort"]);
+            // TODO(rryk): Retrieve port number from the confiuration for |service|.
+            int port = 34837;
 
             // Start the server.
             SWSServer server = new SWSServer(handler);
