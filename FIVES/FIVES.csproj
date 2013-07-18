@@ -45,6 +45,9 @@
     <Reference Include="SuperWebSocket">
       <HintPath>..\ThirdParty\SuperWebSocket\Net40\Release\SuperWebSocket.dll</HintPath>
     </Reference>
+    <Reference Include="SuperSocket.SocketEngine">
+      <HintPath>..\ThirdParty\SuperWebSocket\Net40\Release\SuperSocket.SocketEngine.dll</HintPath>
+    </Reference>
     <Reference Include="SuperSocket.SocketBase">
       <HintPath>..\ThirdParty\SuperWebSocket\Net40\Release\SuperSocket.SocketBase.dll</HintPath>
     </Reference>
