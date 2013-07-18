@@ -2,6 +2,7 @@ using System;
 using System.Configuration;
 using KIARA;
 using System.Collections.Generic;
+using FIVES;
 
 public class PluginInitializer
 {
@@ -26,7 +27,8 @@ public class PluginInitializer
 
     internal static List<string> ListObjects()
     {
-        return new List<string> { "house", "tree", "car" };
+        List<Guid> guids = EntityRegistry.GetAllGUIDs();
+        return guids.ConvertAll(guid => guid.ToString());
     }
 
     internal static void RegisterMethods(Connection connection)

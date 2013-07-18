@@ -24,6 +24,10 @@ namespace FIVES
                 logger.Error("Configuration is missing or corrupt.");
             }
 
+            // Add 20 entities.
+            for (int i = 1; i < 20; i++)
+                EntityRegistry.AddEntity(new Entity());
+
             // Wait for any key to be pressed.
             Console.ReadKey();
 
