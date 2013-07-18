@@ -1,0 +1,7 @@
+service kiara {
+  bool[] implements(string[] services);
+}
+
+service clientsync {
+  string[] listObjects();
+}
