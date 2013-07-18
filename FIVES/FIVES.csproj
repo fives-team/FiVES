@@ -58,6 +58,8 @@
     <Compile Include="Domainmodel\DomainmodelTests.cs" />
     <Compile Include="Domainmodel\Component.cs" />
     <Compile Include="Domainmodel\Attribute.cs" />
+    <Compile Include="Domainmodel\EntityRegistry.cs" />
+    <Compile Include="Domainmodel\EntityRegistryTest.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
