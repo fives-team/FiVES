@@ -54,11 +54,18 @@
     <Compile Include="KIARA\IWebSocketJSONConnection.cs" />
     <Compile Include="PluginManager\PluginManager.cs" />
     <Compile Include="PluginManager\PluginManagerTest.cs" />
+    <Compile Include="Domainmodel\Entity.cs" />
+    <Compile Include="Domainmodel\DomainmodelTests.cs" />
+    <Compile Include="Domainmodel\Component.cs" />
+    <Compile Include="Domainmodel\Attribute.cs" />
+    <Compile Include="Domainmodel\EntityRegistry.cs" />
+    <Compile Include="Domainmodel\EntityRegistryTest.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
     <Folder Include="KIARA\" />
     <Folder Include="PluginManager\" />
+    <Folder Include="Domainmodel\" />
   </ItemGroup>
   <ItemGroup>
     <None Include="PluginManager\TestPlugins\invalid_assembly.dll" />
