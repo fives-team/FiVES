@@ -1322,15 +1322,15 @@ define(function () {
 
     // -- Connection --
 
-    function Connection(context, url, userCallback) {
+    function Connection(context, configURL, userCallback) {
         checkContext(context);
         this._context = context;
         this._url = null;
         this._errors = [];
         this._protocol = null;
         augmentWithListener(this);
-        if (url)
-            this.loadIDL(url, userCallback);
+        if (configURL)
+            this.loadConfig(configURL, userCallback);
     }
 
     Connection.prototype._handleError = function(error) {
@@ -1392,6 +1392,12 @@ define(function () {
             this._onIDLLoadError.bind(this, userCallback, url));
     }
 
+    Connection.prototype.loadConfig = function(url, userCallback) {
+        loadData(url,
+            this._onConfigLoaded.bind(this, userCallback, url),
+            this._onIDLLoadError.bind(this, userCallback, url));
+    }
+
     Connection.prototype._isOneWay = function(qualifiedMethodName) {
         var onewayMethods = [
             "omp.connectClient.handshake",
@@ -1410,6 +1416,15 @@ define(function () {
     }
 
     Connection.prototype._onIDLLoaded = function(userCallback, url, response) {
+        this._idls = this._idls || {};
+        this._idls[url] = response;
+        // TODO parse IDL, register types
+
+        if (userCallback)
+            userCallback(null, this);
+    }
+
+    Connection.prototype._onConfigLoaded = function(userCallback, url, response) {
         var that = this;
         function handleError(error) {
             if (userCallback)
@@ -1418,59 +1433,22 @@ define(function () {
                 return that._handleError(error);
         }
 
-        this._idls = this._idls || {};
-        this._idls[url] = response;
-        // TODO parse IDL, open connection specified in the IDL
+        if (!response || !response.idl || !response.protocol || !response.serviceURI)
+            handleError(new KIARAError(KIARA.INIT_ERROR, "Configuration file '" + url + "' is invalid."));
 
-        // FIXME(rryk):This is a hack. We should maintain multiple low-level connections if IDLs contain different URLs.
-        // Then on the call to a function we would need to determine which service it belongs to and use appropriate
-        // connection to send/receive data. Since there is no IDL parsing at the moment - we simply return when the
-        // connection was already provided by the IDL specified in the constructor.
-        if (this._protocol)
-          return;
-
-        //???BEGIN PROTOCOL SPECIFIC PART
-        //var protocolName = 'jsonrpc';
-        //var protocolUrl = 'http://' + location.hostname + ':8080/rpc/calc';
-        //var protocolName = 'xmlrpc';
-        //var protocolUrl = 'http://' + location.hostname + ':8080/xmlrpc/calc';
-        var idlFilename = url.substring(url.lastIndexOf("/") + 1);
-        var protocolName;
-        var protocolUrl;
-        switch (idlFilename) {
-            case "login.kiara":
-                protocolName = 'websocket-json';
-                protocolUrl = 'ws://yellow.cg.uni-saarland.de:9000/login';
-                break;
-            case "interface.kiara":
-                protocolName = 'websocket-json';
-                protocolUrl = 'ws://yellow.cg.uni-saarland.de:9000/region';
-                break;
-            case "sirikata.kiara":
-                protocolName = "sirikata-protobuf";
-                protocolUrl = 'sirikata://yellow.cg.uni-saarland.de:7777/';
-                break;
-            case "fives.json":
-                protocolName = "websocket-json";
-                protocolUrl = "ws://localhost:34837/";
-                break;
-            default:
-                handleError(new KIARAError(KIARA.UNSUPPORTED_FEATURE, "IDL " + url + " is not hard-coded."));
-                break;
+        var protocolCtor = getProtocol(response.protocol);
+        if (!protocolCtor) {
+            handleError(new KIARAError(KIARA.UNSUPPORTED_FEATURE,
+                "Protocol '" + response.protocol + "' is not supported"));
         }
-        //???END PROTOCOL SPECIFIC PART
 
-        var protocolCtor = getProtocol(protocolName);
-        if (!protocolCtor)
-            handleError(new KIARAError(KIARA.UNSUPPORTED_FEATURE, "Protocol '"+protocolName+"' is not supported"));
         try {
-            this._protocol = new protocolCtor(protocolUrl);
+            this._protocol = new protocolCtor(response.serviceURI);
         } catch (e) {
             handleError(e);
         }
 
-        if (userCallback)
-            userCallback(null, this);
+        this.loadIDL(response.idl, userCallback);
     }
 
     Connection.prototype._onIDLLoadError = function(userCallback, xhr) {

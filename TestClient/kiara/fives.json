@@ -1,6 +1,5 @@
 {
   "idl": "http://localhost/fives/fives.kiara",
   "protocol": "websocket-json",
-  "host": "localhost",
-  "port": 34837
+  "serviceURI": "ws://localhost:34837/"
 }
