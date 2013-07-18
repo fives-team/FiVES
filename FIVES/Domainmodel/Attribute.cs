@@ -5,7 +5,7 @@ namespace FIVES
 	public class Attribute
 	{
 		public AttributeType type { get; set; }
-		public string value { get; set; }
+		public object value { get; set; }
 
 		public Attribute()
 		{
