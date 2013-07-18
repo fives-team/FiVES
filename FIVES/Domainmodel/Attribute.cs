@@ -11,7 +11,7 @@ namespace FIVES
 		{
 		}
 
-		public Attribute(AttributeType type, string value)
+		public Attribute(AttributeType type, object value)
 		{
 			this.type = type;
 			this.value = value;
