@@ -37,4 +37,10 @@
     <Compile Include="PluginInitializer.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <ItemGroup>
+    <ProjectReference Include="..\..\FIVES\FIVES.csproj">
+      <Project>{2F7E0670-CA00-42FB-9158-89056784D122}</Project>
+      <Name>FIVES</Name>
+    </ProjectReference>
+  </ItemGroup>
 </Project>

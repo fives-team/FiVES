@@ -24,6 +24,9 @@ namespace FIVES
                 logger.Error("Configuration is missing or corrupt.");
             }
 
+            // Wait for any key to be pressed.
+            Console.ReadKey();
+
             return 0;
         }
     }
