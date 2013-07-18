@@ -131,7 +131,7 @@ namespace KIARA
                     ActiveCalls.Remove(callID);
                 } else {
                     throw new Error(ErrorCode.CONNECTION_ERROR, 
-                                    "Received a response for an unrecognized call id: " + callID);
+                        "Received a response for an unrecognized call id: " + callID);
                 }
             } else if (msgType == "call") {
                 int callID = Convert.ToInt32(data[1]);
@@ -141,7 +141,7 @@ namespace KIARA
                     ParameterInfo[] paramInfo = nativeMethod.Method.GetParameters();
                     if (paramInfo.Length != data.Count - 3) {
                         throw new Error(ErrorCode.INVALID_ARGUMENT,
-                                        "Incorrect number of arguments for method: " + methodName +
+                            "Incorrect number of arguments for method: " + methodName +
                             ". Expected: " + paramInfo.Length + ". Got: " + 
                             (data.Count - 3));
                     }
@@ -178,7 +178,7 @@ namespace KIARA
                     }
                 } else {
                     throw new Error(ErrorCode.CONNECTION_ERROR, 
-                                    "Received a call for an unregistered method: " + methodName);
+                        "Received a call for an unregistered method: " + methodName);
                 }
             } else
                 throw new Error(ErrorCode.CONNECTION_ERROR, "Unknown message type: " + msgType);
