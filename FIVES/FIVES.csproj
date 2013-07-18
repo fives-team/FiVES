@@ -42,6 +42,15 @@
       <HintPath>..\ThirdParty\Json50r6\Bin\Portable40\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="System.Configuration" />
+    <Reference Include="SuperWebSocket">
+      <HintPath>..\ThirdParty\SuperWebSocket\Net40\Release\SuperWebSocket.dll</HintPath>
+    </Reference>
+    <Reference Include="SuperSocket.SocketBase">
+      <HintPath>..\ThirdParty\SuperWebSocket\Net40\Release\SuperSocket.SocketBase.dll</HintPath>
+    </Reference>
+    <Reference Include="SuperSocket.Common">
+      <HintPath>..\ThirdParty\SuperWebSocket\Net40\Release\SuperSocket.Common.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AssemblyInfo.cs" />
@@ -52,6 +61,7 @@
     <Compile Include="KIARA\Error.cs" />
     <Compile Include="KIARA\FunctionCall.cs" />
     <Compile Include="KIARA\IWebSocketJSONConnection.cs" />
+    <Compile Include="KIARA\SWSServer.cs" />
     <Compile Include="PluginManager\PluginManager.cs" />
     <Compile Include="PluginManager\PluginManagerTest.cs" />
     <Compile Include="Domainmodel\Entity.cs" />

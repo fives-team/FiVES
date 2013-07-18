@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Text;
 using System.Linq;
 
@@ -11,10 +12,13 @@ namespace KIARA
 
         public void AcceptClient(string idlURL, ClientHandler handler)
         {
-            // TODO(rryk): Load IDL from idlURL, load info about port number.
-            // TODO(rryk): Listen for new clients on that port number. For each client execute handler
-            // on a new thread.
-            throw new NotImplementedException("AcceptClient is not implemented");
+            // TODO(rryk): Retrieve port number from the confiuration in idlURL.
+            int port = Int32.Parse(ConfigurationManager.AppSettings["ServerPort"]);
+
+            // Start the server.
+            SWSServer server = new SWSServer(handler);
+            server.Setup(port);
+            server.Start();
         }
     }
 }
