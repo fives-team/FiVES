@@ -29,7 +29,9 @@ namespace FIVES
         // Returns entity by its |guid| or null if no such entity is found.
         public static Entity GetEntityByGuid(Guid guid)
         {
-            return entities[guid];
+            if (entities.ContainsKey(guid))
+                return entities[guid];
+            return null;
         }
 
         // Returns a list of all entities' GUIDs.
