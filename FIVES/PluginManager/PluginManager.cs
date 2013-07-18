@@ -39,7 +39,7 @@ namespace FIVES
                     // Construct an instance of the initializer class.
                     loadedPluginInitializers[canonicalName] = Activator.CreateInstance(initializer);
                 } catch (Exception e) {
-                    logger.WarnException("Failed to open file " + filename + " as a plugin.", e);
+                    logger.WarnException("Failed to load file " + filename + " as a plugin.", e);
                     return null;
                 }
             }
