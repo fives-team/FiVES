@@ -1,0 +1,6 @@
+{
+  "idl": "http://localhost/fives/fives.kiara",
+  "protocol": "websocket-json",
+  "host": "localhost",
+  "port": 34837
+}
