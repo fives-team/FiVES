@@ -3,6 +3,12 @@ using System.Collections.Generic;
 
 namespace FIVES
 {
+	public class AttributeTypeMismatchException : System.Exception
+	{
+		public AttributeTypeMismatchException(){}
+		public AttributeTypeMismatchException(string message){}
+	}
+
 	public class Component
 	{
 		private IDictionary<string, Attribute> attributes { get; set; }
