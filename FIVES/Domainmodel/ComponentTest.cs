@@ -4,7 +4,7 @@ using System;
 namespace FIVES
 {
 	[TestFixture()]
-	public class DomainmodelTests
+	public class ComponentTest
 	{
 		private Entity testEntity;
 		private Component testComponent;

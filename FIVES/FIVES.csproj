@@ -68,11 +68,11 @@
     <Compile Include="PluginManager\PluginManager.cs" />
     <Compile Include="PluginManager\PluginManagerTest.cs" />
     <Compile Include="Domainmodel\Entity.cs" />
-    <Compile Include="Domainmodel\DomainmodelTests.cs" />
     <Compile Include="Domainmodel\Component.cs" />
     <Compile Include="Domainmodel\Attribute.cs" />
     <Compile Include="Domainmodel\EntityRegistry.cs" />
     <Compile Include="Domainmodel\EntityRegistryTest.cs" />
+    <Compile Include="Domainmodel\ComponentTest.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
