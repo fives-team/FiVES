@@ -11,11 +11,11 @@ namespace FIVES
 
 	public class Component
 	{
-		private IDictionary<string, Attribute> attributes { get; set; }
+		private Dictionary<string, Attribute> attributes = new Dictionary<string, Attribute> ();
 
 		public Component ()
 		{
-			this.attributes = new Dictionary<string, Attribute> ();
+
 		}
 
 		#region Typed Attribute Setters

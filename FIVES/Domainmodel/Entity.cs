@@ -5,11 +5,10 @@ namespace FIVES
 {
 	public class Entity
 	{
-		private IDictionary<string, Component> components { get; set; }
+		private Dictionary<string, Component> components = new Dictionary<string, Component>();
 
 		public Entity ()
 		{
-			this.components = new Dictionary<string, Component>();
 		}
 
 		public Component this [string index]
