@@ -6,9 +6,9 @@ using FIVES;
 
 namespace ClientSync {
 
-    public class ClientSync : IPluginInitializer
+    public class ClientSyncPlugin : IPluginInitializer
     {
-        public ClientSync()
+        public ClientSyncPlugin()
         {
             var context = new Context();
             string service = "http://localhost/projects/test-client/kiara/fives.json";
