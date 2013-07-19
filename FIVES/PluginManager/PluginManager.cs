@@ -28,14 +28,17 @@ namespace FIVES
                 try {
                     // Load an assembly.
                     Assembly assembly = Assembly.LoadFrom(canonicalName);
-					
+
                     // Find initializer class.
-                    Type initializer = assembly.GetType("PluginInitializer");
+                    List<Type> types = new List<Type>(assembly.GetTypes());
+                    Type pluginInitializerInterface = typeof(IPluginInitializer);
+                    Type initializer = types.Find(t => pluginInitializerInterface.IsAssignableFrom(t));
                     if (initializer == null) {
-                        logger.Warn("Assembly in file " + filename + " doesn't contain PluginInitializer class.");
+                        logger.Warn("Assembly in file " + filename +
+                                    " doesn't contain any class implementing IPluginInitializer.");
                         return null;
                     }
-					
+
                     // Construct an instance of the initializer class.
                     loadedPluginInitializers[canonicalName] = Activator.CreateInstance(initializer);
                 } catch (Exception e) {

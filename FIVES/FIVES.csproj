@@ -74,6 +74,7 @@
     <Compile Include="Domainmodel\EntityRegistryTest.cs" />
     <Compile Include="Domainmodel\ComponentTest.cs" />
     <Compile Include="Domainmodel\EntityTest.cs" />
+    <Compile Include="PluginManager\IPluginInitializer.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
