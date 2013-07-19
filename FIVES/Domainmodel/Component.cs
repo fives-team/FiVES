@@ -1,78 +1,98 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 
 namespace FIVES
 {
-	public class AttributeTypeMismatchException : System.Exception
-	{
-		public AttributeTypeMismatchException(){}
-		public AttributeTypeMismatchException(string message){}
-	}
+    public class AttributeTypeMismatchException : System.Exception
+    {
+        public AttributeTypeMismatchException() : base() { }
+        public AttributeTypeMismatchException(string message) : base(message) { }
+    }
 
-	public class Component
-	{
-		private Dictionary<string, Attribute> attributes = new Dictionary<string, Attribute> ();
+    public class AttributeIsNotDefinedException : System.Exception
+    {
+        public AttributeIsNotDefinedException() : base() { }
+        public AttributeIsNotDefinedException(string message) : base(message) { }
+    }
 
-		public Component ()
-		{
+    public class Component
+    {
+        #region Typed Attribute Setters
+        public void setIntAttribute(string name, int? value) {
+            this.setAttribute (name, value, AttributeType.INT);
+        }
 
-		}
+        public void setFloatAttribute(string name, float? value) {
+            this.setAttribute (name, value, AttributeType.FLOAT);
+        }
 
-		#region Typed Attribute Setters
-		public void setIntAttribute(string name, int value) {
-			this.setAttribute (name, value, AttributeType.INT);
-		}
+        public void setStringAttribute(string name, string value) {
+            this.setAttribute (name, value, AttributeType.STRING);
+        }
 
-		public void setFloatAttribute(string name, float value) {
-			this.setAttribute (name, value, AttributeType.FLOAT);
-		}
+        public void setBoolAttribute(string name, bool? value) {
+            this.setAttribute (name, value, AttributeType.BOOL);
+        }
+        #endregion
 
-		public void setStringAttribute(string name, string value) {
-			this.setAttribute (name, value, AttributeType.STRING);
-		}
+        #region Typed Attribute Getters
+        public int? getIntAttribute(string name) {
+            checkAttributeExistsAndTypeMatches(name, AttributeType.INT);
+            return attributes[name].value as int?;
+        }
 
-		public void setBoolAttribute(string name, bool value) {
-			this.setAttribute (name, value, AttributeType.BOOL);
-		}
-		#endregion
+        public float? getFloatAttribute(string name) {
+            checkAttributeExistsAndTypeMatches(name, AttributeType.FLOAT);
+            return attributes[name].value as float?;
+        }
 
-		#region Typed Attribute Getters
-		public int getIntAttribute(string name) {
-			Attribute attribute = this.attributes [name];
-			this.checkForMatchingTypes (attribute, AttributeType.INT);
-			return Convert.ToInt32(attribute.value);
-		}
+        public string getStringAttribute(string name) {
+            checkAttributeExistsAndTypeMatches(name, AttributeType.STRING);
+            return attributes[name].value as string;
+        }
 
-		public float getFloatAttribute(string name) {
-			Attribute attribute = this.attributes [name];
-			this.checkForMatchingTypes (attribute,AttributeType.FLOAT);
-			return Convert.ToSingle(attribute.value);
-		}
+        public bool? getBoolAttribute(string name) {
+            checkAttributeExistsAndTypeMatches(name, AttributeType.BOOL);
+            return attributes[name].value as bool?;
+        }
+        #endregion
 
-		public string getStringAttribute(string name) {
-			Attribute attribute = this.attributes [name];
-			this.checkForMatchingTypes (attribute, AttributeType.STRING);
-			return (string)attribute.value;
-		}
+        // Can only be constructed by ComponentRegistry to ensure correct attributes.
+        internal Component (string name)
+        {
+            componentName = name;
+        }
 
-		public bool getBoolAttribute(string name) {
-			Attribute attribute = this.attributes [name];
-			this.checkForMatchingTypes (attribute, AttributeType.BOOL);
-			return Convert.ToBoolean(attribute.value);
-		}
-		#endregion
+        // This is used to populate the attributes into a component based on it's layout.
+        internal void addAttribute(string attributeName, AttributeType type) {
+            // If the attribute already exists, then it's an internal error (probably in ComponentRegistry).
+            Debug.Assert(!attributes.ContainsKey(attributeName));
 
-		private void checkForMatchingTypes(Attribute requestedAttribute, AttributeType requestedType) {
-			AttributeType attributeType = requestedAttribute.type;
-			if (attributeType != requestedType)
-			{
-				throw new AttributeTypeMismatchException ("Error while retrieving Attribute value - Requested  " + requestedType.ToString() + " but Attribute was of type " + attributeType.ToString());
-			}
-		}
+            attributes.Add(attributeName, new Attribute(type, null));
+        }
 
-		private void setAttribute<T>(string name, T value, AttributeType type) {
-			Attribute newAttribute = new Attribute (type, value);
-			this.attributes.Add (name, newAttribute);
-		}
-	}
+        private void checkAttributeExistsAndTypeMatches(string attributeName, AttributeType requestedType) {
+            if (!attributes.ContainsKey(attributeName)) {
+                throw new AttributeIsNotDefinedException(
+                    "Attribute '" + attributeName + "' is not defined in the component '" + componentName + "'.");
+            }
+
+            AttributeType attributeType = attributes[attributeName].type;
+            if (attributeType != requestedType) {
+                throw new AttributeTypeMismatchException(
+                    "Attribute '\" + attributeName + \"' has a different type in the component '" + componentName +
+                    "'. Requested type is " + requestedType.ToString() + ", but attribute type is " +
+                    attributeType.ToString() + ".");
+            }
+        }
+
+        private void setAttribute<T>(string attributeName, T value, AttributeType type) {
+            checkAttributeExistsAndTypeMatches(attributeName, type);
+            attributes[attributeName].value = value;
+        }
+
+        private Dictionary<string, Attribute> attributes = new Dictionary<string, Attribute> ();
+        private string componentName;
+    }
 }

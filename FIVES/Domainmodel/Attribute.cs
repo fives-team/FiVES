@@ -2,27 +2,27 @@ using System;
 
 namespace FIVES
 {
-	public class Attribute
-	{
-		public AttributeType type { get; set; }
-		public object value { get; set; }
+    public enum AttributeType {
+        INT,
+        FLOAT,
+        STRING,
+        BOOL
+    }
 
-		public Attribute()
-		{
-		}
+    internal class Attribute
+    {
+        public AttributeType type { get; set; }
+        public object value { get; set; }
 
-		public Attribute(AttributeType type, object value)
-		{
-			this.type = type;
-			this.value = value;
-		}
-	}
+        public Attribute()
+        {
+        }
 
-	public enum AttributeType {
-		INT,
-		FLOAT,
-		STRING,
-		BOOL
-	}
+        public Attribute(AttributeType type, object value)
+        {
+            this.type = type;
+            this.value = value;
+        }
+    }
 }
 
