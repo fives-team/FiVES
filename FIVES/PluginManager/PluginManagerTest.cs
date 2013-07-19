@@ -12,51 +12,51 @@ namespace FIVES
         private string pathToPlugins = "../../PluginManager/";
 
         [SetUp()]
-        public void Init()
+        public void init()
         {
             pm = new PluginManager();
         }
 
         [Test()]
-        public void ShouldLoadAllValidPluginsInDirectory()
+        public void shouldLoadAllValidPluginsInDirectory()
         {
-            pm.LoadPluginsFrom(pathToPlugins + "TestPlugins");
-            Assert.IsTrue(pm.IsPluginLoaded(pathToPlugins + "TestPlugins/valid_plugin.dll"));
-            Assert.IsTrue(pm.IsPluginLoaded(pathToPlugins + "TestPlugins/valid_plugin2.dll"));
+            pm.loadPluginsFrom(pathToPlugins + "TestPlugins");
+            Assert.IsTrue(pm.isPluginLoaded(pathToPlugins + "TestPlugins/valid_plugin.dll"));
+            Assert.IsTrue(pm.isPluginLoaded(pathToPlugins + "TestPlugins/valid_plugin2.dll"));
         }
 
         [Test()]
-        public void ShouldOmitInvalidPluginsInDirectory()
+        public void shouldOmitInvalidPluginsInDirectory()
         {
-            pm.LoadPluginsFrom(pathToPlugins + "TestPlugins");
-            Assert.IsFalse(pm.IsPluginLoaded(pathToPlugins + "TestPlugins/invalid_plugin.dll"));
-            Assert.IsFalse(pm.IsPluginLoaded(pathToPlugins + "TestPlugins/invalid_assembly.dll"));
+            pm.loadPluginsFrom(pathToPlugins + "TestPlugins");
+            Assert.IsFalse(pm.isPluginLoaded(pathToPlugins + "TestPlugins/invalid_plugin.dll"));
+            Assert.IsFalse(pm.isPluginLoaded(pathToPlugins + "TestPlugins/invalid_assembly.dll"));
         }
 
         [Test()]
-        public void ShouldRecognizeDifferentPathsToTheSamePlugin()
+        public void shouldRecognizeDifferentPathsToTheSamePlugin()
         {
-            pm.LoadPlugin(pathToPlugins + "TestPlugins/valid_plugin.dll");
-            Assert.IsTrue(pm.IsPluginLoaded(pathToPlugins + "TestPlugins/../TestPlugins/valid_plugin.dll"));
-            Assert.IsTrue(pm.IsPluginLoaded(pathToPlugins + "TestPlugins/./valid_plugin.dll"));
+            pm.loadPlugin(pathToPlugins + "TestPlugins/valid_plugin.dll");
+            Assert.IsTrue(pm.isPluginLoaded(pathToPlugins + "TestPlugins/../TestPlugins/valid_plugin.dll"));
+            Assert.IsTrue(pm.isPluginLoaded(pathToPlugins + "TestPlugins/./valid_plugin.dll"));
         }
 
         [Test()]
-        public void ShouldReturnNullOnMissingFile()
+        public void shouldReturnNullOnMissingFile()
         {
-            Assert.IsNull(pm.LoadPlugin(pathToPlugins + "TestPlugins/non-existing-file.dll"));
+            Assert.IsNull(pm.loadPlugin(pathToPlugins + "TestPlugins/non-existing-file.dll"));
         }
 
         [Test()]
-        public void ShouldReturnNullOnInvalidPlugin()
+        public void shouldReturnNullOnInvalidPlugin()
         {
-            Assert.IsNull(pm.LoadPlugin(pathToPlugins + "TestPlugins/invalid_plugin.dll"));
+            Assert.IsNull(pm.loadPlugin(pathToPlugins + "TestPlugins/invalid_plugin.dll"));
         }
 
         [Test()]
-        public void ShouldReturnNullOnInvalidAssembly()
+        public void shouldReturnNullOnInvalidAssembly()
         {
-            Assert.IsNull(pm.LoadPlugin(pathToPlugins + "TestPlugins/invalid_assembly.dll"));
+            Assert.IsNull(pm.loadPlugin(pathToPlugins + "TestPlugins/invalid_assembly.dll"));
         }
     }
 }

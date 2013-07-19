@@ -17,7 +17,7 @@ namespace FIVES
                 if (!Directory.Exists(pluginDir))
                     logger.Error("Plugin directory doesn't exist.");
                 else
-                    PluginManager.Instance.LoadPluginsFrom(pluginDir);
+                    PluginManager.Instance.loadPluginsFrom(pluginDir);
             } catch (NullReferenceException) {
                 logger.Error("Plugins dir is not specified.");
             } catch (ConfigurationErrorsException) {
@@ -26,7 +26,7 @@ namespace FIVES
 
             // Add 20 entities.
             for (int i = 1; i < 20; i++)
-                EntityRegistry.AddEntity(new Entity());
+                EntityRegistry.addEntity(new Entity());
 
             // Wait for any key to be pressed.
             Console.ReadKey();

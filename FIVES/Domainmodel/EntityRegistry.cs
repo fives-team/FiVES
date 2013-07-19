@@ -8,7 +8,7 @@ namespace FIVES
     public class EntityRegistry
     {
         // Adds a new entity to the database. Returns GUID assigned to the entity.
-        public static Guid AddEntity(Entity entity)
+        public static Guid addEntity(Entity entity)
         {
             Guid newGUID = Guid.NewGuid();
             entities[newGUID] = entity;
@@ -16,7 +16,7 @@ namespace FIVES
         }
 
         // Removes an entity with a given |guid|. Returns false if such entity was not found.
-        public static bool RemoveEntity(Guid guid)
+        public static bool removeEntity(Guid guid)
         {
             if (entities.ContainsKey(guid)) {
                 entities.Remove(guid);
@@ -27,7 +27,7 @@ namespace FIVES
         }
 
         // Returns entity by its |guid| or null if no such entity is found.
-        public static Entity GetEntityByGuid(Guid guid)
+        public static Entity getEntityByGuid(Guid guid)
         {
             if (entities.ContainsKey(guid))
                 return entities[guid];
@@ -35,7 +35,7 @@ namespace FIVES
         }
 
         // Returns a list of all entities' GUIDs.
-        public static List<Guid> GetAllGUIDs()
+        public static List<Guid> getAllGUIDs()
         {
             List<Guid> res = new List<Guid>();
             foreach (Guid guid in entities.Keys)

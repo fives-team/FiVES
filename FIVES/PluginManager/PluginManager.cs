@@ -15,15 +15,15 @@ namespace FIVES
 
         // Canoninizes the filename (converts .. and . into actual path). This allows to identify plugin from the same
         // file but different paths as the same. E.g. /foo/bar/baz/../plugin.dll is the same as /foo/bar/plugin.dll.
-        private string GetCanonicalName(string filename)
+        private string getCanonicalName(string filename)
         {
             return Path.GetFullPath(filename);
         }
 
         // Loads a plugin (unless loaded before) and returns plugin initializer. Returns null when loading fails.
-        public object LoadPlugin(string filename)
+        public object loadPlugin(string filename)
         {
-            string canonicalName = GetCanonicalName(filename);
+            string canonicalName = getCanonicalName(filename);
             if (!loadedPluginInitializers.ContainsKey(canonicalName)) {
                 try {
                     // Load an assembly.
@@ -49,16 +49,16 @@ namespace FIVES
             return loadedPluginInitializers[canonicalName];
         }
 
-        public void LoadPluginsFrom(string pluginDirectory)
+        public void loadPluginsFrom(string pluginDirectory)
         {
             string[] files = Directory.GetFiles(pluginDirectory);
             foreach (string filename in files)
-                LoadPlugin(filename);
+                loadPlugin(filename);
         }
 
-        public bool IsPluginLoaded(string filename)
+        public bool isPluginLoaded(string filename)
         {
-            string canonicalName = GetCanonicalName(filename);
+            string canonicalName = getCanonicalName(filename);
             return loadedPluginInitializers.ContainsKey(canonicalName);
         }
     }

@@ -8,30 +8,30 @@ namespace FIVES
     public class EntityRegistryTest
     {
         [Test()]
-        public void ShouldAddEntitites() {
+        public void shouldAddEntitites() {
             var e1 = new Entity();
-            var g1 = EntityRegistry.AddEntity(e1);
-            Assert.NotNull(EntityRegistry.GetEntityByGuid(g1));
+            var g1 = EntityRegistry.addEntity(e1);
+            Assert.NotNull(EntityRegistry.getEntityByGuid(g1));
         }
 
         [Test()]
-        public void ShouldRemoveEntities() {
+        public void shouldRemoveEntities() {
             var e1 = new Entity();
-            var g1 = EntityRegistry.AddEntity(e1);
-            Assert.True(EntityRegistry.RemoveEntity(g1));
-            Assert.Null(EntityRegistry.GetEntityByGuid(g1));
+            var g1 = EntityRegistry.addEntity(e1);
+            Assert.True(EntityRegistry.removeEntity(g1));
+            Assert.Null(EntityRegistry.getEntityByGuid(g1));
         }
 
         [Test()]
-        public void ShouldReturnAllGUIDs() {
+        public void shouldReturnAllGUIDs() {
             var e1 = new Entity();
             var e2 = new Entity();
             var e3 = new Entity();
-            var g1 = EntityRegistry.AddEntity(e1);
-            var g2 = EntityRegistry.AddEntity(e2);
-            var g3 = EntityRegistry.AddEntity(e3);
+            var g1 = EntityRegistry.addEntity(e1);
+            var g2 = EntityRegistry.addEntity(e2);
+            var g3 = EntityRegistry.addEntity(e3);
 
-            var allGUIDs = EntityRegistry.GetAllGUIDs();
+            var allGUIDs = EntityRegistry.getAllGUIDs();
 
             Assert.Contains(g1, allGUIDs);
             Assert.Contains(g2, allGUIDs);

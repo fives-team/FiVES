@@ -12,7 +12,7 @@ namespace FIVES
         }
 
         [Test()]
-        public void ShouldAddOneChildren()
+        public void shouldAddOneChildren()
         {
             Entity parentEntity = new Entity ();
             var EntityToAdd = new Entity ();
@@ -23,7 +23,7 @@ namespace FIVES
         }
 
         [Test()]
-        public void ShouldCorrectlyAssignParent()
+        public void shouldCorrectlyAssignParent()
         {
             Entity parentEntity = new Entity ();
             Entity childEntity = new Entity ();
@@ -32,7 +32,7 @@ namespace FIVES
         }
 
         [Test()]
-        public void ShouldCorrectlyRetrieveFirstAndLast()
+        public void shouldCorrectlyRetrieveFirstAndLast()
         {
             Entity parentEntity = new Entity ();
             Entity firstChildEntity = new Entity ();

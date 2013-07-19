@@ -12,7 +12,7 @@ namespace ClientSync {
         {
             var context = new Context();
             string service = "http://localhost/projects/test-client/kiara/fives.json";
-            context.AcceptClients(service, RegisterMethods);
+            context.acceptClients(service, registerMethods);
         }
 
         // This plugin uses KIARA to communicate with the clients. The following services are supported:
@@ -31,22 +31,22 @@ namespace ClientSync {
             "clientsync"
         };
 
-        private static List<bool> Implements(List<string> services)
+        private static List<bool> implements(List<string> services)
         {
             return services.ConvertAll(service => supportedServices.Contains(service));
         }
 
-        private static List<string> ListObjects()
+        private static List<string> listObjects()
         {
-            List<Guid> guids = EntityRegistry.GetAllGUIDs();
+            List<Guid> guids = EntityRegistry.getAllGUIDs();
             return guids.ConvertAll(guid => guid.ToString());
         }
 
-        private static void RegisterMethods(Connection connection)
+        private static void registerMethods(Connection connection)
         {
-            connection.RegisterFuncImplementation("kiara.implements", "...",
-                                                  (Func<List<string>, List<bool>>)Implements);
-            connection.RegisterFuncImplementation("clientsync.listObjects", "...", (Func<List<string>>)ListObjects);
+            connection.registerFuncImplementation("kiara.implements", "...",
+                                                  (Func<List<string>, List<bool>>)implements);
+            connection.registerFuncImplementation("clientsync.listObjects", "...", (Func<List<string>>)listObjects);
         }
     }
 

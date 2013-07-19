@@ -12,28 +12,28 @@ namespace KIARA
         {
             clientHandler = aClientHandler;
 
-            NewMessageReceived += HandleNewMessageReceived;
-            NewSessionConnected += HandleNewSessionConnected;
-            SessionClosed += HandleSessionClosed;
+            NewMessageReceived += handleNewMessageReceived;
+            NewSessionConnected += handleNewSessionConnected;
+            SessionClosed += handleSessionClosed;
         }
 
-        private void HandleNewSessionConnected(WebSocketSession session)
+        private void handleNewSessionConnected(WebSocketSession session)
         {
             Debug.Assert(!wrappers.ContainsKey(session));
             wrappers[session] = new SWSSessionWrapper(session);
             clientHandler(new Connection(wrappers[session]));
         }
 
-        private void HandleSessionClosed(WebSocketSession session, SuperSocket.SocketBase.CloseReason reason)
+        private void handleSessionClosed(WebSocketSession session, SuperSocket.SocketBase.CloseReason reason)
         {
             Debug.Assert(wrappers.ContainsKey(session));
-            wrappers[session].HandleClose();
+            wrappers[session].handleClose();
         }
 
-        private void HandleNewMessageReceived(WebSocketSession session, string value)
+        private void handleNewMessageReceived(WebSocketSession session, string value)
         {
             Debug.Assert(wrappers.ContainsKey(session));
-            wrappers[session].HandleMessage(value);
+            wrappers[session].handleMessage(value);
         }
 
         private Context.ClientHandler clientHandler;
@@ -57,14 +57,14 @@ namespace KIARA
         public event ConnectionErrorDelegate OnError;
 
         // Sends a message.
-        public bool Send(string message)
+        public bool send(string message)
         {
             session.Send(message);
             return true;
         }
 
         // Receive a message.
-        internal void HandleMessage(string message)
+        internal void handleMessage(string message)
         {
             if (isListening)
                 OnMessage(message);
@@ -72,19 +72,19 @@ namespace KIARA
                 cachedMessages.Add(message);
         }
 
-        internal void HandleClose()
+        internal void handleClose()
         {
             OnClose();
         }
 
-        internal void HandleError(string reason)
+        internal void handleError(string reason)
         {
             OnError(reason);
         }
 
         // Starts receiving messages (and triggering OnMessage). Previous messages should be cached 
         // until this method is called.
-        public void Listen()
+        public void listen()
         {
             if (!isListening) {
                 isListening = true;

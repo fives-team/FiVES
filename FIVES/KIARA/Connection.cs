@@ -18,26 +18,26 @@ namespace KIARA
 
         // Loads an IDL file from the |uri|. Parses it's content and adds new types and services to 
         // the type system. When called on a |uri| that was already loaded, does not raise an error.
-        public void LoadIDL(string uri)
+        public void loadIDL(string uri)
         {
-            Implementation.LoadIDL(uri);
+            Implementation.loadIDL(uri);
         }
 
         // Returns a function wrapper for an IDL method with |qualifiedMethodName| that sends a call
         // to the remote end using |typeMapping| for serialization/desirialization.
-        public FunctionWrapper GenerateFunctionWrapper(string qualifiedMethodName, 
+        public FunctionWrapper generateFunctionWrapper(string qualifiedMethodName, 
                                                        string typeMapping)
         {
-            return GenerateFunctionWrapper(qualifiedMethodName, typeMapping, 
+            return generateFunctionWrapper(qualifiedMethodName, typeMapping, 
                                            new Dictionary<string, Delegate>());
         }
 
         // Same as above, but |defaultHandlers| are automatically assigned to each call.
-        public FunctionWrapper GenerateFunctionWrapper(
+        public FunctionWrapper generateFunctionWrapper(
             string qualifiedMethodName, string typeMapping, 
             Dictionary<string, Delegate> defaultHandlers)
         {
-            return Implementation.GenerateFuncWrapper(qualifiedMethodName, typeMapping, 
+            return Implementation.generateFuncWrapper(qualifiedMethodName, typeMapping, 
                                                       defaultHandlers);
         }
 
@@ -68,10 +68,10 @@ namespace KIARA
         // It is possible to pass static/instance, private/public methods, delegates or lambda 
         // functions, but all of them must be implicity casted to some delegate type as shown
         // above.
-        public void RegisterFuncImplementation(string qualifiedMethodName, string typeMapping, 
+        public void registerFuncImplementation(string qualifiedMethodName, string typeMapping, 
                                                Delegate nativeMethod)
         {
-            Implementation.RegisterFuncImplementation(qualifiedMethodName, typeMapping, 
+            Implementation.registerFuncImplementation(qualifiedMethodName, typeMapping, 
                                                       nativeMethod);
         }
         #endregion
@@ -81,12 +81,12 @@ namespace KIARA
         {
             event CloseDelegate OnClose;
 
-            void LoadIDL(string uri);
+            void loadIDL(string uri);
 
-            FunctionWrapper GenerateFuncWrapper(string qualifiedMethodName, string typeMapping,
+            FunctionWrapper generateFuncWrapper(string qualifiedMethodName, string typeMapping,
                                                 Dictionary<string, Delegate> defaultHandlers);
 
-            void RegisterFuncImplementation(string qualifiedMethodName, string typeMapping, 
+            void registerFuncImplementation(string qualifiedMethodName, string typeMapping, 
                                             Delegate nativeMethod);
         }
 

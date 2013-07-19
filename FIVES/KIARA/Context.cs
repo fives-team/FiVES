@@ -10,7 +10,7 @@ namespace KIARA
     {
         public delegate void ClientHandler(Connection connection);
 
-        public void AcceptClients(string service, ClientHandler handler)
+        public void acceptClients(string service, ClientHandler handler)
         {
             // TODO(rryk): Retrieve port number from the confiuration for |service|.
             int port = 34837;

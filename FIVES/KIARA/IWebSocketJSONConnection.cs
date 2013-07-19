@@ -22,11 +22,11 @@ namespace KIARA
         event ConnectionErrorDelegate OnError;
 
         // Sends a message.
-        bool Send(string message);
+        bool send(string message);
 
         // Starts receiving messages (and triggering OnMessage). Previous messages should be cached 
         // until this method is called.
-        void Listen();
+        void listen();
     }
 
     public partial class Connection
@@ -46,7 +46,7 @@ namespace KIARA
     {
         public event Connection.CloseDelegate OnClose;
 
-        public void LoadIDL(string uri)
+        public void loadIDL(string uri)
         {
             // TODO(rryk): Load and parse IDL.
         }
@@ -54,18 +54,18 @@ namespace KIARA
         public WebSocketJSONConnectionImplementation(IWebSocketJSONConnection connection)
         {
             Connection = connection;
-            Connection.OnMessage += HandleMessage;
-            Connection.OnClose += HandleClose;
-            Connection.OnError += HandleError;
-            Connection.Listen();
+            Connection.OnMessage += handleMessage;
+            Connection.OnClose += handleClose;
+            Connection.OnError += handleError;
+            Connection.listen();
         }
 
-        public FunctionWrapper GenerateFuncWrapper(string qualifiedMethodName, string typeMapping, 
+        public FunctionWrapper generateFuncWrapper(string qualifiedMethodName, string typeMapping, 
                                                    Dictionary<string, Delegate> defaultHandlers)
         {
             // Validate default handlers.
             foreach (KeyValuePair<string, Delegate> defaultHandler in defaultHandlers)
-                FunctionCall.ValidateHandler(defaultHandler.Key, defaultHandler.Value);
+                FunctionCall.validateHandler(defaultHandler.Key, defaultHandler.Value);
 
             return (FunctionWrapper)delegate(object[] parameters) {
                 int callID = NextCallID++;
@@ -75,21 +75,21 @@ namespace KIARA
                 callMessage.Add(qualifiedMethodName);
                 callMessage.AddRange(parameters);
                 string serializedMessage = JsonConvert.SerializeObject(callMessage);
-                Connection.Send(serializedMessage);
+                Connection.send(serializedMessage);
 
-                if (IsOneWay(qualifiedMethodName))
+                if (isOneWay(qualifiedMethodName))
                     return null;
 
                 FunctionCall callObj = new FunctionCall();
                 foreach (KeyValuePair<string, Delegate> defaultHandler in defaultHandlers)
-                    callObj.On(defaultHandler.Key, defaultHandler.Value);
+                    callObj.on(defaultHandler.Key, defaultHandler.Value);
 
                 ActiveCalls.Add(callID, callObj);
                 return callObj;
             };
         }
 
-        private bool IsOneWay(string qualifiedMethodName)
+        private bool isOneWay(string qualifiedMethodName)
         {
             List<string> onewayMethods = new List<string> {
                 "omp.connectClient.handshake",
@@ -108,7 +108,7 @@ namespace KIARA
             return onewayMethods.Contains(qualifiedMethodName);
         }
 
-        private void HandleMessage(string message)
+        private void handleMessage(string message)
         {
             List<object> data = null;
 
@@ -126,7 +126,7 @@ namespace KIARA
                 if (ActiveCalls.ContainsKey(callID)) {
                     bool success = (bool)data[2];
                     object retValOrException = data[3];
-                    ActiveCalls[callID].SetResult(success ? "result" : "exception",
+                    ActiveCalls[callID].setResult(success ? "result" : "exception",
                                                   retValOrException);
                     ActiveCalls.Remove(callID);
                 } else {
@@ -147,7 +147,7 @@ namespace KIARA
                     }
                     List<object> parameters = new List<object>();
                     for (int i = 0; i < paramInfo.Length; i++) {
-                        parameters.Add(ConversionUtils.CastJObject(
+                        parameters.Add(ConversionUtils.castJObject(
                             data[i + 3], paramInfo[i].ParameterType));
                     }
 
@@ -162,7 +162,7 @@ namespace KIARA
                         success = false;
                     }
 
-                    if (!IsOneWay(methodName)) {
+                    if (!isOneWay(methodName)) {
                         // Send call-reply message.
                         List<object> callReplyMessage = new List<object>();
                         callReplyMessage.Add("call-reply");
@@ -174,7 +174,7 @@ namespace KIARA
                         else if (nativeMethod.Method.ReturnType != typeof(void))
                             callReplyMessage.Add(returnValue);
 
-                        Connection.Send(JsonConvert.SerializeObject(callReplyMessage));
+                        Connection.send(JsonConvert.SerializeObject(callReplyMessage));
                     }
                 } else {
                     throw new Error(ErrorCode.CONNECTION_ERROR, 
@@ -184,21 +184,21 @@ namespace KIARA
                 throw new Error(ErrorCode.CONNECTION_ERROR, "Unknown message type: " + msgType);
         }
 
-        public void HandleClose()
+        public void handleClose()
         {
-            HandleError("Connection closed.");
+            handleError("Connection closed.");
         }
 
-        public void HandleError(string reason)
+        public void handleError(string reason)
         {
             foreach (KeyValuePair<int, FunctionCall> call in ActiveCalls)
-                call.Value.SetResult("error", reason);
+                call.Value.setResult("error", reason);
             ActiveCalls.Clear();
             if (OnClose != null)
                 OnClose(reason);
         }
 
-        public void RegisterFuncImplementation(string qualifiedMethodName, string typeMapping, 
+        public void registerFuncImplementation(string qualifiedMethodName, string typeMapping, 
                                                Delegate nativeMethod)
         {
             RegisteredFunctions[qualifiedMethodName] = nativeMethod;

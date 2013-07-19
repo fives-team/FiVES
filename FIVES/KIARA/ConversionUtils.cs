@@ -6,7 +6,7 @@ namespace KIARA
 {
     internal class ConversionUtils
     {
-        public static object CastJObject(object obj, Type destType)
+        public static object castJObject(object obj, Type destType)
         {
             // Special cases
             if (obj == null)                                    // null

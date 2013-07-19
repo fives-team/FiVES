@@ -19,9 +19,9 @@ namespace KIARA
         #region Public interface
         // Registers a |handler| for the event with |eventName|. Supported event names: error, result. See corresponding 
         // handler types above.
-        public FunctionCall On(string eventName, Delegate handler)
+        public FunctionCall on(string eventName, Delegate handler)
         {
-            ValidateHandler(eventName, handler);
+            validateHandler(eventName, handler);
 
             if (eventName == "result")
                 OnResult.Add(handler);
@@ -31,13 +31,13 @@ namespace KIARA
                 OnError += (CallErrorCallback)handler;
 
             if (haveCachedResult)
-                SetResult(cachedResultType, cachedArgument);
+                setResult(cachedResultType, cachedArgument);
 
             return this;
         }
         // Allows to set up a global exception handler to handle all otherwise unhandled exceptions.
         // This will override any previously configured global exception handler.
-        public static void SetGlobalExceptionHandler(Delegate exceptionHandler)
+        public static void setGlobalExceptionHandler(Delegate exceptionHandler)
         {
             globalExceptionHandler = exceptionHandler;
         }
@@ -55,7 +55,7 @@ namespace KIARA
                     Type retValueType =
                         globalExceptionHandler.Method.GetParameters()[0].ParameterType;
                     globalExceptionHandler.DynamicInvoke(
-                        ConversionUtils.CastJObject(cachedArgument, retValueType));
+                        ConversionUtils.castJObject(cachedArgument, retValueType));
                 } else {
                     throw new Error(ErrorCode.GENERIC_ERROR, "Received unhandled exception from " +
                         "the remote end: " + cachedArgument.ToString()
@@ -64,20 +64,20 @@ namespace KIARA
             }
         }
 
-        internal void SetResult(string resultType, object argument)
+        internal void setResult(string resultType, object argument)
         {
             if (resultType == "result") {
                 // Cast return object to a specific type accepted by each individual result handler.
                 foreach (Delegate resultDelegate in OnResult) {
                     Type retValueType = resultDelegate.Method.GetParameters()[0].ParameterType;
                     resultDelegate.DynamicInvoke(
-                        ConversionUtils.CastJObject(argument, retValueType));
+                        ConversionUtils.castJObject(argument, retValueType));
                 }
 
                 foreach (Delegate excResultDelegate in OnExcResult) {
                     Type retValueType = excResultDelegate.Method.GetParameters()[1].ParameterType;
                     excResultDelegate.DynamicInvoke(
-                        null, ConversionUtils.CastJObject(argument, retValueType));
+                        null, ConversionUtils.castJObject(argument, retValueType));
                 }
             } else if (resultType == "exception") {
                 // Cast exception object to a specific type accepted by each individual result 
@@ -85,13 +85,13 @@ namespace KIARA
                 foreach (Delegate exceptionDelegate in OnException) {
                     Type retValueType = exceptionDelegate.Method.GetParameters()[0].ParameterType;
                     exceptionDelegate.DynamicInvoke(
-                        ConversionUtils.CastJObject(argument, retValueType));
+                        ConversionUtils.castJObject(argument, retValueType));
                 }
 
                 foreach (Delegate excResultDelegate in OnExcResult) {
                     Type exceptionType = excResultDelegate.Method.GetParameters()[0].ParameterType;
                     excResultDelegate.DynamicInvoke(
-                        ConversionUtils.CastJObject(argument, exceptionType), null);
+                        ConversionUtils.castJObject(argument, exceptionType), null);
                 }
 
                 // If no handlers are set, yet exception was returned - raise it.
@@ -120,24 +120,24 @@ namespace KIARA
             OnError = null;
         }
 
-        private static bool ValidateNArgumentHandler(Delegate handler, int numArgs)
+        private static bool validateHandlerWithNArguments(Delegate handler, int numArgs)
         {
             return handler is CallResultCallback ||
                 (handler.Method.GetParameters().Length == numArgs && 
                 handler.Method.ReturnType == typeof(void));
         }
 
-        internal static void ValidateHandler(string eventName, Delegate handler)
+        internal static void validateHandler(string eventName, Delegate handler)
         {
             bool valid = false;
             if (eventName == "result") 
-                valid = ValidateNArgumentHandler(handler, 1);
+                valid = validateHandlerWithNArguments(handler, 1);
             else if (eventName == "error")
                 valid = handler is CallErrorCallback;
             else if (eventName == "exception")
-                valid = ValidateNArgumentHandler(handler, 1);
+                valid = validateHandlerWithNArguments(handler, 1);
             else if (eventName == "exc_result")
-                valid = ValidateNArgumentHandler(handler, 2);
+                valid = validateHandlerWithNArguments(handler, 2);
             else
                 throw new Error(ErrorCode.INVALID_ARGUMENT, "Unknown event name: " + eventName);
             if (!valid) {
