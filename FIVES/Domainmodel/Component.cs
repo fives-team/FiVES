@@ -71,7 +71,7 @@ namespace FIVES
 		}
 
 		private void setAttribute<T>(string name, T value, AttributeType type) {
-			Attribute newAttribute = new Attribute (type, value.ToString ());
+			Attribute newAttribute = new Attribute (type, value);
 			this.attributes.Add (name, newAttribute);
 		}
 	}
