@@ -73,6 +73,7 @@
     <Compile Include="Domainmodel\EntityRegistry.cs" />
     <Compile Include="Domainmodel\EntityRegistryTest.cs" />
     <Compile Include="Domainmodel\ComponentTest.cs" />
+    <Compile Include="Domainmodel\EntityTest.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
