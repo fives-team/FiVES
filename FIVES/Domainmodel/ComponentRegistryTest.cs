@@ -30,16 +30,28 @@ namespace FIVES
         }
 
         [Test()]
-        public void shouldThrowExceptionWhenRedefiningComponentWithSameOwner() 
+        public void shouldNotThrowExceptionWhenRedefiningSameComponent()
         {
             Guid owner = Guid.NewGuid();
             registry.defineComponent(name, owner, layout);
-            Assert.Throws<ComponentAlreadyDefinedException>(
-                delegate() { registry.defineComponent(name, owner, layout); } );
+            registry.defineComponent(name, owner, layout);
         }
 
         [Test()]
-        public void shouldThrowExceptionWhenRedefiningComponentWithDifferentOwners() 
+        public void shouldThrowExceptionWhenRedefiningComponentWithDifferentLayout()
+        {
+            Guid owner = Guid.NewGuid();
+
+            ComponentLayout otherLayout = new ComponentLayout();
+            otherLayout["a"] = AttributeType.BOOL;
+
+            registry.defineComponent(name, owner, layout);
+            Assert.Throws<ComponentAlreadyDefinedException>(
+                delegate() { registry.defineComponent(name, owner, otherLayout); } );
+        }
+
+        [Test()]
+        public void shouldThrowExceptionWhenRedefiningComponentWithDifferentOwner()
         {
             registry.defineComponent(name, Guid.NewGuid(), layout);
             Assert.Throws<ComponentAlreadyDefinedException>(

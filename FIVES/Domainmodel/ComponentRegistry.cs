@@ -24,8 +24,15 @@ namespace FIVES
         // Defines a new component type with a |name| and a |layout|. |owner| can be anything as long as its unique.
         // Typically it's plugin's or script's GUID. Will throw an exception if component is already defined.
         public void defineComponent(string name, Guid owner, ComponentLayout layout) {
-            if (registeredComponents.ContainsKey(name))
+            if (registeredComponents.ContainsKey(name)) {
+                // We should only raise an error when we try to register a different layout or the different owner for
+                // the same name. Otherwise, this can happen normally when the registry was restored from the
+                // persistance database and plugin/script re-registers the layout.
+                if (registeredComponents[name].owner == owner && registeredComponents[name].layout == layout)
+                    return;
+
                 throw new ComponentAlreadyDefinedException("There is already a component with name '" + name + "'");
+            }
 
             registeredComponents[name] = new ComponentInfo();
             registeredComponents[name].owner = owner;
