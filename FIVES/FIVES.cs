@@ -31,7 +31,7 @@ namespace FIVES
                 entity["position"].setFloatAttribute("x", (float)(random.NextDouble()*100-5));
                 entity["position"].setFloatAttribute("y", (float)(random.NextDouble()*100-5));
                 entity["position"].setFloatAttribute("z", (float)(random.NextDouble()*100-5));
-                EntityRegistry.addEntity(entity);
+                EntityRegistry.Instance.addEntity(entity);
             }
 
             // Wait for any key to be pressed.

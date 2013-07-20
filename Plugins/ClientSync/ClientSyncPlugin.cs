@@ -42,7 +42,7 @@ namespace ClientSync {
 
         private static List<string> listObjects()
         {
-            List<Guid> guids = EntityRegistry.getAllGUIDs();
+            List<Guid> guids = EntityRegistry.Instance.getAllGUIDs();
             return guids.ConvertAll(guid => guid.ToString());
         }
 
@@ -51,7 +51,7 @@ namespace ClientSync {
         }
 
         private static Position getObjectPosition(string guid) {
-            var entity = EntityRegistry.getEntityByGuid(new Guid(guid));
+            var entity = EntityRegistry.Instance.getEntityByGuid(new Guid(guid));
             var pos = new Position();
             pos.x = (float)entity["position"].getFloatAttribute("x");
             pos.y = (float)entity["position"].getFloatAttribute("y");
