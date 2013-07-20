@@ -21,9 +21,13 @@ namespace ClientSync {
         //   bool[] implements(string[] services);
         // }
         //
+        // struct Position {
+        //   float x, y, z;
+        // }
+        //
         // service clientsync {
         //   string[] listObjects();
-        //   TODO: getObjectPosition
+        //   Position getObjectPosition(string objID);
         // }
 
         private static readonly List<string> supportedServices = new List<string> {
@@ -42,11 +46,26 @@ namespace ClientSync {
             return guids.ConvertAll(guid => guid.ToString());
         }
 
+        private class Position {
+            public float x, y, z;
+        }
+
+        private static Position getObjectPosition(string guid) {
+            var entity = EntityRegistry.getEntityByGuid(new Guid(guid));
+            var pos = new Position();
+            pos.x = (float)entity["position"].getFloatAttribute("x");
+            pos.y = (float)entity["position"].getFloatAttribute("y");
+            pos.z = (float)entity["position"].getFloatAttribute("z");
+            return pos;
+        }
+
         private static void registerMethods(Connection connection)
         {
             connection.registerFuncImplementation("kiara.implements", "...",
                                                   (Func<List<string>, List<bool>>)implements);
             connection.registerFuncImplementation("clientsync.listObjects", "...", (Func<List<string>>)listObjects);
+            connection.registerFuncImplementation("clientsync.getObjectPosition", "...",
+                                                  (Func<string, Position>)getObjectPosition);
         }
     }
 

@@ -23,8 +23,16 @@ namespace FIVES
             }
 
             // Add 20 entities.
-            for (int i = 1; i < 20; i++)
-                EntityRegistry.addEntity(new Entity());
+            var random = new Random();
+            for (int i = 1; i < 20; i++) {
+                // FIXME (rryk): somehow the object doesn't get recreated, so all objects have the
+                // last generated set of coordinates.
+                var entity = new Entity();
+                entity["position"].setFloatAttribute("x", (float)(random.NextDouble()*100-5));
+                entity["position"].setFloatAttribute("y", (float)(random.NextDouble()*100-5));
+                entity["position"].setFloatAttribute("z", (float)(random.NextDouble()*100-5));
+                EntityRegistry.addEntity(entity);
+            }
 
             // Wait for any key to be pressed.
             Console.ReadKey();
