@@ -25,8 +25,6 @@ namespace FIVES
             // Add 20 entities.
             var random = new Random();
             for (int i = 1; i < 20; i++) {
-                // FIXME (rryk): somehow the object doesn't get recreated, so all objects have the
-                // last generated set of coordinates.
                 var entity = new Entity();
                 entity["position"].setFloatAttribute("x", (float)(random.NextDouble()*100-5));
                 entity["position"].setFloatAttribute("y", (float)(random.NextDouble()*100-5));

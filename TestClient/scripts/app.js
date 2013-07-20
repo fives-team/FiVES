@@ -22,7 +22,7 @@ function(KIARA, $) {
                            var div = document.createElement("div");
                            var guid = objects[i];
                            div.appendChild(document.createTextNode(guid));
-                           div.addEventListener("click", function() { requestPosition(guid); })
+                           div.addEventListener("click", requestPosition.bind(null, guid));
                            div.setAttribute("style", "border: 1px solid black; background-color: gray; margin: 2px;");
                            document.body.appendChild(div);
                        }
