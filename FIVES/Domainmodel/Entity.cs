@@ -14,19 +14,26 @@ namespace FIVES
         private Dictionary<string, Component> components = new Dictionary<string, Component>();
         public Entity parent { get; set; }
         private List<Entity> children  = new List<Entity> ();
+        private ComponentRegistry componentRegistry;
 
         public Entity ()
         {
-
+            componentRegistry = ComponentRegistry.Instance;
         }
 
         public Component this [string index]
         {
             get {
+                if (!components.ContainsKey(index)) {
+                    if (componentRegistry.isRegistered(index)) {
+                        components[index] = componentRegistry.createComponent(index);
+                    } else {
+                        throw new ComponentIsNotDefinedException("Cannot create component '" + index + "' as its " +
+                                                                 "type is not registered with the ComponentRegistry");
+                    }
+                }
+
                 return this.components [index];
-            }
-            set {
-                this.components [index] = value;
             }
         }
 
@@ -57,6 +64,12 @@ namespace FIVES
             if(children.Count == 0)
                 throw(new EntityHasNoChildrenException("List of children for Entity is empty"));
             return children [children.Count -1];
+        }
+
+        // Used for testing to separate component registry database for different tests.
+        internal Entity(ComponentRegistry customComponentRegistry)
+        {
+            componentRegistry = customComponentRegistry;
         }
     }
 }

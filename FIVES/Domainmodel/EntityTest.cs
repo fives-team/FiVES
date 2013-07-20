@@ -44,6 +44,37 @@ namespace FIVES
             Assert.IsTrue (parentEntity.getFirstChild () == firstChildEntity);
             Assert.IsTrue (parentEntity.getLastChild () == lastChildEntity);
         }
+
+        [Test()]
+        public void shouldCreateRegisteredComponent()
+        {
+            // Define new component type "myComponent" with one int attribute "attr".
+            ComponentRegistry myRegistry = new ComponentRegistry();
+            ComponentLayout layout = new ComponentLayout();
+            layout["attr"] = AttributeType.INT;
+            myRegistry.defineComponent("myComponent", Guid.NewGuid(), layout);
+
+            var entity = new Entity(myRegistry);
+            entity["myComponent"].setIntAttribute("attr", 42);
+        }
+
+        [Test()]
+        public void shouldThrowExceptionWhenAccessingUnregisteredComponent()
+        {
+            var entity = new Entity();
+            Assert.Throws<ComponentIsNotDefinedException>(delegate() {
+                var component = entity["myComponent"];
+            });
+        }
+
+        [Test()]
+        public void shouldThrowExceptionWhenCreatingUnregisteredComponent()
+        {
+            var entity = new Entity();
+            Assert.Throws<ComponentIsNotDefinedException>(delegate() {
+                var component = entity["myComponent"];
+            });
+        }
     }
 }
 

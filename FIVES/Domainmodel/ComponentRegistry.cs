@@ -51,6 +51,11 @@ namespace FIVES
             return newComponent;
         }
 
+        public bool isRegistered(string name)
+        {
+            return registeredComponents.ContainsKey(name);
+        }
+
         private class ComponentInfo {
             public Guid owner;
             public ComponentLayout layout;
