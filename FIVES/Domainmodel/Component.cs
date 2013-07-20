@@ -19,42 +19,42 @@ namespace FIVES
     public class Component
     {
         #region Typed Attribute Setters
-        public void setIntAttribute(string name, int? value) {
-            this.setAttribute (name, value, AttributeType.INT);
+        public void setIntAttribute(string attributeName, int? value) {
+            this.setAttribute (attributeName, value, AttributeType.INT);
         }
 
-        public void setFloatAttribute(string name, float? value) {
-            this.setAttribute (name, value, AttributeType.FLOAT);
+        public void setFloatAttribute(string attributeName, float? value) {
+            this.setAttribute (attributeName, value, AttributeType.FLOAT);
         }
 
-        public void setStringAttribute(string name, string value) {
-            this.setAttribute (name, value, AttributeType.STRING);
+        public void setStringAttribute(string attributeName, string value) {
+            this.setAttribute (attributeName, value, AttributeType.STRING);
         }
 
-        public void setBoolAttribute(string name, bool? value) {
-            this.setAttribute (name, value, AttributeType.BOOL);
+        public void setBoolAttribute(string attributeName, bool? value) {
+            this.setAttribute (attributeName, value, AttributeType.BOOL);
         }
         #endregion
 
         #region Typed Attribute Getters
-        public int? getIntAttribute(string name) {
-            checkAttributeExistsAndTypeMatches(name, AttributeType.INT);
-            return attributes[name].value as int?;
+        public int? getIntAttribute(string attributeName) {
+            checkAttributeExistsAndTypeMatches(attributeName, AttributeType.INT);
+            return attributes[attributeName].value as int?;
         }
 
-        public float? getFloatAttribute(string name) {
-            checkAttributeExistsAndTypeMatches(name, AttributeType.FLOAT);
-            return attributes[name].value as float?;
+        public float? getFloatAttribute(string attributeName) {
+            checkAttributeExistsAndTypeMatches(attributeName, AttributeType.FLOAT);
+            return attributes[attributeName].value as float?;
         }
 
-        public string getStringAttribute(string name) {
-            checkAttributeExistsAndTypeMatches(name, AttributeType.STRING);
-            return attributes[name].value as string;
+        public string getStringAttribute(string attributeName) {
+            checkAttributeExistsAndTypeMatches(attributeName, AttributeType.STRING);
+            return attributes[attributeName].value as string;
         }
 
-        public bool? getBoolAttribute(string name) {
-            checkAttributeExistsAndTypeMatches(name, AttributeType.BOOL);
-            return attributes[name].value as bool?;
+        public bool? getBoolAttribute(string attributeName) {
+            checkAttributeExistsAndTypeMatches(attributeName, AttributeType.BOOL);
+            return attributes[attributeName].value as bool?;
         }
         #endregion
 
