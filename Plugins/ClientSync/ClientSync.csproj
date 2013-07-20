@@ -21,7 +21,7 @@
     <ConsolePause>False</ConsolePause>
     <CustomCommands>
       <CustomCommands>
-        <Command type="AfterBuild" command="xcopy /y &quot;${TargetFile}&quot; &quot;${SolutionDir}\BuiltPlugins\&quot;" externalConsole="True" />
+        <Command type="AfterBuild" command="xcopy /y &quot;${TargetDir}&quot; &quot;${SolutionDir}\BuiltPlugins\&quot;" externalConsole="True" />
       </CustomCommands>
     </CustomCommands>
   </PropertyGroup>
