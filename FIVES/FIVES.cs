@@ -14,9 +14,7 @@ namespace FIVES
             ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
             try {
                 string pluginDir = ConfigurationManager.AppSettings["PluginsDir"].ToString();
-                if (!Directory.Exists(pluginDir))
-                    logger.Error("Plugin directory doesn't exist.");
-                else
+                if (Directory.Exists(pluginDir))
                     PluginManager.Instance.loadPluginsFrom(pluginDir);
             } catch (NullReferenceException) {
                 logger.Error("Plugins dir is not specified.");
