@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>10.0.0</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{627CCFC6-4071-4119-92C6-8BC96E4310C8}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <RootNamespace>Core</RootNamespace>
+    <AssemblyName>Core</AssemblyName>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug</OutputPath>
+    <DefineConstants>DEBUG;</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <ConsolePause>false</ConsolePause>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>full</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release</OutputPath>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <ConsolePause>false</ConsolePause>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="Newtonsoft.Json">
+      <HintPath>..\ThirdParty\Json50r6\Bin\Portable40\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="NLog">
+      <HintPath>..\ThirdParty\NLog\NLog.dll</HintPath>
+    </Reference>
+    <Reference Include="SuperSocket.Common">
+      <HintPath>..\ThirdParty\SuperWebSocket\Net40\Release\SuperSocket.Common.dll</HintPath>
+    </Reference>
+    <Reference Include="SuperSocket.SocketBase">
+      <HintPath>..\ThirdParty\SuperWebSocket\Net40\Release\SuperSocket.SocketBase.dll</HintPath>
+    </Reference>
+    <Reference Include="SuperSocket.SocketEngine">
+      <HintPath>..\ThirdParty\SuperWebSocket\Net40\Release\SuperSocket.SocketEngine.dll</HintPath>
+    </Reference>
+    <Reference Include="SuperWebSocket">
+      <HintPath>..\ThirdParty\SuperWebSocket\Net40\Release\SuperWebSocket.dll</HintPath>
+    </Reference>
+    <Reference Include="nunit.framework, Version=2.6.0.12051, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77">
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="System.Configuration" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Domainmodel\Attribute.cs" />
+    <Compile Include="Domainmodel\Component.cs" />
+    <Compile Include="Domainmodel\ComponentLayout.cs" />
+    <Compile Include="Domainmodel\ComponentRegistry.cs" />
+    <Compile Include="Domainmodel\ComponentRegistryTest.cs" />
+    <Compile Include="Domainmodel\ComponentTest.cs" />
+    <Compile Include="Domainmodel\Entity.cs" />
+    <Compile Include="Domainmodel\EntityRegistry.cs" />
+    <Compile Include="Domainmodel\EntityRegistryTest.cs" />
+    <Compile Include="Domainmodel\EntityTest.cs" />
+    <Compile Include="KIARA\Connection.cs" />
+    <Compile Include="KIARA\Context.cs" />
+    <Compile Include="KIARA\ConversionUtils.cs" />
+    <Compile Include="KIARA\Error.cs" />
+    <Compile Include="KIARA\FunctionCall.cs" />
+    <Compile Include="KIARA\IWebSocketJSONConnection.cs" />
+    <Compile Include="KIARA\SWSServer.cs" />
+    <Compile Include="PluginManager\IPluginInitializer.cs" />
+    <Compile Include="PluginManager\PluginManager.cs" />
+    <Compile Include="PluginManager\PluginManagerTest.cs" />
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <ItemGroup>
+    <Folder Include="Domainmodel\" />
+    <Folder Include="KIARA\" />
+    <Folder Include="PluginManager\" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="PluginManager\TestPlugins\invalid_assembly.dll" />
+    <None Include="PluginManager\TestPlugins\invalid_plugin.dll" />
+    <None Include="PluginManager\TestPlugins\valid_plugin.dll" />
+    <None Include="PluginManager\TestPlugins\valid_plugin2.dll" />
+  </ItemGroup>
+</Project>

@@ -6,7 +6,7 @@ using NLog;
 
 namespace FIVES
 {
-    class PluginManager
+    public class PluginManager
     {
         public static PluginManager Instance = new PluginManager();
 

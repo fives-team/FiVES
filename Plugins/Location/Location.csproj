@@ -42,9 +42,9 @@
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
-    <ProjectReference Include="..\..\FIVES\FIVES.csproj">
-      <Project>{2F7E0670-CA00-42FB-9158-89056784D122}</Project>
-      <Name>FIVES</Name>
+    <ProjectReference Include="..\..\Core\Core.csproj">
+      <Project>{627CCFC6-4071-4119-92C6-8BC96E4310C8}</Project>
+      <Name>Core</Name>
     </ProjectReference>
   </ItemGroup>
 </Project>
