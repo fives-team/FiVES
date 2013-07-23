@@ -10,7 +10,7 @@ function(KIARA, $) {
 
     function main() {
         context = KIARA.createContext();
-        service = "http://localhost/projects/test-client/kiara/fives.json";
+        service = "kiara/fives.json";
         conn = context.openConnection(service, function() {
             var implements = conn.generateFuncWrapper("kiara.implements");
             implements(["clientsync"]).on("result", function(error, supported) {
