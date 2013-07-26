@@ -56,6 +56,9 @@ namespace FIVES
             return registeredComponents.ContainsKey(name);
         }
 
+        // Users should not construct ComponentRegistry on their own, but use ComponentRegistry.Instance instead.
+        internal ComponentRegistry() {}
+
         private class ComponentInfo {
             public Guid owner;
             public ComponentLayout layout;
