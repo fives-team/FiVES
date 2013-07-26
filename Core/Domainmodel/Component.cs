@@ -58,7 +58,7 @@ namespace FIVES
         }
         #endregion
 
-        // Can only be constructed by ComponentRegistry to ensure correct attributes.
+        // Can only be constructed by ComponentRegistry.createComponent to ensure correct attributes.
         internal Component (string name)
         {
             componentName = name;
