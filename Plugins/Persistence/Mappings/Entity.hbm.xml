@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2" 
+                   assembly="Core" 
+                   namespace="FIVES">
+	<class name="Entity" lazy="false">
+		<id name="Id">
+      		<generator class="guid" />
+      	</id>
+		<many-to-one name="parent" class="Entity" column="parent_id" cascade="all-delete-orphan" />
+		<!---
+		<map name="componentHandler">
+		  <key>
+		    <column name="entityID" />
+		  </key>
+		  <index type="string"> 
+    			<column name="`Nickname`" />
+		  </index>
+		  <many-to-many class="Component">
+		    <column name="`componentID`" />
+		  </many-to-many>
+		</map> -->
+	</class>                   
+</hibernate-mapping>
