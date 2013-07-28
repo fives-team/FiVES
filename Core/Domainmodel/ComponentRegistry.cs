@@ -45,8 +45,9 @@ namespace FIVES
             return registeredComponents.ContainsKey(name);
         }
 
-            Debug.Assert(registeredComponents.ContainsKey(componentName));
         internal Component getComponentInstance(string componentName) {
+            if(!isRegistered(componentName))
+				throw new ComponentIsNotDefinedException("Component '" + componentName + "' is not defined.");
 
             Component newComponent = new Component(componentName);
             foreach (var entry in registeredComponents[componentName].layout.attributes)
