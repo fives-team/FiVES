@@ -62,14 +62,14 @@ namespace FIVES
         [Test()]
         public void shouldFailToConstructUndefinedComponent() {
             Assert.Throws<ComponentIsNotDefinedException>(
-                delegate() { registry.createComponent("foobar"); } );
+                delegate() { registry.getComponentInstance("foobar"); } );
         }
 
         [Test()]
         public void shouldCreateDefinedLayoutAttributesInNewComponents() 
         {
             registry.defineComponent(name, Guid.NewGuid(), layout);
-            Component c = registry.createComponent(name);
+            Component c = registry.getComponentInstance(name);
             Assert.Null(c.getIntAttribute("i"));
             Assert.Null(c.getFloatAttribute("f"));
             Assert.Null(c.getStringAttribute("s"));
@@ -80,7 +80,7 @@ namespace FIVES
         public void shouldNotCreateUndefinedAttributesInNewComponents() 
         {
             registry.defineComponent(name, Guid.NewGuid(), layout);
-            Component c = registry.createComponent(name);
+            Component c = registry.getComponentInstance(name);
             Assert.Throws<AttributeIsNotDefinedException>(
                 delegate() { c.getIntAttribute("foobar"); } );
         }

@@ -45,8 +45,8 @@ namespace FIVES
             return registeredComponents.ContainsKey(name);
         }
 
-        internal Component createComponent(string componentName) {
             Debug.Assert(registeredComponents.ContainsKey(componentName));
+        internal Component getComponentInstance(string componentName) {
 
             Component newComponent = new Component(componentName);
             foreach (var entry in registeredComponents[componentName].layout.attributes)
