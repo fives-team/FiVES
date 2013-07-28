@@ -30,7 +30,7 @@ namespace Persistence
 			cfg.Configure ();
 			cfg.AddAssembly (typeof(Entity).Assembly);
 			cfg.AddAssembly (typeof(Component).Assembly);
-			new SchemaExport (cfg).Execute (true, true, true);
+			new SchemaExport (cfg).Execute (true, true, false);
 
 			ComponentLayout layout = new ComponentLayout();
 			layout["attr"] = AttributeType.INT;

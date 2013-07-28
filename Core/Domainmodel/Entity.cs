@@ -12,7 +12,7 @@ namespace FIVES
     public class Entity
     {
 		protected virtual Guid Id { get; set; }
-        private Dictionary<string, Component> components = new Dictionary<string, Component>();
+		private IDictionary<string, Component> components { get; set; }
         public Entity parent { get; set; }
         private List<Entity> children  = new List<Entity> ();
         private ComponentRegistry componentRegistry;
@@ -20,6 +20,7 @@ namespace FIVES
         public Entity ()
         {
             componentRegistry = ComponentRegistry.Instance;
+			this.components = new Dictionary<string, Component>();
         }
 
         public Component this [string index]
@@ -71,6 +72,7 @@ namespace FIVES
         internal Entity(ComponentRegistry customComponentRegistry)
         {
             componentRegistry = customComponentRegistry;
+			this.components = new Dictionary<string, Component> ();
         }
     }
 }

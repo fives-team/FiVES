@@ -3,7 +3,7 @@
                    assembly="Core" 
                    namespace="FIVES">
 	<class name="Component" lazy="false">
-		<id name="componentName" type = "string">      		
+		<id name="Id" type = "Guid">      		
     	</id>    	    		
 	</class>                   
 </hibernate-mapping>

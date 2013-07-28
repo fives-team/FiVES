@@ -7,8 +7,7 @@
       		<generator class="guid" />
       	</id>
 		<many-to-one name="parent" class="Entity" column="parent_id" cascade="all-delete-orphan" />
-		<!---
-		<map name="componentHandler">
+		<map name="components">
 		  <key>
 		    <column name="entityID" />
 		  </key>
@@ -18,6 +17,6 @@
 		  <many-to-many class="Component">
 		    <column name="`componentID`" />
 		  </many-to-many>
-		</map> -->
+		</map>
 	</class>                   
 </hibernate-mapping>
