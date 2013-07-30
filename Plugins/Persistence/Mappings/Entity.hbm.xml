@@ -3,20 +3,14 @@
                    assembly="Core" 
                    namespace="FIVES">
 	<class name="Entity" lazy="false">
-		<id name="Id">
+		<id name="Id" type="Guid">
       		<generator class="guid" />
       	</id>
-		<many-to-one name="parent" class="Entity" column="parent_id" cascade="all-delete-orphan" />
-		<map name="components">
-		  <key>
-		    <column name="entityID" />
-		  </key>
-		  <index type="string"> 
-    			<column name="`Nickname`" />
-		  </index>
-		  <many-to-many class="Component">
-		    <column name="`componentID`" />
-		  </many-to-many>
+		<many-to-one name="parent" class="Entity" column="parent_id" />
+		<map name="components" cascade = "all">
+		  <key column = "entityID" /.
+		  <index type = "string" column = "componentName" />
+		  <many-to-many column = "componentID" class="Component" />
 		</map>
 	</class>                   
 </hibernate-mapping>
