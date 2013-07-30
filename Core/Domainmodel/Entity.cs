@@ -11,7 +11,7 @@ namespace FIVES
 
     public class Entity
     {
-		protected virtual Guid Id { get; set; }
+		private Guid Id { get; set; }
 		private IDictionary<string, Component> components { get; set; }
         public Entity parent { get; set; }
         private List<Entity> children  = new List<Entity> ();
