@@ -8,7 +8,7 @@
       	</id>
 		<many-to-one name="parent" class="Entity" column="parent_id" />
 		<map name="components" cascade = "all">
-		  <key column = "entityID" /.
+		  <key column = "entityID" />
 		  <index type = "string" column = "componentName" />
 		  <many-to-many column = "componentID" class="Component" />
 		</map>
