@@ -3,7 +3,8 @@
                    assembly="Core" 
                    namespace="FIVES">
 	<class name="Component" lazy="false">
-		<id name="Id" type = "Guid">      		
-    	</id>    	    		
-	</class>                   
+		<id name="Id" type = "Guid">
+			<generator class = "guid" />
+    	</id>
+	</class>
 </hibernate-mapping>
