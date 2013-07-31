@@ -48,7 +48,7 @@ namespace Persistence
             layout["IntAttribute"] = AttributeType.INT;
             layout["StringAttribute"] = AttributeType.STRING;
             componentRegistry.defineComponent("myComponent", Guid.NewGuid(), layout);
-            Component newComponent = componentRegistry.createComponent ("myComponent");
+            
 
             Entity entity = new Entity();
             entityRegistry.addEntity(entity);
