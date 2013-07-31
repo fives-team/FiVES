@@ -35,6 +35,7 @@ namespace Persistence
 		{
 			cfg.AddAssembly (typeof(Entity).Assembly);
 			cfg.AddAssembly (typeof(Component).Assembly);
+            cfg.AddAssembly (typeof(Attribute).Assembly);
             new SchemaExport (cfg).Execute (true, true, false);
 		}
 
@@ -43,13 +44,15 @@ namespace Persistence
         public void shouldAddAndPersistComponent()
         {
             ComponentLayout layout = new ComponentLayout();
-            layout["attr"] = AttributeType.INT;
+            layout["IntAttribute"] = AttributeType.INT;
+            layout["StringAttribute"] = AttributeType.STRING;
             componentRegistry.defineComponent("myComponent", Guid.NewGuid(), layout);
             Component newComponent = componentRegistry.createComponent ("myComponent");
 
             Entity entity = new Entity();
             entityRegistry.addEntity(entity);
-            entity["myComponent"].setIntAttribute("attr", 42);
+            entity["myComponent"].setIntAttribute("IntAttribute", 42);
+            entity["myComponent"].setStringAttribute("StringAttribute", "Hello World!");
 
             var session = sessionFactory.OpenSession ();
             var trans = session.BeginTransaction ();
