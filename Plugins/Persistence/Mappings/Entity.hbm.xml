@@ -3,8 +3,7 @@
                    assembly="Core" 
                    namespace="FIVES">
 	<class name="Entity" lazy="false">
-		<id name="Id" type="Guid">
-      		<generator class="guid" />
+		<id name="Guid" type="Guid">
       	</id>
 		<many-to-one name="parent" class="Entity" column="parent_id" />
 		<map name="components" cascade = "all">
