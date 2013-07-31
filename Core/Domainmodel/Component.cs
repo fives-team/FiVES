@@ -65,6 +65,7 @@ namespace FIVES
         internal Component (string name)
         {
             componentName = name;
+            this.attributes = new Dictionary<string, Attribute> ();
         }
 
         // This is used to populate the attributes into a component based on it's layout.
@@ -95,7 +96,7 @@ namespace FIVES
             attributes[attributeName].value = value;
         }
 
-        private Dictionary<string, Attribute> attributes = new Dictionary<string, Attribute> ();
+        private IDictionary<string, Attribute> attributes {get ; set;}
         private string componentName;
     }
 }
