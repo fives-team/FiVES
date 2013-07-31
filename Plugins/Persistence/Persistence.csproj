@@ -67,5 +67,6 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </EmbeddedResource>
     <EmbeddedResource Include="Mappings\Component.hbm.xml" />
+    <EmbeddedResource Include="Mappings\Attribute.hbm.xml" />
   </ItemGroup>
 </Project>

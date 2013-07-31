@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2"
+                   assembly="Core"
+                   namespace="FIVES">
+	<class name="Attribute" lazy="false">
+		<id name="Id" type = "Guid">
+			<generator class = "guid" />
+    	</id>
+		<property name = "value" type = "Serializable" />
+		<property name = "type" type = "AttributeType" />
+	</class>
+</hibernate-mapping>
