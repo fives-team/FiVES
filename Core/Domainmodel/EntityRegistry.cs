@@ -46,6 +46,9 @@ namespace FIVES
             return res;
         }
 
+        // Users should not construct EntityRegistry on their own, but use EntityRegistry.Instance instead.
+        internal EntityRegistry() {}
+
         private Dictionary<Guid, Entity> entities = new Dictionary<Guid, Entity>();
     }
 }

@@ -28,7 +28,7 @@ namespace FIVES
             get {
                 if (!components.ContainsKey(index)) {
                     if (componentRegistry.isRegistered(index)) {
-                        components[index] = componentRegistry.createComponent(index);
+                        components[index] = componentRegistry.getComponentInstance(index);
                     } else {
                         throw new ComponentIsNotDefinedException("Cannot create component '" + index + "' as its " +
                                                                  "type is not registered with the ComponentRegistry");

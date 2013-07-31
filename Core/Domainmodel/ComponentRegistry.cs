@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 
 namespace FIVES
 {
@@ -39,10 +40,14 @@ namespace FIVES
             registeredComponents[name].layout = layout;
         }
 
-        // Constructs a component based on previosly defined type. Will throw an exception if component is not defined.
-        public Component createComponent(string componentName) {
-            if (!registeredComponents.ContainsKey(componentName))
-                throw new ComponentIsNotDefinedException("Component '" + componentName + "' is not defined.");
+        public bool isRegistered(string name)
+        {
+            return registeredComponents.ContainsKey(name);
+        }
+
+        internal Component getComponentInstance(string componentName) {
+            if(!isRegistered(componentName))
+				throw new ComponentIsNotDefinedException("Component '" + componentName + "' is not defined.");
 
             Component newComponent = new Component(componentName);
             foreach (var entry in registeredComponents[componentName].layout.attributes)
@@ -51,10 +56,8 @@ namespace FIVES
             return newComponent;
         }
 
-        public bool isRegistered(string name)
-        {
-            return registeredComponents.ContainsKey(name);
-        }
+        // Users should not construct ComponentRegistry on their own, but use ComponentRegistry.Instance instead.
+        internal ComponentRegistry() {}
 
         private class ComponentInfo {
             public Guid owner;
