@@ -11,7 +11,7 @@ namespace FIVES
 
     public class Entity
     {
-		private Guid Id { get; set; }
+		internal Guid Guid { get; set; }
 		private IDictionary<string, Component> components { get; set; }
         public Entity parent { get; set; }
         private List<Entity> children  = new List<Entity> ();

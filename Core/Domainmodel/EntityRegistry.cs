@@ -13,6 +13,7 @@ namespace FIVES
         public Guid addEntity(Entity entity)
         {
             Guid newGUID = Guid.NewGuid();
+            entity.Guid = newGUID;
             entities[newGUID] = entity;
             return newGUID;
         }
