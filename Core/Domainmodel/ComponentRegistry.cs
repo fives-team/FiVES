@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 
 namespace FIVES
 {
@@ -14,12 +15,6 @@ namespace FIVES
     { 
         public ComponentIsNotDefinedException() : base() { }
         public ComponentIsNotDefinedException(string message) : base(message) { }
-    }
-
-    public class ComponentInfo {
-        private Guid Id { get; set; }
-        public Guid owner { get; set; }
-        public ComponentLayout layout { get; set; }
     }
 
     // Manages component types in the database. Each component has a name and a attribute layout that it uses. Also each
@@ -83,15 +78,16 @@ namespace FIVES
             return newComponent;
         }
 
+        private class ComponentInfo {
+            public Guid owner { get; set; }
+            public ComponentLayout layout { get; set; }
+        }
+
         // Users should not construct ComponentRegistry on their own, but use ComponentRegistry.Instance instead.
         internal ComponentRegistry() {}
 
         internal Guid Id { get; set; }
-        private IDictionary<string, ComponentInfo> registeredComponents = new Dictionary<string, ComponentInfo>();
-        private IDictionary<string, ComponentInfo> registryHandler {
-            get { return this.registeredComponents; }
-            set { this.registeredComponents = value; }
-        }
+        private Dictionary<string, ComponentInfo> registeredComponents = new Dictionary<string, ComponentInfo>();
     }
 }
 

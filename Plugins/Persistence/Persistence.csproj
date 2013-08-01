@@ -46,6 +46,7 @@
     <Compile Include="PersistencePlugin.cs" />
     <Compile Include="PersistenceTest.cs" />
     <Compile Include="MySQLGuid32.cs" />
+    <Compile Include="Domainmodel\ComponentRegistryPersistence.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -56,6 +57,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Mappings\" />
+    <Folder Include="Domainmodel\" />
   </ItemGroup>
   <ItemGroup>
     <None Include="mysql.data.dll">
@@ -70,8 +72,8 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Mappings\Component.hbm.xml" />
     <EmbeddedResource Include="Mappings\Attribute.hbm.xml" />
+    <EmbeddedResource Include="Mappings\ComponentOwnerLayout.hbm.xml" />
+    <EmbeddedResource Include="Mappings\ComponentRegistryPersistence.hbm.xml" />
     <EmbeddedResource Include="Mappings\ComponentLayout.hbm.xml" />
-    <EmbeddedResource Include="Mappings\ComponentInfo.hbm.xml" />
-    <EmbeddedResource Include="Mappings\ComponentRegistry.hbm.xml" />
   </ItemGroup>
 </Project>

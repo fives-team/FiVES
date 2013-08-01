@@ -87,9 +87,12 @@ namespace Persistence
             layout["StringAttribute"] = AttributeType.STRING;
             componentRegistry.defineComponent("myComponent", Guid.NewGuid(), layout);
 
+            ComponentRegistryPersistence persist = new ComponentRegistryPersistence ();
+            persist.getComponentsFromRegistry ();
+
             var session = sessionFactory.OpenSession ();
             var trans = session.BeginTransaction ();
-            session.Save (componentRegistry);
+            session.Save (persist);
             trans.Commit ();
         }
 	}

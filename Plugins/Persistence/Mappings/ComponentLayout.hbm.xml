@@ -6,7 +6,7 @@
 		<id name="Id" type = "Guid">
 			<generator class = "guid" />
 		</id>
-		<map name="attributeHandler" table = "attributeDefinitions" cascade = "all">
+		<map name="attributes" table = "attributeDefinitions" cascade = "all">
 		  <key column = "layoutID" />
 		  <index type = "string" column = "attributeName" />
 		  <element column = "attributeType" type="AttributeType" />
