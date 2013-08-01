@@ -35,8 +35,6 @@ namespace Persistence
 		public void testSchemeGeneration()
 		{
 			cfg.AddAssembly (typeof(Entity).Assembly);
-			cfg.AddAssembly (typeof(Component).Assembly);
-            cfg.AddAssembly (typeof(Attribute).Assembly);
             new SchemaExport (cfg).Execute (true, true, false);
 		}
 
@@ -78,6 +76,20 @@ namespace Persistence
             var trans = session.BeginTransaction ();
             session.Save (entity);
             session.Save (childEntity);
+            trans.Commit ();
+        }
+
+        [Test()]
+        public void shouldPersistComponentRegistry ()
+        {
+            ComponentLayout layout = new ComponentLayout();
+            layout["IntAttribute"] = AttributeType.INT;
+            layout["StringAttribute"] = AttributeType.STRING;
+            componentRegistry.defineComponent("myComponent", Guid.NewGuid(), layout);
+
+            var session = sessionFactory.OpenSession ();
+            var trans = session.BeginTransaction ();
+            session.Save (componentRegistry);
             trans.Commit ();
         }
 	}
