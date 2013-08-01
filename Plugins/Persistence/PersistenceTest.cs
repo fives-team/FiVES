@@ -29,15 +29,14 @@ namespace Persistence
 
 			componentRegistry = ComponentRegistry.Instance;
 			entityRegistry = EntityRegistry.Instance;
-
-		}
-		[Test()]
-		public void testSchemeGeneration()
-		{
-			cfg.AddAssembly (typeof(Entity).Assembly);
-            new SchemaUpdate (cfg).Execute (true, true);
+            setupDatabaseScheme ();
 		}
 
+        private void setupDatabaseScheme()
+        {
+            cfg.AddAssembly (typeof(Entity).Assembly);
+            new SchemaExport (cfg).Execute (true, true, false);
+        }
 
         [Test()]
         public void shouldAddAndPersistComponent()
@@ -96,6 +95,16 @@ namespace Persistence
             var session = sessionFactory.OpenSession ();
             var trans = session.BeginTransaction ();
             session.Save (persist);
+            trans.Commit ();
+        }
+
+        [Test()]
+        public void shouldPersistEntityRegistry()
+        {
+            var session = sessionFactory.OpenSession ();
+            var trans = session.BeginTransaction ();
+            var entityGuid = entityRegistry.addEntity (new Entity());
+            session.Save (entityRegistry);
             trans.Commit ();
         }
 	}

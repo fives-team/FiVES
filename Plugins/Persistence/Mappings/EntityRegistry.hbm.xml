@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2"
+                   assembly="Core"
+                   namespace="FIVES">
+	<class name="EntityRegistry" lazy="false">
+		<id name="Id" type = "Guid">
+			<generator class = "guid" />
+		</id>
+		<map name="entityHandler" table = "entities_in_registry" cascade = "all">
+		  <key column = "registryId" />
+		  <index type = "Guid" column = "entityGuid" />
+		  <many-to-many column = "entityId" class="Entity" />
+		</map>
+	</class>
+</hibernate-mapping>
+
