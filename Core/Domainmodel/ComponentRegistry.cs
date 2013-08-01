@@ -16,6 +16,12 @@ namespace FIVES
         public ComponentIsNotDefinedException(string message) : base(message) { }
     }
 
+    public class ComponentInfo {
+        private Guid Id { get; set; }
+        public Guid owner { get; set; }
+        public ComponentLayout layout { get; set; }
+    }
+
     // Manages component types in the database. Each component has a name and a attribute layout that it uses. Also each
     // component must have an associated plugin/script that has defined it.
     public class ComponentRegistry
@@ -59,12 +65,12 @@ namespace FIVES
         // Users should not construct ComponentRegistry on their own, but use ComponentRegistry.Instance instead.
         internal ComponentRegistry() {}
 
-        private class ComponentInfo {
-            public Guid owner;
-            public ComponentLayout layout;
+        internal Guid Id { get; set; }
+        private IDictionary<string, ComponentInfo> registeredComponents = new Dictionary<string, ComponentInfo>();
+        private IDictionary<string, ComponentInfo> registryHandler {
+            get { return this.registeredComponents; }
+            set { this.registeredComponents = value; }
         }
-
-        private Dictionary<string, ComponentInfo> registeredComponents = new Dictionary<string, ComponentInfo>();
     }
 }
 
