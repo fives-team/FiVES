@@ -75,6 +75,5 @@
     <EmbeddedResource Include="Mappings\ComponentOwnerLayout.hbm.xml" />
     <EmbeddedResource Include="Mappings\ComponentRegistryPersistence.hbm.xml" />
     <EmbeddedResource Include="Mappings\ComponentLayout.hbm.xml" />
-    <EmbeddedResource Include="Mappings\EntityRegistry.hbm.xml" />
   </ItemGroup>
 </Project>

@@ -19,6 +19,7 @@ namespace Persistence
     {
         public ComponentRegistryPersistence ()
         {
+            this.Id = ComponentRegistry.Instance.RegistryGuid;
             this.ownerRegisteredComponents = new Dictionary<string, ComponentOwnerLayout> ();
         }
 

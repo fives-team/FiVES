@@ -86,8 +86,9 @@ namespace FIVES
         // Users should not construct ComponentRegistry on their own, but use ComponentRegistry.Instance instead.
         internal ComponentRegistry() {}
 
-        internal Guid Id { get; set; }
         private Dictionary<string, ComponentInfo> registeredComponents = new Dictionary<string, ComponentInfo>();
+
+        public readonly Guid RegistryGuid = new Guid("18c4a2ed-caa3-4d71-8764-268551284083");
     }
 }
 

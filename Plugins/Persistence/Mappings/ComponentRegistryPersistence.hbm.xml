@@ -4,7 +4,6 @@
                    namespace="Persistence">
 	<class name="ComponentRegistryPersistence" lazy="false">
 		<id name="Id" type = "Guid">
-			<generator class = "guid" />
 		</id>
 		<map name="ownerRegisteredComponents" table = "compinfo_in_registries" cascade = "all">
 		  <key column = "registryId" />
