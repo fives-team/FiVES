@@ -13,10 +13,15 @@ namespace FIVES
         public Guid addEntity(Entity entity)
         {
             Guid newGUID = Guid.NewGuid();
-            entities[newGUID] = entity;
+            entity.Guid = newGUID;
+            this.addEntityWithGUID(entity, newGUID);
             return newGUID;
         }
 
+        public void addEntityWithGUID(Entity entity, Guid guid)
+        {
+            entities[guid] = entity;
+        }
         // Removes an entity with a given |guid|. Returns false if such entity was not found.
         public bool removeEntity(Guid guid)
         {
@@ -48,7 +53,8 @@ namespace FIVES
         // Users should not construct EntityRegistry on their own, but use EntityRegistry.Instance instead.
         internal EntityRegistry() {}
 
-        private Dictionary<Guid, Entity> entities = new Dictionary<Guid, Entity>();
+        private IDictionary<Guid, Entity> entities = new Dictionary<Guid, Entity>();
+        public readonly Guid RegistryGuid = new Guid("0f5f96c5-30cb-4b4f-b06f-e5efd257a3c9");
     }
 }
 

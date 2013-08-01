@@ -1,0 +1,43 @@
+using System;
+using FIVES;
+using NHibernate.Cfg;
+using NHibernate;
+using NHibernate.Tool.hbm2ddl;
+using System.Collections.Generic;
+
+
+namespace Persistence
+{
+	public class PersistencePlugin: IPluginInitializer
+	{
+		public PersistencePlugin()
+		{
+            nHibernateConfiguration.Configure ();
+            sessionFactory = nHibernateConfiguration.BuildSessionFactory ();
+            nHibernateConfiguration.AddAssembly (typeof(Entity).Assembly);
+		}
+
+        internal void retrieveComponentRegistryFromDatabase()
+        {
+            var session = sessionFactory.OpenSession ();
+            ComponentRegistryPersistence persistedRegistry = session.Get<ComponentRegistryPersistence> (ComponentRegistry.Instance.RegistryGuid);
+            persistedRegistry.registerPersistedComponents ();
+
+        }
+
+        internal void retrieveEntitiesFromDatabase()
+        {
+            var session = sessionFactory.OpenSession ();
+            IList<Entity> entitiesInDatabase = session.CreateQuery ("from " + typeof(Entity)).List<Entity> ();
+            foreach (Entity e in entitiesInDatabase)
+            {
+                EntityRegistry.Instance.addEntityWithGUID (e, e.Guid);
+            }
+        }
+
+        private readonly Guid pluginGUID = new Guid("90dd4c50-f09d-11e2-b778-0800200c9a66");
+
+        private Configuration nHibernateConfiguration = new Configuration();
+        private ISessionFactory sessionFactory;
+	}
+}

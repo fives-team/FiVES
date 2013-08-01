@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2" 
+                   assembly="Core" 
+                   namespace="FIVES">
+	<class name="Entity" lazy="false">
+		<id name="Guid" type="Guid">
+      	</id>
+		<many-to-one name="parent" class="Entity" column="parent_id" />
+		<map name="components" table = "components_to_entity" cascade = "all">
+		  <key column = "entityID" />
+		  <index type = "string" column = "componentName" />
+		  <many-to-many column = "componentID" class="Component" />
+		</map>
+	</class>                   
+</hibernate-mapping>

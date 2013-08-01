@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 
 namespace FIVES
 {
@@ -45,6 +46,27 @@ namespace FIVES
             return registeredComponents.ContainsKey(name);
         }
 
+        public string[] getArrayOfRegisteredComponentNames()
+        {
+            return this.registeredComponents.Keys.ToArray ();;
+        }
+
+        public Guid getComponentOwner(string name)
+        {
+            return this.registeredComponents [name].owner;
+        }
+
+        public string[] getRegisteredAttributesOfComponent(string componentName)
+        {
+            ComponentLayout layout = this.registeredComponents [componentName].layout;
+            return layout.attributes.Keys.ToArray ();
+        }
+
+        public AttributeType getAttributeType(string componentName, string attributeName)
+        {
+            return this.registeredComponents [componentName].layout.attributes [attributeName];
+        }
+
         internal Component getComponentInstance(string componentName) {
             if(!isRegistered(componentName))
 				throw new ComponentIsNotDefinedException("Component '" + componentName + "' is not defined.");
@@ -56,15 +78,17 @@ namespace FIVES
             return newComponent;
         }
 
+        private class ComponentInfo {
+            public Guid owner { get; set; }
+            public ComponentLayout layout { get; set; }
+        }
+
         // Users should not construct ComponentRegistry on their own, but use ComponentRegistry.Instance instead.
         internal ComponentRegistry() {}
 
-        private class ComponentInfo {
-            public Guid owner;
-            public ComponentLayout layout;
-        }
-
         private Dictionary<string, ComponentInfo> registeredComponents = new Dictionary<string, ComponentInfo>();
+
+        public readonly Guid RegistryGuid = new Guid("18c4a2ed-caa3-4d71-8764-268551284083");
     }
 }
 

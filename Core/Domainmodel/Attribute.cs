@@ -11,6 +11,7 @@ namespace FIVES
 
     internal class Attribute
     {
+        private Guid Id { get; set; }
         public AttributeType type { get; set; }
         public object value { get; set; }
 

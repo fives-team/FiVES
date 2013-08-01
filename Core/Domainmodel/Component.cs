@@ -18,6 +18,8 @@ namespace FIVES
 
     public class Component
     {
+		private Guid Id {get; set; }
+
         #region Typed Attribute Setters
         public void setIntAttribute(string attributeName, int? value) {
             this.setAttribute (attributeName, value, AttributeType.INT);
@@ -57,11 +59,13 @@ namespace FIVES
             return attributes[attributeName].value as bool?;
         }
         #endregion
+		internal Component() {}
 
         // Can only be constructed by ComponentRegistry.createComponent to ensure correct attributes.
         internal Component (string name)
         {
             componentName = name;
+            this.attributes = new Dictionary<string, Attribute> ();
         }
 
         // This is used to populate the attributes into a component based on it's layout.
@@ -92,7 +96,7 @@ namespace FIVES
             attributes[attributeName].value = value;
         }
 
-        private Dictionary<string, Attribute> attributes = new Dictionary<string, Attribute> ();
+        private IDictionary<string, Attribute> attributes {get ; set;}
         private string componentName;
     }
 }

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<hibernate-mapping xmlns="urn:nhibernate-mapping-2.2"
+                   assembly="Core"
+                   namespace="FIVES">
+	<class name="ComponentLayout" lazy="false">
+		<id name="Id" type = "Guid">
+			<generator class = "guid" />
+		</id>
+		<map name="attributes" table = "attributeDefinitions" cascade = "all">
+		  <key column = "layoutID" />
+		  <index type = "string" column = "attributeName" />
+		  <element column = "attributeType" type="AttributeType" />
+		</map>
+	</class>
+</hibernate-mapping>
