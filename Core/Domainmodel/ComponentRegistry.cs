@@ -51,6 +51,27 @@ namespace FIVES
             return registeredComponents.ContainsKey(name);
         }
 
+        public string[] getArrayOfRegisteredComponentNames()
+        {
+            return this.registeredComponents.Keys.ToArray ();;
+        }
+
+        public Guid getComponentOwner(string name)
+        {
+            return this.registeredComponents [name].owner;
+        }
+
+        public string[] getRegisteredAttributesOfComponent(string componentName)
+        {
+            ComponentLayout layout = this.registeredComponents [componentName].layout;
+            return layout.attributes.Keys.ToArray ();
+        }
+
+        public AttributeType getAttributeType(string componentName, string attributeName)
+        {
+            return this.registeredComponents [componentName].layout.attributes [attributeName];
+        }
+
         internal Component getComponentInstance(string componentName) {
             if(!isRegistered(componentName))
 				throw new ComponentIsNotDefinedException("Component '" + componentName + "' is not defined.");
