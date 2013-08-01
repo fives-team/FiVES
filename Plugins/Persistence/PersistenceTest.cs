@@ -18,18 +18,13 @@ namespace Persistence
 
 		public PersistenceTest ()
 		{
-		}
-
-		[SetUp()]
-		public void initPersistenceTest()
-		{
             cfg = new Configuration ();
             cfg.Configure ();
 
             sessionFactory = cfg.BuildSessionFactory ();
 
-			componentRegistry = ComponentRegistry.Instance;
-			entityRegistry = EntityRegistry.Instance;
+            componentRegistry = ComponentRegistry.Instance;
+            entityRegistry = EntityRegistry.Instance;
             setupDatabaseScheme ();
 		}
 
