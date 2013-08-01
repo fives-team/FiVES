@@ -35,7 +35,7 @@ namespace Persistence
 		public void testSchemeGeneration()
 		{
 			cfg.AddAssembly (typeof(Entity).Assembly);
-            new SchemaExport (cfg).Execute (true, true, false);
+            new SchemaUpdate (cfg).Execute (true, true);
 		}
 
 
@@ -82,10 +82,13 @@ namespace Persistence
         [Test()]
         public void shouldPersistComponentRegistry ()
         {
-            ComponentLayout layout = new ComponentLayout();
-            layout["IntAttribute"] = AttributeType.INT;
-            layout["StringAttribute"] = AttributeType.STRING;
-            componentRegistry.defineComponent("myComponent", Guid.NewGuid(), layout);
+            if(!componentRegistry.isRegistered("myComponent"))
+            {
+                ComponentLayout layout = new ComponentLayout();
+                layout["IntAttribute"] = AttributeType.INT;
+                layout["StringAttribute"] = AttributeType.STRING;
+                componentRegistry.defineComponent("myComponent", Guid.NewGuid(), layout);
+            }
 
             ComponentRegistryPersistence persist = new ComponentRegistryPersistence ();
             persist.getComponentsFromRegistry ();
