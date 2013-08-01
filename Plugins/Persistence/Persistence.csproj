@@ -70,5 +70,8 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Mappings\Component.hbm.xml" />
     <EmbeddedResource Include="Mappings\Attribute.hbm.xml" />
+    <EmbeddedResource Include="Mappings\ComponentLayout.hbm.xml" />
+    <EmbeddedResource Include="Mappings\ComponentInfo.hbm.xml" />
+    <EmbeddedResource Include="Mappings\ComponentRegistry.hbm.xml" />
   </ItemGroup>
 </Project>
