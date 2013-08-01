@@ -4,6 +4,7 @@ using FIVES;
 using NHibernate.Tool.hbm2ddl;
 using NUnit.Framework;
 using System.Diagnostics;
+using System.Collections.Generic;
 
 namespace Persistence
 {
@@ -39,16 +40,16 @@ namespace Persistence
         }
 
         [Test()]
-        public void shouldAddAndPersistComponent()
+        public void shouldStoreAndRetrieveComponent()
         {
             ComponentLayout layout = new ComponentLayout();
             layout["IntAttribute"] = AttributeType.INT;
             layout["StringAttribute"] = AttributeType.STRING;
+
             componentRegistry.defineComponent("myComponent", Guid.NewGuid(), layout);
-            
 
             Entity entity = new Entity();
-            entityRegistry.addEntity(entity);
+            Guid entityGuid = entityRegistry.addEntity(entity);
             entity["myComponent"].setIntAttribute("IntAttribute", 42);
             entity["myComponent"].setStringAttribute("StringAttribute", "Hello World!");
 
@@ -56,10 +57,20 @@ namespace Persistence
             var trans = session.BeginTransaction ();
             session.Save (entity);
             trans.Commit ();
+
+            entityRegistry.removeEntity (entityGuid);
+
+            PersistencePlugin plugin = new PersistencePlugin ();
+            plugin.retrieveEntitiesFromDatabase ();
+
+            Entity storedEntity = entityRegistry.getEntityByGuid (entityGuid);
+            Assert.IsTrue (storedEntity ["myComponent"].getIntAttribute ("IntAttribute") == 42);
+            Assert.IsTrue (storedEntity ["myComponent"].getStringAttribute ("StringAttribute") == "Hello World!");
+
         }
 
         [Test()]
-        public void shouldAddAndSaveParentEntity()
+        public void shouldStoreAndRetrieveEntities()
         {
             Entity entity = new Entity();
             Entity childEntity = new Entity ();
@@ -71,15 +82,29 @@ namespace Persistence
             Console.WriteLine ("Entity Guid: " + entityGuid);
             Console.WriteLine ("Child  Guid: " + childGuid);
 
+            // Transfer entities to Database
             var session = sessionFactory.OpenSession ();
             var trans = session.BeginTransaction ();
             session.Save (entity);
             session.Save (childEntity);
             trans.Commit ();
+
+            entityRegistry.removeEntity (entityGuid);
+            entityRegistry.removeEntity (childGuid);
+
+            PersistencePlugin plugin = new PersistencePlugin ();
+            plugin.retrieveEntitiesFromDatabase ();
+
+            List<Guid> guidsInRegistry = entityRegistry.getAllGUIDs ();
+            Console.WriteLine (guidsInRegistry.ToString ());
+
+            Assert.Contains (entityGuid, guidsInRegistry);
+            Assert.Contains (childGuid, guidsInRegistry);
+            Assert.IsTrue (entityRegistry.getEntityByGuid (childGuid).parent.Guid == entityGuid);
         }
 
         [Test()]
-        public void shouldPersistComponentRegistry ()
+        public void shouldStoreAndRetrieveComponentRegistry ()
         {
             if(!componentRegistry.isRegistered("myComponent"))
             {
@@ -96,16 +121,11 @@ namespace Persistence
             var trans = session.BeginTransaction ();
             session.Save (persist);
             trans.Commit ();
-        }
 
-        [Test()]
-        public void shouldPersistEntityRegistry()
-        {
-            var session = sessionFactory.OpenSession ();
-            var trans = session.BeginTransaction ();
-            var entityGuid = entityRegistry.addEntity (new Entity());
-            session.Save (entityRegistry);
-            trans.Commit ();
+            persist.registerPersistedComponents ();
+
+            Assert.IsTrue (componentRegistry.getAttributeType ("myComponent", "IntAttribute") == AttributeType.INT);
+            Assert.IsTrue (componentRegistry.getAttributeType ("myComponent", "StringAttribute") == AttributeType.STRING);
         }
 	}
 }
