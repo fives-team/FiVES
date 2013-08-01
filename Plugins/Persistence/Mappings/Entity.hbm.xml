@@ -6,7 +6,7 @@
 		<id name="Guid" type="Guid">
       	</id>
 		<many-to-one name="parent" class="Entity" column="parent_id" />
-		<map name="components" cascade = "all">
+		<map name="components" table = "components_to_entity" cascade = "all">
 		  <key column = "entityID" />
 		  <index type = "string" column = "componentName" />
 		  <many-to-many column = "componentID" class="Component" />
