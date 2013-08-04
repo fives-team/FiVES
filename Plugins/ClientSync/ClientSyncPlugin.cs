@@ -16,7 +16,7 @@ namespace ClientSync {
 
         public List<string> getDependencies()
         {
-            return new List<string>();
+            return new List<string>() { "WebSocketJSON" };
         }
 
         public void initialize()
