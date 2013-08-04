@@ -6,10 +6,24 @@ namespace WebSocketJSON
 {
     public class WebSocketJSON : IPluginInitializer
     {
-        public WebSocketJSON()
+        #region IPluginInitializer implementation
+
+        public string getName()
+        {
+            return "WebSocketJSON";
+        }
+
+        public System.Collections.Generic.List<string> getDependencies()
+        {
+            return new System.Collections.Generic.List<string>();
+        }
+
+        public void initialize()
         {
             ProtocolRegistry.Instance.registerProtocolFactory("websocket-json", new WSJProtocolFactory());
         }
+
+        #endregion
     }
 }
 
