@@ -1,11 +1,24 @@
 using System;
 using FIVES;
+using System.Collections.Generic;
 
 namespace Location
 {
     public class LocationPlugin : IPluginInitializer
     {
-        public LocationPlugin()
+        #region IPluginInitializer implementation
+
+        public string getName()
+        {
+            return "Location";
+        }
+
+        public List<string> getDependencies()
+        {
+            return new List<string>();
+        }
+
+        public void initialize()
         {
             // Position is represented as a vector (x,y,z) from the default position, which is at (0,0,0).
             ComponentLayout positionLayout = new ComponentLayout();
@@ -26,6 +39,8 @@ namespace Location
             ComponentRegistry.Instance.defineComponent("position", pluginGUID, positionLayout);
             ComponentRegistry.Instance.defineComponent("orientation", pluginGUID, orientationLayout);
         }
+
+        #endregion
 
         private readonly Guid pluginGUID = new Guid("90dd4c50-f09d-11e2-b778-0800200c9a66");
     }

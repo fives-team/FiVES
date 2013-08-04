@@ -1,5 +1,5 @@
-
 using System;
+using System.Collections.Generic;
 
 namespace FIVES
 {
@@ -12,6 +12,15 @@ namespace FIVES
     // parameterless constructor.
     public interface IPluginInitializer
     {
+        // Should return a name of the plugin.
+        string getName();
+
+        // Should return a list of dependencies of the plugin.
+        List<string> getDependencies();
+
+        // Will be run when all dependencies have been initialized.
+        void initialize();
+
     }
 }
 

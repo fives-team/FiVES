@@ -44,19 +44,35 @@ namespace FIVES
         [Test()]
         public void shouldReturnNullOnMissingFile()
         {
-            Assert.IsNull(pm.loadPlugin(pathToPlugins + "TestPlugins/non-existing-file.dll"));
+            var testPlugin = pathToPlugins + "TestPlugins/non-existing-file.dll";
+            pm.loadPlugin(testPlugin);
+            Assert.IsFalse(pm.isPluginLoaded(testPlugin));
         }
 
         [Test()]
         public void shouldReturnNullOnInvalidPlugin()
         {
-            Assert.IsNull(pm.loadPlugin(pathToPlugins + "TestPlugins/invalid_plugin.dll"));
+            var testPlugin = pathToPlugins + "TestPlugins/invalid_plugin.dll";
+            pm.loadPlugin(testPlugin);
+            Assert.IsFalse(pm.isPluginLoaded(testPlugin));
         }
 
         [Test()]
         public void shouldReturnNullOnInvalidAssembly()
         {
-            Assert.IsNull(pm.loadPlugin(pathToPlugins + "TestPlugins/invalid_assembly.dll"));
+            var testPlugin = pathToPlugins + "TestPlugins/invalid_assembly.dll";
+            pm.loadPlugin(testPlugin);
+            Assert.IsFalse(pm.isPluginLoaded(testPlugin));
+        }
+
+        [Test()]
+        public void shouldLoadPluginsInDependencyOrder()
+        {
+            pm.loadPlugin(pathToPlugins + "TestPlugins/valid_plugin2.dll");
+            Assert.False(pm.isPluginLoaded(pathToPlugins + "TestPlugins/valid_plugin2.dll"));
+            pm.loadPlugin(pathToPlugins + "TestPlugins/valid_plugin.dll");
+            Assert.True(pm.isPluginLoaded(pathToPlugins + "TestPlugins/valid_plugin.dll"));
+            Assert.True(pm.isPluginLoaded(pathToPlugins + "TestPlugins/valid_plugin2.dll"));
         }
     }
 }

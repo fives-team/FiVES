@@ -7,12 +7,26 @@ namespace ClientSync {
 
     public class ClientSyncPlugin : IPluginInitializer
     {
-        public ClientSyncPlugin()
+        #region IPluginInitializer implementation
+
+        public string getName()
+        {
+            return "ClientSync";
+        }
+
+        public List<string> getDependencies()
+        {
+            return new List<string>();
+        }
+
+        public void initialize()
         {
             var context = new Context();
             string service = "http://localhost/projects/test-client/kiara/fives.json";
             context.acceptClients(service, registerMethods);
         }
+
+        #endregion
 
         // This plugin uses KIARA to communicate with the clients. The following services are supported:
         //
