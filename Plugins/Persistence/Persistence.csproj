@@ -19,6 +19,12 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <ConsolePause>false</ConsolePause>
+    <CustomCommands>
+      <CustomCommands>
+        <Command type="AfterBuild" command="xcopy /y &quot;${TargetDir}&quot; &quot;${SolutionDir}\BuiltPlugins\&quot; || echo &quot;Ignoring error&quot;" externalConsole="True" />
+        <Command type="AfterBuild" command="mkdir -p &quot;${SolutionDir}/BuiltPlugins/&quot; &amp;&amp; cp &quot;${TargetDir}/&quot;* &quot;${SolutionDir}/BuiltPlugins/&quot; || echo &quot;Ignoring error&quot;" externalConsole="True" />
+      </CustomCommands>
+    </CustomCommands>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>full</DebugType>
