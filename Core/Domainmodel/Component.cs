@@ -18,7 +18,7 @@ namespace FIVES
 
     public class Component
     {
-		private Guid Id {get; set; }
+        private Guid Id {get; set; }
 
         #region Typed Attribute Setters
         public void setIntAttribute(string attributeName, int? value) {
@@ -59,7 +59,7 @@ namespace FIVES
             return attributes[attributeName].value as bool?;
         }
         #endregion
-		internal Component() {}
+        internal Component() {}
 
         // Can only be constructed by ComponentRegistry.createComponent to ensure correct attributes.
         internal Component (string name)

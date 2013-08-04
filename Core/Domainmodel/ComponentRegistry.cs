@@ -69,7 +69,7 @@ namespace FIVES
 
         internal Component getComponentInstance(string componentName) {
             if(!isRegistered(componentName))
-				throw new ComponentIsNotDefinedException("Component '" + componentName + "' is not defined.");
+                throw new ComponentIsNotDefinedException("Component '" + componentName + "' is not defined.");
 
             Component newComponent = new Component(componentName);
             foreach (var entry in registeredComponents[componentName].layout.attributes)
