@@ -4,6 +4,7 @@ using System.Collections.Generic;
 
 namespace FIVES
 {
+    #pragma warning disable 660, 661
     // Represents an attribute layout for the component. Use as following:
     //   layout = new ComponentLayout();
     //   layout["attrA"] = AttributeType.INT;
@@ -44,5 +45,6 @@ namespace FIVES
         private Guid Id { get; set; }
         internal IDictionary<string, AttributeType> attributes { get; set; }
     }
+    #pragma warning restore 660, 661
 }
 
