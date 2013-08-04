@@ -22,8 +22,7 @@ namespace ClientSync {
         public void initialize()
         {
             var context = new Context();
-            string service = "http://localhost/projects/test-client/kiara/fives.json";
-            context.acceptClients(service, registerMethods);
+            context.startServer("http://localhost/projects/test-client/kiara/fives.json", registerMethods);
         }
 
         #endregion
@@ -74,10 +73,9 @@ namespace ClientSync {
 
         private static void registerMethods(Connection connection)
         {
-            connection.registerFuncImplementation("kiara.implements", "...",
-                                                  (Func<List<string>, List<bool>>)implements);
-            connection.registerFuncImplementation("clientsync.listObjects", "...", (Func<List<string>>)listObjects);
-            connection.registerFuncImplementation("clientsync.getObjectPosition", "...",
+            connection.registerFuncImplementation("kiara.implements", (Func<List<string>, List<bool>>)implements);
+            connection.registerFuncImplementation("clientsync.listObjects", (Func<List<string>>)listObjects);
+            connection.registerFuncImplementation("clientsync.getObjectPosition",
                                                   (Func<string, Position>)getObjectPosition);
         }
     }
