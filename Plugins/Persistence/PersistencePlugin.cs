@@ -10,12 +10,26 @@ namespace Persistence
 {
 	public class PersistencePlugin: IPluginInitializer
 	{
-		public PersistencePlugin()
-		{
+        #region IPluginInitializer implementation
+
+        public string getName()
+        {
+            return "Persistance";
+        }
+
+        public List<string> getDependencies()
+        {
+            return new List<string>();
+        }
+
+        public void initialize()
+        {
             nHibernateConfiguration.Configure ();
             sessionFactory = nHibernateConfiguration.BuildSessionFactory ();
             nHibernateConfiguration.AddAssembly (typeof(Entity).Assembly);
-		}
+        }
+
+        #endregion
 
         internal void retrieveComponentRegistryFromDatabase()
         {

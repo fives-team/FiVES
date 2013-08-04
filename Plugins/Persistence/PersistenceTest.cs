@@ -56,6 +56,7 @@ namespace Persistence
             entityRegistry.removeEntity (entityGuid);
 
             PersistencePlugin plugin = new PersistencePlugin ();
+            plugin.initialize();
             plugin.retrieveEntitiesFromDatabase ();
 
             Entity storedEntity = entityRegistry.getEntityByGuid (entityGuid);
@@ -88,6 +89,7 @@ namespace Persistence
             entityRegistry.removeEntity (childGuid);
 
             PersistencePlugin plugin = new PersistencePlugin ();
+            plugin.initialize();
             plugin.retrieveEntitiesFromDatabase ();
 
             List<Guid> guidsInRegistry = entityRegistry.getAllGUIDs ();
