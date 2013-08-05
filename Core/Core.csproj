@@ -65,6 +65,7 @@
     <Compile Include="PluginManager\PluginManagerTest.cs" />
     <Compile Include="Domainmodel\ComponentLayoutTest.cs" />
     <Compile Include="KIARA\ProtocolUtils.cs" />
+    <Compile Include="KIARA\FuncCallBase.cs" />
     <Compile Include="KIARA\IFuncCall.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
