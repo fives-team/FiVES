@@ -57,17 +57,17 @@ namespace ClientSync {
         //   Position getObjectPosition(string objID);
         // }
 
-        private static readonly List<string> supportedServices = new List<string> {
+        private readonly List<string> supportedServices = new List<string> {
             "kiara",
             "clientsync"
         };
 
-        private static List<bool> implements(List<string> services)
+        private List<bool> implements(List<string> services)
         {
             return services.ConvertAll(service => supportedServices.Contains(service));
         }
 
-        private static List<string> listObjects()
+        private List<string> listObjects()
         {
             List<Guid> guids = EntityRegistry.Instance.getAllGUIDs();
             return guids.ConvertAll(guid => guid.ToString());
@@ -77,7 +77,7 @@ namespace ClientSync {
             public float x, y, z;
         }
 
-        private static Position getObjectPosition(string guid) {
+        private Position getObjectPosition(string guid) {
             var entity = EntityRegistry.Instance.getEntityByGuid(new Guid(guid));
             var pos = new Position();
             pos.x = (float)entity["position"].getFloatAttribute("x");
@@ -86,18 +86,30 @@ namespace ClientSync {
             return pos;
         }
 
-        private static void registerClientMethods(Connection connection)
+        private void registerClientMethods(Connection connection)
         {
             connection.registerFuncImplementation("kiara.implements", (Func<List<string>, List<bool>>)implements);
             connection.registerFuncImplementation("clientsync.listObjects", (Func<List<string>>)listObjects);
             connection.registerFuncImplementation("clientsync.getObjectPosition",
                                                   (Func<string, Position>)getObjectPosition);
+
+            // Register custom client methods.
+            foreach (var entry in clientMethods)
+                connection.registerFuncImplementation(entry.Key, entry.Value);
         }
 
-        private static void registerPluginMethods(Connection connection)
+        private void registerClientMethod(string name, Delegate handler)
         {
-            // TODO
+            clientMethods.Add(name, handler);
         }
+
+        private void registerPluginMethods(Connection connection)
+        {
+            connection.registerFuncImplementation("registerClientMethod",
+                                                  (Action<string, Delegate>)registerClientMethod);
+        }
+
+        private Dictionary<string, Delegate> clientMethods = new Dictionary<string, Delegate>();
 
         private Context clientContext = new Context();
         private Context pluginContext = new Context();
