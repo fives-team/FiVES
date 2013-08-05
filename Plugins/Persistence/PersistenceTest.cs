@@ -35,6 +35,13 @@ namespace Persistence
         }
 
         [Test()]
+        public void shouldSetupDatabase()
+        {
+            cfg.AddAssembly (typeof(Entity).Assembly);
+            new SchemaExport (cfg).Execute (true, true, false);
+        }
+
+        [Test()]
         public void shouldStoreAndRetrieveComponent()
         {
             ComponentLayout layout = new ComponentLayout();
