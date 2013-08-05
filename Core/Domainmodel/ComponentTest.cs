@@ -6,7 +6,6 @@ namespace FIVES
     [TestFixture()]
     public class ComponentTest
     {
-        private Entity testEntity;
         private Component testComponent;
 
         private int intAttribute = 1;
@@ -18,8 +17,6 @@ namespace FIVES
         [SetUp()]
         public void init()
         {
-            testEntity = new Entity ();
-
             // normally components must be created with ComponentRegistry, but since we are doing unit-test here, it's
             // better to remove dependency on yet another class
             testComponent = new Component ("testComponent");
