@@ -32,8 +32,9 @@ namespace KIARA
         // |onConnected| is called with constructed Connection object.
         public void openConnection(string configURI, Action<Connection> onConnected)
         {
-            Config config = retrieveConfig(configURI);
-            Server server = selectServer(configURI, config);
+            string fragment = "";
+            Config config = retrieveConfig(configURI, out fragment);
+            Server server = selectServer(fragment, config);
 
             string protocolName = server.protocol["name"].ToString();
             IProtocolFactory protocolFactory = ProtocolRegistry.Instance.getProtocolFactory(protocolName);
@@ -51,8 +52,9 @@ namespace KIARA
         // in the config file.
         public void startServer(string configURI, Action<Connection> onNewClient)
         {
-            Config config = retrieveConfig(configURI);
-            Server server = selectServer(configURI, config);
+            string fragment = "";
+            Config config = retrieveConfig(configURI, out fragment);
+            Server server = selectServer(fragment, config);
 
             string protocolName = server.protocol["name"].ToString();
             IProtocolFactory protocolFactory = ProtocolRegistry.Instance.getProtocolFactory(protocolName);
@@ -63,11 +65,30 @@ namespace KIARA
         }
 
         #region Private implementation
-        private Config retrieveConfig(string configURI)
+        private Config retrieveConfig(string configURI, out string fragment)
         {
-            WebClient client = new WebClient();
-            string config = client.DownloadString(configURI);
-            return JsonConvert.DeserializeObject<Config>(config);
+            // Extract fragment.
+            int hashIndex = configURI.IndexOf("#");
+            if (hashIndex != -1) {
+                fragment = configURI.Substring(hashIndex + 1);
+                configURI = configURI.Substring(0, hashIndex);
+            } else {
+                fragment = "";
+            }
+
+            // Retrieve config content.
+            string configContent;
+            if (configURI.StartsWith("data:text/json;base64,")) {
+                string base64Content = configURI.Substring(22);
+                byte[] byteData = System.Convert.FromBase64String(base64Content);
+                configContent = System.Text.Encoding.ASCII.GetString(byteData);
+            } else {
+                WebClient client = new WebClient();
+                configContent = client.DownloadString(configURI);
+            }
+
+            // Parse the config.
+            return JsonConvert.DeserializeObject<Config>(configContent);
         }
 
         private bool isSupportedServerProtocol(Server server) {
@@ -81,11 +102,8 @@ namespace KIARA
             return ProtocolRegistry.Instance.isRegistered(protocolName.ToString());
         }
 
-        private Server selectServer(string configURI, Config config)
+        private Server selectServer(string fragment, Config config)
         {
-            Uri parsedURI = new Uri(configURI);
-            string fragment = parsedURI.Fragment;
-
             if (config.servers == null)
                 throw new Error(ErrorCode.INIT_ERROR, "Configuration file contains no servers.");
 

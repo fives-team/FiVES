@@ -16,13 +16,28 @@ namespace ClientSync {
 
         public List<string> getDependencies()
         {
-            return new List<string>() { "WebSocketJSON" };
+            return new List<string>() { "WebSocketJSON", "DirectCall" };
         }
 
         public void initialize()
         {
-            var context = new Context();
-            context.startServer("http://localhost/projects/test-client/kiara/fives.json", registerMethods);
+            clientContext.startServer("http://localhost/projects/test-client/kiara/fives.json", registerClientMethods);
+
+            // {
+            //   'info': 'ClientSyncPlugin',
+            //   'idlContent': '...',
+            //   'servers': [{
+            //     'services': '*',
+            //     'protocol': {
+            //       'name': 'direct-call',
+            //       'id': 'clientsync',
+            //     },
+            //   }],
+            // }
+            string pluginConfig = "data:text/json;base64,ewogICdpbmZvJzogJ0NsaWVudFN5bmNQbHVnaW4nLAogICdpZGxDb250ZW50" +
+                "JzogJy4uLicsCiAgJ3NlcnZlcnMnOiBbewogICAgJ3NlcnZpY2VzJzogJyonLAogICAgJ3Byb3RvY29sJzogewogICAgICAnbmFt" +
+                "ZSc6ICdkaXJlY3QtY2FsbCcsCiAgICAgICdpZCc6ICdjbGllbnRzeW5jJywKICAgICB9LAogIH1dLAp9Cg==";
+            pluginContext.startServer(pluginConfig, registerPluginMethods);
         }
 
         #endregion
@@ -71,13 +86,21 @@ namespace ClientSync {
             return pos;
         }
 
-        private static void registerMethods(Connection connection)
+        private static void registerClientMethods(Connection connection)
         {
             connection.registerFuncImplementation("kiara.implements", (Func<List<string>, List<bool>>)implements);
             connection.registerFuncImplementation("clientsync.listObjects", (Func<List<string>>)listObjects);
             connection.registerFuncImplementation("clientsync.getObjectPosition",
                                                   (Func<string, Position>)getObjectPosition);
         }
+
+        private static void registerPluginMethods(Connection connection)
+        {
+            // TODO
+        }
+
+        private Context clientContext = new Context();
+        private Context pluginContext = new Context();
     }
 
 }
