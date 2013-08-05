@@ -1433,22 +1433,53 @@ define(function () {
                 return that._handleError(error);
         }
 
-        if (!response || !response.idl || !response.protocol || !response.serviceURI)
+        if (!response || (!response.idlURL && !response.idlContents) ||
+            !response.servers || response.servers.length == 0)
             handleError(new KIARAError(KIARA.INIT_ERROR, "Configuration file '" + url + "' is invalid."));
 
-        var protocolCtor = getProtocol(response.protocol);
+        var protocolCtor;
+        var protocolConfig;
+
+        // Try to use the server specified in the fragment.
+        var fragmentIndex = url.indexOf("#");
+        if (fragmentIndex != -1) {
+            var index = parseInt(url.substring(fragmentIndex + 1));
+            if (index >= 0 && index < response.servers.length && response.servers[index].protocol) {
+                protocolCtor = getProtocol(response.servers[index].protocol.name);
+                protocolConfig = response.servers[index].protocol;
+            }
+        }
+
+        // Try to select any server that uses a supported protocol.
+        if (!protocolCtor) {
+            for (var i in response.servers) {
+                if (!response.servers[i].protocol)
+                    continue;
+
+                protocolCtor = getProtocol(response.servers[i].protocol.name);
+                protocolConfig = response.servers[i].protocol;
+
+                if (!protocolCtor)
+                    continue;
+            }
+        }
+
+        // If we haven't found any server using a supported protocol, we must fail.
         if (!protocolCtor) {
             handleError(new KIARAError(KIARA.UNSUPPORTED_FEATURE,
                 "Protocol '" + response.protocol + "' is not supported"));
         }
 
         try {
-            this._protocol = new protocolCtor(response.serviceURI);
+            this._protocol = new protocolCtor(protocolConfig);
         } catch (e) {
             handleError(e);
         }
 
-        this.loadIDL(response.idl, userCallback);
+        if (response.idlURL)
+            this.loadIDL(response.idlURL, userCallback);
+        else if (response.idlContents)
+            this._onIDLLoaded(userCallback, response.idlContents, response.idlContents)
     }
 
     Connection.prototype._onIDLLoadError = function(userCallback, xhr) {

@@ -1,6 +1,6 @@
 {
   "info": "TestServer",
-  "idlURL": "http://localhost/fives/fives.kiara",
+  "idlURL": "http://localhost/projects/test-client/kiara/fives.kiara",
   "servers": [{
     "services": "*",
     "protocol": {
