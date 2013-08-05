@@ -10,6 +10,14 @@ namespace FIVES
     {
         public static PluginManager Instance = new PluginManager();
 
+        public delegate void PluginLoaded(string pluginName);
+        public event PluginLoaded OnPluginLoaded;
+
+        public PluginManager()
+        {
+            OnPluginLoaded += updateDeferredPlugins;
+        }
+
         private struct LoadedPluginInfo {
             public string path;
             public IPluginInitializer initializer;
@@ -75,9 +83,7 @@ namespace FIVES
                     // Initialize plugin.
                     info.initializer.initialize();
                     loadedPlugins.Add(name, info);
-
-                    // Initializes plugins that depend on current one.
-                    initializeDeferredPlugins(name);
+                    OnPluginLoaded(name);
                 } catch (Exception e) {
                     logger.WarnException("Failed to load file " + path + " as a plugin.", e);
                     return;
@@ -85,8 +91,9 @@ namespace FIVES
             }
         }
 
-        // Initializes plugins that have no other dependencies that |loadedPlugin|.
-        private void initializeDeferredPlugins(string loadedPlugin)
+        // Updates deferred plugins by removing |loadedPlugin| from the list of their remaining dependecies. Plugins
+        // that have no other remaining dependencies are initialized.
+        private void updateDeferredPlugins(string loadedPlugin)
         {
             // Iterate over deferred plugins and remove |loadedPlugin| from the list of dependencies.
             foreach (var info in deferredPlugins.Values)
@@ -104,7 +111,7 @@ namespace FIVES
                 deferredPlugins[name].initializer.initialize();
                 loadedPlugins[name] = deferredPlugins[name];
                 deferredPlugins.Remove(name);
-                initializeDeferredPlugins(name);
+                OnPluginLoaded(name);
             }
         }
 
