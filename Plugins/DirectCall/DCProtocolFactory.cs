@@ -5,6 +5,8 @@ using KIARA;
 
 namespace DirectCall
 {
+    // TODO: This can be rewritten such that the server is running on a different thread. For this we need to add
+    // synchronization primities to avoid race conditions.
     public class DCProtocolFactory : IProtocolFactory
     {
         #region IProtocolFactory implementation
@@ -22,7 +24,6 @@ namespace DirectCall
             var protocol = new DCProtocol();
 
             // Notify the server.
-            // TODO: Should we start a new thread?
             startedServers[id](protocol);
 
             // Notify the client.

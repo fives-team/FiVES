@@ -59,7 +59,7 @@ namespace KIARA
 
         #endregion
 
-        protected void handleSuccess(object retValue)
+        public virtual void handleSuccess(object retValue)
         {
             state = State.Success;
             result = retValue;
@@ -74,7 +74,7 @@ namespace KIARA
             callFinished.Set();
         }
 
-        protected void handleException(Exception exception)
+        public virtual void handleException(Exception exception)
         {
             state = State.Exception;
             result = exception;
@@ -86,7 +86,7 @@ namespace KIARA
             callFinished.Set();
         }
 
-        protected void handleError(string reason)
+        public virtual void handleError(string reason)
         {
             state = State.Error;
             result = reason;
