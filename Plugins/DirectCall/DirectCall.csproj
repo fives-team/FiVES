@@ -42,6 +42,7 @@
     <Compile Include="DirectCallPlugin.cs" />
     <Compile Include="DCProtocolFactory.cs" />
     <Compile Include="DCProtocol.cs" />
+    <Compile Include="DCFuncCall.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
