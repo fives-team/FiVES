@@ -62,7 +62,7 @@ namespace WebSocketJSON
                     }
                     List<object> parameters = new List<object>();
                     for (int i = 0; i < paramInfo.Length; i++)
-                        parameters.Add(data[i+3].ToObject(paramInfo[i].GetType()));
+                        parameters.Add(data[i+3].ToObject(paramInfo[i].ParameterType));
 
                     object returnValue = null;
                     object exception = null;
