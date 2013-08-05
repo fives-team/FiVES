@@ -66,7 +66,7 @@
     <Folder Include="Domainmodel\" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="mysql.data.dll">
+    <None Include="MySql.Data.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
