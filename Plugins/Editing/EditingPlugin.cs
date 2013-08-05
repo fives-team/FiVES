@@ -16,7 +16,10 @@ namespace Editing
 
         public List<string> getDependencies()
         {
-            return new List<string>() { "Location" };
+            // FIXME: Instead of forcing Editing plugin to depend on ClientSync, we should introduce OnPluginLoaded
+            // event into the PluginManager and only register client functions dynamically. This way we make Editing
+            // plugin independant of client sync plugin.
+            return new List<string>() { "Location", "ClientSync" };
         }
 
         public void initialize()
