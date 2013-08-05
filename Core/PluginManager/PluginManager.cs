@@ -104,6 +104,7 @@ namespace FIVES
                 deferredPlugins[name].initializer.initialize();
                 loadedPlugins[name] = deferredPlugins[name];
                 deferredPlugins.Remove(name);
+                initializeDeferredPlugins(name);
             }
         }
 
