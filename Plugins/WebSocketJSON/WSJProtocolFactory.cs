@@ -18,17 +18,12 @@ namespace WebSocketJSON
 
         public void startServer(Server serverConfig, Action<IProtocol> onNewClient)
         {
-            int port = retrieveProtocolSetting(serverConfig, "port", 34837);
-            string ip = retrieveProtocolSetting(serverConfig, "ip", "Any");
+            int port = ProtocolUtils.retrieveProtocolSetting(serverConfig, "port", 34837);
+            string ip = ProtocolUtils.retrieveProtocolSetting(serverConfig, "ip", "Any");
 
             WSJServer server = new WSJServer(onNewClient);
             server.Setup(ip, port);
             server.Start();
-        }
-
-        private T retrieveProtocolSetting<T>(Server config, string name, T defValue) {
-            JToken value = config.protocol.SelectToken(name);
-            return value != null ? value.ToObject<T>() : defValue;
         }
     }
 }
