@@ -1264,7 +1264,7 @@ define(function () {
     }
 
     CallResponse.prototype._handleResult = function() {
-        if (this._result != undefined && this._resultType) {
+        if (this._resultType) {
             var emitArgs = null;
             // special case for 'result' and 'exception'
             if (this._resultType == 'result' && this.hasListeners('result'))
