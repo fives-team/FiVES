@@ -18,6 +18,11 @@ namespace Persistence
 
 		public PersistenceTest ()
 		{
+		}
+
+        [Test()]
+        public void shouldSetupDatabase()
+        {
             cfg = new Configuration ();
             cfg.Configure ();
 
@@ -25,18 +30,7 @@ namespace Persistence
 
             componentRegistry = ComponentRegistry.Instance;
             entityRegistry = EntityRegistry.Instance;
-            setupDatabaseScheme ();
-		}
 
-        private void setupDatabaseScheme()
-        {
-            cfg.AddAssembly (typeof(Entity).Assembly);
-            new SchemaExport (cfg).Execute (true, true, false);
-        }
-
-        [Test()]
-        public void shouldSetupDatabase()
-        {
             cfg.AddAssembly (typeof(Entity).Assembly);
             new SchemaExport (cfg).Execute (true, true, false);
         }
