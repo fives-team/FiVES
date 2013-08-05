@@ -104,7 +104,7 @@ namespace WebSocketJSON
             // TODO
         }
 
-        public FuncCall callFunc(string name, params object[] args)
+        public IFuncCall callFunc(string name, params object[] args)
         {
             int callID = nextCallID++;
             List<object> callMessage = new List<object>();

@@ -8,11 +8,11 @@ using System.Diagnostics;
 
 namespace WebSocketJSON
 {
-    public class WSJFuncCall : FuncCall
+    public class WSJFuncCall : IFuncCall
     {
         #region FuncCall implementation
 
-        public FuncCall onSuccess<T>(Action<T> handler)
+        public IFuncCall onSuccess<T>(Action<T> handler)
         {
             if (state == State.InProgress)
                 successHandlers.Add(handler);
@@ -21,7 +21,7 @@ namespace WebSocketJSON
             return this;
         }
 
-        public FuncCall onException(Action<Exception> handler)
+        public IFuncCall onException(Action<Exception> handler)
         {
             if (state == State.InProgress)
                 exceptionHandlers.Add(handler);
@@ -30,7 +30,7 @@ namespace WebSocketJSON
             return this;
         }
 
-        public FuncCall onError(Action<string> handler)
+        public IFuncCall onError(Action<string> handler)
         {
             if (state == State.InProgress)
                 errorHandlers.Add(handler);

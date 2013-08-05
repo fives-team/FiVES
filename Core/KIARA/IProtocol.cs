@@ -14,7 +14,7 @@ namespace KIARA
 
         // Calls function |name| with |args| on the remote end. Returns FuncCall object which allows users to set up 
         // callbacks for various outcomes of the call or wait for the call completion (synchronous execution).
-        FuncCall callFunc(string name, params object[] args);
+        IFuncCall callFunc(string name, params object[] args);
 
         // Registers a |handler| for the function |name|, which is called when remote end requests the function to be
         // called. Returned value from |handler| (if any) is returned back to the caller.

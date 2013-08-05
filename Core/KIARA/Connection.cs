@@ -8,7 +8,7 @@ namespace KIARA
 {
     public class Connection
     {
-        public delegate FuncCall FuncWrapper(params object[] args);
+        public delegate IFuncCall FuncWrapper(params object[] args);
 
         public Connection(IProtocol aProtocol)
         {

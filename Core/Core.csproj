@@ -59,12 +59,12 @@
     <Compile Include="KIARA\IProtocol.cs" />
     <Compile Include="KIARA\IProtocolFactory.cs" />
     <Compile Include="KIARA\Error.cs" />
-    <Compile Include="KIARA\FuncCall.cs" />
     <Compile Include="KIARA\ProtocolRegistry.cs" />
     <Compile Include="PluginManager\IPluginInitializer.cs" />
     <Compile Include="PluginManager\PluginManager.cs" />
     <Compile Include="PluginManager\PluginManagerTest.cs" />
     <Compile Include="Domainmodel\ComponentLayoutTest.cs" />
+    <Compile Include="KIARA\IFuncCall.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
