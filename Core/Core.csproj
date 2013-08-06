@@ -78,6 +78,7 @@
     <Compile Include="KIARA\TestingUtils.cs" />
     <Compile Include="KIARA\FuncCallBaseTest.cs" />
     <Compile Include="KIARA\ProtocolUtilsTest.cs" />
+    <Compile Include="KIARA\ProtocolRegistryTest.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

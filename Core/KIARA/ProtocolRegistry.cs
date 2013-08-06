@@ -28,11 +28,11 @@ namespace KIARA
             registeredProtocols[protocol] = factory;
         }
 
-        // Returns protocol factory for |protocol| or null if |protocol| is not registered.
+        // Returns protocol factory for |protocol|. If protocol is not registered, throws an exception.
         public IProtocolFactory getProtocolFactory(string protocol) {
             if (isRegistered(protocol))
                 return registeredProtocols[protocol];
-            throw new Error(ErrorCode.API_ERROR, "Protocol " + protocol + " is not registered.");
+            throw new Error(ErrorCode.GENERIC_ERROR, "Protocol " + protocol + " is not registered.");
         }
 
         // Returns whether a factory for the |protocol| is registered.
