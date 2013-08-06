@@ -7,7 +7,7 @@ namespace FIVES
     // Manages entities in the database.
     public class EntityRegistry
     {
-        public static EntityRegistry Instance = new EntityRegistry();
+        public readonly static EntityRegistry Instance = new EntityRegistry();
 
         // Adds a new entity to the database. Returns GUID assigned to the entity.
         public Guid addEntity(Entity entity)

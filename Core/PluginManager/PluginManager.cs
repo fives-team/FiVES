@@ -8,7 +8,7 @@ namespace FIVES
 {
     public class PluginManager
     {
-        public static PluginManager Instance = new PluginManager();
+        public readonly static PluginManager Instance = new PluginManager();
 
         public delegate void PluginLoaded(string pluginName);
         public event PluginLoaded OnPluginLoaded;

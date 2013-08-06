@@ -21,7 +21,7 @@ namespace FIVES
     // component must have an associated plugin/script that has defined it.
     public class ComponentRegistry
     {
-        public static ComponentRegistry Instance = new ComponentRegistry();
+        public readonly static ComponentRegistry Instance = new ComponentRegistry();
 
         // Defines a new component type with a |name| and a |layout|. |owner| can be anything as long as its unique.
         // Typically it's plugin's or script's GUID. Will throw an exception if component is already defined.
