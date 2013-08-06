@@ -18,6 +18,7 @@ namespace ClientSync
         [Test()]
         public void shouldReturnCorrectDeps()
         {
+            Assert.AreEqual(plugin.getDependencies().Count, 2);
             Assert.Contains("WebSocketJSON", plugin.getDependencies());
             Assert.Contains("DirectCall", plugin.getDependencies());
         }

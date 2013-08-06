@@ -22,9 +22,9 @@ namespace FIVES
                 logger.Error("Configuration is missing or corrupt.");
             }
 
-            // Add 20 entities.
+            // Add 5 entities.
             var random = new Random();
-            for (int i = 1; i < 20; i++) {
+            for (int i = 0; i < 5; i++) {
                 var entity = new Entity();
                 entity["position"].setFloatAttribute("x", (float)(random.NextDouble()*100-50));
                 entity["position"].setFloatAttribute("y", (float)(random.NextDouble()*100-50));
