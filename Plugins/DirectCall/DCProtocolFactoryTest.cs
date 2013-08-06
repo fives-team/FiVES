@@ -22,50 +22,50 @@ namespace DirectCall
         }
 
         private DCProtocolFactory factory;
-        private Mock<IHandlers> handlers;
+        private Mock<IHandlers> mockHandlers;
 
         [SetUp()]
         public void init()
         {
             factory = new DCProtocolFactory();
-            handlers = new Mock<IHandlers>();
+            mockHandlers = new Mock<IHandlers>();
         }
 
         [Test()]
         public void shouldCallConnectedCallback()
         {
-            factory.startServer(config, handlers.Object.newClient);
-            factory.openConnection(config, handlers.Object.connected);
-            handlers.Verify(h => h.connected(It.IsAny<IProtocol>()), Times.Once());
+            factory.startServer(config, mockHandlers.Object.newClient);
+            factory.openConnection(config, mockHandlers.Object.connected);
+            mockHandlers.Verify(h => h.connected(It.IsAny<IProtocol>()), Times.Once());
         }
 
         [Test()]
         public void shouldCallNewClientCallback()
         {
-            factory.startServer(config, handlers.Object.newClient);
-            factory.openConnection(config, handlers.Object.connected);
-            handlers.Verify(h => h.newClient(It.IsAny<IProtocol>()), Times.Once());
+            factory.startServer(config, mockHandlers.Object.newClient);
+            factory.openConnection(config, mockHandlers.Object.connected);
+            mockHandlers.Verify(h => h.newClient(It.IsAny<IProtocol>()), Times.Once());
         }
 
         [Test()]
         public void shouldFailToRecreateServerWithTheSameId()
         {
-            factory.startServer(config, handlers.Object.newClient);
-            Assert.Throws<Error>(() => factory.startServer(config, handlers.Object.newClient));
+            factory.startServer(config, mockHandlers.Object.newClient);
+            Assert.Throws<Error>(() => factory.startServer(config, mockHandlers.Object.newClient));
         }
 
         [Test()]
         public void shouldFailOnConfigForDifferentProtocol()
         {
-            Assert.Throws<Error>(() => factory.startServer(nonDirectCallConfig, handlers.Object.newClient));
-            Assert.Throws<Error>(() => factory.openConnection(nonDirectCallConfig, handlers.Object.connected));
+            Assert.Throws<Error>(() => factory.startServer(nonDirectCallConfig, mockHandlers.Object.newClient));
+            Assert.Throws<Error>(() => factory.openConnection(nonDirectCallConfig, mockHandlers.Object.connected));
         }
 
         [Test()]
         public void shouldFailToUseConfigWithoutId()
         {
-            Assert.Throws<Error>(() => factory.openConnection(configWithoutId, handlers.Object.connected));
-            Assert.Throws<Error>(() => factory.startServer(configWithoutId, handlers.Object.newClient));
+            Assert.Throws<Error>(() => factory.openConnection(configWithoutId, mockHandlers.Object.connected));
+            Assert.Throws<Error>(() => factory.startServer(configWithoutId, mockHandlers.Object.newClient));
         }
 
         [Test()]
@@ -77,10 +77,10 @@ namespace DirectCall
         [Test()]
         public void shouldConstructDCProtocol()
         {
-            factory.startServer(config, handlers.Object.newClient);
-            factory.openConnection(config, handlers.Object.connected);
-            handlers.Verify(h => h.connected(It.IsAny<DCProtocol>()), Times.Once());
-            handlers.Verify(h => h.newClient(It.IsAny<DCProtocol>()), Times.Once());
+            factory.startServer(config, mockHandlers.Object.newClient);
+            factory.openConnection(config, mockHandlers.Object.connected);
+            mockHandlers.Verify(h => h.connected(It.IsAny<DCProtocol>()), Times.Once());
+            mockHandlers.Verify(h => h.newClient(It.IsAny<DCProtocol>()), Times.Once());
         }
     }
 }
