@@ -36,6 +36,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
+    <Reference Include="nunit.framework" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -43,6 +44,7 @@
     <Compile Include="DCProtocolFactory.cs" />
     <Compile Include="DCProtocol.cs" />
     <Compile Include="DCFuncCall.cs" />
+    <Compile Include="DirectCallPluginTest.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
