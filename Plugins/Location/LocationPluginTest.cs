@@ -27,9 +27,14 @@ namespace Location
         }
 
         [Test()]
-        public void shouldReturnCorrectNameAndDeps()
+        public void shouldReturnCorrectName()
         {
             Assert.AreEqual("Location", plugin.getName());
+        }
+
+        [Test()]
+        public void shouldReturnCorrectDeps()
+        {
             Assert.IsEmpty(plugin.getDependencies());
         }
     }
