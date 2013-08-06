@@ -3,7 +3,16 @@ using System.Collections.Generic;
 
 namespace KIARA
 {
-    public class ProtocolRegistry
+    #region Testing
+    public interface IProtocolRegistry
+    {
+        void registerProtocolFactory(string protocol, IProtocolFactory factory);
+        IProtocolFactory getProtocolFactory(string protocol);
+        bool isRegistered(string protocol);
+    }
+    #endregion
+
+    public class ProtocolRegistry : IProtocolRegistry
     {
         public static ProtocolRegistry Instance = new ProtocolRegistry();
 
@@ -23,7 +32,7 @@ namespace KIARA
         public IProtocolFactory getProtocolFactory(string protocol) {
             if (isRegistered(protocol))
                 return registeredProtocols[protocol];
-            return null;
+            throw new Error(ErrorCode.API_ERROR, "Protocol " + protocol + " is not registered.");
         }
 
         // Returns whether a factory for the |protocol| is registered.

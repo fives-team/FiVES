@@ -26,6 +26,8 @@ namespace KIARA
 
     public class Context
     {
+        public Context() : this(ProtocolRegistry.Instance, new WebClientWrapper()) {}
+
         // Opens a connection to a server specified in the config file retrived from |configURI|. Fragment part of the
         // |configURI| may be used to select the server by its index, e.g. http://www.example.org/config.json#3. If no
         // fragment is provided, or index is invalid, first server with supported protocol is chosen. Upon connection
@@ -37,7 +39,7 @@ namespace KIARA
             Server server = selectServer(fragment, config);
 
             string protocolName = server.protocol["name"].ToString();
-            IProtocolFactory protocolFactory = ProtocolRegistry.Instance.getProtocolFactory(protocolName);
+            IProtocolFactory protocolFactory = protocolRegistry.getProtocolFactory(protocolName);
             protocolFactory.openConnection(server, delegate(IProtocol p) {
                 Connection conn = new Connection(p);
                 onConnected(conn);
@@ -57,14 +59,13 @@ namespace KIARA
             Server server = selectServer(fragment, config);
 
             string protocolName = server.protocol["name"].ToString();
-            IProtocolFactory protocolFactory = ProtocolRegistry.Instance.getProtocolFactory(protocolName);
+            IProtocolFactory protocolFactory = protocolRegistry.getProtocolFactory(protocolName);
             protocolFactory.startServer(server, delegate(IProtocol p) {
                 Connection conn = new Connection(p);
                 onNewClient(conn);
             });
         }
 
-        #region Private implementation
         private Config retrieveConfig(string configURI, out string fragment)
         {
             // Extract fragment.
@@ -83,8 +84,7 @@ namespace KIARA
                 byte[] byteData = System.Convert.FromBase64String(base64Content);
                 configContent = System.Text.Encoding.ASCII.GetString(byteData);
             } else {
-                WebClient client = new WebClient();
-                configContent = client.DownloadString(configURI);
+                configContent = webClient.DownloadString(configURI);
             }
 
             // Parse the config.
@@ -99,7 +99,7 @@ namespace KIARA
             if (protocolName == null)
                 return false;
 
-            return ProtocolRegistry.Instance.isRegistered(protocolName.ToString());
+            return protocolRegistry.isRegistered(protocolName.ToString());
         }
 
         private Server selectServer(string fragment, Config config)
@@ -119,6 +119,14 @@ namespace KIARA
             return config.servers[serverNum];
         }
 
+        IProtocolRegistry protocolRegistry;
+        IWebClient webClient;
+
+        #region Testing
+        internal Context(IProtocolRegistry customProtocolRegistry, IWebClient customWebClient) {
+            protocolRegistry = customProtocolRegistry;
+            webClient = customWebClient;
+        }
         #endregion
     }
 }
