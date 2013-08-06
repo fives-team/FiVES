@@ -1,6 +1,5 @@
 using System;
 using NUnit.Framework;
-using NUnit.Mocks;
 using Moq;
 
 namespace KIARA
