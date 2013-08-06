@@ -55,6 +55,8 @@ namespace KIARA
                 throw new Error(ErrorCode.CONNECTION_ERROR, "Error during the call. Reason: " + (string)result);
             else if (state == State.Exception)
                 throw (Exception)result;
+            else if (state == State.InProgress)
+                throw new TimeoutException("Call timed out after " + millisecondsTimeout + "ms");
         }
 
         #endregion

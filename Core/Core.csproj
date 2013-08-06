@@ -76,6 +76,7 @@
     <Compile Include="KIARA\ConnectionTest.cs" />
     <Compile Include="KIARA\ContextTest.cs" />
     <Compile Include="KIARA\TestingUtils.cs" />
+    <Compile Include="KIARA\FuncCallBaseTest.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
