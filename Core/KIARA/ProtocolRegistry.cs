@@ -14,7 +14,7 @@ namespace KIARA
 
     public class ProtocolRegistry : IProtocolRegistry
     {
-        public static ProtocolRegistry Instance = new ProtocolRegistry();
+        public readonly static ProtocolRegistry Instance = new ProtocolRegistry();
 
         // Registers a protocol |factory| for the |protocol|.
         public void registerProtocolFactory(string protocol, IProtocolFactory factory)
