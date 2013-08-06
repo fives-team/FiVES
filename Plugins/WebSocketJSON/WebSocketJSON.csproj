@@ -52,6 +52,7 @@
     <Reference Include="SuperWebSocket">
       <HintPath>..\..\ThirdParty\SuperWebSocket\Net40\Debug\SuperWebSocket.dll</HintPath>
     </Reference>
+    <Reference Include="nunit.framework" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -60,6 +61,8 @@
     <Compile Include="WSJProtocol.cs" />
     <Compile Include="WSJFuncCall.cs" />
     <Compile Include="WebSocketJSONPlugin.cs" />
+    <Compile Include="WebSocketJSONPluginTest.cs" />
+    <Compile Include="WSJFuncCallTest.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
