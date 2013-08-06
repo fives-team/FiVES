@@ -75,10 +75,10 @@
     <Compile Include="KIARA\IFuncCall.cs" />
     <Compile Include="KIARA\ConnectionTest.cs" />
     <Compile Include="KIARA\ContextTest.cs" />
-    <Compile Include="KIARA\TestingUtils.cs" />
     <Compile Include="KIARA\FuncCallBaseTest.cs" />
     <Compile Include="KIARA\ProtocolUtilsTest.cs" />
     <Compile Include="KIARA\ProtocolRegistryTest.cs" />
+    <Compile Include="KIARA\TestingWrappers.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
