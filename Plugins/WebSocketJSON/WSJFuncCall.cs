@@ -8,26 +8,32 @@ using System.Diagnostics;
 
 namespace WebSocketJSON
 {
-    public class WSJFuncCall : FuncCallBase
+    #region Testing
+
+    public interface IWSJFuncCall : IFuncCall
+    {
+        void handleSuccess(JToken retValue);
+        void handleException(JToken exception);
+        void handleError(string error);
+    }
+
+    #endregion
+
+    public class WSJFuncCall : FuncCallBase, IWSJFuncCall
     {
         protected override object convertResult(object result, Type type)
         {
             return ((JToken)result).ToObject(type);
         }
 
-        internal void handleSuccess(JToken retValue)
+        public void handleSuccess(JToken retValue)
         {
             base.handleSuccess((object)retValue);
         }
 
-        internal void handleException(JToken exception)
+        public void handleException(JToken exception)
         {
             base.handleException(new Exception(exception.ToString()));
-        }
-
-        internal void handleError(JToken error)
-        {
-            base.handleError(error.ToString());
         }
     }
     

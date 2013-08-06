@@ -17,7 +17,8 @@ namespace KIARA
         IFuncCall callFunc(string name, params object[] args);
 
         // Registers a |handler| for the function |name|, which is called when remote end requests the function to be
-        // called. Returned value from |handler| (if any) is returned back to the caller.
+        // called. Returned value from |handler| (if any) is returned back to the caller. If called again for the same
+        // |name| - throws an exception.
         void registerHandler(string name, Delegate handler);
     }
 }

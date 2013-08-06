@@ -6,9 +6,7 @@ namespace WebSocketJSON
 {
     public class WSJProtocolFactory : IProtocolFactory
     {
-        public WSJProtocolFactory()
-        {
-        }
+        public WSJProtocolFactory() : this(new WSJServerFactory()) {}
 
         public void openConnection(Server serverConfig, Action<IProtocol> onConnected)
         {
@@ -18,13 +16,28 @@ namespace WebSocketJSON
 
         public void startServer(Server serverConfig, Action<IProtocol> onNewClient)
         {
+            string protocol = ProtocolUtils.retrieveProtocolSetting<string>(serverConfig, "name", null);
+            if (protocol != "websocket-json")
+                throw new Error(ErrorCode.CONNECTION_ERROR, "Given сonfig is not for websocket-json protocol.");
+
             int port = ProtocolUtils.retrieveProtocolSetting(serverConfig, "port", 34837);
             string ip = ProtocolUtils.retrieveProtocolSetting(serverConfig, "ip", "Any");
 
-            WSJServer server = new WSJServer(onNewClient);
+            IWSJServer server = wsjServerFactory.construct(onNewClient);
             server.Setup(ip, port);
             server.Start();
         }
+
+        #region Testing
+
+        internal WSJProtocolFactory(IWSJServerFactory factory)
+        {
+            wsjServerFactory = factory;
+        }
+
+        IWSJServerFactory wsjServerFactory;
+
+        #endregion
     }
 }
 

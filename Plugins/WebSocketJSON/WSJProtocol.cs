@@ -8,11 +8,33 @@ using System.Reflection;
 
 namespace WebSocketJSON
 {
+    public class UnregisteredMethod : Exception
+    {
+        public UnregisteredMethod() : base() { }
+        public UnregisteredMethod(string message) : base(message) { }
+    }
+
+    public class InvalidNumberOfArgs : Exception
+    {
+        public InvalidNumberOfArgs() : base() { }
+        public InvalidNumberOfArgs(string message) : base(message) { }
+    }
+
+    public class UnknownCallID : Exception
+    {
+        public UnknownCallID() : base() { }
+        public UnknownCallID(string message) : base(message) { }
+    }
+
+    public class HandlerAlreadyRegistered : Exception
+    {
+        public HandlerAlreadyRegistered() : base() { }
+        public HandlerAlreadyRegistered(string message) : base(message) { }
+    }
+
     public class WSJProtocol : WebSocketSession<WSJProtocol>, IProtocol
     {
-        public WSJProtocol()
-        {
-        }
+        public WSJProtocol() : this(new WSJFuncCallFactory()) {}
 
         public void handleClose(SuperSocket.SocketBase.CloseReason reason)
         {
@@ -38,15 +60,15 @@ namespace WebSocketJSON
                 int callID = Convert.ToInt32(data[1]);
                 if (activeCalls.ContainsKey(callID)) {
                     bool success = data[2].ToObject<bool>();
-                    JToken result = data[3];
+                    JToken result = data.Count == 4 ? data[3] : new JValue((object)null);
                     if (success)
                         activeCalls[callID].handleSuccess(result);
                     else
                         activeCalls[callID].handleException(result);
                     activeCalls.Remove(callID);
                 } else {
-                    throw new Error(ErrorCode.CONNECTION_ERROR, 
-                                    "Received a response for an unrecognized call id: " + callID);
+                    // TODO: Report error to another side.
+                    throw new UnknownCallID("Received a response for an unrecognized call id: " + callID);
                 }
             } else if (msgType == "call") {
                 int callID = data[1].ToObject<int>();
@@ -55,10 +77,9 @@ namespace WebSocketJSON
                     Delegate nativeMethod = registeredFunctions[methodName];
                     ParameterInfo[] paramInfo = nativeMethod.Method.GetParameters();
                     if (paramInfo.Length != data.Count - 3) {
-                        throw new Error(ErrorCode.INVALID_ARGUMENT,
-                                        "Incorrect number of arguments for method: " + methodName +
-                                        ". Expected: " + paramInfo.Length + ". Got: " + 
-                                        (data.Count - 3));
+                        // TODO: Report error to another side.
+                        throw new InvalidNumberOfArgs("Incorrect number of arguments for method: " + methodName +
+                                                      ". Expected: " + paramInfo.Length + ". Got: " + (data.Count - 3));
                     }
                     List<object> parameters = new List<object>();
                     for (int i = 0; i < paramInfo.Length; i++)
@@ -90,14 +111,12 @@ namespace WebSocketJSON
                         Send(JsonConvert.SerializeObject(callReplyMessage));
                     }
                 } else {
-                    throw new Error(ErrorCode.CONNECTION_ERROR, 
-                                    "Received a call for an unregistered method: " + methodName);
+                    // TODO: Report error to another side.
+                    throw new UnregisteredMethod("Received a call for an unregistered method: " + methodName);
                 }
             } else
                 throw new Error(ErrorCode.CONNECTION_ERROR, "Unknown message type: " + msgType);
         }
-
-        #region IProtocol implementation
 
         public void processIDL(string parsedIDL)
         {
@@ -118,7 +137,7 @@ namespace WebSocketJSON
             if (isOneWay(name))
                 return null;
 
-            WSJFuncCall callObj = new WSJFuncCall();
+            IWSJFuncCall callObj = wsjFuncCallFactory.construct();
 
             activeCalls.Add(callID, callObj);
             return callObj;
@@ -135,12 +154,24 @@ namespace WebSocketJSON
 
         public void registerHandler(string name, Delegate handler)
         {
+            if (registeredFunctions.ContainsKey(name))
+                throw new HandlerAlreadyRegistered("Handler with " + name + " is already registered.");
+
             registeredFunctions[name] = handler;
         }
 
         private int nextCallID = 0;
-        private Dictionary<int, WSJFuncCall> activeCalls = new Dictionary<int, WSJFuncCall>();
+        private Dictionary<int, IWSJFuncCall> activeCalls = new Dictionary<int, IWSJFuncCall>();
         private Dictionary<string, Delegate> registeredFunctions = new Dictionary<string, Delegate>();
+
+        #region Testing
+
+        internal WSJProtocol(IWSJFuncCallFactory factory)
+        {
+            wsjFuncCallFactory = factory;
+        }
+
+        private IWSJFuncCallFactory wsjFuncCallFactory;
 
         #endregion
     }
