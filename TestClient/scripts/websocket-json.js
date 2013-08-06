@@ -1,6 +1,15 @@
 define(['kiara'], function(KIARA) {
-    function JSONWebSocket(url) {
+    function JSONWebSocket(config) {
         var self = this;
+
+        // Construct URL
+        var url = "ws://";
+        url += config.host ? config.host : "localhost";
+        url += config.port ? ":" + config.port : "";
+        if (config.path)
+            url += config.path.substring(0, 1) == "/" ? config.path : "/" + config.path;
+        else
+            url += "/";
 
         KIARA.Protocol.call(self, 'websocket-json');
         self.__url = url;

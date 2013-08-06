@@ -5,10 +5,10 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>10.0.0</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{C463A928-9F1B-4134-B8C7-D398097E2D73}</ProjectGuid>
+    <ProjectGuid>{7729110A-D86E-4802-A158-9BE992C98F68}</ProjectGuid>
     <OutputType>Library</OutputType>
-    <RootNamespace>Location</RootNamespace>
-    <AssemblyName>Location</AssemblyName>
+    <RootNamespace>WebSocketJSON</RootNamespace>
+    <AssemblyName>WebSocketJSON</AssemblyName>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -36,12 +36,41 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
-    <Reference Include="nunit.framework" />
+    <Reference Include="Newtonsoft.Json">
+      <HintPath>..\..\ThirdParty\Json50r6\Bin\Portable40\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Configuration" />
+    <Reference Include="SuperSocket.Common">
+      <HintPath>..\..\ThirdParty\SuperWebSocket\Net40\Debug\SuperSocket.Common.dll</HintPath>
+    </Reference>
+    <Reference Include="SuperSocket.SocketBase">
+      <HintPath>..\..\ThirdParty\SuperWebSocket\Net40\Debug\SuperSocket.SocketBase.dll</HintPath>
+    </Reference>
+    <Reference Include="SuperSocket.SocketEngine">
+      <HintPath>..\..\ThirdParty\SuperWebSocket\Net40\Debug\SuperSocket.SocketEngine.dll</HintPath>
+    </Reference>
+    <Reference Include="SuperWebSocket">
+      <HintPath>..\..\ThirdParty\SuperWebSocket\Net40\Debug\SuperWebSocket.dll</HintPath>
+    </Reference>
+    <Reference Include="nunit.framework, Version=2.6.0.12051, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77">
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="Moq">
+      <HintPath>..\..\ThirdParty\Moq\NET40\Moq.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="LocationPlugin.cs" />
-    <Compile Include="LocationPluginTest.cs" />
+    <Compile Include="WSJProtocolFactory.cs" />
+    <Compile Include="WSJServer.cs" />
+    <Compile Include="WSJProtocol.cs" />
+    <Compile Include="WSJFuncCall.cs" />
+    <Compile Include="WebSocketJSONPlugin.cs" />
+    <Compile Include="WebSocketJSONPluginTest.cs" />
+    <Compile Include="WSJFuncCallTest.cs" />
+    <Compile Include="WSJProtocolTest.cs" />
+    <Compile Include="TestingWrappers.cs" />
+    <Compile Include="WSJProtocolFactoryTest.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

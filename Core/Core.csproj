@@ -36,23 +36,17 @@
     <Reference Include="NLog">
       <HintPath>..\ThirdParty\NLog\NLog.dll</HintPath>
     </Reference>
-    <Reference Include="SuperSocket.Common">
-      <HintPath>..\ThirdParty\SuperWebSocket\Net40\Release\SuperSocket.Common.dll</HintPath>
-    </Reference>
-    <Reference Include="SuperSocket.SocketBase">
-      <HintPath>..\ThirdParty\SuperWebSocket\Net40\Release\SuperSocket.SocketBase.dll</HintPath>
-    </Reference>
-    <Reference Include="SuperSocket.SocketEngine">
-      <HintPath>..\ThirdParty\SuperWebSocket\Net40\Release\SuperSocket.SocketEngine.dll</HintPath>
-    </Reference>
-    <Reference Include="SuperWebSocket">
-      <HintPath>..\ThirdParty\SuperWebSocket\Net40\Release\SuperWebSocket.dll</HintPath>
-    </Reference>
     <Reference Include="nunit.framework, Version=2.6.0.12051, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77">
       <Private>False</Private>
     </Reference>
     <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
+    <Reference Include="nunit.mocks, Version=2.4.8.0, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77">
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="Moq">
+      <HintPath>..\ThirdParty\Moq\NET40\Moq.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -68,15 +62,23 @@
     <Compile Include="Domainmodel\EntityTest.cs" />
     <Compile Include="KIARA\Connection.cs" />
     <Compile Include="KIARA\Context.cs" />
-    <Compile Include="KIARA\ConversionUtils.cs" />
+    <Compile Include="KIARA\IProtocol.cs" />
+    <Compile Include="KIARA\IProtocolFactory.cs" />
     <Compile Include="KIARA\Error.cs" />
-    <Compile Include="KIARA\FunctionCall.cs" />
-    <Compile Include="KIARA\IWebSocketJSONConnection.cs" />
-    <Compile Include="KIARA\SWSServer.cs" />
+    <Compile Include="KIARA\ProtocolRegistry.cs" />
     <Compile Include="PluginManager\IPluginInitializer.cs" />
     <Compile Include="PluginManager\PluginManager.cs" />
     <Compile Include="PluginManager\PluginManagerTest.cs" />
     <Compile Include="Domainmodel\ComponentLayoutTest.cs" />
+    <Compile Include="KIARA\ProtocolUtils.cs" />
+    <Compile Include="KIARA\FuncCallBase.cs" />
+    <Compile Include="KIARA\IFuncCall.cs" />
+    <Compile Include="KIARA\ConnectionTest.cs" />
+    <Compile Include="KIARA\ContextTest.cs" />
+    <Compile Include="KIARA\FuncCallBaseTest.cs" />
+    <Compile Include="KIARA\ProtocolUtilsTest.cs" />
+    <Compile Include="KIARA\ProtocolRegistryTest.cs" />
+    <Compile Include="KIARA\TestingWrappers.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

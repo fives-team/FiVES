@@ -5,20 +5,20 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>10.0.0</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{E1955FF2-6109-4C71-9F13-486A48DE6C17}</ProjectGuid>
+    <ProjectGuid>{6A801102-282E-415D-A711-82413918344D}</ProjectGuid>
     <OutputType>Library</OutputType>
-    <RootNamespace>ClientSync</RootNamespace>
-    <AssemblyName>ClientSync</AssemblyName>
+    <RootNamespace>DirectCall</RootNamespace>
+    <AssemblyName>DirectCall</AssemblyName>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DebugSymbols>True</DebugSymbols>
+    <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
-    <Optimize>False</Optimize>
+    <Optimize>false</Optimize>
     <OutputPath>bin\Debug</OutputPath>
     <DefineConstants>DEBUG;</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <ConsolePause>False</ConsolePause>
+    <ConsolePause>false</ConsolePause>
     <CustomCommands>
       <CustomCommands>
         <Command type="AfterBuild" command="xcopy /y &quot;${TargetDir}&quot; &quot;${SolutionDir}\BuiltPlugins\&quot; || echo &quot;Ignoring error&quot;" externalConsole="True" />
@@ -27,22 +27,35 @@
     </CustomCommands>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>none</DebugType>
-    <Optimize>True</Optimize>
+    <DebugType>full</DebugType>
+    <Optimize>true</Optimize>
     <OutputPath>bin\Release</OutputPath>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <ConsolePause>False</ConsolePause>
+    <ConsolePause>false</ConsolePause>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
-    <Reference Include="System.Configuration" />
-    <Reference Include="nunit.framework" />
+    <Reference Include="Moq">
+      <HintPath>..\..\ThirdParty\Moq\NET40\Moq.dll</HintPath>
+    </Reference>
+    <Reference Include="nunit.framework, Version=2.6.0.12051, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77">
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="Newtonsoft.Json">
+      <HintPath>..\..\ThirdParty\Json50r6\Bin\Net40\Newtonsoft.Json.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AssemblyInfo.cs" />
-    <Compile Include="ClientSyncPlugin.cs" />
-    <Compile Include="ClientSyncPluginTest.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="DirectCallPlugin.cs" />
+    <Compile Include="DCProtocolFactory.cs" />
+    <Compile Include="DCProtocol.cs" />
+    <Compile Include="DCFuncCall.cs" />
+    <Compile Include="DirectCallPluginTest.cs" />
+    <Compile Include="DCProtocolFactoryTest.cs" />
+    <Compile Include="DCFuncCallTest.cs" />
+    <Compile Include="DCProtocolTest.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

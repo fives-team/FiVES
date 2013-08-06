@@ -1,96 +1,60 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Linq;
+using System.Net;
 
 namespace KIARA
 {
-    public delegate FunctionCall FunctionWrapper(params object[] parameters);
-
-    public partial class Connection
+    // This class represenents a connection to the remote end. Can be used to generate remote function wrappers and to
+    // register func implementations on the local end.
+    public class Connection
     {
-        #region Public interface
+        // Func wrapper delegate generated with generateFuncWrapper. Allows passing arbitrary arguments and returns an
+        // object representing the remote call.
+        public delegate IFuncCall FuncWrapper(params object[] args);
 
-        // Event that is raised when connection is raised. The |reason| for closing is passed.
-        public delegate void CloseDelegate(string reason);
+        // Constructs connection from a protocol. Please use Context.openConnection or Context.startServer to construct
+        // a new connection.
+        internal Connection(IProtocol aProtocol) : this(aProtocol, new WebClientWrapper()) {}
 
-        public event CloseDelegate OnClose;
-
-        // Loads an IDL file from the |uri|. Parses it's content and adds new types and services to 
-        // the type system. When called on a |uri| that was already loaded, does not raise an error.
+        // Loads an IDL at |uri| into the connection.
         public void loadIDL(string uri)
         {
-            Implementation.loadIDL(uri);
+            string contents = webClient.DownloadString(uri);
+            // TODO: Parse the IDL and pass parsed structure into processIDL.
+            protocol.processIDL(contents);
         }
 
-        // Returns a function wrapper for an IDL method with |qualifiedMethodName| that sends a call
-        // to the remote end using |typeMapping| for serialization/desirialization.
-        public FunctionWrapper generateFunctionWrapper(string qualifiedMethodName, 
-                                                       string typeMapping)
+        // Generates a func wrapper for the |funcName|. Optional |typeMapping| can be used to specify data omission and
+        // reordering options.
+        public FuncWrapper generateFuncWrapper(string funcName, string typeMapping = "")
         {
-            return generateFunctionWrapper(qualifiedMethodName, typeMapping, 
-                                           new Dictionary<string, Delegate>());
+            // TODO: implement type mapping and add respective tests
+            return (FuncWrapper) delegate(object[] args) {
+                return protocol.callFunc(funcName, args);
+            };
         }
 
-        // Same as above, but |defaultHandlers| are automatically assigned to each call.
-        public FunctionWrapper generateFunctionWrapper(
-            string qualifiedMethodName, string typeMapping, 
-            Dictionary<string, Delegate> defaultHandlers)
+        // Registers a local |handler| as an implementation for the |funcName|. Optional |typeMapping| can be used to
+        // specify data omission and reordering options.
+        public void registerFuncImplementation(string funcName, Delegate handler, string typeMapping = "")
         {
-            return Implementation.generateFuncWrapper(qualifiedMethodName, typeMapping, 
-                                                      defaultHandlers);
+            // TODO: implement type mapping and add respective tests
+            protocol.registerHandler(funcName, handler);
         }
 
-        // Registers nativeMethod as an implementation of the IDL method with qualifiedMethodName. 
-        // Parameters, return value and exceptions are serialized/deserialized according to 
-        // typeMapping. When called more than once on the same |qualifiedMethodName| will
-        // override previous entry and use |nativeMethod| that was passed with the last call.
-        // To pass an arbitrary method in place of the |nativeMethod| argument the user must and 
-        // cast passed method to a respective delegate type implicitly. For example, if a user needs
-        // to use a static method Bar of the class Foo as an implementation for some IDL function 
-        // "myservice.foobar", he would need to write the following code:
-        //
-        //   class Foo {
-        //     public static int Bar(float x, string s) { ... }
-        //   };
-        //
-        //   delegate int FooBarDelegate(float x, string s);
-        //
-        //   connection.RegisterFuncImplementation("myservice.foobar", "...", 
-        //                                         (FooBarDelegate)Foo.Bar);
-        //
-        // One can also use Func template that is available in .NET Framework 3.5 or later to avoid 
-        // declaring a new delegate type for each registered function:
-        //
-        //   connection.RegisterFuncImplementation("myservice.foobar", "...", 
-        //                                         (Func<float, string, int>)Foo.Bar);
-        //
-        // It is possible to pass static/instance, private/public methods, delegates or lambda 
-        // functions, but all of them must be implicity casted to some delegate type as shown
-        // above.
-        public void registerFuncImplementation(string qualifiedMethodName, string typeMapping, 
-                                               Delegate nativeMethod)
+        private IProtocol protocol;
+        private IWebClient webClient;
+
+        #region Testing
+
+        internal Connection(IProtocol aProtocol, IWebClient client)
         {
-            Implementation.registerFuncImplementation(qualifiedMethodName, typeMapping, 
-                                                      nativeMethod);
-        }
-        #endregion
-
-        #region Private implementation
-        internal interface IImplementation
-        {
-            event CloseDelegate OnClose;
-
-            void loadIDL(string uri);
-
-            FunctionWrapper generateFuncWrapper(string qualifiedMethodName, string typeMapping,
-                                                Dictionary<string, Delegate> defaultHandlers);
-
-            void registerFuncImplementation(string qualifiedMethodName, string typeMapping, 
-                                            Delegate nativeMethod);
+            protocol = aProtocol;
+            webClient = client;
         }
 
-        private IImplementation Implementation;
         #endregion
     }
 }
