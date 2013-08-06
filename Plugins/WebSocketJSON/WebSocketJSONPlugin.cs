@@ -4,7 +4,7 @@ using KIARA;
 
 namespace WebSocketJSON
 {
-    public class WebSocketJSON : IPluginInitializer
+    public class WebSocketJSONPlugin : IPluginInitializer
     {
         #region IPluginInitializer implementation
 

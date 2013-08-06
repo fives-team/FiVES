@@ -55,11 +55,11 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="WebSocketJSON.cs" />
     <Compile Include="WSJProtocolFactory.cs" />
     <Compile Include="WSJServer.cs" />
     <Compile Include="WSJProtocol.cs" />
     <Compile Include="WSJFuncCall.cs" />
+    <Compile Include="WebSocketJSONPlugin.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
