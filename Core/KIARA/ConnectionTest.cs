@@ -10,7 +10,7 @@ namespace KIARA
         private string idlURL = "http://www.example.com/my.idl";
 
         [Test()]
-        public void ShouldCallFuncInProtocol()
+        public void shouldCallFuncInProtocol()
         {
             var mockProtocol = new Mock<IProtocol>();
 
@@ -22,7 +22,7 @@ namespace KIARA
         }
 
         [Test()]
-        public void ShouldDownloadIDLAndCallProcessIDLInProtocol()
+        public void shouldDownloadIDLAndCallProcessIDLInProtocol()
         {
             var mockProtocol = new Mock<IProtocol>();
             var mockWebClient = new Mock<IWebClient>();
@@ -37,7 +37,7 @@ namespace KIARA
         }
 
         [Test()]
-        public void ShouldCallRegisterHandlerInProtocol()
+        public void shouldCallRegisterHandlerInProtocol()
         {
             var mockProtocol = new Mock<IProtocol>();
 

@@ -56,21 +56,21 @@ namespace KIARA
         }
 
         [Test()]
-        public void ShouldRetrieveConfigOnConnect()
+        public void shouldRetrieveConfigOnConnect()
         {
             context.openConnection(configURL, callback);
             mockWebClient.Verify(client => client.DownloadString(configURL), Times.Once());
         }
 
         [Test()]
-        public void ShouldRetrieveConfigOnStartServer()
+        public void shouldRetrieveConfigOnStartServer()
         {
             context.startServer(configURL, callback);
             mockWebClient.Verify(client => client.DownloadString(configURL), Times.Once());
         }
 
         [Test()]
-        public void ShouldSearchForSupportedServer()
+        public void shouldSearchForSupportedServer()
         {
             context.openConnection(configURL, callback);
             mockProtocolRegistry.Verify(registry => registry.isRegistered("test-protocol"), Times.Once());
@@ -79,7 +79,7 @@ namespace KIARA
         }
 
         [Test()]
-        public void ShouldChooseServerAccordingToTheFragment()
+        public void shouldChooseServerAccordingToTheFragment()
         {
             context.openConnection(configURL + "#1", callback);
             mockProtocolRegistry.Verify(registry => registry.isRegistered("test-protocol"), Times.Never());
@@ -88,7 +88,7 @@ namespace KIARA
         }
 
         [Test()]
-        public void ShouldOpenConnectionToTheServer()
+        public void shouldOpenConnectionToTheServer()
         {
             context.openConnection(configURL, callback);
             mockProtocolFactory.Verify(factory => factory.openConnection(It.IsAny<Server>(), 
@@ -96,7 +96,7 @@ namespace KIARA
         }
 
         [Test()]
-        public void ShouldStartServer()
+        public void shouldStartServer()
         {
             context.startServer(configURL, callback);
             mockProtocolFactory.Verify(factory => factory.startServer(It.IsAny<Server>(), 
