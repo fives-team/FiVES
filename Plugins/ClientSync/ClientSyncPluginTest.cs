@@ -9,11 +9,6 @@ namespace ClientSync
     {
         ClientSyncPlugin plugin = new ClientSyncPlugin();
 
-        public ClientSyncPluginTest()
-        {
-            plugin.initialize();
-        }
-
         [Test()]
         public void shouldReturnCorrectName()
         {
