@@ -55,6 +55,7 @@
     <Compile Include="DirectCallPluginTest.cs" />
     <Compile Include="DCProtocolFactoryTest.cs" />
     <Compile Include="DCFuncCallTest.cs" />
+    <Compile Include="DCProtocolTest.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
