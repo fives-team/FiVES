@@ -26,12 +26,22 @@ namespace KIARA
 
     public class Context
     {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="KIARA.Context"/> class.
+        /// </summary>
         public Context() : this(ProtocolRegistry.Instance, new WebClientWrapper()) {}
 
-        // Opens a connection to a server specified in the config file retrived from |configURI|. Fragment part of the
-        // |configURI| may be used to select the server by its index, e.g. http://www.example.org/config.json#3. If no
-        // fragment is provided, or index is invalid, first server with supported protocol is chosen. Upon connection
-        // |onConnected| is called with constructed Connection object.
+        /// <summary>
+        /// Opens a connection to a server specified in the config file retrived from <paramref name="configURI"/>.
+        /// Fragment part of the <paramref name="configURI"/> may be used to select the server by its index, e.g.
+        /// <c>"http://www.example.org/config.json#3"</c>. If no fragment is provided, or index is invalid, first server
+        /// with supported protocol is chosen. Upon connection <paramref name="onConnected"/> is called with the
+        /// constructed <see cref="KIARA.Connection"/> object.
+        /// </summary>
+        /// <param name="configURI">
+        /// URI where config is to be found. Data URIs starting with <c>"data:text/json;base64,"</c> are supported.
+        /// </param>
+        /// <param name="onConnected">Handler to be invoked when connection is established.</param>
         public void openConnection(string configURI, Action<Connection> onConnected)
         {
             string fragment = "";
@@ -46,12 +56,21 @@ namespace KIARA
             });
         }
 
-        // Creates a server specified in the config file retrieved from |configURI|. Fragment part of the |configURI|
-        // may be used to select the server by its index, e.g. http://www.example.org/config.json#3. If no fragment is
-        // provided, or index is invalid, first server with supported protocol is chosen. For each connected client
-        // |onNewClient| is called with constructed Connection object. Note that |onNewClient| may be executed on a
-        // different thread than the one you are calling from, depending on the implementation of the protocol specified
-        // in the config file.
+        /// <summary>
+        /// Creates a server specified in the config file retrieved from <paramref name="configURI"/>. Fragment part of
+        /// the <paramref name="configURI"/> may be used to select the server by its index, e.g.
+        /// <c>"http://www.example.org/config.json#3"</c>. If no fragment is provided, or index is invalid, first server
+        /// with supported protocol is chosen. For each connected client <paramref name="onNewClient"/> is called with
+        /// constructed <see cref="KIARA.Connection"/> object.
+        /// </summary>
+        /// <remarks>
+        /// Note that <paramref name="onNewClient"/> may be executed on a different thread than the one you are calling
+        /// from, depending on the implementation of the protocol specified in the config file.
+        /// </remarks>
+        /// <param name="configURI">
+        /// URI where config is to be found. Data URIs starting with <c>"data:text/json;base64,"</c> are supported.
+        /// </param>
+        /// <param name="onNewClient">Handler to be invoked for each new client.</param>
         public void startServer(string configURI, Action<Connection> onNewClient)
         {
             string fragment = "";

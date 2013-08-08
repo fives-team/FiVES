@@ -6,19 +6,29 @@ using System.Net;
 
 namespace KIARA
 {
-    // This class represenents a connection to the remote end. Can be used to generate remote function wrappers and to
-    // register func implementations on the local end.
+    /// <summary>
+    /// This class represenents a connection to the remote end. It may be used to load new IDL definition files,
+    /// generate callable remote function  wrappers and to register local functions as implementations for remote calls.
+    /// </summary>
     public class Connection
     {
-        // Func wrapper delegate generated with generateFuncWrapper. Allows passing arbitrary arguments and returns an
-        // object representing the remote call.
+        /// <summary>
+        /// Represents a generated function wrapper. It allows calling the function with arbitrary arguments.
+        /// </summary>
+        /// <returns>An object representing a call.</returns>
         public delegate IFuncCall FuncWrapper(params object[] args);
 
-        // Constructs connection from a protocol. Please use Context.openConnection or Context.startServer to construct
-        // a new connection.
+        /// <summary>
+        /// Constructs connection given a protocol implementation. This for internal use only - please use
+        /// <see cref="KIARA.Context.openConnection"/> or <see cref="KIARA.Context.startServer"/> instead.
+        /// </summary>
+        /// <param name="aProtocol">Protocol implementation.</param>
         internal Connection(IProtocol aProtocol) : this(aProtocol, new WebClientWrapper()) {}
 
-        // Loads an IDL at |uri| into the connection.
+        /// <summary>
+        /// Loads an IDL definition file at <paramref name="uri"/> into the connection.
+        /// </summary>
+        /// <param name="uri">URI of the IDL definition file.</param>
         public void loadIDL(string uri)
         {
             string contents = webClient.DownloadString(uri);
@@ -26,8 +36,13 @@ namespace KIARA
             protocol.processIDL(contents);
         }
 
-        // Generates a func wrapper for the |funcName|. Optional |typeMapping| can be used to specify data omission and
-        // reordering options.
+        /// <summary>
+        /// Generates a func wrapper for the <paramref name="funcName"/>. Optional <paramref name="typeMapping"/> string
+        /// may be used to specify data omission and reordering options.
+        /// </summary>
+        /// <returns>The generated func wrapper.</returns>
+        /// <param name="funcName">Name of the function to be wrapped.</param>
+        /// <param name="typeMapping">Type mapping string.</param>
         public FuncWrapper generateFuncWrapper(string funcName, string typeMapping = "")
         {
             // TODO: implement type mapping and add respective tests
@@ -36,8 +51,13 @@ namespace KIARA
             };
         }
 
-        // Registers a local |handler| as an implementation for the |funcName|. Optional |typeMapping| can be used to
-        // specify data omission and reordering options.
+        /// <summary>
+        /// Registers a local <paramref name="handler"/> as an implementation for the <paramref name="funcName"/>.
+        /// Optional <paramref name="typeMapping"/> string can be used to specify data omission and reordering options.
+        /// </summary>
+        /// <param name="funcName">Name of the implemented function.</param>
+        /// <param name="handler">Handler to be invoked upon remote call.</param>
+        /// <param name="typeMapping">Type mapping string.</param>
         public void registerFuncImplementation(string funcName, Delegate handler, string typeMapping = "")
         {
             // TODO: implement type mapping and add respective tests
