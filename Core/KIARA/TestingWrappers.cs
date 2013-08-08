@@ -8,14 +8,6 @@ namespace KIARA
         string DownloadString(string address);
     };
 
-    public class WebClientWrapper : IWebClient
-    {
-        public string DownloadString(string address)
-        {
-            return webClient.DownloadString(address);
-        }
-
-        private WebClient webClient = new WebClient();
-    };
+    public class WebClientWrapper : WebClient, IWebClient { };
 }
 
