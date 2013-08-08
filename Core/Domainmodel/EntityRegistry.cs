@@ -76,7 +76,14 @@ namespace FIVES
         // Users should not construct EntityRegistry on their own, but use EntityRegistry.Instance instead.
         internal EntityRegistry() {}
 
+        /// <summary>
+        /// All registered entities, indexed by their Guids
+        /// </summary>
         private IDictionary<Guid, Entity> entities = new Dictionary<Guid, Entity>();
+
+        /// <summary>
+        /// The registry GUID.
+        /// </summary>
         public readonly Guid RegistryGuid = new Guid("0f5f96c5-30cb-4b4f-b06f-e5efd257a3c9");
     }
 }
