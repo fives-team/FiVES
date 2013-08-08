@@ -81,6 +81,11 @@ namespace FIVES
             return children [children.Count -1];
         }
 
+        public bool hasComponent(string name)
+        {
+            return this.components.ContainsKey (name);
+        }
+
         // Used for testing to separate component registry database for different tests.
         internal Entity(ComponentRegistry customComponentRegistry)
         {
