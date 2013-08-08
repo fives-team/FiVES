@@ -24,7 +24,7 @@ namespace Editing
             if (PluginManager.Instance.isPluginLoaded("ClientSync")) {
                 registerEditingAPI();
             } else {
-                PluginManager.Instance.OnPluginLoaded += delegate(string pluginName) {
+                PluginManager.Instance.OnPluginInitialized += delegate(string pluginName) {
                     if (pluginName == "ClientSync")
                         registerEditingAPI();
                 };

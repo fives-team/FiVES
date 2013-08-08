@@ -6,16 +6,30 @@ using NLog;
 
 namespace FIVES
 {
+    /// <summary>
+    /// Plugin manager. Manages loading and initializing plugins.
+    /// </summary>
     public class PluginManager
     {
+        /// <summary>
+        /// Default instance of the plugin manager. This should be used instead of creating a new instance.
+        /// </summary>
         public readonly static PluginManager Instance = new PluginManager();
 
+        /// <summary>
+        /// Delegate to be used with <see cref="OnPluginInitialized"/>
+        /// </summary>
+        /// <param name="pluginName">Name of the initialized plugin</param>
         public delegate void PluginLoaded(string pluginName);
-        public event PluginLoaded OnPluginLoaded;
+
+        /// <summary>
+        /// Occurs when a plugin is initialized.
+        /// </summary>
+        public event PluginLoaded OnPluginInitialized;
 
         public PluginManager()
         {
-            OnPluginLoaded += updateDeferredPlugins;
+            OnPluginInitialized += updateDeferredPlugins;
         }
 
         private struct LoadedPluginInfo {
@@ -30,14 +44,22 @@ namespace FIVES
 
         private static Logger logger = LogManager.GetCurrentClassLogger();
 
-        // Canoninizes the filename (converts .. and . into actual path). This allows to identify plugin from the same
-        // file but different paths as the same. E.g. /foo/bar/baz/../plugin.dll is the same as /foo/bar/plugin.dll.
-        private string getCanonicalPath(string filename)
+
+        /// <summary>
+        /// Canoninizes the filename (converts .. and . into actual path). This allows to identify plugin from the same
+        /// file but different paths as the same. E.g. /foo/bar/baz/../plugin.dll is the same as /foo/bar/plugin.dll.
+        /// </summary>
+        /// <returns>The canonical path.</returns>
+        /// <param name="path">The path to be canonized.</param>
+        private string getCanonicalPath(string path)
         {
-            return Path.GetFullPath(filename);
+            return Path.GetFullPath(path);
         }
 
-        // Attempts to load a plugin from file located at |path|.
+        /// <summary>
+        /// Attempts to load a plugin from the assembly located at <paramref name="path"/>.
+        /// </summary>
+        /// <param name="path">The path at which plugin assembly is to be found.</param>
         public void loadPlugin(string path)
         {
             string canonicalPath = getCanonicalPath(path);
@@ -83,7 +105,7 @@ namespace FIVES
                     // Initialize plugin.
                     info.initializer.initialize();
                     loadedPlugins.Add(name, info);
-                    OnPluginLoaded(name);
+                    OnPluginInitialized(name);
                 } catch (Exception e) {
                     logger.WarnException("Failed to load file " + path + " as a plugin.", e);
                     return;
@@ -91,8 +113,11 @@ namespace FIVES
             }
         }
 
-        // Updates deferred plugins by removing |loadedPlugin| from the list of their remaining dependecies. Plugins
-        // that have no other remaining dependencies are initialized.
+        /// <summary>
+        /// Updates deferred plugins by removing <paramref name="loadedPlugin"/> from the list of their remaining
+        /// dependecies. Plugins that have no other remaining dependencies are initialized.
+        /// </summary>
+        /// <param name="loadedPlugin">Loaded plugin name.</param>
         private void updateDeferredPlugins(string loadedPlugin)
         {
             // Iterate over deferred plugins and remove |loadedPlugin| from the list of dependencies.
@@ -111,11 +136,14 @@ namespace FIVES
                 deferredPlugins[name].initializer.initialize();
                 loadedPlugins[name] = deferredPlugins[name];
                 deferredPlugins.Remove(name);
-                OnPluginLoaded(name);
+                OnPluginInitialized(name);
             }
         }
 
-        // Loads all valid plugins from the |pluginDirectory|
+        /// <summary>
+        /// Attempts to load all valid plugins from the <paramref name="pluginDirectory"/>.
+        /// </summary>
+        /// <param name="pluginDirectory">Directory in which plugins are too be looked for.</param>
         public void loadPluginsFrom(string pluginDirectory)
         {
             string[] files = Directory.GetFiles(pluginDirectory);
@@ -123,7 +151,11 @@ namespace FIVES
                 loadPlugin(filename);
         }
 
-        // Returns whether plugin in |path| was loaded and initialized.
+        /// <summary>
+        /// Returns whether plugin in assembly at <paramref name="path"/> was loaded and initialized.
+        /// </summary>
+        /// <returns><c>true</c>, if the plugin was initialized, <c>false</c> otherwise.</returns>
+        /// <param name="path">The path to the assembly.</param>
         public bool isPathLoaded(string path)
         {
             // Check if we've attempted loading this filename before.
@@ -140,7 +172,11 @@ namespace FIVES
             return false;
         }
 
-        // Returns whether plugin with |name| is loaded.
+        /// <summary>
+        /// Returns whether plugin with <paramref name="name"/> was loaded and initialized.
+        /// </summary>
+        /// <returns><c>true</c>, if the plugin was initialized, <c>false</c> otherwise.</returns>
+        /// <param name="name">Plugin name.</param>
         public bool isPluginLoaded(string name)
         {
             return loadedPlugins.ContainsKey(name);
