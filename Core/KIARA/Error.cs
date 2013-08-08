@@ -24,16 +24,32 @@ namespace KIARA
         UNSUPPORTED_FEATURE = 0x0507
     }
 
+    /// <summary>
+    /// Represents an error raised by KIARA.
+    /// </summary>
     public class Error : Exception
     {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="KIARA.Error"/> class.
+        /// </summary>
+        /// <param name="code">The error code.</param>
+        /// <param name="reason">The reason.</param>
         public Error(ErrorCode code, string reason)
         {
             Code = code;
             Reason = reason;
         }
 
+        /// <summary>
+        /// Gets the error code.
+        /// </summary>
+        /// <value>The error code.</value>
         public ErrorCode Code { get; private set; }
 
+        /// <summary>
+        /// Gets the reason.
+        /// </summary>
+        /// <value>The reason.</value>
         public string Reason { get; private set; }
     }
 }
