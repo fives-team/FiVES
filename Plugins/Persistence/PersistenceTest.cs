@@ -93,11 +93,11 @@ namespace Persistence
             plugin.initialize();
             plugin.retrieveEntitiesFromDatabase ();
 
-            List<Guid> guidsInRegistry = entityRegistry.getAllGUIDs ();
+            HashSet<Guid> guidsInRegistry = entityRegistry.getAllGUIDs ();
             Console.WriteLine (guidsInRegistry.ToString ());
 
-            Assert.Contains (entityGuid, guidsInRegistry);
-            Assert.Contains (childGuid, guidsInRegistry);
+            Assert.True(guidsInRegistry.Contains(entityGuid));
+            Assert.True(guidsInRegistry.Contains(childGuid));
             Assert.IsTrue (entityRegistry.getEntityByGuid (childGuid).parent.Guid == entityGuid);
         }
 

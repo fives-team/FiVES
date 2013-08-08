@@ -40,9 +40,9 @@ namespace FIVES
 
             var allGUIDs = registry.getAllGUIDs();
 
-            Assert.Contains(g1, allGUIDs);
-            Assert.Contains(g2, allGUIDs);
-            Assert.Contains(g3, allGUIDs);
+            Assert.True(allGUIDs.Contains(g1));
+            Assert.True(allGUIDs.Contains(g2));
+            Assert.True(allGUIDs.Contains(g3));
         }
     }
 }

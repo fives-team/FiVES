@@ -69,8 +69,11 @@ namespace ClientSync {
 
         private List<string> listObjects()
         {
-            List<Guid> guids = EntityRegistry.Instance.getAllGUIDs();
-            return guids.ConvertAll(guid => guid.ToString());
+            HashSet<Guid> guids = EntityRegistry.Instance.getAllGUIDs();
+            List<string> objects = new List<string>();
+            foreach (var guid in guids)
+                objects.Add(guid.ToString());
+            return objects;
         }
 
         private class Position {
