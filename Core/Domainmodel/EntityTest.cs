@@ -32,6 +32,31 @@ namespace FIVES
         }
 
         [Test()]
+        public void shouldCorrectlyRemoveChild()
+        {
+            Entity parentEntity = new Entity ();
+            Entity childEntity = new Entity ();
+            parentEntity.addChildNode (childEntity);
+
+            Assert.True (parentEntity.removeChild (childEntity));
+            Assert.IsEmpty (parentEntity.getAllChildren ());
+            Assert.IsNull (childEntity.parent);
+        }
+
+        [Test()]
+        public void shouldCorrectlyChangeParenthood()
+        {
+            Entity parentEntity_1 = new Entity ();
+            Entity parentEntity_2 = new Entity ();
+            Entity childEntity = new Entity ();
+            parentEntity_1.addChildNode (childEntity);
+            parentEntity_2.addChildNode (childEntity);
+
+            Assert.IsEmpty (parentEntity_1.getAllChildren ());
+            Assert.Contains (childEntity, parentEntity_2.getAllChildren ());
+            Assert.IsTrue (childEntity.parent == parentEntity_2);
+        }
+        [Test()]
         public void shouldCorrectlyRetrieveFirstAndLast()
         {
             Entity parentEntity = new Entity ();
