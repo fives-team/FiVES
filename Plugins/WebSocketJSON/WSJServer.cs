@@ -22,8 +22,15 @@ namespace WebSocketJSON
     }
     #endregion
 
+    /// <summary>
+    /// A simple WebSocket server based on SuperWebSocket library.
+    /// </summary>
     public class WSJServer : WebSocketServer<WSJProtocol>, IWSJServer
     {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="WebSocketJSON.WSJServer"/> class.
+        /// </summary>
+        /// <param name="onNewClient">The handler to be called for each new client.</param>
         public WSJServer(Action<IProtocol> onNewClient)
         {
             NewSessionConnected += (session) => onNewClient(session);

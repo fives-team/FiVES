@@ -19,6 +19,9 @@ namespace WebSocketJSON
 
     #endregion
 
+    /// <summary>
+    /// Call object implementation for WebSocketJSON protocol.
+    /// </summary>
     public class WSJFuncCall : FuncCallBase, IWSJFuncCall
     {
         protected override object convertResult(object result, Type type)
@@ -26,11 +29,19 @@ namespace WebSocketJSON
             return ((JToken)result).ToObject(type);
         }
 
+        /// <summary>
+        /// Handles the successful completion of the call.
+        /// </summary>
+        /// <param name="retValue">Ret value returned from the call.</param>
         public void handleSuccess(JToken retValue)
         {
             base.handleSuccess((object)retValue);
         }
 
+        /// <summary>
+        /// Handles the exception thrown from the call.
+        /// </summary>
+        /// <param name="exception">Exception that was thrown.</param>
         public void handleException(JToken exception)
         {
             base.handleException(new Exception(exception.ToString()));

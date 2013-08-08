@@ -5,6 +5,9 @@ using KIARA;
 
 namespace Editing
 {
+    /// <summary>
+    /// Plugin that allows changing the world by the users.
+    /// </summary>
     public class EditingPlugin : IPluginInitializer
     {
         #region IPluginInitializer implementation
@@ -31,6 +34,14 @@ namespace Editing
             }
         }
 
+        #endregion
+
+        /// <summary>
+        /// Creates an entity at x, y and z.
+        /// </summary>
+        /// <param name="x">The x coordinate.</param>
+        /// <param name="y">The y coordinate.</param>
+        /// <param name="z">The z coordinate.</param>
         public void createEntityAt(float x, float y, float z)
         {
             Entity e = new Entity();
@@ -40,7 +51,9 @@ namespace Editing
             EntityRegistry.Instance.addEntity(e);
         }
 
-        // Register editing APIs with ClientSync plugin.
+        /// <summary>
+        /// Registers editing APIs with the ClientSync plugin.
+        /// </summary>
         private void registerEditingAPI() {
             var context = new Context();
             string pluginConfig = "data:text/json;base64,ewogICdpbmZvJzogJ0NsaWVudFN5bmNQbHVnaW4nLAogICdpZGxDb250" +
@@ -51,8 +64,6 @@ namespace Editing
                 registerClientMethod("editing.createEntityAt", (Action<float, float, float>)createEntityAt);
             });
         }
-
-        #endregion
     }
 }
 

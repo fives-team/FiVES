@@ -5,6 +5,9 @@ using FIVES;
 
 namespace ClientSync {
 
+    /// <summary>
+    /// Implements a plugin that can be used to communicate with clients using KIARA.
+    /// </summary>
     public class ClientSyncPlugin : IPluginInitializer
     {
         #region IPluginInitializer implementation
@@ -41,21 +44,6 @@ namespace ClientSync {
         }
 
         #endregion
-
-        // This plugin uses KIARA to communicate with the clients. The following services are supported:
-        //
-        // service kiara {
-        //   bool[] implements(string[] services);
-        // }
-        //
-        // struct Position {
-        //   float x, y, z;
-        // }
-        //
-        // service clientsync {
-        //   string[] listObjects();
-        //   Position getObjectPosition(string objID);
-        // }
 
         private readonly List<string> supportedServices = new List<string> {
             "kiara",

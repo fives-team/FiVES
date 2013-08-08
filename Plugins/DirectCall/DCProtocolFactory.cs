@@ -5,8 +5,13 @@ using KIARA;
 
 namespace DirectCall
 {
-    // TODO: This can be rewritten such that the server is running on a different thread. For this we need to add
-    // synchronization primities to avoid race conditions.
+    /// <summary>
+    /// DirectCall protocol factory implementation.
+    /// </summary>
+    /// <remarks>
+    /// TODO: This should be rewritten such that the server is running on a different thread. For this we need to add
+    /// synchronization primities to avoid race conditions.
+    /// </remarks>
     public class DCProtocolFactory : IProtocolFactory
     {
         #region IProtocolFactory implementation

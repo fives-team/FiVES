@@ -4,6 +4,9 @@ using System.Collections.Generic;
 
 namespace Location
 {
+    /// <summary>
+    /// Plugin that registers two components - position and orientation. Does not provide any associated functionality.
+    /// </summary>
     public class LocationPlugin : IPluginInitializer
     {
         #region IPluginInitializer implementation

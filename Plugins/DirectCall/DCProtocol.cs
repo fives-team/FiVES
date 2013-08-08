@@ -5,6 +5,9 @@ using KIARA;
 
 namespace DirectCall
 {
+    /// <summary>
+    /// DirectCall protocol implementation.
+    /// </summary>
     class DCProtocol : IProtocol
     {
         #region IProtocol implementation

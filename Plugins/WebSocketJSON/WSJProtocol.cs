@@ -8,34 +8,92 @@ using System.Reflection;
 
 namespace WebSocketJSON
 {
+    /// <summary>
+    /// An exception that is thrown when an unregistered method is invoked by the remote end.
+    /// </summary>
     public class UnregisteredMethod : Exception
     {
         public UnregisteredMethod() : base() { }
         public UnregisteredMethod(string message) : base(message) { }
     }
 
+    /// <summary>
+    /// An exception that is thrown when the number of passed arguments does not match the number of arguments in the
+    /// registered call handler.
+    /// </summary>
     public class InvalidNumberOfArgs : Exception
     {
         public InvalidNumberOfArgs() : base() { }
         public InvalidNumberOfArgs(string message) : base(message) { }
     }
 
+    /// <summary>
+    /// An exception that is thrown when an unknown call ID was returned with a call-reply message.
+    /// </summary>
     public class UnknownCallID : Exception
     {
         public UnknownCallID() : base() { }
         public UnknownCallID(string message) : base(message) { }
     }
 
+    /// <summary>
+    /// An exception that is thrown when a handler for the method have already be registered before. Only one handler
+    /// may be registered for one method.
+    /// </summary>
     public class HandlerAlreadyRegistered : Exception
     {
         public HandlerAlreadyRegistered() : base() { }
         public HandlerAlreadyRegistered(string message) : base(message) { }
     }
 
+    /// <summary>
+    /// WebSocketJSON protocol implementation.
+    /// </summary>
     public class WSJProtocol : WebSocketSession<WSJProtocol>, IProtocol
     {
         public WSJProtocol() : this(new WSJFuncCallFactory()) {}
 
+        #region IProtocol implementation
+
+        public void processIDL(string parsedIDL)
+        {
+            // TODO
+        }
+
+        public IFuncCall callFunc(string name, params object[] args)
+        {
+            int callID = nextCallID++;
+            List<object> callMessage = new List<object>();
+            callMessage.Add("call");
+            callMessage.Add(callID);
+            callMessage.Add(name);
+            callMessage.AddRange(args);
+            string serializedMessage = JsonConvert.SerializeObject(callMessage);
+            Send(serializedMessage);
+
+            if (isOneWay(name))
+                return null;
+
+            IWSJFuncCall callObj = wsjFuncCallFactory.construct();
+
+            activeCalls.Add(callID, callObj);
+            return callObj;
+        }
+
+        public void registerHandler(string name, Delegate handler)
+        {
+            if (registeredFunctions.ContainsKey(name))
+                throw new HandlerAlreadyRegistered("Handler with " + name + " is already registered.");
+
+            registeredFunctions[name] = handler;
+        }
+
+        #endregion
+
+        /// <summary>
+        /// Handles the close event. All calls are completely with an error.
+        /// </summary>
+        /// <param name="reason">The reason for the close event.</param>
         public void handleClose(SuperSocket.SocketBase.CloseReason reason)
         {
             foreach (var call in activeCalls)
@@ -43,6 +101,10 @@ namespace WebSocketJSON
             activeCalls.Clear();
         }
 
+        /// <summary>
+        /// Handles an incoming message.
+        /// </summary>
+        /// <param name="message">The incoming message.</param>
         public void handleMessage(string message)
         {
             List<JToken> data = null;
@@ -118,31 +180,6 @@ namespace WebSocketJSON
                 throw new Error(ErrorCode.CONNECTION_ERROR, "Unknown message type: " + msgType);
         }
 
-        public void processIDL(string parsedIDL)
-        {
-            // TODO
-        }
-
-        public IFuncCall callFunc(string name, params object[] args)
-        {
-            int callID = nextCallID++;
-            List<object> callMessage = new List<object>();
-            callMessage.Add("call");
-            callMessage.Add(callID);
-            callMessage.Add(name);
-            callMessage.AddRange(args);
-            string serializedMessage = JsonConvert.SerializeObject(callMessage);
-            Send(serializedMessage);
-
-            if (isOneWay(name))
-                return null;
-
-            IWSJFuncCall callObj = wsjFuncCallFactory.construct();
-
-            activeCalls.Add(callID, callObj);
-            return callObj;
-        }
-
         private bool isOneWay(string qualifiedMethodName)
         {
             List<string> onewayMethods = new List<string> {
@@ -150,14 +187,6 @@ namespace WebSocketJSON
             };
 
             return onewayMethods.Contains(qualifiedMethodName);
-        }
-
-        public void registerHandler(string name, Delegate handler)
-        {
-            if (registeredFunctions.ContainsKey(name))
-                throw new HandlerAlreadyRegistered("Handler with " + name + " is already registered.");
-
-            registeredFunctions[name] = handler;
         }
 
         private int nextCallID = 0;

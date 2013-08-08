@@ -3,6 +3,9 @@ using KIARA;
 
 namespace DirectCall
 {
+    /// <summary>
+    /// Call object implementation for DirectCall protocol.
+    /// </summary>
     public class DCFuncCall : FuncCallBase
     {
         protected override object convertResult(object result, Type type)

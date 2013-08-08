@@ -4,9 +4,17 @@ using Newtonsoft.Json.Linq;
 
 namespace WebSocketJSON
 {
+    /// <summary>
+    /// WebSocketJSON protocol factory implementation.
+    /// </summary>
     public class WSJProtocolFactory : IProtocolFactory
     {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="WebSocketJSON.WSJProtocolFactory"/> class.
+        /// </summary>
         public WSJProtocolFactory() : this(new WSJServerFactory()) {}
+
+        #region IProtocolFactory implementation
 
         public void openConnection(Server serverConfig, Action<IProtocol> onConnected)
         {
@@ -27,6 +35,8 @@ namespace WebSocketJSON
             server.Setup(ip, port);
             server.Start();
         }
+
+        #endregion
 
         #region Testing
 
