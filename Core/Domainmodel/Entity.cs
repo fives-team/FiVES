@@ -44,6 +44,9 @@ namespace FIVES
             if (this.children.Contains (childEntity))
                 return false;
 
+            if (childEntity.parent != null)
+                childEntity.parent.removeChild (childEntity);
+
             childEntity.parent = this;
             this.children.Add (childEntity);
             return true;
