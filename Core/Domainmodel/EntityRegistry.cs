@@ -14,13 +14,12 @@ namespace FIVES
         {
             Guid newGUID = Guid.NewGuid();
             entity.Guid = newGUID;
-            this.addEntityWithGUID(entity, newGUID);
+            this.addEntityWithGUID(entity);
             return newGUID;
         }
 
-        public void addEntityWithGUID(Entity entity, Guid guid)
         {
-            entities[guid] = entity;
+            entities[entity.Guid] = entity;
         }
         // Removes an entity with a given |guid|. Returns false if such entity was not found.
         public bool removeEntity(Guid guid)
