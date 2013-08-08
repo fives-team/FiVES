@@ -12,11 +12,21 @@ namespace KIARA
     }
     #endregion
 
+    /// <summary>
+    /// Protocol registry. Allows to register new protocol types and their implementations.
+    /// </summary>
     public class ProtocolRegistry : IProtocolRegistry
     {
+        /// <summary>
+        /// Default instance of the protocol registry. This should be used instead of creating a new instance.
+        /// </summary>
         public readonly static ProtocolRegistry Instance = new ProtocolRegistry();
 
-        // Registers a protocol |factory| for the |protocol|.
+        /// <summary>
+        /// Registers a protocol <paramref name="factory"/> for the <paramref name="protocol"/>.
+        /// </summary>
+        /// <param name="protocol">Protocol name.</param>
+        /// <param name="factory">Protocol factory.</param>
         public void registerProtocolFactory(string protocol, IProtocolFactory factory)
         {
             if (protocol == null)
@@ -28,14 +38,23 @@ namespace KIARA
             registeredProtocols[protocol] = factory;
         }
 
-        // Returns protocol factory for |protocol|. If protocol is not registered, throws an exception.
+        /// <summary>
+        /// Returns protocol factory for <paramref name="protocol"/>. If protocol is not registered, an exception is
+        /// thrown.
+        /// </summary>
+        /// <returns>The protocol factory.</returns>
+        /// <param name="protocol">Protocol name.</param>
         public IProtocolFactory getProtocolFactory(string protocol) {
             if (isRegistered(protocol))
                 return registeredProtocols[protocol];
             throw new Error(ErrorCode.GENERIC_ERROR, "Protocol " + protocol + " is not registered.");
         }
 
-        // Returns whether a factory for the |protocol| is registered.
+        /// <summary>
+        /// Returns whether a factory for the <paramref name="protocol"/> is registered.
+        /// </summary>
+        /// <returns><c>true</c>, if <paramref name="protocol"/> is registered, <c>false</c> otherwise.</returns>
+        /// <param name="protocol">Protocol name.</param>
         public bool isRegistered(string protocol) {
             return registeredProtocols.ContainsKey(protocol);
         }

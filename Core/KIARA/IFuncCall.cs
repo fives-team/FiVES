@@ -11,8 +11,10 @@ namespace KIARA
         public TimeoutException(string message) : base(message) { }
     }
 
-    // Represents an initiated call to the remote function. May be used to set up handlers for various outcomes and/or
-    // wait for the completion of the call.
+    /// <summary>
+    /// Represents an initiated call to the remote function. May be used to set up handlers for various outcomes and/or
+    /// wait for the completion of the call.
+    /// </summary>
     public interface IFuncCall
     {
         /// <summary>
@@ -45,12 +47,12 @@ namespace KIARA
         /// error is passed as a first argument to the <paramref name="handler"/>. When the error is reported the
         /// outcome of the call on the remote end is unknown.
         /// </summary>
-        /// <returns>The error.</returns>
-        /// <param name="handler">Handler.</param>
+        /// <returns>This call object.</returns>
+        /// <param name="handler">Handler to be executed when error happened during the call.</param>
         IFuncCall onError(Action<string> handler);
 
         /// <summary>
-        /// Executes the call syncrhonously. Converts a value returned from the call into type <typeparamref name="T"> 
+        /// Executes the call syncrhonously. Converts a value returned from the call into type <typeparamref name="T">
         /// and returns it. On error a <see cref="KIARA.Error"/> exception is raised. Remote exceptions are raised 
         /// locally. All assigned handlers for this call are executed before returning from this call. Times out after
         /// <paramref name="millisecondsTimeout"/> and throws <see cref="TimeoutException"/>. If 

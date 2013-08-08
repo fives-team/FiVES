@@ -24,6 +24,9 @@ namespace KIARA
     }
     #endregion
 
+    /// <summary>
+    /// Represents an independent context for KIARA.
+    /// </summary>
     public class Context
     {
         /// <summary>
