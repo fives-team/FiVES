@@ -18,6 +18,15 @@ namespace KIARA
             return this;
         }
 
+        public IFuncCall onSuccess(Action handler)
+        {
+            if (state == State.InProgress)
+                successHandlers.Add(handler);
+            else if (state == State.Success)
+                handler();
+            return this;
+        }
+
         public IFuncCall onException(Action<Exception> handler)
         {
             if (state == State.InProgress)
@@ -67,9 +76,13 @@ namespace KIARA
             result = retValue;
 
             foreach (var handler in successHandlers) {
-                Debug.Assert(handler.Method.GetParameters().Length == 1);
-                Type argType = handler.Method.GetParameters()[0].GetType();
-                handler.DynamicInvoke(convertResult(retValue, argType));
+                Debug.Assert(handler.Method.GetParameters().Length <= 1);
+                if (handler.Method.GetParameters().Length == 0) {
+                    handler.DynamicInvoke();
+                } else {
+                    Type argType = handler.Method.GetParameters()[0].GetType();
+                    handler.DynamicInvoke(convertResult(retValue, argType));
+                }
             }
 
             successHandlers.Clear();

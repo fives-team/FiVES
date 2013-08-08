@@ -15,6 +15,8 @@ namespace KIARA
         // |handler|.
         IFuncCall onSuccess<T>(Action<T> handler);
 
+        IFuncCall onSuccess(Action handler);
+
         // Sets up an exception |handler|, which gets passed an exception that was raised.
         IFuncCall onException(Action<Exception> handler);
 
