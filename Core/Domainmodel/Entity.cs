@@ -49,6 +49,16 @@ namespace FIVES
             return true;
         }
 
+        public bool removeChild(Entity entity)
+        {
+            if (!this.children.Contains (entity))
+                return false;
+
+            entity.parent = null;
+            this.children.Remove (entity);
+            return true;
+        }
+
         public List<Entity> getAllChildren()
         {
             return children;
