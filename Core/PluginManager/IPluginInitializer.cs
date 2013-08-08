@@ -3,22 +3,30 @@ using System.Collections.Generic;
 
 namespace FIVES
 {
-    // Plugins must have one class implementing this interface. This plugin manager will find this class and create its
-    // instance. Plugin authors may use this to perform initialization of the plugin-specific datastructures. Later we
-    // may add more functions into this interface, so that all plugins can provide us with some extra meta-information,
-    // e.g. a name, a list of dependencies etc.
-    //
-    // IMPORTANT: Plugin authors must make sure that an object implementing this interface can be constructed via a
-    // parameterless constructor.
+    /// <summary>
+    /// An interface that must be implemented by one class in a plugin. Plugin manager will find such class, create its 
+    /// instance using <b>parameterless constructor</b> and use its methods to extra meta-info about and initialize 
+    /// plugin. The plugin manager may construct the instance at any time, but will only call <see cref="initialize"/> 
+    /// when all the dependency plugins identified by <see cref="getDependencies"/>  have been loaded.
+    /// </summary>
     public interface IPluginInitializer
     {
-        // Should return a name of the plugin.
+        /// <summary>
+        /// Rerturns the name of the plugin.
+        /// </summary>
+        /// <returns>The name of the plugin.</returns>
         string getName();
 
-        // Should return a list of dependencies of the plugin.
+        /// <summary>
+        /// Returns the list of names of the plugins that this plugin depends on.
+        /// </summary>
+        /// <returns>The list of names of the plugins that this plugin depends on.</returns>
         List<string> getDependencies();
 
-        // Will be run when all dependencies have been initialized.
+        /// <summary>
+        /// Initializes the plugin. This method will be called by the plugin manager when all dependency plugins have
+        /// been loaded.
+        /// </summary>
         void initialize();
 
     }
