@@ -65,9 +65,9 @@ namespace FIVES
         ///  Returns a list of all entities' GUIDs.
         /// </summary>
         /// <returns>The all GUI ds.</returns>
-        public List<Guid> getAllGUIDs()
+        public HashSet<Guid> getAllGUIDs()
         {
-            List<Guid> res = new List<Guid>();
+            HashSet<Guid> res = new HashSet<Guid>();
             foreach (Guid guid in entities.Keys)
                 res.Add(guid);
             return res;
