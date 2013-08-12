@@ -1,6 +1,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 
 namespace FIVES
 {
@@ -11,6 +12,12 @@ namespace FIVES
     {
         public readonly static EntityRegistry Instance = new EntityRegistry();
 
+        public delegate void EntityAdded (Guid newEntityGuid);
+        public delegate void EntityRemoved (Guid removedEntityGuid);
+
+        public event EntityAdded OnEntityAdded;
+        public event EntityRemoved OnEntityRemoved;
+
         /// <summary>
         /// Adds a new entity to the database.
         /// </summary>
@@ -18,6 +25,7 @@ namespace FIVES
         public void addEntity(Entity entity)
         {
             entities[entity.Guid] = entity;
+			OnEntityAdded (entity.Guid);
         }
 
         /// <summary>
@@ -39,6 +47,7 @@ namespace FIVES
         {
             if (entities.ContainsKey(guid)) {
                 entities.Remove(guid);
+                OnEntityRemoved (guid);
                 return true;
             }
 
@@ -70,7 +79,15 @@ namespace FIVES
         }
 
         // Users should not construct EntityRegistry on their own, but use EntityRegistry.Instance instead.
-        internal EntityRegistry() {}
+        internal EntityRegistry() {
+            OnEntityAdded += delegate(Guid newEntityGuid) {
+                Debug.WriteLine("Added new Entity " + newEntityGuid);
+           };
+
+            OnEntityRemoved += delegate(Guid newEntityGuid) {
+                Debug.WriteLine("Removed Entity " + newEntityGuid);
+            };
+        }
 
         /// <summary>
         /// All registered entities, indexed by their Guids
