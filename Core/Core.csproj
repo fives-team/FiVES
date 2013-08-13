@@ -76,12 +76,14 @@
     <Compile Include="KIARA\ProtocolUtilsTest.cs" />
     <Compile Include="KIARA\ProtocolRegistryTest.cs" />
     <Compile Include="KIARA\TestingWrappers.cs" />
+    <Compile Include="Events\ElementChangedEventArgs.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
     <Folder Include="Domainmodel\" />
     <Folder Include="KIARA\" />
     <Folder Include="PluginManager\" />
+    <Folder Include="Events\" />
   </ItemGroup>
   <ItemGroup>
     <None Include="PluginManager\TestPlugins\invalid_assembly.dll" />

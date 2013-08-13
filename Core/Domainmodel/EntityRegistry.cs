@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using Events;
 
 namespace FIVES
 {
@@ -12,8 +13,8 @@ namespace FIVES
     {
         public readonly static EntityRegistry Instance = new EntityRegistry();
 
-        public delegate void EntityAdded (Guid newEntityGuid);
-        public delegate void EntityRemoved (Guid removedEntityGuid);
+        public delegate void EntityAdded (Object sender, EntityAddedOrRemovedEventArgs e);
+        public delegate void EntityRemoved (Object sender, EntityAddedOrRemovedEventArgs e);
 
         public event EntityAdded OnEntityAdded;
         public event EntityRemoved OnEntityRemoved;
@@ -25,7 +26,7 @@ namespace FIVES
         public void addEntity(Entity entity)
         {
             entities[entity.Guid] = entity;
-			OnEntityAdded (entity.Guid);
+			OnEntityAdded (this, new EntityAddedOrRemovedEventArgs(entity.Guid));
         }
 
         /// <summary>
@@ -35,7 +36,7 @@ namespace FIVES
         /// <param name="entity">Entity that should be removed.</param>
         public bool removeEntity(Entity entity)
         {
-            return removeEntity(entity.Guid);
+            return removeEntity(entity.Guid);         
         }
 
         /// <summary>
@@ -47,7 +48,7 @@ namespace FIVES
         {
             if (entities.ContainsKey(guid)) {
                 entities.Remove(guid);
-                OnEntityRemoved (guid);
+                OnEntityRemoved (this, new EntityAddedOrRemovedEventArgs(guid));
                 return true;
             }
 
@@ -80,15 +81,17 @@ namespace FIVES
 
         // Users should not construct EntityRegistry on their own, but use EntityRegistry.Instance instead.
         internal EntityRegistry() {
-            OnEntityAdded += delegate(Guid newEntityGuid) {
-                Debug.WriteLine("Added new Entity " + newEntityGuid);
-           };
-
-            OnEntityRemoved += delegate(Guid newEntityGuid) {
-                Debug.WriteLine("Removed Entity " + newEntityGuid);
-            };
+            OnEntityAdded += new EntityAdded (handleOnNewEntity);
+            OnEntityRemoved += new EntityRemoved (handleOnEntityRemoved);
         }
 
+        private void handleOnNewEntity(Object sender, EntityAddedOrRemovedEventArgs e) {
+            Debug.WriteLine ("Added Entity " + e.elementId);
+        }
+
+        private void handleOnEntityRemoved(Object sender, EntityAddedOrRemovedEventArgs e) {
+            Debug.WriteLine ("Removed Entity " + e.elementId);
+        }
         /// <summary>
         /// All registered entities, indexed by their Guids
         /// </summary>
