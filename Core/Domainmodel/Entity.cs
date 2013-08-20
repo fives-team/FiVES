@@ -11,7 +11,7 @@ namespace FIVES
 
     public class Entity
     {
-        public Guid Guid { get; set; }
+        public Guid Guid { get; private set; }
         private IDictionary<string, Component> components { get; set; }
         public Entity parent { get; set; }
         private List<Entity> children  = new List<Entity> ();
@@ -20,7 +20,10 @@ namespace FIVES
         public Entity ()
         {
             componentRegistry = ComponentRegistry.Instance;
-            this.components = new Dictionary<string, Component>();
+            components = new Dictionary<string, Component>();
+
+            // Generate new GUID for this entity.
+            Guid = Guid.NewGuid();
         }
 
         public Component this [string index]

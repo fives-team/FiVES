@@ -12,26 +12,22 @@ namespace FIVES
         public readonly static EntityRegistry Instance = new EntityRegistry();
 
         /// <summary>
-        /// Adds a new entity without any Guid assigned yet to the database.
-        ///  A new Guid is generated for the entity and returned by the function
+        /// Adds a new entity to the database.
         /// </summary>
-        /// <returns>Guid assigned to the new Entity</returns>
         /// <param name="entity">Entity that is to be added to the registry</param>
-        public Guid addEntity(Entity entity)
+        public void addEntity(Entity entity)
         {
-            Guid newGUID = Guid.NewGuid();
-            entity.Guid = newGUID;
-            this.addEntityWithGUID(entity);
-            return newGUID;
+            entities[entity.Guid] = entity;
         }
 
         /// <summary>
-        /// Adds an entity that has already a Guid assigned to the registry.
+        ///  Removes a given <paramref name="entity"/>. Returns false if such entity was not found.
         /// </summary>
-        /// <param name="entity">Entity to be added to the registry</param>
-        public void addEntityWithGUID(Entity entity)
+        /// <returns><c>true</c>, if entity was removed, <c>false</c> otherwise.</returns>
+        /// <param name="entity">Entity that should be removed.</param>
+        public bool removeEntity(Entity entity)
         {
-            entities[entity.Guid] = entity;
+            return removeEntity(entity.Guid);
         }
 
         /// <summary>
@@ -54,7 +50,7 @@ namespace FIVES
         /// </summary>
         /// <returns>The entity by GUID.</returns>
         /// <param name="guid">GUID.</param>
-        public Entity getEntityByGuid(Guid guid)
+        public Entity getEntity(Guid guid)
         {
             if (entities.ContainsKey(guid))
                 return entities[guid];

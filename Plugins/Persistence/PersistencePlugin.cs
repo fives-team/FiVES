@@ -44,9 +44,7 @@ namespace Persistence
             var session = sessionFactory.OpenSession ();
             IList<Entity> entitiesInDatabase = session.CreateQuery ("from " + typeof(Entity)).List<Entity> ();
             foreach (Entity e in entitiesInDatabase)
-            {
-                EntityRegistry.Instance.addEntityWithGUID (e);
-            }
+                EntityRegistry.Instance.addEntity(e);
         }
 
         private Configuration nHibernateConfiguration = new Configuration();

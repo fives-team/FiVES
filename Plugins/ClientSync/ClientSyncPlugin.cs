@@ -69,7 +69,7 @@ namespace ClientSync {
         }
 
         private Position getObjectPosition(string guid) {
-            var entity = EntityRegistry.Instance.getEntityByGuid(new Guid(guid));
+            var entity = EntityRegistry.Instance.getEntity(new Guid(guid));
             var pos = new Position();
             pos.x = (float)entity["position"].getFloatAttribute("x");
             pos.y = (float)entity["position"].getFloatAttribute("y");

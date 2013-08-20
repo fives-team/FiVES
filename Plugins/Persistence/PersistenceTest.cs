@@ -45,7 +45,7 @@ namespace Persistence
             componentRegistry.defineComponent("myComponent", Guid.NewGuid(), layout);
 
             Entity entity = new Entity();
-            Guid entityGuid = entityRegistry.addEntity(entity);
+            entityRegistry.addEntity(entity);
             entity["myComponent"].setIntAttribute("IntAttribute", 42);
             entity["myComponent"].setStringAttribute("StringAttribute", "Hello World!");
 
@@ -54,13 +54,13 @@ namespace Persistence
             session.Save (entity);
             trans.Commit ();
 
-            entityRegistry.removeEntity (entityGuid);
+            entityRegistry.removeEntity (entity.Guid);
 
             PersistencePlugin plugin = new PersistencePlugin ();
             plugin.initialize();
             plugin.retrieveEntitiesFromDatabase ();
 
-            Entity storedEntity = entityRegistry.getEntityByGuid (entityGuid);
+            Entity storedEntity = entityRegistry.getEntity(entity.Guid);
             Assert.IsTrue (storedEntity ["myComponent"].getIntAttribute ("IntAttribute") == 42);
             Assert.IsTrue (storedEntity ["myComponent"].getStringAttribute ("StringAttribute") == "Hello World!");
 
@@ -73,11 +73,11 @@ namespace Persistence
             Entity childEntity = new Entity ();
             Assert.True(entity.addChildNode (childEntity));
 
-            var entityGuid = entityRegistry.addEntity (entity);
-            var childGuid = entityRegistry.addEntity (childEntity);
+            entityRegistry.addEntity (entity);
+            entityRegistry.addEntity (childEntity);
 
-            Console.WriteLine ("Entity Guid: " + entityGuid);
-            Console.WriteLine ("Child  Guid: " + childGuid);
+            Console.WriteLine ("Entity Guid: " + entity.Guid);
+            Console.WriteLine ("Child  Guid: " + childEntity.Guid);
 
             // Transfer entities to Database
             var session = sessionFactory.OpenSession ();
@@ -86,8 +86,8 @@ namespace Persistence
             session.Save (childEntity);
             trans.Commit ();
 
-            entityRegistry.removeEntity (entityGuid);
-            entityRegistry.removeEntity (childGuid);
+            entityRegistry.removeEntity (entity.Guid);
+            entityRegistry.removeEntity (childEntity.Guid);
 
             PersistencePlugin plugin = new PersistencePlugin ();
             plugin.initialize();
@@ -96,9 +96,9 @@ namespace Persistence
             HashSet<Guid> guidsInRegistry = entityRegistry.getAllGUIDs ();
             Console.WriteLine (guidsInRegistry.ToString ());
 
-            Assert.True(guidsInRegistry.Contains(entityGuid));
-            Assert.True(guidsInRegistry.Contains(childGuid));
-            Assert.IsTrue (entityRegistry.getEntityByGuid (childGuid).parent.Guid == entityGuid);
+            Assert.True(guidsInRegistry.Contains(entity.Guid));
+            Assert.True(guidsInRegistry.Contains(childEntity.Guid));
+            Assert.IsTrue (entityRegistry.getEntity (childEntity.Guid).parent.Guid == entity.Guid);
         }
 
         [Test()]
