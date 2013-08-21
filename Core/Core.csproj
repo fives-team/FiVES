@@ -80,6 +80,7 @@
     <Compile Include="Events\AttributeChangedEventArgs.cs" />
     <Compile Include="Events\EventTests.cs" />
     <Compile Include="Events\AttributeInComponentEventArgs.cs" />
+    <Compile Include="Events\PluginLoadedEventArgs.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

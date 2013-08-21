@@ -2,6 +2,7 @@ using System;
 using FIVES;
 using System.Collections.Generic;
 using KIARA;
+using Events;
 
 namespace Editing
 {
@@ -27,8 +28,8 @@ namespace Editing
             if (PluginManager.Instance.isPluginLoaded("ClientSync")) {
                 registerEditingAPI();
             } else {
-                PluginManager.Instance.OnPluginInitialized += delegate(string pluginName) {
-                    if (pluginName == "ClientSync")
+                PluginManager.Instance.OnPluginInitialized += delegate(Object sender, PluginLoadedEventArgs e) {
+                    if (e.pluginName == "ClientSync")
                         registerEditingAPI();
                 };
             }

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
 using NLog;
+using Events;
 
 namespace FIVES
 {
@@ -20,7 +21,7 @@ namespace FIVES
         /// Delegate to be used with <see cref="OnPluginInitialized"/>
         /// </summary>
         /// <param name="pluginName">Name of the initialized plugin</param>
-        public delegate void PluginLoaded(string pluginName);
+        public delegate void PluginLoaded(Object sender, PluginLoadedEventArgs e);
 
         /// <summary>
         /// Occurs when a plugin is initialized.
@@ -105,7 +106,7 @@ namespace FIVES
                     // Initialize plugin.
                     info.initializer.initialize();
                     loadedPlugins.Add(name, info);
-                    OnPluginInitialized(name);
+                    OnPluginInitialized(this, new PluginLoadedEventArgs(name));
                 } catch (Exception e) {
                     logger.WarnException("Failed to load file " + path + " as a plugin.", e);
                     return;
@@ -118,11 +119,11 @@ namespace FIVES
         /// dependecies. Plugins that have no other remaining dependencies are initialized.
         /// </summary>
         /// <param name="loadedPlugin">Loaded plugin name.</param>
-        private void updateDeferredPlugins(string loadedPlugin)
+        private void updateDeferredPlugins(Object sender, PluginLoadedEventArgs e)
         {
             // Iterate over deferred plugins and remove |loadedPlugin| from the list of dependencies.
             foreach (var info in deferredPlugins.Values)
-                info.remainingDeps.Remove(loadedPlugin);
+                info.remainingDeps.Remove(e.pluginName);
 
             // Find plugins that have no other dependencies.
             List<string> pluginsWithNoDeps = new List<string>();
@@ -136,7 +137,7 @@ namespace FIVES
                 deferredPlugins[name].initializer.initialize();
                 loadedPlugins[name] = deferredPlugins[name];
                 deferredPlugins.Remove(name);
-                OnPluginInitialized(name);
+                OnPluginInitialized(this, new PluginLoadedEventArgs(name));
             }
         }
 
