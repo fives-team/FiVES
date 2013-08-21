@@ -23,7 +23,7 @@ namespace FIVES
     public interface IPluginInitializer
     {
         /// <summary>
-        /// Rerturns the name of the plugin.
+        /// Returns the name of the plugin.
         /// </summary>
         /// <returns>The name of the plugin.</returns>
         string getName();
