@@ -2,7 +2,7 @@ using System;
 
 namespace Events
 {
-    public class AttributeChangedEventArgs
+    public class AttributeChangedEventArgs : EventArgs
     {
         public AttributeChangedEventArgs (string attributeName, object value)
         {
