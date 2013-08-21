@@ -56,6 +56,27 @@ namespace Events
             newEntity ["MyComponent"].setIntAttribute ("a", (int)valueToSet);
             Assert.IsTrue (wasRaised);
         }
+
+        [Test()]
+        public void shouldRaiseAttributeInComponentChanged()
+        {
+            ComponentLayout layout = new ComponentLayout ();
+            layout.attributes ["a"] = AttributeType.INT;
+            ComponentRegistry.Instance.defineComponent ("MyComponent", new Guid (), layout);
+            Entity newEntity = new Entity ();
+            bool wasRaised = false;
+
+            object valueToSet = 42;
+            newEntity.OnAttributeInComponentChanged += delegate(object sender, AttributeInComponentEventArgs e) {
+                wasRaised = true;
+                Assert.AreEqual(e.componentName, "MyComponent");
+                Assert.AreEqual(e.attributeName, "a");
+                Assert.AreEqual(e.newValue, valueToSet);
+           };
+
+            newEntity ["MyComponent"].setIntAttribute ("a", (int)valueToSet);
+            Assert.IsTrue (wasRaised);
+        }
     }
 }
 

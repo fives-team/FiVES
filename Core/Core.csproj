@@ -79,6 +79,7 @@
     <Compile Include="Events\EntityAddedOrRemovedEventArgs.cs" />
     <Compile Include="Events\AttributeChangedEventArgs.cs" />
     <Compile Include="Events\EventTests.cs" />
+    <Compile Include="Events\AttributeInComponentEventArgs.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

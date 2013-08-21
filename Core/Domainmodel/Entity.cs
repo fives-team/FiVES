@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Events;
 
 namespace FIVES
 {
@@ -17,6 +18,9 @@ namespace FIVES
         private List<Entity> children  = new List<Entity> ();
         private ComponentRegistry componentRegistry;
 
+        public delegate void AttributeInComponentChanged(Object sender, AttributeInComponentEventArgs e);
+        public event AttributeInComponentChanged OnAttributeInComponentChanged;
+
         public Entity ()
         {
             componentRegistry = ComponentRegistry.Instance;
@@ -32,6 +36,10 @@ namespace FIVES
                 if (!components.ContainsKey(index)) {
                     if (componentRegistry.isRegistered(index)) {
                         components[index] = componentRegistry.getComponentInstance(index);
+                        components[index].OnAttributeChanged += delegate(object sender, AttributeChangedEventArgs e) {
+                            if(this.OnAttributeInComponentChanged != null)
+                                this.OnAttributeInComponentChanged(this, new AttributeInComponentEventArgs(index, e.attributeName, e.value));
+                       };
                     } else {
                         throw new ComponentIsNotDefinedException("Cannot create component '" + index + "' as its " +
                                                                  "type is not registered with the ComponentRegistry");
