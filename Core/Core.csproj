@@ -78,6 +78,7 @@
     <Compile Include="KIARA\TestingWrappers.cs" />
     <Compile Include="Events\EntityAddedOrRemovedEventArgs.cs" />
     <Compile Include="Events\AttributeChangedEventArgs.cs" />
+    <Compile Include="Events\EventTests.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
