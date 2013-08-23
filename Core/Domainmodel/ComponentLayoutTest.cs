@@ -16,19 +16,19 @@ namespace FIVES
         public void differentEntriesShouldBeNotEqual()
         {
             ComponentLayout layout1 = new ComponentLayout ();
-            layout1.attributes = new Dictionary<string, AttributeType> ();
-            layout1.attributes ["attribute1"] = AttributeType.INT;
-            layout1.attributes ["attribute2"] = AttributeType.FLOAT;
+            layout1.attributes = new Dictionary<string, Type> ();
+            layout1.attributes ["attribute1"] = typeof(int);
+            layout1.attributes ["attribute2"] = typeof(float);
 
             ComponentLayout layout2 = new ComponentLayout ();
-            layout2.attributes = new Dictionary<string, AttributeType> ();
-            layout2.attributes ["attribute1"] = AttributeType.INT;
-            layout2.attributes ["attribute2"] = AttributeType.INT;
+            layout2.attributes = new Dictionary<string, Type> ();
+            layout2.attributes ["attribute1"] = typeof(int);
+            layout2.attributes ["attribute2"] = typeof(int);
 
             ComponentLayout layout3 = new ComponentLayout ();
-            layout3.attributes = new Dictionary<string, AttributeType> ();
-            layout3.attributes ["attribute1"] = AttributeType.INT;
-            layout3.attributes ["attribute3"] = AttributeType.FLOAT;
+            layout3.attributes = new Dictionary<string, Type> ();
+            layout3.attributes ["attribute1"] = typeof(int);
+            layout3.attributes ["attribute3"] = typeof(float);
 
             Assert.IsFalse (layout1 == layout2);
             Assert.IsFalse (layout1 == layout3);
@@ -41,14 +41,14 @@ namespace FIVES
         public void sameEntriesShouldBeEqual()
         {
             ComponentLayout layout1 = new ComponentLayout ();
-            layout1.attributes = new Dictionary<string, AttributeType> ();
-            layout1.attributes ["attribute1"] = AttributeType.INT;
-            layout1.attributes ["attribute2"] = AttributeType.FLOAT;
+            layout1.attributes = new Dictionary<string, Type> ();
+            layout1.attributes ["attribute1"] = typeof(int);
+            layout1.attributes ["attribute2"] = typeof(float);
 
             ComponentLayout layout2 = new ComponentLayout ();
-            layout2.attributes = new Dictionary<string, AttributeType> ();
-            layout2.attributes ["attribute1"] = AttributeType.INT;
-            layout2.attributes ["attribute2"] = AttributeType.FLOAT;
+            layout2.attributes = new Dictionary<string, Type> ();
+            layout2.attributes ["attribute1"] = typeof(int);
+            layout2.attributes ["attribute2"] = typeof(float);
           
             Assert.IsTrue (layout1 == layout2);
             Assert.IsFalse (layout1 != layout2);

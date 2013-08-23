@@ -13,9 +13,9 @@ namespace FIVES
     public class ComponentLayout
     {
         public ComponentLayout() {
-            this.attributes = new Dictionary<string, AttributeType> ();
+            this.attributes = new Dictionary<string, Type> ();
         }
-        public AttributeType this [string name] 
+        public Type this [string name]
         {
             get { return attributes[name]; }
             set { attributes[name] = value; }
@@ -24,11 +24,11 @@ namespace FIVES
         public static bool operator ==(ComponentLayout layout_1, ComponentLayout layout_2)
         {
             bool isEqual = true;
-            foreach(KeyValuePair<string, AttributeType> entry in layout_1.attributes)
+            foreach(KeyValuePair<string, Type> entry in layout_1.attributes)
             {
                 isEqual = isEqual && layout_2.attributes.ContainsKey (entry.Key) && layout_2.attributes [entry.Key] == layout_1.attributes [entry.Key];
             }
-            foreach(KeyValuePair<string, AttributeType> entry in layout_2.attributes)
+            foreach(KeyValuePair<string, Type> entry in layout_2.attributes)
             {
                 isEqual = isEqual && layout_1.attributes.ContainsKey (entry.Key) && layout_1.attributes [entry.Key] == layout_2.attributes [entry.Key];
             }
@@ -43,7 +43,7 @@ namespace FIVES
         // We need to access this internally to be able to iterate over the list of the attributes when constructing a 
         // new component in ComponentRegistry::createComponent.
         private Guid Id { get; set; }
-        internal IDictionary<string, AttributeType> attributes { get; set; }
+        internal IDictionary<string, Type> attributes { get; set; }
     }
     #pragma warning restore 660, 661
 }

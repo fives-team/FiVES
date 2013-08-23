@@ -39,8 +39,8 @@ namespace Persistence
         public void shouldStoreAndRetrieveComponent()
         {
             ComponentLayout layout = new ComponentLayout();
-            layout["IntAttribute"] = AttributeType.INT;
-            layout["StringAttribute"] = AttributeType.STRING;
+            layout["IntAttribute"] = typeof(int);
+            layout["StringAttribute"] = typeof(string);
 
             componentRegistry.defineComponent("myComponent", Guid.NewGuid(), layout);
 
@@ -107,8 +107,8 @@ namespace Persistence
             if(!componentRegistry.isRegistered("myComponent"))
             {
                 ComponentLayout layout = new ComponentLayout();
-                layout["IntAttribute"] = AttributeType.INT;
-                layout["StringAttribute"] = AttributeType.STRING;
+                layout["IntAttribute"] = typeof(int);
+                layout["StringAttribute"] = typeof(string);
                 componentRegistry.defineComponent("myComponent", Guid.NewGuid(), layout);
             }
 
@@ -122,8 +122,8 @@ namespace Persistence
 
             persist.registerPersistedComponents ();
 
-            Assert.IsTrue (componentRegistry.getAttributeType ("myComponent", "IntAttribute") == AttributeType.INT);
-            Assert.IsTrue (componentRegistry.getAttributeType ("myComponent", "StringAttribute") == AttributeType.STRING);
+            Assert.IsTrue (componentRegistry.getAttributeType ("myComponent", "IntAttribute") == typeof(int));
+            Assert.IsTrue (componentRegistry.getAttributeType ("myComponent", "StringAttribute") == typeof(string));
         }
 	}
 }

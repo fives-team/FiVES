@@ -108,7 +108,7 @@ namespace FIVES
         /// <returns>The attribute type.</returns>
         /// <param name="componentName">Component name.</param>
         /// <param name="attributeName">Attribute name.</param>
-        public AttributeType getAttributeType(string componentName, string attributeName)
+        public Type getAttributeType(string componentName, string attributeName)
         {
             if(!isRegistered(componentName))
                 throw new ComponentIsNotDefinedException("Component '" + componentName + "' is not defined.");

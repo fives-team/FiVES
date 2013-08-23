@@ -76,7 +76,7 @@ namespace FIVES
             // Define new component type "myComponent" with one int attribute "attr".
             ComponentRegistry myRegistry = new ComponentRegistry();
             ComponentLayout layout = new ComponentLayout();
-            layout["attr"] = AttributeType.INT;
+            layout["attr"] = typeof(int);
             myRegistry.defineComponent("myComponent", Guid.NewGuid(), layout);
 
             dynamic entity = new Entity(myRegistry);

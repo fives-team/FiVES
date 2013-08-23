@@ -3,16 +3,6 @@ using System;
 namespace FIVES
 {
     /// <summary>
-    /// Attribute type.
-    /// </summary>
-    public enum AttributeType {
-        INT,
-        FLOAT,
-        STRING,
-        BOOL
-    }
-
-    /// <summary>
     /// Typed attribute of a component.
     /// </summary>
     internal class Attribute
@@ -27,7 +17,7 @@ namespace FIVES
         /// Gets or sets the type of the Attribute.
         /// </summary>
         /// <value>The type of the attribute.</value>
-        public AttributeType type { get; set; }
+        public Type type { get; set; }
 
         /// <summary>
         /// Gets or sets the value of the Attribute.
@@ -47,7 +37,7 @@ namespace FIVES
         /// </summary>
         /// <param name="type">Type the attribute should have</param>
         /// <param name="value">Value the attribute should have</param>
-        public Attribute(AttributeType type, object value)
+        public Attribute(Type type, object value)
         {
             this.type = type;
             this.value = value;

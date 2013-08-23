@@ -74,20 +74,20 @@ namespace FIVES
         }
 
         // This is used to populate the attributes into a component based on it's layout.
-        internal void addAttribute(string attributeName, AttributeType type) {
+        internal void addAttribute(string attributeName, Type type) {
             // If the attribute already exists, then it's an internal error (probably in ComponentRegistry).
             Debug.Assert(!attributes.ContainsKey(attributeName));
 
             attributes.Add(attributeName, new Attribute(type, null));
         }
 
-        private void checkAttributeExistsAndTypeMatches(string attributeName, AttributeType requestedType) {
+        private bool checkAttributeExistsAndTypeMatches(string attributeName, Type requestedType) {
             if (!attributes.ContainsKey(attributeName)) {
                 throw new AttributeIsNotDefinedException(
                     "Attribute '" + attributeName + "' is not defined in the component '" + componentName + "'.");
             }
 
-            AttributeType attributeType = attributes[attributeName].type;
+            Type attributeType = attributes[attributeName].type;
             if (attributeType != requestedType) {
                 throw new AttributeTypeMismatchException(
                     "Attribute '\" + attributeName + \"' has a different type in the component '" + componentName +

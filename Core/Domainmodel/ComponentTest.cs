@@ -20,10 +20,10 @@ namespace FIVES
             // normally components must be created with ComponentRegistry, but since we are doing unit-test here, it's
             // better to remove dependency on yet another class
             testComponent = new Component ("testComponent");
-            testComponent.addAttribute("i", AttributeType.INT);
-            testComponent.addAttribute("f", AttributeType.FLOAT);
-            testComponent.addAttribute("b", AttributeType.BOOL);
-            testComponent.addAttribute("s", AttributeType.STRING);
+            testComponent.addAttribute("i", typeof(int));
+            testComponent.addAttribute("f", typeof(float));
+            testComponent.addAttribute("b", typeof(bool));
+            testComponent.addAttribute("s", typeof(string));
         }
 
         [Test()]
