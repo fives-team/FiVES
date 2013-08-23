@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using Events;
 using System.Dynamic;
+using Microsoft.CSharp.RuntimeBinder;
 
 namespace FIVES
 {
@@ -25,7 +26,7 @@ namespace FIVES
         public delegate void AttributeChanged (Object sender, AttributeChangedEventArgs e);
         public event AttributeChanged OnAttributeChanged;
 
-        public void subscribeToEvent(AttributeChanged eventHandler)
+        public void subscribeToAttributeChanged(AttributeChanged eventHandler)
         {
             this.OnAttributeChanged += eventHandler;
         }
@@ -81,7 +82,7 @@ namespace FIVES
 
             Type attributeType = attributes[attributeName].type;
             if (attributeType != requestedType) {
-                throw new AttributeTypeMismatchException(
+                throw new RuntimeBinderException(
                     "Attribute '\" + attributeName + \"' has a different type in the component '" + componentName +
                     "'. Requested type is " + requestedType.ToString() + ", but attribute type is " +
                     attributeType.ToString() + ".");
