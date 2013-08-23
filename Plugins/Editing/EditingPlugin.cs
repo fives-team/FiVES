@@ -46,9 +46,9 @@ namespace Editing
         public void createEntityAt(float x, float y, float z)
         {
             dynamic e = new Entity();
-            e.position.setFloatAttribute("x", x);
-            e.position.setFloatAttribute("y", y);
-            e.position.setFloatAttribute("z", z);
+            e.position.x = x;
+            e.position.y = y;
+            e.position.z = z;
             EntityRegistry.Instance.addEntity(e);
         }
 
