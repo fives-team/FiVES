@@ -31,30 +31,39 @@ namespace FIVES
             this.OnAttributeChanged += eventHandler;
         }
 
+        public object this[string attributeName]
+        {
+            get
+            {
+                if (!attributes.ContainsKey(attributeName))
+                {
+                    throw new AttributeIsNotDefinedException(
+                        "Attribute '" + attributeName + "' is not defined in the component '" + componentName + "'.");
+                }
+
+                return attributes[attributeName].value;
+            }
+            set
+            {
+                if (checkAttributeExistsAndTypeMatches(attributeName, value.GetType()))
+                {
+                    this.attributes[attributeName].value = value;
+                    if (this.OnAttributeChanged != null)
+                        this.OnAttributeChanged(this, new AttributeChangedEventArgs(attributeName, value));
+                }
+            }
+        }
+
         public override bool TryGetMember(GetMemberBinder binder, out object result)
         {
-            string attributeName = binder.Name;
-            if (!attributes.ContainsKey(attributeName)) {
-                throw new AttributeIsNotDefinedException(
-                    "Attribute '" + attributeName + "' is not defined in the component '" + componentName + "'.");
-            }
-
-            result = attributes [attributeName].value;
+            result = this[binder.Name];
             return true;
         }
 
         public override bool TrySetMember(SetMemberBinder binder, object value)
         {
-            string attributeName = binder.Name;
-
-            if (checkAttributeExistsAndTypeMatches (attributeName, value.GetType())) {
-                this.attributes [attributeName].value = value;
-                if (this.OnAttributeChanged != null)
-                    this.OnAttributeChanged(this, new AttributeChangedEventArgs(attributeName, value));
-                return true;
-            } else {
-                return false;
-            }
+            this[binder.Name] = value;
+            return true;
         }
 
         internal Component() {}

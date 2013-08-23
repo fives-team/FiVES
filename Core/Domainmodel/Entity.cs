@@ -78,17 +78,25 @@ namespace FIVES
             return this.components.ContainsKey (name);
         }
 
+        public Component this[string componentName]
+        {
+            get
+            {
+                if (!components.ContainsKey(componentName))
+                {
+                    if (componentRegistry.isRegistered(componentName))
+                        instantiateNewComponent(componentName);
+                    else
+                        throw new ComponentIsNotDefinedException("Cannot create component '" + componentName + "' as its " +
+                            "type is not registered with the ComponentRegistry");
+                }
+                return this.components[componentName];
+            }
+        }
+
         public override bool TryGetMember(GetMemberBinder binder, out object result)
         {
-            string componentName = binder.Name;
-            if (!components.ContainsKey (componentName)) {
-                if (componentRegistry.isRegistered (componentName))
-                    instantiateNewComponent (componentName);
-                else
-                    throw new ComponentIsNotDefinedException ("Cannot create component '" + componentName + "' as its " +
-                        "type is not registered with the ComponentRegistry");
-            }
-            result = this.components [componentName];
+            result = this[binder.Name];
             return true;
         }
 
