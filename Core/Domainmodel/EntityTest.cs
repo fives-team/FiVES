@@ -80,7 +80,7 @@ namespace FIVES
             myRegistry.defineComponent("myComponent", Guid.NewGuid(), layout);
 
             dynamic entity = new Entity(myRegistry);
-            entity.myComponent.setIntAttribute("attr", 42);
+            entity.myComponent.attr =  42;
         }
 
         [Test()]

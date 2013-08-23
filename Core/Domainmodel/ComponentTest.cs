@@ -6,7 +6,7 @@ namespace FIVES
     [TestFixture()]
     public class ComponentTest
     {
-        private Component testComponent;
+        private dynamic testComponent;
 
         private int intAttribute = 1;
         private string stringAttribute = "test";
@@ -30,35 +30,35 @@ namespace FIVES
         public void shouldAddAttributes()
         {
             // Attributes are already added in init()... just need to check they exist and NULL
-            Assert.Null(testComponent.getIntAttribute("i"));
-            Assert.Null(testComponent.getFloatAttribute("f"));
-            Assert.Null(testComponent.getBoolAttribute("b"));
-            Assert.Null(testComponent.getStringAttribute("s"));
+            Assert.Null(testComponent.i);
+            Assert.Null(testComponent.f);
+            Assert.Null(testComponent.b);
+            Assert.Null(testComponent.s);
         }
 
         #region Test for Setter functions of Attribute (pass if no exception)
         [Test()]
         public void shouldSetIntAttribute()
         {
-            testComponent.setIntAttribute("i", intAttribute);
+            testComponent.i = intAttribute;
         }
 
         [Test()]
         public void shouldSetFloatAttribute()
         {
-            testComponent.setFloatAttribute ("f", floatAttribute);
+            testComponent.f = floatAttribute;
         }
 
         [Test()]
         public void shouldSetStringAttribute()
         {
-            testComponent.setStringAttribute ("s", stringAttribute);
+            testComponent.s = stringAttribute;
         }
 
         [Test()]
         public void shouldSetBoolAttribute()
         {
-            testComponent.setBoolAttribute ("b", boolAttribute);
+            testComponent.b = boolAttribute;
         }
         #endregion
 
@@ -66,32 +66,32 @@ namespace FIVES
         [Test()]
         public void shouldReturnIntAttribute()
         {
-            testComponent.setIntAttribute ("i", intAttribute);
-            int? returnValue = testComponent.getIntAttribute ("i");
+            testComponent.i = intAttribute;
+            int? returnValue = testComponent.i;
             Assert.AreEqual(returnValue, intAttribute);
         }
 
         [Test()]
         public void shouldReturnFloatAttribute()
         {
-            testComponent.setFloatAttribute ("f", floatAttribute);
-            float? returnValue = testComponent.getFloatAttribute ("f");
+            testComponent.f = floatAttribute;
+            float? returnValue = testComponent.f;
             Assert.AreEqual(returnValue, floatAttribute);
         }
 
         [Test()]
         public void shouldReturnStringAttribute()
         {
-            testComponent.setStringAttribute ("s", stringAttribute);
-            string returnValue = testComponent.getStringAttribute ("s");
+            testComponent.s = stringAttribute;
+            string returnValue = testComponent.s;
             Assert.AreEqual(returnValue, stringAttribute);
         }
 
         [Test()]
         public void shouldReturnBoolAttribute()
         {
-            testComponent.setBoolAttribute ("b", boolAttribute);
-            bool? returnValue = testComponent.getBoolAttribute ("b");
+            testComponent.b = boolAttribute;
+            bool? returnValue = testComponent.b;
             Assert.AreEqual(returnValue, boolAttribute);
         }
         #endregion
@@ -101,40 +101,44 @@ namespace FIVES
         [ExpectedException(typeof(AttributeTypeMismatchException))]
         public void shouldThrowExceptionOnWrongTypeForInt()
         {
-            testComponent.getIntAttribute("f");
+            testComponent.f = 1.0f;
+            int? result = testComponent.f;
         }
 
         [Test()]
         [ExpectedException(typeof(AttributeTypeMismatchException))]
         public void shouldThrowExceptionOnWrongTypeForFloat()
         {
-            testComponent.getFloatAttribute("i");
+            testComponent.i = 42;
+            float result = testComponent.i;
         }
 
         [Test()]
         [ExpectedException(typeof(AttributeTypeMismatchException))]
         public void shouldThrowExceptionOnWrongTypeForString()
         {
-            testComponent.getStringAttribute("b");
+            testComponent.b = false;
+            string result = testComponent.b;
         }
 
         [Test()]
         [ExpectedException(typeof(AttributeTypeMismatchException))]
         public void shouldThrowExceptionOnWrongTypeForBool()
         {
-            testComponent.getBoolAttribute("s");
+           testComponent.s = "foobar";
+           bool result =  testComponent.s;
         }
 
         [Test()]
         [ExpectedException(typeof(AttributeIsNotDefinedException))]
         public void shouldThrowExceptionWhenSettingUndefinedAttribute() {
-            testComponent.setIntAttribute("foobar", 42);
+            testComponent.foobar = 42;
         }
 
         [Test()]
         [ExpectedException(typeof(AttributeIsNotDefinedException))]
         public void shouldThrowExceptionWhenGettingUndefinedAttribute() {
-            testComponent.getIntAttribute("foobar");
+            int? getResult = testComponent.foobar;
         }
         #endregion
     }

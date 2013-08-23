@@ -69,20 +69,20 @@ namespace FIVES
         public void shouldCreateDefinedLayoutAttributesInNewComponents() 
         {
             registry.defineComponent(name, Guid.NewGuid(), layout);
-            Component c = registry.getComponentInstance(name);
-            Assert.Null(c.getIntAttribute("i"));
-            Assert.Null(c.getFloatAttribute("f"));
-            Assert.Null(c.getStringAttribute("s"));
-            Assert.Null(c.getBoolAttribute("b"));
+            dynamic c = registry.getComponentInstance(name);
+            Assert.Null(c.i);
+            Assert.Null(c.f);
+            Assert.Null(c.s);
+            Assert.Null(c.b);
         }
 
         [Test()]
         public void shouldNotCreateUndefinedAttributesInNewComponents() 
         {
             registry.defineComponent(name, Guid.NewGuid(), layout);
-            Component c = registry.getComponentInstance(name);
+            dynamic c = registry.getComponentInstance(name);
             Assert.Throws<AttributeIsNotDefinedException>(
-                delegate() { c.getIntAttribute("foobar"); } );
+                delegate() { object result = c.foobar; } );
         }
     }
 }
