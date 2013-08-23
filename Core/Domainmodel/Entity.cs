@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using Events;
+using System.Dynamic;
 
 namespace FIVES
 {
@@ -10,7 +11,7 @@ namespace FIVES
         public EntityHasNoChildrenException(string message) {}
     }
 
-    public class Entity
+    public class Entity : DynamicObject
     {
         public Guid Guid { get; private set; }
         private IDictionary<string, Component> components { get; set; }
@@ -28,26 +29,6 @@ namespace FIVES
 
             // Generate new GUID for this entity.
             Guid = Guid.NewGuid();
-        }
-
-        public Component this [string index]
-        {
-            get {
-                if (!components.ContainsKey(index)) {
-                    if (componentRegistry.isRegistered(index)) {
-                        components[index] = componentRegistry.getComponentInstance(index);
-                        components[index].OnAttributeChanged += delegate(object sender, AttributeChangedEventArgs e) {
-                            if(this.OnAttributeInComponentChanged != null)
-                                this.OnAttributeInComponentChanged(this, new AttributeInComponentEventArgs(index, e.attributeName, e.value));
-                       };
-                    } else {
-                        throw new ComponentIsNotDefinedException("Cannot create component '" + index + "' as its " +
-                                                                 "type is not registered with the ComponentRegistry");
-                    }
-                }
-
-                return this.components [index];
-            }
         }
 
         public bool addChildNode(Entity childEntity)
@@ -95,6 +76,28 @@ namespace FIVES
         public bool hasComponent(string name)
         {
             return this.components.ContainsKey (name);
+        }
+
+        public override bool TryGetMember(GetMemberBinder binder, out object result)
+        {
+            string componentName = binder.Name;
+            if (!components.ContainsKey (componentName)) {
+                if (componentRegistry.isRegistered (componentName))
+                    instantiateNewComponent (componentName);
+                else
+                    throw new ComponentIsNotDefinedException ("Cannot create component '" + componentName + "' as its " +
+                        "type is not registered with the ComponentRegistry");
+            }
+            result = this.components [componentName];
+            return true;
+        }
+
+        private void instantiateNewComponent(string componentName) {
+            components [componentName] = componentRegistry.getComponentInstance (componentName);
+            components [componentName].OnAttributeChanged += delegate(object sender, AttributeChangedEventArgs e) {
+                if (this.OnAttributeInComponentChanged != null)
+                    this.OnAttributeInComponentChanged (this, new AttributeInComponentEventArgs (componentName, e.attributeName, e.value));
+            };
         }
 
         // Used for testing to separate component registry database for different tests.

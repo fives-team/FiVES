@@ -44,10 +44,10 @@ namespace Persistence
 
             componentRegistry.defineComponent("myComponent", Guid.NewGuid(), layout);
 
-            Entity entity = new Entity();
+            dynamic entity = new Entity();
             entityRegistry.addEntity(entity);
-            entity["myComponent"].setIntAttribute("IntAttribute", 42);
-            entity["myComponent"].setStringAttribute("StringAttribute", "Hello World!");
+            entity.myComponent.setIntAttribute("IntAttribute", 42);
+            entity.myComponent.setStringAttribute("StringAttribute", "Hello World!");
 
             var session = sessionFactory.OpenSession ();
             var trans = session.BeginTransaction ();
@@ -60,9 +60,9 @@ namespace Persistence
             plugin.initialize();
             plugin.retrieveEntitiesFromDatabase ();
 
-            Entity storedEntity = entityRegistry.getEntity(entity.Guid);
-            Assert.IsTrue (storedEntity ["myComponent"].getIntAttribute ("IntAttribute") == 42);
-            Assert.IsTrue (storedEntity ["myComponent"].getStringAttribute ("StringAttribute") == "Hello World!");
+            dynamic storedEntity = entityRegistry.getEntity(entity.Guid);
+            Assert.IsTrue (storedEntity.myComponent.getIntAttribute ("IntAttribute") == 42);
+            Assert.IsTrue (storedEntity.myComponent.getStringAttribute ("StringAttribute") == "Hello World!");
 
         }
 

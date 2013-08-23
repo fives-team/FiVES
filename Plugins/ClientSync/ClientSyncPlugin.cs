@@ -69,11 +69,11 @@ namespace ClientSync {
         }
 
         private Position getObjectPosition(string guid) {
-            var entity = EntityRegistry.Instance.getEntity(new Guid(guid));
+            dynamic entity = EntityRegistry.Instance.getEntity(new Guid(guid));
             var pos = new Position();
-            pos.x = (float)entity["position"].getFloatAttribute("x");
-            pos.y = (float)entity["position"].getFloatAttribute("y");
-            pos.z = (float)entity["position"].getFloatAttribute("z");
+            pos.x = (float)entity.position.getFloatAttribute("x");
+            pos.y = (float)entity.position.getFloatAttribute("y");
+            pos.z = (float)entity.position.getFloatAttribute("z");
             return pos;
         }
 

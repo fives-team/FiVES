@@ -45,10 +45,10 @@ namespace Editing
         /// <param name="z">The z coordinate.</param>
         public void createEntityAt(float x, float y, float z)
         {
-            Entity e = new Entity();
-            e["position"].setFloatAttribute("x", x);
-            e["position"].setFloatAttribute("y", y);
-            e["position"].setFloatAttribute("z", z);
+            dynamic e = new Entity();
+            e.position.setFloatAttribute("x", x);
+            e.position.setFloatAttribute("y", y);
+            e.position.setFloatAttribute("z", z);
             EntityRegistry.Instance.addEntity(e);
         }
 

@@ -79,25 +79,25 @@ namespace FIVES
             layout["attr"] = AttributeType.INT;
             myRegistry.defineComponent("myComponent", Guid.NewGuid(), layout);
 
-            var entity = new Entity(myRegistry);
-            entity["myComponent"].setIntAttribute("attr", 42);
+            dynamic entity = new Entity(myRegistry);
+            entity.myComponent.setIntAttribute("attr", 42);
         }
 
         [Test()]
         public void shouldThrowExceptionWhenAccessingUnregisteredComponent()
         {
-            var entity = new Entity();
+            dynamic entity = new Entity();
             Assert.Throws<ComponentIsNotDefinedException>(delegate() {
-                var component = entity["myComponent"];
+                var component = entity.myComponent;
             });
         }
 
         [Test()]
         public void shouldThrowExceptionWhenCreatingUnregisteredComponent()
         {
-            var entity = new Entity();
+            dynamic entity = new Entity();
             Assert.Throws<ComponentIsNotDefinedException>(delegate() {
-                var component = entity["myComponent"];
+                var component = entity.myComponent;
             });
         }
     }
