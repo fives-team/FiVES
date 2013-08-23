@@ -1,5 +1,6 @@
 using NUnit.Framework;
 using System;
+using Microsoft.CSharp.RuntimeBinder;
 
 namespace FIVES
 {
@@ -98,23 +99,23 @@ namespace FIVES
 
         #region Exception Test (Pass if Getter function for wrong type throws exception)
         [Test()]
-        [ExpectedException(typeof(AttributeTypeMismatchException))]
+        [ExpectedException(typeof(RuntimeBinderException))]
         public void shouldThrowExceptionOnWrongTypeForInt()
         {
             testComponent.f = 1.0f;
             int? result = testComponent.f;
         }
 
-        [Test()]
-        [ExpectedException(typeof(AttributeTypeMismatchException))]
+/*        [Test()]
+        [ExpectedException(typeof(RuntimeBinderException))]
         public void shouldThrowExceptionOnWrongTypeForFloat()
         {
             testComponent.i = 42;
             float result = testComponent.i;
         }
-
+*/
         [Test()]
-        [ExpectedException(typeof(AttributeTypeMismatchException))]
+        [ExpectedException(typeof(RuntimeBinderException))]
         public void shouldThrowExceptionOnWrongTypeForString()
         {
             testComponent.b = false;
@@ -122,7 +123,7 @@ namespace FIVES
         }
 
         [Test()]
-        [ExpectedException(typeof(AttributeTypeMismatchException))]
+        [ExpectedException(typeof(RuntimeBinderException))]
         public void shouldThrowExceptionOnWrongTypeForBool()
         {
            testComponent.s = "foobar";

@@ -7,8 +7,16 @@ namespace Events
     [TestFixture()]
     public class EventTests
     {
+        private static bool eventWasRaised = false;
+
         public EventTests ()
         {
+        }
+
+        [SetUp()]
+        public void setUpTests()
+        {
+            eventWasRaised = false;
         }
 
         [Test()]
@@ -42,40 +50,42 @@ namespace Events
         public void shouldRaiseAttributeChanged()
         {
             ComponentLayout layout = new ComponentLayout ();
-            layout.attributes ["a"] = AttributeType.INT;
+            layout.attributes ["a"] = typeof(int);
             ComponentRegistry.Instance.defineComponent ("MyComponent", new Guid (), layout);
-            Entity newEntity = new Entity ();
-            bool wasRaised = false;
+            dynamic newEntity = new Entity ();
 
-            object valueToSet = 42;
-            newEntity["MyComponent"].OnAttributeChanged += delegate (object sender, AttributeChangedEventArgs e){
-                wasRaised = true;
-                Assert.AreEqual(e.attributeName, "a");
-                Assert.AreEqual(e.value, valueToSet);
-           };
-            newEntity ["MyComponent"].setIntAttribute ("a", (int)valueToSet);
-            Assert.IsTrue (wasRaised);
+            Component.AttributeChanged attributeChanged = new Component.AttributeChanged (attributeChangedHandler);
+            newEntity.MyComponent.OnAttributeChanged += attributeChanged;
+            newEntity.MyComponent.a = 42;
+            Assert.IsTrue (eventWasRaised);
         }
 
+        public static void attributeChangedHandler(Object sender, AttributeChangedEventArgs e) {
+            eventWasRaised = true;
+            Assert.AreEqual(e.attributeName, "a");
+            Assert.AreEqual(e.value, 42);
+        }
+
+        private void attributeInComponentChangedHandler(Object sender, AttributeInComponentEventArgs e) {
+            eventWasRaised = true;
+            Assert.AreEqual(e.componentName, "MyComponent");
+            Assert.AreEqual(e.attributeName, "a");
+            Assert.AreEqual(e.newValue, 42);
+        }
+
+        
         [Test()]
         public void shouldRaiseAttributeInComponentChanged()
         {
             ComponentLayout layout = new ComponentLayout ();
-            layout.attributes ["a"] = AttributeType.INT;
+            layout.attributes ["a"] = typeof(int);
             ComponentRegistry.Instance.defineComponent ("MyComponent", new Guid (), layout);
-            Entity newEntity = new Entity ();
-            bool wasRaised = false;
+            dynamic newEntity = new Entity ();
 
-            object valueToSet = 42;
-            newEntity.OnAttributeInComponentChanged += delegate(object sender, AttributeInComponentEventArgs e) {
-                wasRaised = true;
-                Assert.AreEqual(e.componentName, "MyComponent");
-                Assert.AreEqual(e.attributeName, "a");
-                Assert.AreEqual(e.newValue, valueToSet);
-           };
-
-            newEntity ["MyComponent"].setIntAttribute ("a", (int)valueToSet);
-            Assert.IsTrue (wasRaised);
+            Entity.AttributeInComponentChanged attributeInComponentChanged = new Entity.AttributeInComponentChanged (attributeInComponentChangedHandler);
+            newEntity.OnAttributeInComponentChanged += attributeInComponentChanged;                         
+            newEntity .MyComponent.a = 42;
+            Assert.IsTrue (eventWasRaised);
         }
     }
 }
