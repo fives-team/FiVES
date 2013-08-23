@@ -9,7 +9,7 @@
 		<map name="attributes" table = "attributeDefinitions" cascade = "all">
 		  <key column = "layoutID" />
 		  <index type = "string" column = "attributeName" />
-		  <element column = "attributeType" type="AttributeType" />
+		  <element column = "attributeType" type="Type" />
 		</map>
 	</class>
 </hibernate-mapping>

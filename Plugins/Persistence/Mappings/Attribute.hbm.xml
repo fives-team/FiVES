@@ -7,6 +7,6 @@
 			<generator class = "guid" />
     	</id>
 		<property name = "value" type = "Serializable" />
-		<property name = "type" type = "AttributeType" />
+		<property name = "type" type = "Type" />
 	</class>
 </hibernate-mapping>
