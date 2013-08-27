@@ -15,10 +15,16 @@ namespace Persistence
 		EntityRegistry entityRegistry;
         Configuration cfg;
         NHibernate.ISessionFactory sessionFactory;
+        PersistencePlugin plugin;
 
 		public PersistenceTest ()
 		{
 		}
+
+        [SetUp()]
+        public void setUpDatabaseTest() {
+            entityRegistry = EntityRegistry.Instance;
+        }
 
         [Test()]
         public void shouldSetupDatabase()
@@ -44,20 +50,16 @@ namespace Persistence
 
             componentRegistry.defineComponent("myComponent", Guid.NewGuid(), layout);
 
+            plugin = new PersistencePlugin ();
+            plugin.initialize();
+
             dynamic entity = new Entity();
             entityRegistry.addEntity(entity);
             entity.myComponent.IntAttribute = 42;
             entity.myComponent.StringAttribute= "Hello World!";
 
-            var session = sessionFactory.OpenSession ();
-            var trans = session.BeginTransaction ();
-            session.Save (entity);
-            trans.Commit ();
-
             entityRegistry.removeEntity (entity.Guid);
 
-            PersistencePlugin plugin = new PersistencePlugin ();
-            plugin.initialize();
             plugin.retrieveEntitiesFromDatabase ();
 
             dynamic storedEntity = entityRegistry.getEntity(entity.Guid);
@@ -73,24 +75,21 @@ namespace Persistence
             Entity childEntity = new Entity ();
             Assert.True(entity.addChildNode (childEntity));
 
+            if (plugin == null) {
+                plugin = new PersistencePlugin ();
+                plugin.initialize ();
+            }
+
             entityRegistry.addEntity (entity);
             entityRegistry.addEntity (childEntity);
 
             Console.WriteLine ("Entity Guid: " + entity.Guid);
             Console.WriteLine ("Child  Guid: " + childEntity.Guid);
 
-            // Transfer entities to Database
-            var session = sessionFactory.OpenSession ();
-            var trans = session.BeginTransaction ();
-            session.Save (entity);
-            session.Save (childEntity);
-            trans.Commit ();
-
             entityRegistry.removeEntity (entity.Guid);
             entityRegistry.removeEntity (childEntity.Guid);
 
-            PersistencePlugin plugin = new PersistencePlugin ();
-            plugin.initialize();
+
             plugin.retrieveEntitiesFromDatabase ();
 
             HashSet<Guid> guidsInRegistry = entityRegistry.getAllGUIDs ();
