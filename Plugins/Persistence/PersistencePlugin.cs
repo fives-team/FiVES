@@ -4,6 +4,8 @@ using NHibernate.Cfg;
 using NHibernate;
 using NHibernate.Tool.hbm2ddl;
 using System.Collections.Generic;
+using Events;
+using System.Diagnostics;
 
 
 namespace Persistence
@@ -25,29 +27,39 @@ namespace Persistence
         public void initialize()
         {
             nHibernateConfiguration.Configure ();
-            sessionFactory = nHibernateConfiguration.BuildSessionFactory ();
+            ISessionFactory sessionFactory = nHibernateConfiguration.BuildSessionFactory ();
+            session = sessionFactory.OpenSession ();
+            retrieveComponentRegistryFromDatabase ();
+            retrieveEntitiesFromDatabase ();
             nHibernateConfiguration.AddAssembly (typeof(Entity).Assembly);
+            EntityRegistry.Instance.OnEntityAdded += new EntityRegistry.EntityAdded (onEntityAdded);
         }
 
+        public void onEntityAdded(Object sender, EntityAddedOrRemovedEventArgs e) {
+            Entity addedEntity = EntityRegistry.Instance.getEntity (e.elementId);
+            var transaction = session.BeginTransaction ();
+            session.Save (addedEntity);
+            transaction.Commit ();
+        }
         #endregion
 
         internal void retrieveComponentRegistryFromDatabase()
         {
-            var session = sessionFactory.OpenSession ();
             ComponentRegistryPersistence persistedRegistry = session.Get<ComponentRegistryPersistence> (ComponentRegistry.Instance.RegistryGuid);
-            persistedRegistry.registerPersistedComponents ();
+            if(persistedRegistry != null)
+                persistedRegistry.registerPersistedComponents ();
 
         }
 
         internal void retrieveEntitiesFromDatabase()
         {
-            var session = sessionFactory.OpenSession ();
             IList<Entity> entitiesInDatabase = session.CreateQuery ("from " + typeof(Entity)).List<Entity> ();
-            foreach (Entity e in entitiesInDatabase)
-                EntityRegistry.Instance.addEntity(e);
+            foreach (Entity e in entitiesInDatabase) {
+                EntityRegistry.Instance.addEntity (e);
+            }
         }
 
         private Configuration nHibernateConfiguration = new Configuration();
-        private ISessionFactory sessionFactory;
+        private ISession session;
 	}
 }
