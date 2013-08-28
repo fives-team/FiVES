@@ -34,6 +34,7 @@ namespace Persistence
 
         public void onEntityAdded(Object sender, EntityAddedOrRemovedEventArgs e) {
             Entity addedEntity = EntityRegistry.Instance.getEntity (e.elementId);
+            addedEntity.OnAttributeInComponentChanged += new Entity.AttributeInComponentChanged (onComponentChanged);
             // Only persist entities if they are not added during intialization on Startup
             if (!entitiesToInitialize.Contains (e.elementId)) {
                 persistEntityToDatabase (addedEntity);
