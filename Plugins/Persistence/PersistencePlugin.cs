@@ -27,12 +27,8 @@ namespace Persistence
 
         public void initialize()
         {
-            nHibernateConfiguration.Configure ();
-            ISessionFactory sessionFactory = nHibernateConfiguration.BuildSessionFactory ();
-            session = sessionFactory.OpenSession ();
-            retrieveComponentRegistryFromDatabase ();
-            retrieveEntitiesFromDatabase ();
-            nHibernateConfiguration.AddAssembly (typeof(Entity).Assembly);
+            initializeNHibernate ();
+            initializePersistedCollections ();
             EntityRegistry.Instance.OnEntityAdded += new EntityRegistry.EntityAdded (onEntityAdded);
         }
 
@@ -46,6 +42,18 @@ namespace Persistence
             }
         }
         #endregion
+
+        private void initializeNHibernate() {
+            nHibernateConfiguration.Configure ();
+            nHibernateConfiguration.AddAssembly (typeof(Entity).Assembly);
+            sessionFactory = nHibernateConfiguration.BuildSessionFactory ();
+            globalSession = sessionFactory.OpenSession ();
+        }
+
+        private void initializePersistedCollections() {
+            retrieveComponentRegistryFromDatabase ();
+            retrieveEntitiesFromDatabase ();
+        }
 
         private void persistEntityToDatabase(Entity addedEntity) {
 
