@@ -6,6 +6,7 @@ using NHibernate.Tool.hbm2ddl;
 using System.Collections.Generic;
 using Events;
 using System.Diagnostics;
+using Iesi.Collections.Generic;
 
 
 namespace Persistence
@@ -37,9 +38,12 @@ namespace Persistence
 
         public void onEntityAdded(Object sender, EntityAddedOrRemovedEventArgs e) {
             Entity addedEntity = EntityRegistry.Instance.getEntity (e.elementId);
-            var transaction = session.BeginTransaction ();
-            session.Save (addedEntity);
-            transaction.Commit ();
+            // Only persist entities if they are not added during intialization on Startup
+            if (!entitiesToInitialize.Contains (e.elementId)) {
+                persistEntityToDatabase (addedEntity);
+            } else {
+                entitiesToInitialize.Remove (e.elementId);
+            }
         }
         #endregion
 
