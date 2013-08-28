@@ -29,12 +29,12 @@ namespace Persistence
         {
             initializeNHibernate ();
             initializePersistedCollections ();
-            EntityRegistry.Instance.OnEntityAdded += new EntityRegistry.EntityAdded (onEntityAdded);
+            EntityRegistry.Instance.OnEntityAdded += onEntityAdded;
         }
 
         public void onEntityAdded(Object sender, EntityAddedOrRemovedEventArgs e) {
             Entity addedEntity = EntityRegistry.Instance.getEntity (e.elementId);
-            addedEntity.OnAttributeInComponentChanged += new Entity.AttributeInComponentChanged (onComponentChanged);
+            addedEntity.OnAttributeInComponentChanged += onComponentChanged;
             // Only persist entities if they are not added during intialization on Startup
             if (!entitiesToInitialize.Contains (e.elementId)) {
                 persistEntityToDatabase (addedEntity);
