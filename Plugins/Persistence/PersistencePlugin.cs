@@ -63,8 +63,10 @@ namespace Persistence
 
         internal void retrieveEntitiesFromDatabase()
         {
-            IList<Entity> entitiesInDatabase = session.CreateQuery ("from " + typeof(Entity)).List<Entity> ();
+            IList<Entity> entitiesInDatabase = new List<Entity> ();
+            entitiesInDatabase = globalSession.CreateQuery ("from " + typeof(Entity)).List<Entity> ();
             foreach (Entity e in entitiesInDatabase) {
+                entitiesToInitialize.Add (e.Guid);
                 EntityRegistry.Instance.addEntity (e);
             }
         }
@@ -72,5 +74,6 @@ namespace Persistence
         private Configuration nHibernateConfiguration = new Configuration();
         private ISessionFactory sessionFactory;
         private ISession globalSession;
+        private HashedSet<Guid> entitiesToInitialize = new HashedSet<Guid>();
 	}
 }
