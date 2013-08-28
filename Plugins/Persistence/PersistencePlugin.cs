@@ -32,7 +32,7 @@ namespace Persistence
             EntityRegistry.Instance.OnEntityAdded += onEntityAdded;
         }
 
-        public void onEntityAdded(Object sender, EntityAddedOrRemovedEventArgs e) {
+        internal void onEntityAdded(Object sender, EntityAddedOrRemovedEventArgs e) {
             Entity addedEntity = EntityRegistry.Instance.getEntity (e.elementId);
             addedEntity.OnAttributeInComponentChanged += onComponentChanged;
             // Only persist entities if they are not added during intialization on Startup
@@ -43,7 +43,7 @@ namespace Persistence
             }
         }
 
-        public void onComponentChanged(Object sender, AttributeInComponentEventArgs e) {
+        internal void onComponentChanged(Object sender, AttributeInComponentEventArgs e) {
             Entity changedEntity = (Entity)sender;
             Component changedComponent = changedEntity [e.componentName];
             // TODO: change cascading persistence of entity, but only persist component and take care to persist mapping to entity as well
