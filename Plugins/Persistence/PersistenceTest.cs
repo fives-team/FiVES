@@ -63,6 +63,9 @@ namespace Persistence
             entity.myComponent.IntAttribute = 42;
             entity.myComponent.StringAttribute= "Hello World!";
 
+            // De-Activate on-remove event handler, as for tests, we only want to remove the entity from the local registry, not from the
+            // persistence storage
+            entityRegistry.OnEntityRemoved -= plugin.onEntityRemoved;
             entityRegistry.removeEntity (entity.Guid);
 
             plugin.retrieveEntitiesFromDatabase ();
@@ -91,13 +94,15 @@ namespace Persistence
             Console.WriteLine (" ==== [SHOULD STORE AND RETRIEVE ENTITIES]: Adding Entity " + childEntity.Guid);
             entityRegistry.addEntity (childEntity);
 
-            entityRegistry.removeEntity (entity.Guid);
+            // De-Activate on-remove event handler, as for tests, we only want to remove the entity from the local registry, not from the
+            // persistence storage
+            entityRegistry.OnEntityRemoved -= plugin.onEntityRemoved;
             entityRegistry.removeEntity (childEntity.Guid);
-
+            entityRegistry.removeEntity (entity.Guid);
 
             plugin.retrieveEntitiesFromDatabase ();
 
-            HashSet<Guid> guidsInRegistry = entityRegistry.getAllGUIDs ();
+            ISet<Guid> guidsInRegistry = entityRegistry.getAllGUIDs ();
             Console.WriteLine (guidsInRegistry.ToString ());
 
             Assert.True(guidsInRegistry.Contains(entity.Guid));
