@@ -21,7 +21,7 @@ namespace FIVES
 
     public class Component : DynamicObject
     {
-        private Guid Id {get; set; }
+        public Guid Id {get; set; }
 
         public delegate void AttributeChanged (Object sender, AttributeChangedEventArgs e);
         public event AttributeChanged OnAttributeChanged;

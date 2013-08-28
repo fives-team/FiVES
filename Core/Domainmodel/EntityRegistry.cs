@@ -47,8 +47,8 @@ namespace FIVES
         public bool removeEntity(Guid guid)
         {
             if (entities.ContainsKey(guid)) {
-                entities.Remove(guid);
                 OnEntityRemoved (this, new EntityAddedOrRemovedEventArgs(guid));
+                entities.Remove(guid);
                 return true;
             }
 

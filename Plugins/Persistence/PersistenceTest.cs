@@ -19,11 +19,13 @@ namespace Persistence
 
 		public PersistenceTest ()
 		{
+
 		}
 
         [SetUp()]
         public void setUpDatabaseTest() {
             entityRegistry = EntityRegistry.Instance;
+            componentRegistry = ComponentRegistry.Instance;
         }
 
         [Test()]
@@ -33,9 +35,6 @@ namespace Persistence
             cfg.Configure ();
 
             sessionFactory = cfg.BuildSessionFactory ();
-
-            componentRegistry = ComponentRegistry.Instance;
-            entityRegistry = EntityRegistry.Instance;
 
             cfg.AddAssembly (typeof(Entity).Assembly);
             new SchemaExport (cfg).Execute (true, true, false);
@@ -50,14 +49,23 @@ namespace Persistence
 
             componentRegistry.defineComponent("myComponent", Guid.NewGuid(), layout);
 
-            plugin = new PersistencePlugin ();
-            plugin.initialize();
+            if (plugin == null) {
+                Console.WriteLine (" ==== [SHOULD STORE AND RETRIEVE COMPONENTS]: Initializing Plugin");
+                plugin = new PersistencePlugin ();
+                plugin.initialize ();
+            }
 
             dynamic entity = new Entity();
+
+            Console.WriteLine (" ==== [SHOULD STORE AND RETRIEVE COMPONENTS]: Adding Entity " + entity.Guid);
             entityRegistry.addEntity(entity);
+            Console.WriteLine (" ==== [SHOULD STORE AND RETRIEVE COMPONENTS]: Setting Attributes for " + entity.Guid);
             entity.myComponent.IntAttribute = 42;
             entity.myComponent.StringAttribute= "Hello World!";
 
+            // De-Activate on-remove event handler, as for tests, we only want to remove the entity from the local registry, not from the
+            // persistence storage
+            entityRegistry.OnEntityRemoved -= plugin.onEntityRemoved;
             entityRegistry.removeEntity (entity.Guid);
 
             plugin.retrieveEntitiesFromDatabase ();
@@ -76,23 +84,25 @@ namespace Persistence
             Assert.True(entity.addChildNode (childEntity));
 
             if (plugin == null) {
+                Console.WriteLine (" ==== [SHOULD STORE AND RETRIEVE ENTITIES]: Initializing Plugin ");
                 plugin = new PersistencePlugin ();
                 plugin.initialize ();
             }
 
+            Console.WriteLine (" ==== [SHOULD STORE AND RETRIEVE ENTITIES]: Adding Entity " + entity.Guid);
             entityRegistry.addEntity (entity);
+            Console.WriteLine (" ==== [SHOULD STORE AND RETRIEVE ENTITIES]: Adding Entity " + childEntity.Guid);
             entityRegistry.addEntity (childEntity);
 
-            Console.WriteLine ("Entity Guid: " + entity.Guid);
-            Console.WriteLine ("Child  Guid: " + childEntity.Guid);
-
-            entityRegistry.removeEntity (entity.Guid);
+            // De-Activate on-remove event handler, as for tests, we only want to remove the entity from the local registry, not from the
+            // persistence storage
+            entityRegistry.OnEntityRemoved -= plugin.onEntityRemoved;
             entityRegistry.removeEntity (childEntity.Guid);
-
+            entityRegistry.removeEntity (entity.Guid);
 
             plugin.retrieveEntitiesFromDatabase ();
 
-            HashSet<Guid> guidsInRegistry = entityRegistry.getAllGUIDs ();
+            ISet<Guid> guidsInRegistry = entityRegistry.getAllGUIDs ();
             Console.WriteLine (guidsInRegistry.ToString ());
 
             Assert.True(guidsInRegistry.Contains(entity.Guid));
@@ -123,6 +133,36 @@ namespace Persistence
 
             Assert.IsTrue (componentRegistry.getAttributeType ("myComponent", "IntAttribute") == typeof(int));
             Assert.IsTrue (componentRegistry.getAttributeType ("myComponent", "StringAttribute") == typeof(string));
+        }
+
+        [Test()]
+        public void shouldDeleteEntity()
+        {
+            Entity entity = new Entity();
+            Entity childEntity = new Entity ();
+            Assert.True(entity.addChildNode (childEntity));
+
+            if (plugin == null) {
+                Console.WriteLine (" ==== [SHOULD STORE AND RETRIEVE ENTITIES]: Initializing Plugin ");
+                plugin = new PersistencePlugin ();
+                plugin.initialize ();
+            }
+
+            Console.WriteLine (" ==== [SHOULD STORE AND RETRIEVE ENTITIES]: Adding Entity " + entity.Guid);
+            entityRegistry.addEntity (entity);
+            Console.WriteLine (" ==== [SHOULD STORE AND RETRIEVE ENTITIES]: Adding Entity " + childEntity.Guid);
+            entityRegistry.addEntity (childEntity);
+
+            entityRegistry.removeEntity (childEntity.Guid);
+            entityRegistry.removeEntity (entity.Guid);
+
+            plugin.retrieveEntitiesFromDatabase ();
+
+            ISet<Guid> guidsInRegistry = entityRegistry.getAllGUIDs ();
+            Console.WriteLine (guidsInRegistry.ToString ());
+
+            Assert.True(!guidsInRegistry.Contains(entity.Guid));
+            Assert.True(!guidsInRegistry.Contains(childEntity.Guid));
         }
 	}
 }
