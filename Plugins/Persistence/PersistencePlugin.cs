@@ -43,6 +43,14 @@ namespace Persistence
         }
         #endregion
 
+        private void persistEntityToDatabase(Entity addedEntity) {
+
+            using(ISession session = sessionFactory.OpenSession()) {
+                var transaction = session.BeginTransaction ();
+                session.Save (addedEntity);
+                transaction.Commit ();
+            }
+        }
         internal void retrieveComponentRegistryFromDatabase()
         {
             ComponentRegistryPersistence persistedRegistry = session.Get<ComponentRegistryPersistence> (ComponentRegistry.Instance.RegistryGuid);
