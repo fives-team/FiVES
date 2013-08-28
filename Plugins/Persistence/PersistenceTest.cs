@@ -134,6 +134,36 @@ namespace Persistence
             Assert.IsTrue (componentRegistry.getAttributeType ("myComponent", "IntAttribute") == typeof(int));
             Assert.IsTrue (componentRegistry.getAttributeType ("myComponent", "StringAttribute") == typeof(string));
         }
+
+        [Test()]
+        public void shouldDeleteEntity()
+        {
+            Entity entity = new Entity();
+            Entity childEntity = new Entity ();
+            Assert.True(entity.addChildNode (childEntity));
+
+            if (plugin == null) {
+                Console.WriteLine (" ==== [SHOULD STORE AND RETRIEVE ENTITIES]: Initializing Plugin ");
+                plugin = new PersistencePlugin ();
+                plugin.initialize ();
+            }
+
+            Console.WriteLine (" ==== [SHOULD STORE AND RETRIEVE ENTITIES]: Adding Entity " + entity.Guid);
+            entityRegistry.addEntity (entity);
+            Console.WriteLine (" ==== [SHOULD STORE AND RETRIEVE ENTITIES]: Adding Entity " + childEntity.Guid);
+            entityRegistry.addEntity (childEntity);
+
+            entityRegistry.removeEntity (childEntity.Guid);
+            entityRegistry.removeEntity (entity.Guid);
+
+            plugin.retrieveEntitiesFromDatabase ();
+
+            ISet<Guid> guidsInRegistry = entityRegistry.getAllGUIDs ();
+            Console.WriteLine (guidsInRegistry.ToString ());
+
+            Assert.True(!guidsInRegistry.Contains(entity.Guid));
+            Assert.True(!guidsInRegistry.Contains(childEntity.Guid));
+        }
 	}
 }
 
