@@ -71,6 +71,15 @@ namespace Persistence
                 transaction.Commit ();
             }
         }
+
+        private void persistComponentToDatabase(Component component) {
+            using(ISession session = sessionFactory.OpenSession()) {
+                var transaction = session.BeginTransaction ();
+                session.SaveOrUpdate (component);
+                transaction.Commit ();
+            }
+        }
+
         internal void retrieveComponentRegistryFromDatabase()
         {
             ComponentRegistryPersistence persistedRegistry = null;
