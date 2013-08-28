@@ -67,7 +67,7 @@ namespace Persistence
 
             using(ISession session = sessionFactory.OpenSession()) {
                 var transaction = session.BeginTransaction ();
-                session.Save (addedEntity);
+                session.SaveOrUpdate (addedEntity);
                 transaction.Commit ();
             }
         }
