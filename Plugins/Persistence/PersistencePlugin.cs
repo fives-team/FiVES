@@ -53,7 +53,9 @@ namespace Persistence
         }
         internal void retrieveComponentRegistryFromDatabase()
         {
-            ComponentRegistryPersistence persistedRegistry = session.Get<ComponentRegistryPersistence> (ComponentRegistry.Instance.RegistryGuid);
+            ComponentRegistryPersistence persistedRegistry = null;
+            using(ISession session = sessionFactory.OpenSession())
+                session.Get<ComponentRegistryPersistence> (ComponentRegistry.Instance.RegistryGuid);
             if(persistedRegistry != null)
                 persistedRegistry.registerPersistedComponents ();
 
