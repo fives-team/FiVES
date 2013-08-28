@@ -60,6 +60,7 @@ namespace Persistence
         }
 
         private Configuration nHibernateConfiguration = new Configuration();
-        private ISession session;
+        private ISessionFactory sessionFactory;
+        private ISession globalSession;
 	}
 }
