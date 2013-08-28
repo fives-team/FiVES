@@ -41,6 +41,14 @@ namespace Persistence
                 entitiesToInitialize.Remove (e.elementId);
             }
         }
+
+        public void onComponentChanged(Object sender, AttributeInComponentEventArgs e) {
+            Entity changedEntity = (Entity)sender;
+            Component changedComponent = changedEntity [e.componentName];
+            // TODO: change cascading persistence of entity, but only persist component and take care to persist mapping to entity as well
+            persistEntityToDatabase (changedEntity);
+        }
+
         #endregion
 
         private void initializeNHibernate() {
