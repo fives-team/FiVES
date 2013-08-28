@@ -30,6 +30,7 @@ namespace Persistence
             initializeNHibernate ();
             initializePersistedCollections ();
             EntityRegistry.Instance.OnEntityAdded += onEntityAdded;
+            EntityRegistry.Instance.OnEntityRemoved += onEntityRemoved;
         }
 
         internal void onEntityAdded(Object sender, EntityAddedOrRemovedEventArgs e) {
@@ -41,6 +42,11 @@ namespace Persistence
             } else {
                 entitiesToInitialize.Remove (e.elementId);
             }
+        }
+
+        internal void onEntityRemoved(Object sender, EntityAddedOrRemovedEventArgs e) {
+            Entity entityToRemove = EntityRegistry.Instance.getEntity (e.elementId);
+            removeEntityFromDatabase (entityToRemove);
         }
 
         internal void onComponentChanged(Object sender, AttributeInComponentEventArgs e) {
@@ -73,6 +79,13 @@ namespace Persistence
             }
         }
 
+        private void removeEntityFromDatabase(Entity entity) {
+            using (ISession session = sessionFactory.OpenSession()) {
+                var transaction = session.BeginTransaction ();
+                session.Delete (entity);
+                transaction.Commit ();
+            }
+        }
         private void persistComponentToDatabase(Component component) {
             using(ISession session = sessionFactory.OpenSession()) {
                 var transaction = session.BeginTransaction ();
