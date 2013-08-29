@@ -60,20 +60,31 @@ namespace Events
             Assert.IsTrue (eventWasRaised);
         }
 
-        public static void attributeChangedHandler(Object sender, AttributeChangedEventArgs e) {
+        private void attributeChangedHandler(Object sender, AttributeChangedEventArgs e) {
             eventWasRaised = true;
             Assert.AreEqual(e.attributeName, "a");
             Assert.AreEqual(e.value, 42);
         }
 
-        private void attributeInComponentChangedHandler(Object sender, AttributeInComponentEventArgs e) {
-            eventWasRaised = true;
-            Assert.AreEqual(e.componentName, "MyComponent");
-            Assert.AreEqual(e.attributeName, "a");
-            Assert.AreEqual(e.newValue, 42);
+
+        [Test()]
+        public void shouldRaiseComponentCreated()
+        {
+            ComponentLayout layout = new ComponentLayout ();
+            layout.attributes ["a"] = typeof(int);
+            ComponentRegistry.Instance.defineComponent ("MyComponent", new Guid (), layout);
+            dynamic newEntity = new Entity ();
+            newEntity.OnComponentCreated += new Entity.ComponentCreated(componentCreatedEventHandler);
+            newEntity.MyComponent.a = 5;
+            Assert.IsTrue (eventWasRaised);
         }
 
-        
+        private void componentCreatedEventHandler(Object sender, ComponentCreatedEventArgs e)
+        {
+           if (e.newComponentName == "MyComponent")
+                eventWasRaised = true;
+        }
+
         [Test()]
         public void shouldRaiseAttributeInComponentChanged()
         {
@@ -86,6 +97,13 @@ namespace Events
             newEntity.OnAttributeInComponentChanged += attributeInComponentChanged;                         
             newEntity .MyComponent.a = 42;
             Assert.IsTrue (eventWasRaised);
+        }
+
+        private void attributeInComponentChangedHandler(Object sender, AttributeInComponentEventArgs e) {
+            eventWasRaised = true;
+            Assert.AreEqual(e.componentName, "MyComponent");
+            Assert.AreEqual(e.attributeName, "a");
+            Assert.AreEqual(e.newValue, 42);
         }
     }
 }
