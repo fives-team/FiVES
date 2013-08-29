@@ -103,8 +103,13 @@ namespace FIVES
                         return;
                     }
 
-                    // Initialize plugin.
-                    info.initializer.initialize();
+                    try {
+                        // Initialize plugin.
+                        info.initializer.initialize();
+                    } catch (Exception e) {
+                        logger.ErrorException("Exception occured during initialization of " + name + " plugin.", e);
+                        return;
+                    }
                     loadedPlugins.Add(name, info);
                     OnPluginInitialized(this, new PluginLoadedEventArgs(name));
                 } catch (Exception e) {
