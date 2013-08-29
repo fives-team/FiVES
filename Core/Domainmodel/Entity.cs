@@ -19,8 +19,11 @@ namespace FIVES
         private List<Entity> children  = new List<Entity> ();
         private ComponentRegistry componentRegistry;
 
-        public delegate void AttributeInComponentChanged(Object sender, AttributeInComponentEventArgs e);
+        public delegate void AttributeInComponentChanged (Object sender, AttributeInComponentEventArgs e);
         public event AttributeInComponentChanged OnAttributeInComponentChanged;
+
+        public delegate void ComponentCreated (Object sender, ComponentCreatedEventArgs e);
+        public event ComponentCreated OnComponentCreated;
 
         public Entity ()
         {
@@ -101,11 +104,14 @@ namespace FIVES
         }
 
         private void instantiateNewComponent(string componentName) {
-            components [componentName] = componentRegistry.getComponentInstance (componentName);
-            components [componentName].OnAttributeChanged += delegate(object sender, AttributeChangedEventArgs e) {
+            Component newComponent = componentRegistry.getComponentInstance (componentName);
+            newComponent.OnAttributeChanged += delegate(object sender, AttributeChangedEventArgs e) {
                 if (this.OnAttributeInComponentChanged != null)
                     this.OnAttributeInComponentChanged (this, new AttributeInComponentEventArgs (componentName, e.attributeName, e.value));
             };
+            components [componentName] = newComponent;
+            if (this.OnComponentCreated != null)
+                this.OnComponentCreated (this, new ComponentCreatedEventArgs (componentName, newComponent.Id));
         }
 
         // Used for testing to separate component registry database for different tests.
