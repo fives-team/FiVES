@@ -17,7 +17,7 @@ namespace Persistence
 
         public string getName()
         {
-            return "Persistance";
+            return "Persistence";
         }
 
         public List<string> getDependencies()
