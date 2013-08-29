@@ -15,7 +15,7 @@ namespace Renderable
 
         public List<string> getDependencies()
         {
-            return new List<string>();
+            return new List<string>() {"Location"};
         }
 
         public void initialize()
