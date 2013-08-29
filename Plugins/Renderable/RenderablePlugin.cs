@@ -28,6 +28,12 @@ namespace Renderable
             ComponentLayout rendereableComponentLayout = new ComponentLayout ();
             rendereableComponentLayout ["meshResource"] = typeof(string);
             ComponentRegistry.Instance.defineComponent ("Renderable", this.pluginGUID, rendereableComponentLayout);
+            ComponentLayout scaleLayout = new ComponentLayout ();
+            scaleLayout ["x"] = typeof(float);
+            scaleLayout ["y"] = typeof(float);
+            scaleLayout ["z"] = typeof(float);
+
+            ComponentRegistry.Instance.defineComponent ("scale", this.pluginGUID, scaleLayout);
         }
 
         #endregion
