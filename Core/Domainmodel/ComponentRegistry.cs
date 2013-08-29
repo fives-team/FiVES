@@ -24,6 +24,24 @@ namespace FIVES
     }
 
     /// <summary>
+    /// Exception that is thrown when component is upgraded to an invalid version (less or equal to current).
+    /// </summary>
+    public class InvalidUpgradeVersion : System.Exception
+    {
+        public InvalidUpgradeVersion() : base() { }
+        public InvalidUpgradeVersion(string message) : base(message) { }
+    }
+
+    /// <summary>
+    /// Exception that is thrown when the upgraded component owner is not the same as in previous version.
+    /// </summary>
+    public class InvalidUpgradeOwner : System.Exception
+    {
+        public InvalidUpgradeOwner() : base() { }
+        public InvalidUpgradeOwner(string message) : base(message) { }
+    }
+
+    /// <summary>
     /// Manages component types in the database. Each component has a name and a attribute layout that it uses. Also each
     /// component must have an associated plugin/script that has defined it.
     /// </summary>
@@ -56,6 +74,60 @@ namespace FIVES
             registeredComponents[name] = new ComponentInfo();
             registeredComponents[name].owner = owner;
             registeredComponents[name].layout = layout;
+            registeredComponents[name].version = 1;
+        }
+
+        public delegate void ComponentUpgraded(Object sender, ComponentUpgradedEventArgs e);
+        public event ComponentUpgraded OnComponentUpgraded;
+
+        /// <summary>
+        /// Upgrader method used by <see cref="upgradeComponent"/> . Should convert <paramref name="oldComponent"/> to
+        /// <paramref name="newComponent"/>. The attributes in <paramref name="newComponent"/> will be predefined
+        /// according to the new layout, but will be set to a default value and must be updated to correct values based
+        /// on the values in the <paramref name="oldComponent"/>.
+        /// </summary>
+        public delegate void ComponentUpgrader(Component oldComponent, ref Component newComponent);
+
+        /// <summary>
+        /// Upgrades the component.
+        /// </summary>
+        /// <param name="name">Name of the component to be upgraded</param>
+        /// <param name="owner">Guid of the owner that introduces the component, usually a plugin or user script</param>
+        /// <param name="newLayout">New Layout used to be used by the component</param>
+        /// <param name="version">New version. Must be larger than the previous. The first version is always 1</param>
+        /// <param name="upgrader">Upgrader function. Will be called for every component present in the database</param>
+        public void upgradeComponent(string name, Guid owner, ComponentLayout newLayout, int version,
+                                     ComponentUpgrader upgrader)
+        {
+            if (!registeredComponents.ContainsKey(name))
+                throw new ComponentIsNotDefinedException("Undefined component " + name + " cannot be upgraded.");
+
+            ComponentInfo currentInfo = registeredComponents[name];
+            if (version <= currentInfo.version)
+                throw new InvalidUpgradeVersion("Version must be larger than the one already registered.");
+
+            if (owner != currentInfo.owner)
+                throw new InvalidUpgradeOwner("Owner of the upgraded component must remain the same.");
+
+            if (upgrader == null)
+                throw new ArgumentNullException("upgrader");
+
+            registeredComponents[name].layout = newLayout;
+
+            // TODO: perhaps we can do transaction like protection here to make sure that we don't leave the database
+            // in half-upgraded state if one of the upgraders will throw an exception.
+            foreach (var guid in entityRegistry.getAllGUIDs()) {
+                var entity = entityRegistry.getEntity(guid);
+                if (entity.hasComponent(name)) {
+                    Component oldComponent = entity[name];
+                    Component newComponent = getComponentInstance(name);
+                    upgrader(oldComponent, ref newComponent);
+                    entity[name] = newComponent;
+                }
+            }
+
+            if (OnComponentUpgraded != null)
+                OnComponentUpgraded(this, new ComponentUpgradedEventArgs(name));
         }
 
         /// <summary>
@@ -136,6 +208,7 @@ namespace FIVES
         private class ComponentInfo {
             public Guid owner { get; set; }
             public ComponentLayout layout { get; set; }
+            public int version;
         }
 
         // Users should not construct ComponentRegistry on their own, but use ComponentRegistry.Instance instead.
@@ -150,6 +223,14 @@ namespace FIVES
         /// The registry GUID.
         /// </summary>
         public readonly Guid RegistryGuid = new Guid("18c4a2ed-caa3-4d71-8764-268551284083");
+
+        private IEntityRegistry entityRegistry = EntityRegistry.Instance;
+
+        #region Testing
+        internal ComponentRegistry(IEntityRegistry customComponentRegistry) {
+            entityRegistry = customComponentRegistry;
+        }
+        #endregion
     }
 }
 

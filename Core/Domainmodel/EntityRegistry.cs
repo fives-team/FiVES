@@ -6,10 +6,18 @@ using Events;
 
 namespace FIVES
 {
+    #region Testing
+    public interface IEntityRegistry
+    {
+        Entity getEntity(Guid guid);
+        HashSet<Guid> getAllGUIDs();
+    }
+    #endregion
+
     /// <summary>
     /// Manages entities in the database
     /// </summary>
-    public class EntityRegistry
+    public class EntityRegistry : IEntityRegistry
     {
         public readonly static EntityRegistry Instance = new EntityRegistry();
 
@@ -26,7 +34,8 @@ namespace FIVES
         public void addEntity(Entity entity)
         {
             entities[entity.Guid] = entity;
-            OnEntityAdded (this, new EntityAddedOrRemovedEventArgs(entity.Guid));
+            if (OnEntityAdded != null)
+                OnEntityAdded(this, new EntityAddedOrRemovedEventArgs(entity.Guid));
         }
 
         /// <summary>
@@ -47,7 +56,8 @@ namespace FIVES
         public bool removeEntity(Guid guid)
         {
             if (entities.ContainsKey(guid)) {
-                OnEntityRemoved (this, new EntityAddedOrRemovedEventArgs(guid));
+                if (OnEntityRemoved != null)
+                    OnEntityRemoved(this, new EntityAddedOrRemovedEventArgs(guid));
                 entities.Remove(guid);
                 return true;
             }
