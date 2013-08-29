@@ -3,6 +3,7 @@ function(KIARA, $) {
     var listObjects;
     var getObjectPosition;
     var createEntityAt;
+    var createServerScriptFor;
 
     function requestPosition(guid) {
         getObjectPosition(guid).on("result", function(error, position) {
@@ -18,6 +19,14 @@ function(KIARA, $) {
         return parseFloat(value);
     }
 
+    function promptString(msg) {
+        var value;
+        do {
+            value = prompt(msg);
+        } while (value.toString() == "")
+        return value.toString();
+    }
+
     function createNewEntity(conn) {
         var x = promptFloat("x = ");
         var y = promptFloat("y = ");
@@ -26,6 +35,13 @@ function(KIARA, $) {
         createEntityAt(x, y, z).on("result", function() {
             location.reload();
         });
+    }
+
+    function setScript(guid) {
+        //var script = promptString("serverScript = ");
+        var script = "console.log('hello from client');";
+        createServerScriptFor(guid, script);
+        return false;
     }
 
     function main() {
@@ -38,20 +54,22 @@ function(KIARA, $) {
                    listObjects = conn.generateFuncWrapper("clientsync.listObjects");
                    getObjectPosition = conn.generateFuncWrapper("clientsync.getObjectPosition");
                    createEntityAt = conn.generateFuncWrapper("editing.createEntityAt");
+                   createServerScriptFor = conn.generateFuncWrapper("scripting.createServerScriptFor");
                    listObjects().on("result", function(error, objects) {
                        for (var i = 0; i < objects.length; i++) {
                            var div = document.createElement("div");
                            var guid = objects[i];
                            div.appendChild(document.createTextNode(guid));
-                           div.addEventListener("click", requestPosition.bind(null, guid));
+                           //div.addEventListener("click", requestPosition.bind(null, guid));
+                           div.addEventListener("click", setScript.bind(null, guid));
                            div.setAttribute("style", "border: 1px solid black; background-color: gray; margin: 2px;");
                            document.body.appendChild(div);
                        }
 
-                       var button = document.createElement("button");
-                       button.appendChild(document.createTextNode("Create entity"));
-                       button.addEventListener("click", createNewEntity.bind(conn));
-                       document.body.appendChild(button);
+                       var createButton = document.createElement("button");
+                       createButton.appendChild(document.createTextNode("Create entity"));
+                       createButton.addEventListener("click", createNewEntity.bind(conn));
+                       document.body.appendChild(createButton);
                    })
                }
             });

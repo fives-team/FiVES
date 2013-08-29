@@ -68,6 +68,16 @@ namespace FIVES
         }
 
         /// <summary>
+        /// Returns an entity by its <paramref name="guid"/> or null if no such entity is found.
+        /// </summary>
+        /// <returns>The entity.</returns>
+        /// <param name="guid">GUID as a string.</param>
+        public Entity getEntity(string guid)
+        {
+            return getEntity(new Guid(guid));
+        }
+
+        /// <summary>
         ///  Returns a list of all entities' GUIDs.
         /// </summary>
         /// <returns>The all GUI ds.</returns>
