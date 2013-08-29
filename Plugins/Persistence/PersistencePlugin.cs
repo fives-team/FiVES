@@ -11,8 +11,8 @@ using Iesi.Collections.Generic;
 
 namespace Persistence
 {
-	public class PersistencePlugin: IPluginInitializer
-	{
+    public class PersistencePlugin: IPluginInitializer
+    {
         #region IPluginInitializer implementation
 
         /// <summary>
@@ -183,5 +183,5 @@ namespace Persistence
         private ISessionFactory sessionFactory;
         private ISession globalSession;
         private HashedSet<Guid> entitiesToInitialize = new HashedSet<Guid>();
-	}
+    }
 }

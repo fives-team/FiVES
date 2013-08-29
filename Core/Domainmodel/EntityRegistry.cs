@@ -26,7 +26,7 @@ namespace FIVES
         public void addEntity(Entity entity)
         {
             entities[entity.Guid] = entity;
-			OnEntityAdded (this, new EntityAddedOrRemovedEventArgs(entity.Guid));
+            OnEntityAdded (this, new EntityAddedOrRemovedEventArgs(entity.Guid));
         }
 
         /// <summary>

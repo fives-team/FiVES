@@ -8,19 +8,19 @@ using System.Collections.Generic;
 
 namespace Persistence
 {
-	[TestFixture()]
-	public class PersistenceTest
-	{
-		ComponentRegistry componentRegistry;
-		EntityRegistry entityRegistry;
+    [TestFixture()]
+    public class PersistenceTest
+    {
+        ComponentRegistry componentRegistry;
+        EntityRegistry entityRegistry;
         Configuration cfg;
         NHibernate.ISessionFactory sessionFactory;
         PersistencePlugin plugin;
 
-		public PersistenceTest ()
-		{
+        public PersistenceTest ()
+        {
 
-		}
+        }
 
         [SetUp()]
         public void setUpDatabaseTest() {
@@ -164,6 +164,6 @@ namespace Persistence
             Assert.True(!guidsInRegistry.Contains(entity.Guid));
             Assert.True(!guidsInRegistry.Contains(childEntity.Guid));
         }
-	}
+    }
 }
 

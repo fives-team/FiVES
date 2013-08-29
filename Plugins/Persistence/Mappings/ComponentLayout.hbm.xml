@@ -2,14 +2,14 @@
 <hibernate-mapping xmlns="urn:nhibernate-mapping-2.2"
                    assembly="Core"
                    namespace="FIVES">
-	<class name="ComponentLayout" lazy="false">
-		<id name="Id" type = "Guid">
-			<generator class = "guid" />
-		</id>
-		<map name="attributes" table = "attributeDefinitions" cascade = "all">
-		  <key column = "layoutID" />
-		  <index type = "string" column = "attributeName" />
-		  <element column = "attributeType" type="Type" />
-		</map>
-	</class>
+    <class name="ComponentLayout" lazy="false">
+        <id name="Id" type = "Guid">
+            <generator class = "guid" />
+        </id>
+        <map name="attributes" table = "attributeDefinitions" cascade = "all">
+          <key column = "layoutID" />
+          <index type = "string" column = "attributeName" />
+          <element column = "attributeType" type="Type" />
+        </map>
+    </class>
 </hibernate-mapping>

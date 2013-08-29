@@ -2,14 +2,14 @@
 <hibernate-mapping xmlns="urn:nhibernate-mapping-2.2"
                    assembly="Persistence"
                    namespace="Persistence">
-	<class name="ComponentRegistryPersistence" lazy="false">
-		<id name="Id" type = "Guid">
-		</id>
-		<map name="ownerRegisteredComponents" table = "compinfo_in_registries" cascade = "all">
-		  <key column = "registryId" />
-		  <index type = "string" column = "registryName" />
-		  <many-to-many column = "layoutID" class="ComponentOwnerLayout" />
-		</map>
-	</class>
+    <class name="ComponentRegistryPersistence" lazy="false">
+        <id name="Id" type = "Guid">
+        </id>
+        <map name="ownerRegisteredComponents" table = "compinfo_in_registries" cascade = "all">
+          <key column = "registryId" />
+          <index type = "string" column = "registryName" />
+          <many-to-many column = "layoutID" class="ComponentOwnerLayout" />
+        </map>
+    </class>
 </hibernate-mapping>
 
