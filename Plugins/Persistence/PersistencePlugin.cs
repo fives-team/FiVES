@@ -45,6 +45,9 @@ namespace Persistence
             retrieveEntitiesFromDatabase ();
         }
 
+        #endregion
+
+        #region Event Handlers
         internal void onEntityAdded(Object sender, EntityAddedOrRemovedEventArgs e) {
             Entity addedEntity = EntityRegistry.Instance.getEntity (e.elementId);
             addedEntity.OnAttributeInComponentChanged += onComponentChanged;
@@ -70,6 +73,7 @@ namespace Persistence
 
         #endregion
 
+        #region database synchronisation
         private void persistEntityToDatabase(Entity addedEntity) {
 
             using(ISession session = sessionFactory.OpenSession()) {
@@ -114,6 +118,7 @@ namespace Persistence
             }
         }
 
+        #endregion
         private Configuration nHibernateConfiguration = new Configuration();
         private ISessionFactory sessionFactory;
         private ISession globalSession;
