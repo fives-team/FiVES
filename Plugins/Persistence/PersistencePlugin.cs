@@ -33,6 +33,18 @@ namespace Persistence
             EntityRegistry.Instance.OnEntityRemoved += onEntityRemoved;
         }
 
+        private void initializeNHibernate() {
+            nHibernateConfiguration.Configure ();
+            nHibernateConfiguration.AddAssembly (typeof(Entity).Assembly);
+            sessionFactory = nHibernateConfiguration.BuildSessionFactory ();
+            globalSession = sessionFactory.OpenSession ();
+        }
+
+        private void initializePersistedCollections() {
+            retrieveComponentRegistryFromDatabase ();
+            retrieveEntitiesFromDatabase ();
+        }
+
         internal void onEntityAdded(Object sender, EntityAddedOrRemovedEventArgs e) {
             Entity addedEntity = EntityRegistry.Instance.getEntity (e.elementId);
             addedEntity.OnAttributeInComponentChanged += onComponentChanged;
@@ -57,18 +69,6 @@ namespace Persistence
         }
 
         #endregion
-
-        private void initializeNHibernate() {
-            nHibernateConfiguration.Configure ();
-            nHibernateConfiguration.AddAssembly (typeof(Entity).Assembly);
-            sessionFactory = nHibernateConfiguration.BuildSessionFactory ();
-            globalSession = sessionFactory.OpenSession ();
-        }
-
-        private void initializePersistedCollections() {
-            retrieveComponentRegistryFromDatabase ();
-            retrieveEntitiesFromDatabase ();
-        }
 
         private void persistEntityToDatabase(Entity addedEntity) {
 
