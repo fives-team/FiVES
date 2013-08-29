@@ -52,6 +52,7 @@ namespace Persistence
         private void initializeNHibernate() {
             nHibernateConfiguration.Configure ();
             nHibernateConfiguration.AddAssembly (typeof(Entity).Assembly);
+            new SchemaUpdate (nHibernateConfiguration).Execute(false, true);
             sessionFactory = nHibernateConfiguration.BuildSessionFactory ();
             globalSession = sessionFactory.OpenSession ();
         }
