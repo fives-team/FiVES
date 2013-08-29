@@ -82,6 +82,7 @@
     <Compile Include="Events\EventTests.cs" />
     <Compile Include="Events\AttributeInComponentEventArgs.cs" />
     <Compile Include="Events\PluginLoadedEventArgs.cs" />
+    <Compile Include="Events\ComponentCreatedEventArgs.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
