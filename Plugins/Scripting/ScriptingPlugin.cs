@@ -49,6 +49,14 @@ namespace Scripting
             ComponentRegistry.Instance.defineComponent(scriptingComponentName, pluginGUID, layout);
 
             EntityRegistry.Instance.OnEntityAdded += handleOnEntityAdded;
+
+            // Register event handlers for all entities that were created before this plugin was loaded.
+            var guids = EntityRegistry.Instance.getAllGUIDs();
+            foreach (var guid in guids)
+                handleOnEntityAdded(EntityRegistry.Instance, new EntityAddedOrRemovedEventArgs(guid));
+
+            // FIXME: This is for debugging purposes only. Remove in release.
+            registeredGlobalObjects["console"] = new CLRConsole();
         }
 
         #endregion
@@ -62,13 +70,16 @@ namespace Scripting
         {
             Entity newEntity = EntityRegistry.Instance.getEntity(e.elementId);
             // FIXME: This is not very efficient. Would be nice to be triggered only when anything in "scripting" 
-            // component is changed, but without the need to create one. Essentially we need an event 
+            // component is changed, but without the need to create one. Essentially we need an event
             // OnComponentCreated.
-            newEntity.OnAttributeInComponentChanged += delegate(object sender2, AttributeInComponentEventArgs e2) {
-                if (e2.componentName == scriptingComponentName)
-                    initEntityContext(newEntity);
-            };
+            newEntity.OnAttributeInComponentChanged += handleOnAttributeInComponentChanged;
             initEntityContext(newEntity);
+        }
+
+        private void handleOnAttributeInComponentChanged(object sender, AttributeInComponentEventArgs e)
+        {
+            if (e.componentName == scriptingComponentName)
+                initEntityContext((Entity)sender);
         }
 
 
@@ -88,15 +99,19 @@ namespace Scripting
             var context = new V8NetContext(engine);
             context.Execute("script = {}");
 
-            // Register global objects.
-            foreach (var entry in registeredGlobalObjects)
-                engine.GlobalObject.SetProperty(entry.Key, entry.Value, null, true, V8PropertyAttributes.Locked);
+            engine.WithContextScope = () => {
+                // Register global objects.
+                // FIXME: Potential security issue. Users can access .Type in script which allows to create any object and
+                // thus run arbitrary code on the server.
+                foreach (var entry in registeredGlobalObjects)
+                    engine.GlobalObject.SetProperty(entry.Key, entry.Value, null, true, V8PropertyAttributes.Locked);
 
-            // Invoke new context handlers.
-            newContextHandlers.ForEach(handler => handler(context));
+                // Invoke new context handlers.
+                newContextHandlers.ForEach(handler => handler(context));
 
-            // Execute server script.
-            engine.Execute(serverScript);
+                // Execute server script.
+                engine.Execute(serverScript);
+            };
         }
 
         private void registerGlobalObject(string name, object csObject)

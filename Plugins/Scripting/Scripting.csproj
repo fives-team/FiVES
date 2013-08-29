@@ -48,6 +48,7 @@
     <Compile Include="ScriptingPlugin.cs" />
     <Compile Include="IJSContext.cs" />
     <Compile Include="V8NetContext.cs" />
+    <Compile Include="CLRConsole.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

@@ -83,6 +83,11 @@ namespace ClientSync {
             connection.registerFuncImplementation("clientsync.listObjects", (Func<List<string>>)listObjects);
             connection.registerFuncImplementation("clientsync.getObjectPosition",
                                                   (Func<string, Position>)getObjectPosition);
+            connection.registerFuncImplementation("scripting.createServerScriptFor",
+                                                  (Action<string,string>)delegate(string guid, string script) {
+                dynamic entity = EntityRegistry.Instance.getEntity(guid);
+                entity["scripting"]["serverScript"] = script;
+            });
 
             // Register custom client methods.
             foreach (var entry in clientMethods)

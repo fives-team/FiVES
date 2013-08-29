@@ -39,7 +39,7 @@ function(KIARA, $) {
 
     function setScript(guid) {
         //var script = promptString("serverScript = ");
-        var script = "console.WriteLine('hello from script');";
+        var script = "console.log('hello from client');";
         createServerScriptFor(guid, script);
         return false;
     }
