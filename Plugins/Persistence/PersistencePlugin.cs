@@ -183,5 +183,7 @@ namespace Persistence
         private ISessionFactory sessionFactory;
         private ISession globalSession;
         private HashedSet<Guid> entitiesToInitialize = new HashedSet<Guid>();
+
+        internal readonly Guid pluginGuid = new Guid("d51e4394-68cc-4801-82f2-6b2a865b28df");
     }
 }
