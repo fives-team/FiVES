@@ -46,16 +46,44 @@ namespace FIVES
         public static bool operator ==(ComponentLayout layout_1, ComponentLayout layout_2)
         {
             bool isEqual = true;
-            foreach(KeyValuePair<string, Type> entry in layout_1.attributes)
+            AttributeDefinition attribute1, attribute2;
+            foreach(KeyValuePair<string, AttributeDefinition> entry in layout_1.attributes)
             {
-                isEqual = isEqual && layout_2.attributes.ContainsKey (entry.Key) && layout_2.attributes [entry.Key] == layout_1.attributes [entry.Key];
+                if (!layout_2.attributes.ContainsKey (entry.Key))
+                    return false;
+
+                attribute1 = layout_1.attributes [entry.Key];
+                attribute2 = layout_2.attributes [entry.Key];
+
+                isEqual = isEqual
+                    && typeIsEqual (attribute1, attribute2)
+                    && valueIsEqual (attribute1, attribute2);
             }
-            foreach(KeyValuePair<string, Type> entry in layout_2.attributes)
+            foreach(KeyValuePair<string, AttributeDefinition> entry in layout_2.attributes)
             {
-                isEqual = isEqual && layout_1.attributes.ContainsKey (entry.Key) && layout_1.attributes [entry.Key] == layout_2.attributes [entry.Key];
+                if (!layout_1.attributes.ContainsKey (entry.Key))
+                    return false;
+
+                attribute1 = layout_1.attributes [entry.Key];
+                attribute2 = layout_2.attributes [entry.Key];
+
+                isEqual = isEqual
+                        && typeIsEqual (attribute1, attribute2)
+                        && valueIsEqual (attribute1, attribute2);
             }
 
             return isEqual;
+        }
+
+        internal static bool typeIsEqual (AttributeDefinition attribute1, AttributeDefinition attribute2) {
+            return attribute1.type == attribute2.type;
+        }
+
+        internal static bool valueIsEqual(AttributeDefinition attribute1, AttributeDefinition attribute2) {
+            if (attribute1.defaultValue == null || attribute2.defaultValue == null)
+                return attribute1.defaultValue == attribute2.defaultValue;
+            else
+                return attribute1.defaultValue.Equals (attribute2.defaultValue);
         }
 
         public static bool operator !=(ComponentLayout layout_1, ComponentLayout layout_2)
