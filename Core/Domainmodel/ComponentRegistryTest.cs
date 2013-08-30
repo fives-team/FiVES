@@ -220,6 +220,34 @@ namespace FIVES
             Assert.IsTrue(finished);
             Assert.IsTrue(upgradeOnTime);
         }
+
+        [Test]
+        public void shouldOnlyUpgradeOutdatedComponents()
+        {
+            Guid owner = Guid.NewGuid();
+            componentRegistry.defineComponent(name, owner, layout);
+
+            var entity = new Entity(componentRegistry);
+
+            mockEntityRegistry.Setup(r => r.getAllGUIDs()).Returns(new HashSet<Guid>{entity.Guid});
+            mockEntityRegistry.Setup(r => r.getEntity(entity.Guid)).Returns(entity);
+
+            entity[name]["i"] = 42;
+            entity[name]["f"] = 3.14f;
+            entity[name]["s"] = "foobar";
+            entity[name]["b"] = false;
+            entity[name].Version = 2;
+
+            componentRegistry.upgradeComponent(name, owner, layout, 2, testUpgrader);
+
+            mockEntityRegistry.Verify(r => r.getAllGUIDs(), Times.Once());
+            mockEntityRegistry.Verify(r => r.getEntity(entity.Guid), Times.Once());
+
+            Assert.AreEqual(entity[name]["i"], 42);
+            Assert.AreEqual(entity[name]["f"], 3.14f);
+            Assert.AreEqual(entity[name]["s"], "foobar");
+            Assert.AreEqual(entity[name]["b"], false);
+        }
     }
 }
 
