@@ -73,7 +73,7 @@ namespace Persistence
             dynamic storedEntity = entityRegistry.getEntity(entity.Guid);
             Assert.IsTrue (storedEntity.myComponent.IntAttribute == 42);
             Assert.IsTrue (storedEntity.myComponent.StringAttribute == "Hello World!");
-
+            Assert.AreEqual(1, storedEntity.myComponent.Version);
         }
 
         [Test()]

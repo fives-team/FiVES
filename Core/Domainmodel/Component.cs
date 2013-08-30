@@ -66,6 +66,8 @@ namespace FIVES
             return true;
         }
 
+        public int Version { get; internal set; }
+
         internal Component() {}
 
         // Can only be constructed by ComponentRegistry.createComponent to ensure correct attributes.
@@ -82,8 +84,6 @@ namespace FIVES
 
             attributes.Add(attributeName, new Attribute(type, defaultValue));
         }
-
-        internal int Version { get; set; }
 
         private bool checkAttributeExistsAndTypeMatches(string attributeName, Type requestedType) {
             if (!attributes.ContainsKey(attributeName)) {
