@@ -33,6 +33,16 @@ namespace FIVES
             set { attributes[name] = value; }
         }
 
+        public void addAttribute<T>(string name, object defaultValue)
+        {
+            this.attributes [name] = new AttributeDefinition(typeof(T), defaultValue);
+        }
+
+        public void addAttribute<T>(string name)
+        {
+            this.attributes [name] = new AttributeDefinition(typeof(T), default(T));
+        }
+
         public static bool operator ==(ComponentLayout layout_1, ComponentLayout layout_2)
         {
             bool isEqual = true;
