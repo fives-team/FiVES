@@ -5,7 +5,6 @@
     <property name="dialect">Persistence.MySQLGuid32, Persistence</property>
     <property name="connection.driver_class">NHibernate.Driver.MySqlDataDriver</property>
     <property name="connection.connection_string">Server=127.0.0.1;Database=fivestest;Uid=root;</property>
-    <property name="show_sql">true</property>
     <mapping assembly = "Persistence" />
   </session-factory>
 </hibernate-configuration>

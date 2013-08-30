@@ -11,6 +11,8 @@ namespace FIVES
 
         static int Main(string[] args)
         {
+            logger.Info("Loading plugins");
+
             ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
             try {
                 string pluginDir = ConfigurationManager.AppSettings["PluginsDir"].ToString();
@@ -21,6 +23,8 @@ namespace FIVES
             } catch (ConfigurationErrorsException) {
                 logger.Error("Configuration is missing or corrupt.");
             }
+
+            logger.Info("Finished loading plugins");
 
 //            // Add 5 entities.
 //            var random = new Random();
@@ -38,6 +42,8 @@ namespace FIVES
 //
 //                EntityRegistry.Instance.addEntity(entity);
 //            }
+
+            Console.WriteLine("The server is up and running. Press any key to stop it...");
 
             // Wait for any key to be pressed.
             Console.ReadKey();

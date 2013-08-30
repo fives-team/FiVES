@@ -47,6 +47,10 @@
     </Reference>
     <Reference Include="System.Data" />
     <Reference Include="Microsoft.CSharp" />
+    <Reference Include="NLog">
+      <HintPath>..\..\ThirdParty\NLog\NLog.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Configuration" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -54,6 +58,7 @@
     <Compile Include="PersistenceTest.cs" />
     <Compile Include="MySQLGuid32.cs" />
     <Compile Include="Domainmodel\ComponentRegistryPersistence.cs" />
+    <Compile Include="NLogFactory.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

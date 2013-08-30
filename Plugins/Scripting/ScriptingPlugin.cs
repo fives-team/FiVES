@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using KIARA;
 using Events;
 using V8.Net;
+using NLog;
 
 namespace Scripting
 {
@@ -61,6 +62,8 @@ namespace Scripting
 
         #endregion
 
+        private static Logger logger = LogManager.GetCurrentClassLogger();
+
         private const string scriptingComponentName = "scripting";
         private const string ownerScriptAttributeName = "ownerScript";
         private const string serverScriptAttributeName = "serverScript";
@@ -88,26 +91,52 @@ namespace Scripting
             // Remove previous context if any.
             entityContexts.Remove(entity.Guid);
 
+            logger.Debug("Entered initEntityContext with entity [{0}]", entity.Guid);
+
             string serverScript = (string)entity[scriptingComponentName][serverScriptAttributeName];
             if (serverScript == null)
                 return;
 
-            var engine = new V8Engine();
+            logger.Debug("Creating the context. Server script is {0}", serverScript);
+
+            V8Engine engine;
+            try {
+                engine = new V8Engine();
+            } catch (Exception e) {
+                logger.ErrorException("Exception during context creation", e);
+                return;
+            }
+
+            logger.Debug("Adding context to the list");
+
             entityContexts.Add(entity.Guid, engine);
+
+            logger.Debug("Creating context wrapper");
 
             // This object should be used to assign event handlers, e.g. script.onNewObject = function (newObject) {...}
             var context = new V8NetContext(engine);
+
+            logger.Debug("Creating script object");
+
             context.Execute("script = {}");
 
+            logger.Debug("About to enter context scope");
+
             engine.WithContextScope = () => {
+                logger.Debug("Configuring the context");
+
                 // Register global objects.
                 // FIXME: Potential security issue. Users can access .Type in script which allows to create any object and
                 // thus run arbitrary code on the server.
                 foreach (var entry in registeredGlobalObjects)
                     engine.GlobalObject.SetProperty(entry.Key, entry.Value, null, true, V8PropertyAttributes.Locked);
 
+                logger.Debug("Calling context callbacks");
+
                 // Invoke new context handlers.
                 newContextHandlers.ForEach(handler => handler(context));
+
+                logger.Debug("Executing serverScript");
 
                 // Execute server script.
                 engine.Execute(serverScript);
