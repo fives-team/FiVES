@@ -12,6 +12,17 @@ namespace FIVES
     //   layout["attrC"] = AttributeType.STRING;
     public class ComponentLayout
     {
+        public class AttributeDefinition
+        {
+            public AttributeDefinition(Type type, object defaultValue)
+            {
+                this.type = type;
+                this.defaultValue = defaultValue;
+            }
+            public Type type { get; set; }
+            public object defaultValue { get; set; }
+        }
+
         public ComponentLayout() {
             this.attributes = new Dictionary<string, Type> ();
         }
