@@ -76,11 +76,11 @@ namespace FIVES
         }
 
         // This is used to populate the attributes into a component based on it's layout.
-        internal void addAttribute(string attributeName, Type type) {
+        internal void addAttribute(string attributeName, Type type, object defaultValue) {
             // If the attribute already exists, then it's an internal error (probably in ComponentRegistry).
             Debug.Assert(!attributes.ContainsKey(attributeName));
 
-            attributes.Add(attributeName, new Attribute(type, null));
+            attributes.Add(attributeName, new Attribute(type, defaultValue));
         }
 
         private bool checkAttributeExistsAndTypeMatches(string attributeName, Type requestedType) {
