@@ -77,8 +77,27 @@ namespace FIVES
             registeredComponents[name].version = 1;
         }
 
-        public delegate void ComponentUpgraded(Object sender, ComponentUpgradedEventArgs e);
-        public event ComponentUpgraded OnComponentUpgraded;
+        public delegate void ComponentLayoutUpgradeStarted(Object sender, 
+                                                           ComponentLayoutUpgradeStartedOrFinishedEventArgs e);
+        public delegate void ComponentLayoutUpgradeFinished(Object sender, 
+                                                            ComponentLayoutUpgradeStartedOrFinishedEventArgs e);
+        public delegate void EntityComponentUpgraded(Object sender, EntityComponentUpgradedEventArgs e);
+
+        /// <summary>
+        /// Occurs when component layout upgrade starts.
+        /// </summary>
+        public event ComponentLayoutUpgradeStarted OnComponentLayoutUpgradeStarted;
+
+        /// <summary>
+        /// Occurs when component layout upgrade finishes.
+        /// </summary>
+        public event ComponentLayoutUpgradeFinished OnComponentLayoutUpgradeFinished;
+
+        /// <summary>
+        /// Occurs when a component in an entity is upgraded. These events will always occur between 
+        /// OnComponentLayoutUpgradeStarted and OnComponentLayoutUpgradeFinished for the same component.
+        /// </summary>
+        public event EntityComponentUpgraded OnEntityComponentUpgraded;
 
         /// <summary>
         /// Upgrader method used by <see cref="upgradeComponent"/> . Should convert <paramref name="oldComponent"/> to
@@ -112,22 +131,32 @@ namespace FIVES
             if (upgrader == null)
                 throw new ArgumentNullException("upgrader");
 
+            var oldVersion = registeredComponents[name].version;
+            registeredComponents[name].version = version;
             registeredComponents[name].layout = newLayout;
 
-            // TODO: perhaps we can do transaction like protection here to make sure that we don't leave the database
-            // in half-upgraded state if one of the upgraders will throw an exception.
+            if (OnComponentLayoutUpgradeStarted != null)
+                OnComponentLayoutUpgradeStarted(this, new ComponentLayoutUpgradeStartedOrFinishedEventArgs(name));
+
             foreach (var guid in entityRegistry.getAllGUIDs()) {
                 var entity = entityRegistry.getEntity(guid);
                 if (entity.hasComponent(name)) {
                     Component oldComponent = entity[name];
+                    if (oldComponent.Version != oldVersion)
+                        continue;
+
                     Component newComponent = getComponentInstance(name);
                     upgrader(oldComponent, ref newComponent);
+
                     entity[name] = newComponent;
+
+                    if (OnEntityComponentUpgraded != null)
+                        OnEntityComponentUpgraded(this, new EntityComponentUpgradedEventArgs(entity, name));
                 }
             }
 
-            if (OnComponentUpgraded != null)
-                OnComponentUpgraded(this, new ComponentUpgradedEventArgs(name));
+            if (OnComponentLayoutUpgradeFinished != null)
+                OnComponentLayoutUpgradeFinished(this, new ComponentLayoutUpgradeStartedOrFinishedEventArgs(name));
         }
 
         /// <summary>
@@ -198,9 +227,11 @@ namespace FIVES
                 throw new ComponentIsNotDefinedException("Component '" + componentName + "' is not defined.");
 
             Component newComponent = new Component(componentName);
-            foreach (var entry in registeredComponents[componentName].layout.attributes)
+            ComponentInfo info = registeredComponents[componentName];
+            foreach (var entry in info.layout.attributes)
                 newComponent.addAttribute(entry.Key, entry.Value.type, entry.Value.defaultValue);
 
+			newComponent.Version = info.version;
             return newComponent;
         }
 

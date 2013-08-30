@@ -83,6 +83,8 @@ namespace FIVES
             attributes.Add(attributeName, new Attribute(type, defaultValue));
         }
 
+        internal int Version { get; set; }
+
         private bool checkAttributeExistsAndTypeMatches(string attributeName, Type requestedType) {
             if (!attributes.ContainsKey(attributeName)) {
                 throw new AttributeIsNotDefinedException(

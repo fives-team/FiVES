@@ -165,6 +165,61 @@ namespace FIVES
             Assert.IsNull(entity[name]["s"]);
             Assert.AreEqual(entity[name]["b"], false);
         }
+
+        public interface UpgradeEventTester {
+            void HandleStarted(Object sender, ComponentLayoutUpgradeStartedOrFinishedEventArgs e);
+            void HandleFinished(Object sender, ComponentLayoutUpgradeStartedOrFinishedEventArgs e);
+            void HandleUpgraded(Object sender, EntityComponentUpgradedEventArgs e);
+        }
+
+        [Test]
+        public void shouldGenerateUpgradeEvents()
+        {
+            bool started = false;
+            bool finished = false;
+            bool upgradeOnTime = false;
+
+            Mock<UpgradeEventTester> tester = new Mock<UpgradeEventTester>();
+            tester.Setup(t => t.HandleStarted(It.IsAny<Object>(), 
+                It.IsAny<ComponentLayoutUpgradeStartedOrFinishedEventArgs>())).Callback(() => started = true);
+            tester.Setup(t => t.HandleFinished(It.IsAny<Object>(), 
+                It.IsAny<ComponentLayoutUpgradeStartedOrFinishedEventArgs>())).Callback(() => finished = true);
+
+            // This only marks upgrade if it happended after started, but before finished.
+            tester.Setup(t => t.HandleUpgraded(It.IsAny<Object>(), It.IsAny<EntityComponentUpgradedEventArgs>()))
+                .Callback(delegate() { if (started && !finished) upgradeOnTime = true; });
+
+            Guid owner = Guid.NewGuid();
+            componentRegistry.defineComponent(name, owner, layout);
+
+            componentRegistry.OnComponentLayoutUpgradeStarted += tester.Object.HandleStarted;
+            componentRegistry.OnComponentLayoutUpgradeFinished += tester.Object.HandleFinished;
+            componentRegistry.OnEntityComponentUpgraded += tester.Object.HandleUpgraded;
+
+            var entity = new Entity(componentRegistry);
+
+            mockEntityRegistry.Setup(r => r.getAllGUIDs()).Returns(new HashSet<Guid>{entity.Guid});
+            mockEntityRegistry.Setup(r => r.getEntity(entity.Guid)).Returns(entity);
+
+            entity[name]["i"] = 42;
+            entity[name]["f"] = 3.14f;
+            entity[name]["s"] = "foobar";
+            entity[name]["b"] = false;
+
+            componentRegistry.upgradeComponent(name, owner, layout, 2, testUpgrader);
+
+            tester.Verify(t => t.HandleStarted(componentRegistry, 
+                It.Is<ComponentLayoutUpgradeStartedOrFinishedEventArgs>(a => a.componentName == name)), Times.Once());
+            tester.Verify(t => t.HandleFinished(componentRegistry, 
+                It.Is<ComponentLayoutUpgradeStartedOrFinishedEventArgs>(a => a.componentName == name)), Times.Once());
+            tester.Verify(t => t.HandleUpgraded(componentRegistry, 
+                It.Is<EntityComponentUpgradedEventArgs>(a => a.componentName == name && a.entity == entity)), 
+                Times.Once());
+
+            Assert.IsTrue(started);
+            Assert.IsTrue(finished);
+            Assert.IsTrue(upgradeOnTime);
+        }
     }
 }
 

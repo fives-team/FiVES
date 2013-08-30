@@ -7,7 +7,7 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{627CCFC6-4071-4119-92C6-8BC96E4310C8}</ProjectGuid>
     <OutputType>Library</OutputType>
-    <RootNamespace>Core</RootNamespace>
+    <RootNamespace>FIVES</RootNamespace>
     <AssemblyName>Core</AssemblyName>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
@@ -83,7 +83,8 @@
     <Compile Include="Events\AttributeInComponentEventArgs.cs" />
     <Compile Include="Events\PluginLoadedEventArgs.cs" />
     <Compile Include="Events\ComponentCreatedEventArgs.cs" />
-    <Compile Include="Events\ComponentUpgradedEventArgs.cs" />
+    <Compile Include="Events\EntityComponentUpgradedEventArgs.cs" />
+    <Compile Include="Events\ComponentLayoutUpgradeStartedOrFinishedEventArgs.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

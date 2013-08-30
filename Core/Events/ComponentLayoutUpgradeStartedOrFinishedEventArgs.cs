@@ -2,9 +2,9 @@ using System;
 
 namespace FIVES
 {
-    public class ComponentUpgradedEventArgs
+    public class ComponentLayoutUpgradeStartedOrFinishedEventArgs
     {
-        public ComponentUpgradedEventArgs(string aComponentName)
+        public ComponentLayoutUpgradeStartedOrFinishedEventArgs(string aComponentName)
         {
             componentName = aComponentName;
         }
