@@ -26,12 +26,12 @@ namespace Renderable
         private void registerComponent()
         {
             ComponentLayout rendereableComponentLayout = new ComponentLayout ();
-            rendereableComponentLayout ["uri"] = typeof(string);
+            rendereableComponentLayout.addAttribute<string>("uri");
 
             ComponentLayout scaleLayout = new ComponentLayout ();
-            scaleLayout ["x"] = typeof(float);
-            scaleLayout ["y"] = typeof(float);
-            scaleLayout ["z"] = typeof(float);
+            scaleLayout.addAttribute<float>("x");
+            scaleLayout.addAttribute<float>("y");
+            scaleLayout.addAttribute<float>("z");
 
             ComponentRegistry.Instance.defineComponent ("meshResource", this.pluginGUID, rendereableComponentLayout);
             ComponentRegistry.Instance.defineComponent ("scale", this.pluginGUID, scaleLayout);

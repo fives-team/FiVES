@@ -49,7 +49,8 @@ namespace Persistence
             string[] registeredAttributes = registry.getRegisteredAttributesOfComponent (componentName);
             foreach(string attributeName in registeredAttributes)
             {
-                layout [attributeName] = registry.getAttributeType (componentName, attributeName);
+                Type attributeType = registry.getAttributeType (componentName, attributeName);
+                //layout.addAttribute<attributeType.GetType()> (attributeName);
             }
 
             return layout;

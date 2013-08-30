@@ -43,9 +43,9 @@ namespace Scripting
 
             // Register 'scripting' component.
             ComponentLayout layout = new ComponentLayout();
-            layout[ownerScriptAttributeName] = typeof(string);
-            layout[serverScriptAttributeName] = typeof(string);
-            layout[clientScriptAttributeName] = typeof(string);
+            layout.addAttribute<string>(ownerScriptAttributeName);
+            layout.addAttribute<string>(serverScriptAttributeName);
+            layout.addAttribute<string> (clientScriptAttributeName);
             ComponentRegistry.Instance.defineComponent(scriptingComponentName, pluginGUID, layout);
 
             EntityRegistry.Instance.OnEntityAdded += handleOnEntityAdded;
