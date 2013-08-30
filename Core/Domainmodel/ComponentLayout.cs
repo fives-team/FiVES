@@ -24,9 +24,10 @@ namespace FIVES
         }
 
         public ComponentLayout() {
-            this.attributes = new Dictionary<string, Type> ();
+            this.attributes = new Dictionary<string, AttributeDefinition> ();
         }
-        public Type this [string name]
+
+        public AttributeDefinition this [string name]
         {
             get { return attributes[name]; }
             set { attributes[name] = value; }
@@ -54,7 +55,7 @@ namespace FIVES
         // We need to access this internally to be able to iterate over the list of the attributes when constructing a 
         // new component in ComponentRegistry::createComponent.
         private Guid Id { get; set; }
-        internal IDictionary<string, Type> attributes { get; set; }
+        internal IDictionary<string, AttributeDefinition> attributes { get; set; }
     }
     #pragma warning restore 660, 661
 }
