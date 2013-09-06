@@ -24,23 +24,16 @@ namespace ClientSync {
 
         public void initialize()
         {
-            clientContext.startServer("http://localhost/projects/test-client/kiara/fives.json", registerClientMethods);
+            clientService = ServiceFactory.createByURI("http://localhost/projects/test-client/kiara/fives.json");
+            clientService["kiara.implements"] = (Func<List<string>, List<bool>>)implements;
+            clientService["clientsync.listObjects"] = (Func<List<string>>)listObjects;
+            clientService["clientsync.getObjectPosition"] = (Func<string, Position>)getObjectPosition;
 
-            // {
-            //   'info': 'ClientSyncPlugin',
-            //   'idlContent': '...',
-            //   'servers': [{
-            //     'services': '*',
-            //     'protocol': {
-            //       'name': 'direct-call',
-            //       'id': 'clientsync',
-            //     },
-            //   }],
-            // }
-            string pluginConfig = "data:text/json;base64,ewogICdpbmZvJzogJ0NsaWVudFN5bmNQbHVnaW4nLAogICdpZGxDb250ZW50" +
-                "JzogJy4uLicsCiAgJ3NlcnZlcnMnOiBbewogICAgJ3NlcnZpY2VzJzogJyonLAogICAgJ3Byb3RvY29sJzogewogICAgICAnbmFt" +
-                "ZSc6ICdkaXJlY3QtY2FsbCcsCiAgICAgICdpZCc6ICdjbGllbnRzeW5jJywKICAgICB9LAogIH1dLAp9Cg==";
-            pluginContext.startServer(pluginConfig, registerPluginMethods);
+            // DEBUG
+            clientService["scripting.createServerScriptFor"] = (Action<string, string>)createServerScriptFor;
+
+            var pluginService = ServiceFactory.createByName("clientsync", ContextFactory.getContext("inter-plugin"));
+            pluginService["registerClientMethod"] = (Action<string, Delegate>)registerClientMethod;
         }
 
         #endregion
@@ -52,7 +45,7 @@ namespace ClientSync {
 
         private List<bool> implements(List<string> services)
         {
-            return services.ConvertAll(service => supportedServices.Contains(service));
+            return services.ConvertAll(supportedServices.Contains);
         }
 
         private List<string> listObjects()
@@ -77,38 +70,18 @@ namespace ClientSync {
             return pos;
         }
 
-        private void registerClientMethods(Connection connection)
+        private void createServerScriptFor(string guid, string script)
         {
-            connection.registerFuncImplementation("kiara.implements", (Func<List<string>, List<bool>>)implements);
-            connection.registerFuncImplementation("clientsync.listObjects", (Func<List<string>>)listObjects);
-            connection.registerFuncImplementation("clientsync.getObjectPosition",
-                                                  (Func<string, Position>)getObjectPosition);
-            connection.registerFuncImplementation("scripting.createServerScriptFor",
-                                                  (Action<string,string>)delegate(string guid, string script) {
-                dynamic entity = EntityRegistry.Instance.getEntity(guid);
-                entity["scripting"]["serverScript"] = script;
-            });
-
-            // Register custom client methods.
-            foreach (var entry in clientMethods)
-                connection.registerFuncImplementation(entry.Key, entry.Value);
+            dynamic entity = EntityRegistry.Instance.getEntity(guid);
+            entity["scripting"]["serverScript"] = script;
         }
 
         private void registerClientMethod(string name, Delegate handler)
         {
-            clientMethods.Add(name, handler);
+            clientService[name] = handler;
         }
 
-        private void registerPluginMethods(Connection connection)
-        {
-            connection.registerFuncImplementation("registerClientMethod",
-                                                  (Action<string, Delegate>)registerClientMethod);
-        }
-
-        private Dictionary<string, Delegate> clientMethods = new Dictionary<string, Delegate>();
-
-        private Context clientContext = new Context();
-        private Context pluginContext = new Context();
+        private ServiceImpl clientService;
     }
 
 }

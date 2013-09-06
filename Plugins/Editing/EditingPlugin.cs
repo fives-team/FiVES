@@ -56,14 +56,11 @@ namespace Editing
         /// Registers editing APIs with the ClientSync plugin.
         /// </summary>
         private void registerEditingAPI() {
-            var context = new Context();
-            string pluginConfig = "data:text/json;base64,ewogICdpbmZvJzogJ0NsaWVudFN5bmNQbHVnaW4nLAogICdpZGxDb250" +
-                "ZW50JzogJy4uLicsCiAgJ3NlcnZlcnMnOiBbewogICAgJ3NlcnZpY2VzJzogJyonLAogICAgJ3Byb3RvY29sJzogewogICAg" +
-                    "ICAnbmFtZSc6ICdkaXJlY3QtY2FsbCcsCiAgICAgICdpZCc6ICdjbGllbnRzeW5jJywKICAgICB9LAogIH1dLAp9Cg==";
-            context.openConnection(pluginConfig, delegate(Connection conn) {
-                var registerClientMethod = conn.generateFuncWrapper("registerClientMethod");
+            var clientSync = ServiceFactory.discoverByName("clientsync", ContextFactory.getContext("inter-plugin"));
+            clientSync.OnConnected += delegate(Connection connection) {
+                var registerClientMethod = clientSync["registerClientMethod"];
                 registerClientMethod("editing.createEntityAt", (Action<float, float, float>)createEntityAt);
-            });
+            };
         }
     }
 }

@@ -90,7 +90,8 @@ namespace KIARA
         public void shouldOpenConnectionToTheServer()
         {
             context.openConnection(configURL, callback);
-            mockProtocolFactory.Verify(factory => factory.openConnection(It.IsAny<Server>(), 
+            mockProtocolFactory.Verify(factory => factory.openConnection(It.IsAny<Server>(),
+                                                                         context,
                                                                          It.IsAny<Action<IProtocol>>()), Times.Once());
         }
 
@@ -99,6 +100,7 @@ namespace KIARA
         {
             context.startServer(configURL, callback);
             mockProtocolFactory.Verify(factory => factory.startServer(It.IsAny<Server>(), 
+                                                                      context,
                                                                       It.IsAny<Action<IProtocol>>()), Times.Once());
         }
     }

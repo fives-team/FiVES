@@ -16,29 +16,33 @@ namespace DirectCall
     {
         #region IProtocolFactory implementation
 
-        public void openConnection(Server serverConfig, Action<IProtocol> onConnected)
+        public void openConnection(Server serverConfig, Context context, Action<IProtocol> onConnected)
         {
+            Dictionary<string, Action<IProtocol>> serverList = getServerList(context);
+
             string id = validateServerConfigAndRetrieveId(serverConfig);
-            if (!startedServers.ContainsKey(id))
+            if (!serverList.ContainsKey(id))
                 throw new Error(ErrorCode.CONNECTION_ERROR, "Server with id '" + id + "' is not started.");
 
             // Create the protocol.
             var protocol = new DCProtocol();
 
             // Notify the server.
-            startedServers[id](protocol);
+            serverList[id](protocol);
 
             // Notify the client.
             onConnected(protocol);
         }
 
-        public void startServer(Server serverConfig, Action<IProtocol> onNewClient)
+        public void startServer(Server serverConfig, Context context, Action<IProtocol> onNewClient)
         {
+            Dictionary<string, Action<IProtocol>> serverList = getServerList(context);
+
             string id = validateServerConfigAndRetrieveId(serverConfig);
-            if (startedServers.ContainsKey(id))
+            if (serverList.ContainsKey(id))
                 throw new Error(ErrorCode.CONNECTION_ERROR, "Server with id '" + id + "' is already started.");
 
-            startedServers.Add(id, onNewClient);
+            serverList.Add(id, onNewClient);
         }
 
         private string validateServerConfigAndRetrieveId(Server serverConfig)
@@ -53,9 +57,14 @@ namespace DirectCall
             return id;
         }
 
-        #endregion
 
-        private Dictionary<string, Action<IProtocol>> startedServers = new Dictionary<string, Action<IProtocol>>();
+        private Dictionary<string, Action<IProtocol>> getServerList(Context context)
+        {
+            if (!context.protocolSpecificData.ContainsKey("direct-call"))
+                context.protocolSpecificData["direct-call"] = new Dictionary<string, Action<IProtocol>>();
+            return (Dictionary<string, Action<IProtocol>>)context.protocolSpecificData["direct-call"];
+        }
+        #endregion
     }
 }
 

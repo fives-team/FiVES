@@ -14,7 +14,7 @@ namespace KIARA
         /// </summary>
         /// <param name="serverConfig">Server config.</param>
         /// <param name="onConnected">Callback to be called when the connection is established.</param>
-        void openConnection(Server serverConfig, Action<IProtocol> onConnected);
+        void openConnection(Server serverConfig, Context context, Action<IProtocol> onConnected);
 
         /// <summary>
         /// Starts the server listening for new clients according to the configuration in the
@@ -22,7 +22,7 @@ namespace KIARA
         /// </summary>
         /// <param name="serverConfig">Server config.</param>
         /// <param name="onNewClient">Callback to be called for each new client.</param>
-        void startServer(Server serverConfig, Action<IProtocol> onNewClient);
+        void startServer(Server serverConfig, Context context, Action<IProtocol> onNewClient);
     }
 }
 

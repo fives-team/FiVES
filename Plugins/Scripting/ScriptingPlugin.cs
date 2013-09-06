@@ -39,8 +39,9 @@ namespace Scripting
         /// </summary>
         public void initialize()
         {
-            // Provide scripting API to other plugins.
-            pluginContext.startServer(pluginConfig, registerPluginMethods);
+            var pluginService = ServiceFactory.createByName("scripting", ContextFactory.getContext("inter-plugin"));
+            pluginService["registerGlobalObject"] = (Action<string, object>)registerGlobalObject;
+            pluginService["addNewContextHandler"] = (Action<Action<IJSContext>>)addNewContextHandler;
 
             // Register 'scripting' component.
             ComponentLayout layout = new ComponentLayout();
@@ -155,33 +156,10 @@ namespace Scripting
             newContextHandlers.Add(handler);
         }
 
-        private void registerPluginMethods(Connection conn)
-        {
-            conn.registerFuncImplementation("registerGlobalObject", (Action<string, object>)registerGlobalObject);
-            conn.registerFuncImplementation("addNewContextHandler",
-                                            (Action<Action<IJSContext>>)addNewContextHandler);
-        }
-
         private Dictionary<string, object> registeredGlobalObjects = new Dictionary<string, object>();
         private List<Action<IJSContext>> newContextHandlers = new List<Action<IJSContext>>();
-        private Context pluginContext = new Context();
 
         private Dictionary<Guid, V8Engine> entityContexts = new Dictionary<Guid, V8Engine>();
-
-        // {
-        //   'info': 'ScriptingPlugin',
-        //   'idlContent': '...',
-        //   'servers': [{
-        //     'services': '*',
-        //     'protocol': {
-        //       'name': 'direct-call',
-        //       'id': 'scripting',
-        //     },
-        //   }],
-        // }
-        private readonly string pluginConfig = "data:text/json;base64,ew0KICAnaW5mbyc6ICdTY3JpcHRpbmdQbHVnaW4nLA0KICA" +
-            "naWRsQ29udGVudCc6ICcuLi4nLA0KICAnc2VydmVycyc6IFt7DQogICAgJ3NlcnZpY2VzJzogJyonLA0KICAgICdwcm90b2NvbCc6IHs" +
-            "NCiAgICAgICduYW1lJzogJ2RpcmVjdC1jYWxsJywNCiAgICAgICdpZCc6ICdzY3JpcHRpbmcnLA0KICAgIH0sDQogIH1dLA0KfQ==";
 
         private readonly Guid pluginGUID = new Guid("90dd4c50-f09d-11e2-b778-0800200c9a66");
     }
