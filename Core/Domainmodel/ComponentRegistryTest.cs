@@ -173,21 +173,24 @@ namespace FIVES
         }
 
         [Test]
-        public void shouldGenerateUpgradeEvents()
+        public void shouldGenerateUpgradeEventsInOrder()
         {
+            // These flags and following callbacks are used to verify that appropriate events are generated in order.
+            // For example, upgraded flag is only set when it happens after a started event, but before finished. Later
+            // Verify calls also verify that each event is only triggered once.
             bool started = false;
+            bool upgraded = false;
             bool finished = false;
-            bool upgradeOnTime = false;
 
             Mock<UpgradeEventTester> tester = new Mock<UpgradeEventTester>();
-            tester.Setup(t => t.HandleStarted(It.IsAny<Object>(), 
-                It.IsAny<ComponentLayoutUpgradeStartedOrFinishedEventArgs>())).Callback(() => started = true);
-            tester.Setup(t => t.HandleFinished(It.IsAny<Object>(), 
-                It.IsAny<ComponentLayoutUpgradeStartedOrFinishedEventArgs>())).Callback(() => finished = true);
-
-            // This only marks upgrade if it happended after started, but before finished.
+            tester.Setup(t => t.HandleStarted(It.IsAny<Object>(),
+                It.IsAny<ComponentLayoutUpgradeStartedOrFinishedEventArgs>()))
+                .Callback(delegate() { started = true; });
             tester.Setup(t => t.HandleUpgraded(It.IsAny<Object>(), It.IsAny<EntityComponentUpgradedEventArgs>()))
-                .Callback(delegate() { if (started && !finished) upgradeOnTime = true; });
+                .Callback(delegate() { if (started && !finished) upgraded = true; });
+            tester.Setup(t => t.HandleFinished(It.IsAny<Object>(),
+                It.IsAny<ComponentLayoutUpgradeStartedOrFinishedEventArgs>()))
+                .Callback(delegate() { if (started) finished = true; });
 
             Guid owner = Guid.NewGuid();
             componentRegistry.defineComponent(name, owner, layout);
@@ -217,8 +220,8 @@ namespace FIVES
                 Times.Once());
 
             Assert.IsTrue(started);
+            Assert.IsTrue(upgraded);
             Assert.IsTrue(finished);
-            Assert.IsTrue(upgradeOnTime);
         }
 
         [Test]
