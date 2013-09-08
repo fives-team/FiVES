@@ -19,7 +19,7 @@ namespace ClientSync {
 
         public List<string> getDependencies()
         {
-            return new List<string>() { "WebSocketJSON", "DirectCall" };
+            return new List<string>() { "WebSocketJSON", "DirectCall", "Location", "Renderable" };
         }
 
         public void initialize()
@@ -27,7 +27,10 @@ namespace ClientSync {
             clientService = ServiceFactory.createByURI("http://localhost/projects/test-client/kiara/fives.json");
             clientService["kiara.implements"] = (Func<List<string>, List<bool>>)implements;
             clientService["clientsync.listObjects"] = (Func<List<string>>)listObjects;
-            clientService["clientsync.getObjectPosition"] = (Func<string, Position>)getObjectPosition;
+            clientService["clientsync.getObjectLocation"] = (Func<string, Location>)getObjectLocation;
+            clientService["clientsync.getObjectMesh"] = (Func<string, Mesh>)getObjectMesh;
+            clientService["clientsync.notifyAboutNewObjects"] = (Action<Action<string>>)notifyAboutNewObjects;
+            clientService["clientsync.notifyAboutRemovedObjects"] = (Action<Action<string>>)notifyAboutRemovedObjects;
 
             // DEBUG
             clientService["scripting.createServerScriptFor"] = (Action<string, string>)createServerScriptFor;
@@ -37,6 +40,21 @@ namespace ClientSync {
         }
 
         #endregion
+
+        private void notifyAboutNewObjects(Action<string> callback)
+        {
+            EntityRegistry.Instance.OnEntityAdded += (sender, e) => callback(e.elementId.ToString());
+        }
+
+        private void notifyAboutRemovedObjects(Action<string> callback)
+        {
+            EntityRegistry.Instance.OnEntityRemoved += (sender, e) => callback(e.elementId.ToString());
+        }
+
+        private void notifyAboutObjectUpdates(Action<string> callback)
+        {
+            throw new NotImplementedException();
+        }
 
         private readonly List<string> supportedServices = new List<string> {
             "kiara",
@@ -57,17 +75,45 @@ namespace ClientSync {
             return objects;
         }
 
-        private class Position {
+        private struct Vector {
             public float x, y, z;
         }
 
-        private Position getObjectPosition(string guid) {
+        private struct Quat {
+            public float x, y, z, w;
+        }
+
+        private struct Location {
+            public Vector position;
+            public Quat orientation;
+        }
+
+        private Location getObjectLocation(string guid) {
             dynamic entity = EntityRegistry.Instance.getEntity(new Guid(guid));
-            var pos = new Position();
-            pos.x = entity.position.x;
-            pos.y = entity.position.y;
-            pos.z = entity.position.z;
-            return pos;
+            var loc = new Location();
+            loc.position.x = entity.position.x;
+            loc.position.y = entity.position.y;
+            loc.position.z = entity.position.z;
+            loc.orientation.x = entity.orientation.x;
+            loc.orientation.y = entity.orientation.y;
+            loc.orientation.z = entity.orientation.z;
+            loc.orientation.w = entity.orientation.w;
+            return loc;
+        }
+
+        private struct Mesh {
+            public string uri;
+            public Vector scale;
+        }
+
+        private Mesh getObjectMesh(string guid) {
+            dynamic entity = EntityRegistry.Instance.getEntity(new Guid(guid));
+            var mesh = new Mesh();
+            mesh.uri = entity.meshResource.uri;
+            mesh.scale.x = entity.scale.x;
+            mesh.scale.y = entity.scale.y;
+            mesh.scale.z = entity.scale.z;
+            return mesh;
         }
 
         private void createServerScriptFor(string guid, string script)

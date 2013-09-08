@@ -1,13 +1,15 @@
 requirejs(['kiara', 'jquery', 'websocket-json'],
 function(KIARA, $) {
     var listObjects;
-    var getObjectPosition;
+    var getObjectLocation;
     var createEntityAt;
     var createServerScriptFor;
 
-    function requestPosition(guid) {
-        getObjectPosition(guid).on("result", function(error, position) {
-           alert("Object " + guid + " is located at (" + position.x + ", " + position.y + ", " + position.z + ").");
+    function requestLocation(guid) {
+        getObjectLocation(guid).on("result", function(error, loc) {
+           alert("Object " + guid + " is located at pos: (" + loc.position.x + ", " + loc.position.y + ", " +
+                 loc.position.z + ") and rot: (" + loc.orientation.x + ", " + loc.orientation.y + ", " +
+                 loc.orientation.z + ", " + loc.orientation.w + ").");
         });
     }
 
@@ -52,7 +54,7 @@ function(KIARA, $) {
             implements(["clientsync"]).on("result", function(error, supported) {
                if (supported[0]) {
                    listObjects = conn.generateFuncWrapper("clientsync.listObjects");
-                   getObjectPosition = conn.generateFuncWrapper("clientsync.getObjectPosition");
+                   getObjectLocation = conn.generateFuncWrapper("clientsync.getObjectLocation");
                    createEntityAt = conn.generateFuncWrapper("editing.createEntityAt");
                    createServerScriptFor = conn.generateFuncWrapper("scripting.createServerScriptFor");
                    listObjects().on("result", function(error, objects) {
@@ -60,8 +62,8 @@ function(KIARA, $) {
                            var div = document.createElement("div");
                            var guid = objects[i];
                            div.appendChild(document.createTextNode(guid));
-                           //div.addEventListener("click", requestPosition.bind(null, guid));
-                           div.addEventListener("click", setScript.bind(null, guid));
+                           div.addEventListener("click", requestPosition.bind(null, guid));
+                           //div.addEventListener("click", setScript.bind(null, guid));
                            div.setAttribute("style", "border: 1px solid black; background-color: gray; margin: 2px;");
                            document.body.appendChild(div);
                        }
