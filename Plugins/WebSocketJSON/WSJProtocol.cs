@@ -101,6 +101,69 @@ namespace WebSocketJSON
             activeCalls.Clear();
         }
 
+        private void handleCallReply(List<JToken> data)
+        {
+            int callID = Convert.ToInt32(data[1]);
+            if (activeCalls.ContainsKey(callID)) {
+                bool success = data[2].ToObject<bool>();
+                JToken result = data.Count == 4 ? data[3] : new JValue((object)null);
+                if (success)
+                    activeCalls[callID].handleSuccess(result);
+                else
+                    activeCalls[callID].handleException(result);
+                activeCalls.Remove(callID);
+            } else {
+                // TODO: Report error to another side.
+                throw new UnknownCallID("Received a response for an unrecognized call id: " + callID);
+            }
+        }
+
+        private void handleCall(List<JToken> data)
+        {
+            int callID = data[1].ToObject<int>();
+            string methodName = data[2].ToObject<string>();
+            if (registeredFunctions.ContainsKey(methodName)) {
+                Delegate nativeMethod = registeredFunctions[methodName];
+                ParameterInfo[] paramInfo = nativeMethod.Method.GetParameters();
+                if (paramInfo.Length != data.Count - 3) {
+                    // TODO: Report error to another side.
+                    throw new InvalidNumberOfArgs("Incorrect number of arguments for method: " + methodName + 
+                                                  ". Expected: " + paramInfo.Length + ". Got: " + (data.Count - 3));
+                }
+
+                List<object> parameters = new List<object>();
+                for (int i = 0; i < paramInfo.Length; i++)
+                    parameters.Add(data[i + 3].ToObject(paramInfo[i].ParameterType));
+
+                object returnValue = null;
+                object exception = null;
+                bool success = true;
+                try {
+                    returnValue = nativeMethod.DynamicInvoke(parameters.ToArray());
+                }
+                catch (Exception e) {
+                    exception = e;
+                    success = false;
+                }
+                if (!isOneWay(methodName)) {
+                    // Send call-reply message.
+                    List<object> callReplyMessage = new List<object>();
+                    callReplyMessage.Add("call-reply");
+                    callReplyMessage.Add(callID);
+                    callReplyMessage.Add(success);
+                    if (!success)
+                        callReplyMessage.Add(exception);
+                    else
+                        if (nativeMethod.Method.ReturnType != typeof(void))
+                            callReplyMessage.Add(returnValue);
+                    Send(JsonConvert.SerializeObject(callReplyMessage));
+                }
+            } else {
+                // TODO: Report error to another side.
+                throw new UnregisteredMethod("Received a call for an unregistered method: " + methodName);
+            }
+        }
+
         /// <summary>
         /// Handles an incoming message.
         /// </summary>
@@ -118,65 +181,11 @@ namespace WebSocketJSON
             }
 
             string msgType = data[0].ToObject<string>();
-            if (msgType == "call-reply") {
-                int callID = Convert.ToInt32(data[1]);
-                if (activeCalls.ContainsKey(callID)) {
-                    bool success = data[2].ToObject<bool>();
-                    JToken result = data.Count == 4 ? data[3] : new JValue((object)null);
-                    if (success)
-                        activeCalls[callID].handleSuccess(result);
-                    else
-                        activeCalls[callID].handleException(result);
-                    activeCalls.Remove(callID);
-                } else {
-                    // TODO: Report error to another side.
-                    throw new UnknownCallID("Received a response for an unrecognized call id: " + callID);
-                }
-            } else if (msgType == "call") {
-                int callID = data[1].ToObject<int>();
-                string methodName = data[2].ToObject<string>();
-                if (registeredFunctions.ContainsKey(methodName)) {
-                    Delegate nativeMethod = registeredFunctions[methodName];
-                    ParameterInfo[] paramInfo = nativeMethod.Method.GetParameters();
-                    if (paramInfo.Length != data.Count - 3) {
-                        // TODO: Report error to another side.
-                        throw new InvalidNumberOfArgs("Incorrect number of arguments for method: " + methodName +
-                                                      ". Expected: " + paramInfo.Length + ". Got: " + (data.Count - 3));
-                    }
-                    List<object> parameters = new List<object>();
-                    for (int i = 0; i < paramInfo.Length; i++)
-                        parameters.Add(data[i+3].ToObject(paramInfo[i].ParameterType));
-
-                    object returnValue = null;
-                    object exception = null;
-                    bool success = true;
-
-                    try {
-                        returnValue = nativeMethod.DynamicInvoke(parameters.ToArray());
-                    } catch (Exception e) {
-                        exception = e;
-                        success = false;
-                    }
-
-                    if (!isOneWay(methodName)) {
-                        // Send call-reply message.
-                        List<object> callReplyMessage = new List<object>();
-                        callReplyMessage.Add("call-reply");
-                        callReplyMessage.Add(callID);
-                        callReplyMessage.Add(success);
-
-                        if (!success)
-                            callReplyMessage.Add(exception);
-                        else if (nativeMethod.Method.ReturnType != typeof(void))
-                            callReplyMessage.Add(returnValue);
-
-                        Send(JsonConvert.SerializeObject(callReplyMessage));
-                    }
-                } else {
-                    // TODO: Report error to another side.
-                    throw new UnregisteredMethod("Received a call for an unregistered method: " + methodName);
-                }
-            } else
+            if (msgType == "call-reply")
+                handleCallReply(data);
+            else if (msgType == "call")
+                handleCall(data);
+            else
                 throw new Error(ErrorCode.CONNECTION_ERROR, "Unknown message type: " + msgType);
         }
 
