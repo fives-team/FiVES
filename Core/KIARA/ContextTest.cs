@@ -103,6 +103,20 @@ namespace KIARA
                                                                       context,
                                                                       It.IsAny<Action<IProtocol>>()), Times.Once());
         }
+
+        [Test()]
+        public void shouldStoreAndReturnProtocolData()
+        {
+            context.ProtocolData["test-protocol-2"] = 42;
+            Assert.AreEqual(42, context.ProtocolData["test-protocol-2"]);
+        }
+
+        [Test()]
+        public void shouldUseHintAsConfigTemplate()
+        {
+            context.initialize("test {0} template");
+            Assert.AreEqual("test {0} template", context.configTemplate);
+        }
     }
 }
 

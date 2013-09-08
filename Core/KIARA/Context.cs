@@ -31,8 +31,6 @@ namespace KIARA
     {
         public static Context GlobalContext = new Context();
 
-        public Dictionary<string, object> protocolSpecificData = new Dictionary<string, object>();
-
         /// <summary>
         /// Initializes a new instance of the <see cref="KIARA.Context"/> class.
         /// </summary>
@@ -97,6 +95,8 @@ namespace KIARA
                 onNewClient(conn);
             });
         }
+
+        public Dictionary<string, object> ProtocolData = new Dictionary<string, object>();
 
         private Config retrieveConfig(string configURI, out string fragment)
         {

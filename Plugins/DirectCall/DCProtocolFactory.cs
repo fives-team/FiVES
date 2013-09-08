@@ -60,9 +60,9 @@ namespace DirectCall
 
         private Dictionary<string, Action<IProtocol>> getServerList(Context context)
         {
-            if (!context.protocolSpecificData.ContainsKey("direct-call"))
-                context.protocolSpecificData["direct-call"] = new Dictionary<string, Action<IProtocol>>();
-            return (Dictionary<string, Action<IProtocol>>)context.protocolSpecificData["direct-call"];
+            if (!context.ProtocolData.ContainsKey("direct-call"))
+                context.ProtocolData["direct-call"] = new Dictionary<string, Action<IProtocol>>();
+            return (Dictionary<string, Action<IProtocol>>)context.ProtocolData["direct-call"];
         }
         #endregion
     }
