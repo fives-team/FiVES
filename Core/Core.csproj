@@ -85,6 +85,7 @@
     <Compile Include="KIARA\ServiceImplTest.cs" />
     <Compile Include="KIARA\ServiceWrapperTest.cs" />
     <Compile Include="KIARA\ServiceTest.cs" />
+    <Compile Include="KIARA\ContextFactoryTest.cs" />
     <Compile Include="Events\EntityAddedOrRemovedEventArgs.cs" />
     <Compile Include="Events\AttributeChangedEventArgs.cs" />
     <Compile Include="Events\EventTests.cs" />
