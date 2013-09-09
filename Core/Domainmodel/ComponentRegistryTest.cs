@@ -77,8 +77,8 @@ namespace FIVES
         [Test()]
         public void shouldCreateDefinedLayoutAttributesInNewComponents()
         {
-            registry.defineComponent(name, Guid.NewGuid(), layout);
-            dynamic c = registry.getComponentInstance(name);
+            componentRegistry.defineComponent(name, Guid.NewGuid(), layout);
+            dynamic c = componentRegistry.getComponentInstance(name);
             Assert.AreEqual(c.i, default(int));
             Assert.AreEqual(c.f, default(float));
             Assert.AreEqual(c.s, default(string));
