@@ -22,6 +22,7 @@ define(['kiara'], function(KIARA) {
         self.__cachedCalls = [];
         self.__nextCallID = 0;
         self.__reconnectAttempts = 0;
+        self.__callbacks = {};
 
         self.__connect();
     }
@@ -33,8 +34,8 @@ define(['kiara'], function(KIARA) {
 
         if (self.__ws.readyState == WebSocket.OPEN) {
             var callID = self.__nextCallID++;
-            var argsArray = Array.prototype.slice.call(args);
-            var request = [ "call", callID, callResponse.getMethodName() ].concat(argsArray);
+            var argsWithCallbacks = this.__extractCallbacks(args);
+            var request = [ "call", callID, callResponse.getMethodName() ].concat(argsWithCallbacks);
             self.__ws.send(JSON.stringify(request));
             if (!callResponse.isOneWay())
                 self.__activeCalls[callID] = callResponse;
@@ -48,6 +49,42 @@ define(['kiara'], function(KIARA) {
 
         self.__funcs[methodDescriptor.methodName] = nativeMethod;
         self.__oneway[methodDescriptor.methodName] = methodDescriptor.isOneWay;
+    }
+
+    JSONWebSocket.prototype.__isFunction = function (functionToCheck) {
+        var getType = {};
+        return functionToCheck && getType.toString.call(functionToCheck) === '[object Function]';
+    }
+
+    JSONWebSocket.prototype.__guid = function() {
+        return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+            var r = Math.random()*16|0, v = c == 'x' ? r : (r&0x3|0x8);
+            return v.toString(16);
+        });
+    }
+
+    JSONWebSocket.prototype.__extractCallbacks = function(args) {
+        var self = this;
+
+        var newArgs = [];
+        var callbacks = [];
+        for (var i in args) {
+            var arg = args[i];
+            if (self.__isFunction(arg)) {
+                if (!self.__callbacks.hasOwnProperty(arg)) {
+                    var guid = self.__guid();
+                    self.__callbacks[arg] = guid;
+                    self.__funcs[guid] = arg;
+                }
+
+                callbacks.push(i);
+                newArgs.push(self.__callbacks[arg]);
+            } else {
+                newArgs.push(arg);
+            }
+        }
+
+        return [callbacks].concat(newArgs);
     }
 
     JSONWebSocket.prototype.__connect = function() {
@@ -80,7 +117,8 @@ define(['kiara'], function(KIARA) {
             var callID = data[1];
             var methodName = data[2];
             if (methodName in self.__funcs) {
-                var args = data.slice(3);
+                var callbacks = data[3];  // TODO: implement callbacks
+                var args = data.slice(4);
                 var response = [ 'call-reply', callID ];
                 try {
                     retVal = self.__funcs[methodName].apply(null, args);

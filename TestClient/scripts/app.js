@@ -4,6 +4,7 @@ function(KIARA, $) {
     var getObjectLocation;
     var createEntityAt;
     var createServerScriptFor;
+    var notifyAboutNewObjects;
 
     function requestLocation(guid) {
         getObjectLocation(guid).on("result", function(error, loc) {
@@ -33,10 +34,7 @@ function(KIARA, $) {
         var x = promptFloat("x = ");
         var y = promptFloat("y = ");
         var z = promptFloat("z = ");
-
-        createEntityAt(x, y, z).on("result", function() {
-            location.reload();
-        });
+        createEntityAt(x, y, z);
     }
 
     function setScript(guid) {
@@ -44,6 +42,15 @@ function(KIARA, $) {
         var script = "console.log('hello from client');";
         createServerScriptFor(guid, script);
         return false;
+    }
+
+    function addObjectButton(guid) {
+        var div = document.createElement("div");
+        div.appendChild(document.createTextNode(guid));
+        div.addEventListener("click", requestLocation.bind(null, guid));
+        //div.addEventListener("click", setScript.bind(null, guid));
+        div.setAttribute("style", "border: 1px solid black; background-color: gray; margin: 2px;");
+        document.body.appendChild(div);
     }
 
     function main() {
@@ -57,21 +64,20 @@ function(KIARA, $) {
                    getObjectLocation = conn.generateFuncWrapper("clientsync.getObjectLocation");
                    createEntityAt = conn.generateFuncWrapper("editing.createEntityAt");
                    createServerScriptFor = conn.generateFuncWrapper("scripting.createServerScriptFor");
+                   notifyAboutNewObjects = conn.generateFuncWrapper("clientsync.notifyAboutNewObjects");
                    listObjects().on("result", function(error, objects) {
-                       for (var i = 0; i < objects.length; i++) {
-                           var div = document.createElement("div");
-                           var guid = objects[i];
-                           div.appendChild(document.createTextNode(guid));
-                           div.addEventListener("click", requestPosition.bind(null, guid));
-                           //div.addEventListener("click", setScript.bind(null, guid));
-                           div.setAttribute("style", "border: 1px solid black; background-color: gray; margin: 2px;");
-                           document.body.appendChild(div);
-                       }
-
                        var createButton = document.createElement("button");
                        createButton.appendChild(document.createTextNode("Create entity"));
-                       createButton.addEventListener("click", createNewEntity.bind(conn));
+                       createButton.addEventListener("click", createNewEntity.bind(null, conn));
                        document.body.appendChild(createButton);
+
+                       var createButton = document.createElement("button");
+                       createButton.appendChild(document.createTextNode("Start listening for new objects"));
+                       createButton.addEventListener("click", function() { notifyAboutNewObjects(addObjectButton) });
+                       document.body.appendChild(createButton);
+
+                       for (var i = 0; i < objects.length; i++)
+                           addObjectButton(objects[i]);
                    })
                }
             });
