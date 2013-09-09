@@ -195,10 +195,10 @@ namespace Persistence
         public void shouldPersistUpgradedEntity() {
 
             ComponentLayout layout = new ComponentLayout ();
-            layout["i"] = typeof(int);
-            layout["f"] = typeof(float);
-            layout["s"] = typeof(string);
-            layout["b"] = typeof(bool);
+            layout.addAttribute<int> ("i");
+            layout.addAttribute<float> ("f");
+            layout.addAttribute<string> ("s");
+            layout.addAttribute<bool> ("b");
 
             string name = "ComponentToUpgrade";
             componentRegistry.defineComponent (name, plugin.pluginGuid, layout);
