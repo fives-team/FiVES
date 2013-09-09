@@ -3,6 +3,7 @@ using System;
 using Moq;
 using System.Collections.Generic;
 using Newtonsoft.Json.Linq;
+using KIARA;
 
 namespace WebSocketJSON
 {
@@ -23,6 +24,7 @@ namespace WebSocketJSON
 
         public interface IHandlers {
             float testFunc(int i, string s);
+            void testCallback(int i, FuncWrapper callback);
         }
 
         WSJProtocolWrapper protocol;
@@ -45,7 +47,24 @@ namespace WebSocketJSON
         public void shouldCorrectlyFormatCallMessage()
         {
             protocol.callFunc("testFunc", 42, "test-string");
-            Assert.AreEqual(protocol.sentMessages[0], "[\"call\",0,\"testFunc\",42,\"test-string\"]");
+            Assert.AreEqual(protocol.sentMessages[0], "[\"call\",0,\"testFunc\",[],42,\"test-string\"]");
+        }
+
+        [Test()]
+        public void shouldCorrectlyEncodeNativeCallbacksToTheMessage()
+        {
+            protocol.callFunc("testFunc", 42, "test-string", (Action)delegate() {});
+            Assert.That(protocol.sentMessages[0],
+                Is.StringMatching("\\[\"call\",0,\"testFunc\",\\[2\\],42,\"test-string\",\"[0-9a-feA-F\\-]+\"\\]"));
+        }
+
+        [Test()]
+        public void shouldSendCallReplies()
+        {
+            protocol.registerHandler("testFunc", (Func<int, string, float>)mockHandlers.Object.testFunc);
+            mockHandlers.Setup(h => h.testFunc(42, "test-string")).Returns(3.14f);
+            protocol.handleMessage("['call',0,'testFunc',[],42,'test-string']");
+            Assert.AreEqual(protocol.sentMessages[0], "[\"call-reply\",0,true,3.14]");
         }
 
         [Test()]
@@ -96,31 +115,45 @@ namespace WebSocketJSON
         }
 
         [Test()]
+        public void shouldHandleRemoteCallbacksCorrectly()
+        {
+            protocol.registerHandler("testCallback", (Action<int, FuncWrapper>)mockHandlers.Object.testCallback);
+            FuncWrapper generatedFuncWrapper = null;
+            mockHandlers.Setup(h => h.testCallback(42, It.IsAny<FuncWrapper>()))
+                .Callback((int i, FuncWrapper f) => generatedFuncWrapper = f);
+            protocol.handleMessage("['call',0,'testCallback',[1],42,'99095a90-1997-11e3-8ffd-0800200c9a66']");
+            mockHandlers.Verify(h => h.testCallback(42, It.IsAny<FuncWrapper>()), Times.Once());
+            generatedFuncWrapper(42);
+            Assert.AreEqual(protocol.sentMessages[1], "[\"call\",0,\"99095a90-1997-11e3-8ffd-0800200c9a66\",[],42]");
+        }
+
+        [Test()]
         public void shouldCorrectlyHandleRemoteCallRequestForRegisteredFunctionName()
         {
             protocol.registerHandler("testFunc", (Func<int, string, float>)mockHandlers.Object.testFunc);
-            protocol.handleMessage("['call',0,'testFunc',42,'test-string']");
+            protocol.handleMessage("['call',0,'testFunc',[],42,'test-string']");
             mockHandlers.Verify(h => h.testFunc(42, "test-string"), Times.Once());
         }
 
         [Test()]
         public void shouldFailOnRemoteCallRequestForUnregisteredFunctionName()
         {
-            Assert.Throws<UnregisteredMethod>(() => protocol.handleMessage("['call',0,'unknownFunc']"));
+            Assert.Throws<UnregisteredMethod>(() => protocol.handleMessage("['call',0,'unknownFunc',[]]"));
         }
 
-        [Test()]
-        public void shouldFailOnRemoteCallRequestWithInvalidNumberOfArgs()
-        {
-            protocol.registerHandler("testFunc", (Func<int, string, float>)mockHandlers.Object.testFunc);
-            Assert.Throws<InvalidNumberOfArgs>(() => protocol.handleMessage("['call',0,'testFunc',42]"));
-        }
+//        [Test()]
+//        public void shouldReturnErrorToCallerOnInvalidNumberOfArgs()
+//        {
+//            protocol.registerHandler("testFunc", (Func<int, string, float>)mockHandlers.Object.testFunc);
+//            protocol.handleMessage("['call',0,'testFunc',[],42]");
+//            Assert.AreEqual(protocol.sentMessages[0], "... error ...");
+//        }
 
         [Test()]
         public void shouldFailOnCallReplyWithUnknownCallID()
         {
             protocol.registerHandler("testFunc", (Func<int, string, float>)mockHandlers.Object.testFunc);
-            Assert.Throws<UnknownCallID>(() => protocol.handleMessage("['call-reply',100,'testFunc',42,'foobar']"));
+            Assert.Throws<UnknownCallID>(() => protocol.handleMessage("['call-reply',100,'testFunc',[],42,'foobar']"));
         }
 
         [Test()]
