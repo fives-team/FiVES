@@ -66,18 +66,18 @@ function(KIARA, $) {
                    createServerScriptFor = conn.generateFuncWrapper("scripting.createServerScriptFor");
                    notifyAboutNewObjects = conn.generateFuncWrapper("clientsync.notifyAboutNewObjects");
                    listObjects().on("result", function(error, objects) {
+                       // Create a button for adding a new object.
                        var createButton = document.createElement("button");
                        createButton.appendChild(document.createTextNode("Create entity"));
                        createButton.addEventListener("click", createNewEntity.bind(null, conn));
                        document.body.appendChild(createButton);
 
-                       var createButton = document.createElement("button");
-                       createButton.appendChild(document.createTextNode("Start listening for new objects"));
-                       createButton.addEventListener("click", function() { notifyAboutNewObjects(addObjectButton) });
-                       document.body.appendChild(createButton);
-
+                       // Add existing objects.
                        for (var i = 0; i < objects.length; i++)
                            addObjectButton(objects[i]);
+
+                       // Listen for new objects.
+                       notifyAboutNewObjects(addObjectButton);
                    })
                }
             });
