@@ -129,7 +129,7 @@ namespace Persistence
             session.Save (persist);
             trans.Commit ();
 
-            persist.registerPersistedComponents ();
+            plugin.retrieveComponentRegistryFromDatabase ();
 
             Assert.IsTrue (componentRegistry.getAttributeType ("myComponent", "IntAttribute") == typeof(int));
             Assert.IsTrue (componentRegistry.getAttributeType ("myComponent", "StringAttribute") == typeof(string));
