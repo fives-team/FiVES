@@ -34,7 +34,7 @@ define(['kiara'], function(KIARA) {
 
         if (self.__ws.readyState == WebSocket.OPEN) {
             var callID = self.__nextCallID++;
-            var argsWithCallbacks = this.__extractCallbacks(args);
+            var argsWithCallbacks = self.__extractCallbacks(args);
             var request = [ "call", callID, callResponse.getMethodName() ].concat(argsWithCallbacks);
             self.__ws.send(JSON.stringify(request));
             if (!callResponse.isOneWay())
@@ -117,8 +117,24 @@ define(['kiara'], function(KIARA) {
             var callID = data[1];
             var methodName = data[2];
             if (methodName in self.__funcs) {
-                var callbacks = data[3];  // TODO: implement callbacks
+                var callbacks = data[3];
                 var args = data.slice(4);
+                for (var cbIndex in callbacks) {
+                    var remoteFuncName = args[cbIndex];
+                    args[cbIndex] = function() {
+                        // This is a hack. Protocol.callMethod should accept a connection object, which should be passed
+                        // down to the constructor of the protocol, but it isn't - so we just pass a null. Additionally,
+                        // method descriptor should be created with correct type mapping string and one-way flag, which
+                        // we can't know, because we don't know whether user cares about success status or not. We
+                        // assume they do, which is why we pass `false` for one-way flag. Finally, since we can't tell
+                        // the type of the callback argument, we just return CallResponse object and let users set up
+                        // handlers as they like.
+                        var methodDescriptor = self.createMethodDescriptor(remoteFuncName, "", false);
+                        var callResponse = new KIARA.CallResponse(null, methodDescriptor);
+                        self.callMethod(callResponse, arguments);
+                        return callResponse;
+                    }
+                }
                 var response = [ 'call-reply', callID ];
                 try {
                     retVal = self.__funcs[methodName].apply(null, args);

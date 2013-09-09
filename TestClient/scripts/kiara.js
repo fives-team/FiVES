@@ -1733,6 +1733,7 @@ define(function () {
     }
 
     KIARA.node = node;
+    KIARA.CallResponse = CallResponse;
 
     return KIARA;
 });
