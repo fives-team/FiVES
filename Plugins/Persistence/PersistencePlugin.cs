@@ -43,6 +43,7 @@ namespace Persistence
             initializePersistedCollections ();
             EntityRegistry.Instance.OnEntityAdded += onEntityAdded;
             EntityRegistry.Instance.OnEntityRemoved += onEntityRemoved;
+            ComponentRegistry.Instance.OnEntityComponentUpgraded += onComponentOfEntityUpgraded;
         }
 
         /// <summary>
@@ -111,6 +112,11 @@ namespace Persistence
             persistEntityToDatabase (changedEntity);
         }
 
+        internal void onComponentOfEntityUpgraded(Object sender, EntityComponentUpgradedEventArgs e) {
+
+            // TODO: change cascading persistence of entity, but only persist component and take care to persist mapping to entity as well
+            persistEntityToDatabase (e.entity);
+        }
         #endregion
 
         #region database synchronisation

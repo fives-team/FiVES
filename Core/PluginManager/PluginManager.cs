@@ -111,7 +111,8 @@ namespace FIVES
                         return;
                     }
                     loadedPlugins.Add(name, info);
-                    OnPluginInitialized(this, new PluginLoadedEventArgs(name));
+                    if (OnPluginInitialized != null)
+                        OnPluginInitialized(this, new PluginLoadedEventArgs(name));
                 } catch (Exception e) {
                     logger.WarnException("Failed to load file " + path + " as a plugin.", e);
                     return;
@@ -142,7 +143,8 @@ namespace FIVES
                 deferredPlugins[name].initializer.initialize();
                 loadedPlugins[name] = deferredPlugins[name];
                 deferredPlugins.Remove(name);
-                OnPluginInitialized(this, new PluginLoadedEventArgs(name));
+                if (OnPluginInitialized != null)
+                    OnPluginInitialized(this, new PluginLoadedEventArgs(name));
             }
         }
 

@@ -95,6 +95,10 @@ namespace FIVES
                 }
                 return this.components[componentName];
             }
+
+            internal set {
+                components[componentName] = value;
+            }
         }
 
         public override bool TryGetMember(GetMemberBinder binder, out object result)

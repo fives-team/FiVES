@@ -73,7 +73,7 @@ namespace Persistence
             dynamic storedEntity = entityRegistry.getEntity(entity.Guid);
             Assert.IsTrue (storedEntity.myComponent.IntAttribute == 42);
             Assert.IsTrue (storedEntity.myComponent.StringAttribute == "Hello World!");
-
+            Assert.AreEqual(1, storedEntity.myComponent.Version);
         }
 
         [Test()]
@@ -163,6 +163,76 @@ namespace Persistence
 
             Assert.True(!guidsInRegistry.Contains(entity.Guid));
             Assert.True(!guidsInRegistry.Contains(childEntity.Guid));
+        }
+
+/*        public void shouldPersistUpgradedComponentLayout() {
+
+            ComponentLayout layout_1 = new ComponentLayout ();
+            ComponentLayout layout_2 = new ComponentLayout ();
+
+            layout_1 ["i"] = typeof(int);
+            layout_1 ["f"] = typeof(float);
+
+            layout_2 ["i"] = typeof(float);
+            layout_2 ["f"] = typeof(int);
+            layout_2 ["b"] = typeof(bool);
+
+            componentRegistry.defineComponent ("Comp1", plugin.pluginGuid, layout_1);
+
+            ComponentRegistryPersistence persist = new ComponentRegistryPersistence ();
+            persist.getComponentsFromRegistry ();
+
+            var session = sessionFactory.OpenSession ();
+            var trans = session.BeginTransaction ();
+            session.Save (persist);
+            trans.Commit ();
+
+            dynamic newEntity = new Entity ();
+
+        }
+*/
+        [Test()]
+        public void shouldPersistUpgradedEntity() {
+
+            ComponentLayout layout = new ComponentLayout ();
+            layout.addAttribute<int> ("i");
+            layout.addAttribute<float> ("f");
+            layout.addAttribute<string> ("s");
+            layout.addAttribute<bool> ("b");
+
+            string name = "ComponentToUpgrade";
+            componentRegistry.defineComponent (name, plugin.pluginGuid, layout);
+            Entity entity = new Entity ();
+            Guid entityGuid = entity.Guid;
+
+            entityRegistry.addEntity (entity);
+            entity[name]["i"] = 42;
+            entity[name]["f"] = 3.14f;
+            entity[name]["s"] = "foobar";
+            entity[name]["b"] = false;
+
+            componentRegistry.upgradeComponent(name, plugin.pluginGuid, layout, 2, testUpgrader);
+            entityRegistry.OnEntityRemoved -= plugin.onEntityRemoved;
+            entityRegistry.removeEntity (entityGuid);
+
+            plugin.retrieveEntitiesFromDatabase ();
+
+            ISet<Guid> guidsInRegistry = entityRegistry.getAllGUIDs ();
+            Assert.IsTrue(guidsInRegistry.Contains(entityGuid));
+
+            Entity retrievedEntity = entityRegistry.getEntity (entityGuid);
+
+            Assert.AreEqual(retrievedEntity[name]["i"], 3);
+            Assert.AreEqual(retrievedEntity[name]["f"], 42);
+            Assert.IsNull(retrievedEntity[name]["s"]);
+            Assert.AreEqual(retrievedEntity[name]["b"], false);
+
+        }
+
+        public static void testUpgrader(Component oldComponent, ref Component newComponent) {
+            newComponent["f"] = (float)(int)oldComponent["i"];
+            newComponent["i"] = (int)(float)oldComponent["f"];
+            newComponent["b"] = oldComponent["b"];
         }
     }
 }

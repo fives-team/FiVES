@@ -66,6 +66,8 @@ namespace FIVES
             return true;
         }
 
+        public int Version { get; internal set; }
+
         internal Component() {}
 
         // Can only be constructed by ComponentRegistry.createComponent to ensure correct attributes.

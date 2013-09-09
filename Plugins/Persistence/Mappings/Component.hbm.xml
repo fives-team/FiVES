@@ -6,6 +6,7 @@
         <id name="Id" type = "Guid">
             <generator class = "guid" />
         </id>
+        <property name = "Version" />
         <map name="attributes" table = "attributes_to_components" cascade = "all">
           <key column = "componentID" />
           <index type = "string" column = "attributeName" />
