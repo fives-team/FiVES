@@ -113,7 +113,7 @@ namespace FIVES
             if(!isRegistered(componentName))
                 throw new ComponentIsNotDefinedException("Component '" + componentName + "' is not defined.");
 
-            return this.registeredComponents [componentName].layout.attributes [attributeName];
+            return this.registeredComponents [componentName].layout.attributes [attributeName].type;
         }
 
         /// <summary>
@@ -127,7 +127,7 @@ namespace FIVES
 
             Component newComponent = new Component(componentName);
             foreach (var entry in registeredComponents[componentName].layout.attributes)
-                newComponent.addAttribute(entry.Key, entry.Value);
+                newComponent.addAttribute(entry.Key, entry.Value.type, entry.Value.defaultValue);
 
             return newComponent;
         }

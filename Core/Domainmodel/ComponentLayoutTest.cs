@@ -16,19 +16,16 @@ namespace FIVES
         public void differentEntriesShouldBeNotEqual()
         {
             ComponentLayout layout1 = new ComponentLayout ();
-            layout1.attributes = new Dictionary<string, Type> ();
-            layout1.attributes ["attribute1"] = typeof(int);
-            layout1.attributes ["attribute2"] = typeof(float);
+            layout1.addAttribute <int>("attribute1");
+            layout1.addAttribute <float> ("attribute2");
 
             ComponentLayout layout2 = new ComponentLayout ();
-            layout2.attributes = new Dictionary<string, Type> ();
-            layout2.attributes ["attribute1"] = typeof(int);
-            layout2.attributes ["attribute2"] = typeof(int);
+            layout1.addAttribute <int>("attribute1");
+            layout1.addAttribute <int> ("attribute2");
 
             ComponentLayout layout3 = new ComponentLayout ();
-            layout3.attributes = new Dictionary<string, Type> ();
-            layout3.attributes ["attribute1"] = typeof(int);
-            layout3.attributes ["attribute3"] = typeof(float);
+            layout1.addAttribute <int>("attribute1");
+            layout1.addAttribute <float> ("attribute3");
 
             Assert.IsFalse (layout1 == layout2);
             Assert.IsFalse (layout1 == layout3);
@@ -41,14 +38,12 @@ namespace FIVES
         public void sameEntriesShouldBeEqual()
         {
             ComponentLayout layout1 = new ComponentLayout ();
-            layout1.attributes = new Dictionary<string, Type> ();
-            layout1.attributes ["attribute1"] = typeof(int);
-            layout1.attributes ["attribute2"] = typeof(float);
+            layout1.addAttribute <int>("attribute1");
+            layout1.addAttribute <float> ("attribute2");
 
             ComponentLayout layout2 = new ComponentLayout ();
-            layout2.attributes = new Dictionary<string, Type> ();
-            layout2.attributes ["attribute1"] = typeof(int);
-            layout2.attributes ["attribute2"] = typeof(float);
+            layout2.addAttribute <int>("attribute1");
+            layout2.addAttribute <float> ("attribute2");
           
             Assert.IsTrue (layout1 == layout2);
             Assert.IsFalse (layout1 != layout2);

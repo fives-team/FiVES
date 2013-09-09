@@ -50,7 +50,7 @@ namespace Events
         public void shouldRaiseAttributeChanged()
         {
             ComponentLayout layout = new ComponentLayout ();
-            layout.attributes ["a"] = typeof(int);
+            layout.addAttribute<int> ("a");
             ComponentRegistry.Instance.defineComponent ("MyComponent", new Guid (), layout);
             dynamic newEntity = new Entity ();
 
@@ -71,7 +71,7 @@ namespace Events
         public void shouldRaiseComponentCreated()
         {
             ComponentLayout layout = new ComponentLayout ();
-            layout.attributes ["a"] = typeof(int);
+            layout.addAttribute<int> ("a");
             ComponentRegistry.Instance.defineComponent ("MyComponent", new Guid (), layout);
             dynamic newEntity = new Entity ();
             newEntity.OnComponentCreated += new Entity.ComponentCreated(componentCreatedEventHandler);
@@ -89,7 +89,7 @@ namespace Events
         public void shouldRaiseAttributeInComponentChanged()
         {
             ComponentLayout layout = new ComponentLayout ();
-            layout.attributes ["a"] = typeof(int);
+            layout.addAttribute<int> ("a");
             ComponentRegistry.Instance.defineComponent ("MyComponent", new Guid (), layout);
             dynamic newEntity = new Entity ();
 

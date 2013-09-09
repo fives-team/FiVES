@@ -12,10 +12,10 @@ namespace FIVES
         string name = "myComponent";
 
         public ComponentRegistryTest() {
-            layout["i"] = typeof(int);
-            layout["f"] = typeof(float);
-            layout["s"] = typeof(string);
-            layout["b"] = typeof(bool);
+            layout.addAttribute<int>("i");
+            layout.addAttribute<float> ("f");
+            layout.addAttribute<string> ("s");
+            layout.addAttribute<bool>("b");
         }
 
         [SetUp()]
@@ -43,7 +43,7 @@ namespace FIVES
             Guid owner = Guid.NewGuid();
 
             ComponentLayout otherLayout = new ComponentLayout();
-            otherLayout["a"] = typeof(bool);
+            otherLayout.addAttribute<bool>("a");
 
             registry.defineComponent(name, owner, layout);
             Assert.Throws<ComponentAlreadyDefinedException>(
@@ -70,10 +70,10 @@ namespace FIVES
         {
             registry.defineComponent(name, Guid.NewGuid(), layout);
             dynamic c = registry.getComponentInstance(name);
-            Assert.Null(c.i);
-            Assert.Null(c.f);
-            Assert.Null(c.s);
-            Assert.Null(c.b);
+            Assert.AreEqual(c.i, default(int));
+            Assert.AreEqual(c.f, default(float));
+            Assert.AreEqual(c.s, default(string));
+            Assert.AreEqual(c.b, default(bool));
         }
 
         [Test()]
