@@ -79,6 +79,10 @@ function(KIARA, $) {
                        // Listen for new objects.
                        notifyAboutNewObjects(addObjectButton);
                    })
+
+//                   conn.registerFuncImplementation("getAnswer", "", function(callback) {
+//                       callback(42);
+//                   });
                }
             });
         });
