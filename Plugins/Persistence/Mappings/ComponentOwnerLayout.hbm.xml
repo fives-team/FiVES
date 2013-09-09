@@ -7,6 +7,7 @@
             <generator class = "guid" />
         </id>
         <property name = "owner" type = "Guid" />
+        <property name = "version" />
         <many-to-one name = "layout" class = "FIVES.ComponentLayout, Core" column = "layout_id" cascade = "all" />
     </class>
 </hibernate-mapping>

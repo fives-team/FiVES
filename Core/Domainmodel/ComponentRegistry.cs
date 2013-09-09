@@ -191,6 +191,18 @@ namespace FIVES
         }
 
         /// <summary>
+        /// Gets the component version.
+        /// </summary>
+        /// <returns>The component version.</returns>
+        /// <param name="name">Name of the component of which to return the version</param>
+        public int getComponentVersion(string name)
+        {
+            if(!isRegistered(name))
+                throw new ComponentIsNotDefinedException("Component '" + name + "' is not defined.");
+            return this.registeredComponents [name].version;
+        }
+
+        /// <summary>
         /// Gets the names of all registered attributes of a component as array.
         /// </summary>
         /// <returns>The names of registered attributes of a component as array</returns>

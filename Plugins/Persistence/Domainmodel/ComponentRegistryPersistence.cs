@@ -12,6 +12,7 @@ namespace Persistence
 
         private Guid Id {get; set; }
         internal Guid owner { get; set; }
+        internal int version { get; set; }
         internal ComponentLayout layout { get; set; }
     }
 
@@ -39,6 +40,7 @@ namespace Persistence
 
                 ownedLayout.owner = registry.getComponentOwner (componentName);
                 ownedLayout.layout = this.createLayoutToPersistForComponent (componentName);
+                ownedLayout.version = registry.getComponentVersion (componentName);
                 this.ownerRegisteredComponents [componentName] = ownedLayout;
             }
         }
