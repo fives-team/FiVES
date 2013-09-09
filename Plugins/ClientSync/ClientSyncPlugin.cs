@@ -29,8 +29,8 @@ namespace ClientSync {
             clientService["clientsync.listObjects"] = (Func<List<string>>)listObjects;
             clientService["clientsync.getObjectLocation"] = (Func<string, Location>)getObjectLocation;
             clientService["clientsync.getObjectMesh"] = (Func<string, Mesh>)getObjectMesh;
-            clientService["clientsync.notifyAboutNewObjects"] = (Action<Action<string>>)notifyAboutNewObjects;
-            clientService["clientsync.notifyAboutRemovedObjects"] = (Action<Action<string>>)notifyAboutRemovedObjects;
+            clientService["clientsync.notifyAboutNewObjects"] = (Action<FuncWrapper>)notifyAboutNewObjects;
+            clientService["clientsync.notifyAboutRemovedObjects"] = (Action<FuncWrapper>)notifyAboutRemovedObjects;
 
             // DEBUG
             clientService["scripting.createServerScriptFor"] = (Action<string, string>)createServerScriptFor;
@@ -41,12 +41,12 @@ namespace ClientSync {
 
         #endregion
 
-        private void notifyAboutNewObjects(Action<string> callback)
+        private void notifyAboutNewObjects(FuncWrapper callback)
         {
             EntityRegistry.Instance.OnEntityAdded += (sender, e) => callback(e.elementId.ToString());
         }
 
-        private void notifyAboutRemovedObjects(Action<string> callback)
+        private void notifyAboutRemovedObjects(FuncWrapper callback)
         {
             EntityRegistry.Instance.OnEntityRemoved += (sender, e) => callback(e.elementId.ToString());
         }
