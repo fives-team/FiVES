@@ -26,6 +26,8 @@ namespace WebSocketJSON
     {
         protected override object convertResult(object result, Type type)
         {
+            if (type == typeof(JToken))
+                return result;
             return ((JToken)result).ToObject(type);
         }
 
