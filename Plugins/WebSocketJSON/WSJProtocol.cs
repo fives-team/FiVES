@@ -67,7 +67,31 @@ namespace WebSocketJSON
             callMessage.Add("call");
             callMessage.Add(callID);
             callMessage.Add(name);
-            callMessage.AddRange(args);
+
+            // Register delegates as callbacks. Pass their registered names instead.
+            List<object> convertedArgs = new List<object>();
+            List<int> callbacks = new List<int>();
+            for (int i = 0; i < args.Length; i++) {
+                if (args[i] is Delegate) {
+                    var arg = args[i] as Delegate;
+                    if (!registeredCallbacks.ContainsKey(arg)) {
+                        var callbackUUID = Guid.NewGuid().ToString();
+                        registeredCallbacks[arg] = callbackUUID;
+                        registeredFunctions[callbackUUID] = arg;
+                    }
+                    callbacks.Add(i);
+                    convertedArgs.Add(registeredCallbacks[arg]);
+                } else {
+                    convertedArgs.Add(args[i]);
+                }
+            }
+
+            // Add a list of callback indicies.
+            callMessage.Add(callbacks);
+
+            // Add converted arguments.
+            callMessage.AddRange(convertedArgs);
+
             string serializedMessage = JsonConvert.SerializeObject(callMessage);
             Send(serializedMessage);
 
@@ -101,6 +125,108 @@ namespace WebSocketJSON
             activeCalls.Clear();
         }
 
+        private void handleCallReply(List<JToken> data)
+        {
+            int callID = Convert.ToInt32(data[1]);
+            if (activeCalls.ContainsKey(callID)) {
+                bool success = data[2].ToObject<bool>();
+                JToken result = data.Count == 4 ? data[3] : new JValue((object)null);
+                if (success)
+                    activeCalls[callID].handleSuccess(result);
+                else
+                    activeCalls[callID].handleException(result);
+                activeCalls.Remove(callID);
+            } else {
+                // TODO: Report error to another side.
+                throw new UnknownCallID("Received a response for an unrecognized call id: " + callID);
+            }
+        }
+
+        private void handleCall(List<JToken> data)
+        {
+            int callID = data[1].ToObject<int>();
+            string methodName = data[2].ToObject<string>();
+            if (registeredFunctions.ContainsKey(methodName)) {
+                Delegate nativeMethod = registeredFunctions[methodName];
+                ParameterInfo[] paramInfo = nativeMethod.Method.GetParameters();
+                List<int> callbacks = data[3].ToObject<List<int>>();
+                List<JToken> args = data.GetRange(4, data.Count - 4);
+
+                object[] parameters = new object[args.Count];
+                try {
+                    if (paramInfo.Length != args.Count)
+                        throw new InvalidNumberOfArgs("Incorrect number of arguments for a method.");
+
+                    for (int i = 0; i < args.Count; i++) {
+                        if (callbacks.Contains(i)) {
+                            if (paramInfo[i].ParameterType == typeof(FuncWrapper)) {
+                                var remoteCallbackUUID = args[i].ToObject<string>();
+                                parameters[i] = (FuncWrapper)delegate(object[] arguments) {
+                                    return callFunc(remoteCallbackUUID, arguments);
+                                };
+                            } else if (typeof(Delegate).IsAssignableFrom(paramInfo[i].ParameterType)) {
+                                string funcName = args[i].ToObject<string>();
+                                Type retType = paramInfo[i].ParameterType.GetMethod("Invoke").ReturnType;
+                                // TODO: Implement wrapping of generic delegates.
+                                throw new NotImplementedException();
+
+                                // This doesn't work, but parts of this code may be reused when correct solution is
+                                // implemented.
+//                                Func<object[], object> tmpObj = arguments => {
+//                                    if (retType == typeof(void)) {
+//                                        callFunc(funcName, arguments).wait();
+//                                        return null;
+//                                    } else {
+//                                        object result = null;
+//                                        callFunc(funcName, arguments)
+//                                          .onSuccess(delegate(JToken res) { result = res.ToObject(retType); })
+//                                          .wait();
+//                                        return result;
+//                                    }
+//                                };
+//                                parameters[i] = Delegate.CreateDelegate(paramInfo[i].ParameterType, tmpObj.Method);
+                            } else {
+                                throw new Exception("Callback parameter is neither a delegate nor a FuncWrapper.");
+                            }
+                        } else {
+                            parameters[i] = args[i].ToObject(paramInfo[i].ParameterType);
+                        }
+                    }
+                } catch {
+                    // TODO: Mismatching parameters. Return an error to the remote end.
+                    return;
+                }
+
+
+                object returnValue = null;
+                object exception = null;
+                bool success = true;
+                try {
+                    returnValue = nativeMethod.DynamicInvoke(parameters);
+                } catch (Exception e) {
+                    Console.WriteLine(e.ToString());
+                    exception = e;
+                    success = false;
+                }
+
+                if (!isOneWay(methodName)) {
+                    // Send call-reply message.
+                    List<object> callReplyMessage = new List<object>();
+                    callReplyMessage.Add("call-reply");
+                    callReplyMessage.Add(callID);
+                    callReplyMessage.Add(success);
+                    if (!success)
+                        callReplyMessage.Add(exception);
+                    else if (nativeMethod.Method.ReturnType != typeof(void))
+                        callReplyMessage.Add(returnValue);
+                    Send(JsonConvert.SerializeObject(callReplyMessage));
+                }
+            } else {
+                // TODO: Report error to another side.
+                throw new UnregisteredMethod("Received a call for an unregistered method: " + methodName);
+            }
+        }
+
         /// <summary>
         /// Handles an incoming message.
         /// </summary>
@@ -118,65 +244,11 @@ namespace WebSocketJSON
             }
 
             string msgType = data[0].ToObject<string>();
-            if (msgType == "call-reply") {
-                int callID = Convert.ToInt32(data[1]);
-                if (activeCalls.ContainsKey(callID)) {
-                    bool success = data[2].ToObject<bool>();
-                    JToken result = data.Count == 4 ? data[3] : new JValue((object)null);
-                    if (success)
-                        activeCalls[callID].handleSuccess(result);
-                    else
-                        activeCalls[callID].handleException(result);
-                    activeCalls.Remove(callID);
-                } else {
-                    // TODO: Report error to another side.
-                    throw new UnknownCallID("Received a response for an unrecognized call id: " + callID);
-                }
-            } else if (msgType == "call") {
-                int callID = data[1].ToObject<int>();
-                string methodName = data[2].ToObject<string>();
-                if (registeredFunctions.ContainsKey(methodName)) {
-                    Delegate nativeMethod = registeredFunctions[methodName];
-                    ParameterInfo[] paramInfo = nativeMethod.Method.GetParameters();
-                    if (paramInfo.Length != data.Count - 3) {
-                        // TODO: Report error to another side.
-                        throw new InvalidNumberOfArgs("Incorrect number of arguments for method: " + methodName +
-                                                      ". Expected: " + paramInfo.Length + ". Got: " + (data.Count - 3));
-                    }
-                    List<object> parameters = new List<object>();
-                    for (int i = 0; i < paramInfo.Length; i++)
-                        parameters.Add(data[i+3].ToObject(paramInfo[i].ParameterType));
-
-                    object returnValue = null;
-                    object exception = null;
-                    bool success = true;
-
-                    try {
-                        returnValue = nativeMethod.DynamicInvoke(parameters.ToArray());
-                    } catch (Exception e) {
-                        exception = e;
-                        success = false;
-                    }
-
-                    if (!isOneWay(methodName)) {
-                        // Send call-reply message.
-                        List<object> callReplyMessage = new List<object>();
-                        callReplyMessage.Add("call-reply");
-                        callReplyMessage.Add(callID);
-                        callReplyMessage.Add(success);
-
-                        if (!success)
-                            callReplyMessage.Add(exception);
-                        else if (nativeMethod.Method.ReturnType != typeof(void))
-                            callReplyMessage.Add(returnValue);
-
-                        Send(JsonConvert.SerializeObject(callReplyMessage));
-                    }
-                } else {
-                    // TODO: Report error to another side.
-                    throw new UnregisteredMethod("Received a call for an unregistered method: " + methodName);
-                }
-            } else
+            if (msgType == "call-reply")
+                handleCallReply(data);
+            else if (msgType == "call")
+                handleCall(data);
+            else
                 throw new Error(ErrorCode.CONNECTION_ERROR, "Unknown message type: " + msgType);
         }
 
@@ -192,6 +264,7 @@ namespace WebSocketJSON
         private int nextCallID = 0;
         private Dictionary<int, IWSJFuncCall> activeCalls = new Dictionary<int, IWSJFuncCall>();
         private Dictionary<string, Delegate> registeredFunctions = new Dictionary<string, Delegate>();
+        private Dictionary<Delegate, string> registeredCallbacks = new Dictionary<Delegate, string>();
 
         #region Testing
 

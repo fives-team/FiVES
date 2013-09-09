@@ -39,35 +39,36 @@ namespace WebSocketJSON
         [Test()]
         public void shouldCreateWJSServer()
         {
-            factory.startServer(config, mockHandlers.Object.newClient);
+            factory.startServer(config, null, mockHandlers.Object.newClient);
             mockWSJServerFactory.Verify(f => f.construct(mockHandlers.Object.newClient), Times.Once());
         }
 
         [Test()]
         public void shouldSetupWithPortAndIpFromConfig()
         {
-            factory.startServer(configWithIpAndPort, mockHandlers.Object.newClient);
+            factory.startServer(configWithIpAndPort, null, mockHandlers.Object.newClient);
             mockWSJServer.Verify(s => s.Setup("127.0.0.1", 1234, null, null, null, null, null), Times.Once());
         }
 
         [Test()]
         public void shouldSetupWithDefaultPortAndIpIfNotAvailableInConfig()
         {
-            factory.startServer(config, mockHandlers.Object.newClient);
+            factory.startServer(config, null, mockHandlers.Object.newClient);
             mockWSJServer.Verify(s => s.Setup("Any", 34837, null, null, null, null, null), Times.Once());
         }
 
         [Test()]
         public void shouldStartWJSServer()
         {
-            factory.startServer(config, mockHandlers.Object.newClient);
+            factory.startServer(config, null, mockHandlers.Object.newClient);
             mockWSJServer.Verify(s => s.Start(), Times.Once());
         }
 
         [Test()]
         public void shouldFailOnConfigForDifferentProtocol()
         {
-            Assert.Throws<Error>(() => factory.startServer(nonWebSocketJSONConfig, mockHandlers.Object.newClient));
+            Assert.Throws<Error>(
+                () => factory.startServer(nonWebSocketJSONConfig, null, mockHandlers.Object.newClient));
         }
     }
 }

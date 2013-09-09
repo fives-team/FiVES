@@ -19,31 +19,46 @@ namespace ClientSync {
 
         public List<string> getDependencies()
         {
-            return new List<string>() { "WebSocketJSON", "DirectCall" };
+            return new List<string>() { "WebSocketJSON", "DirectCall", "Location", "Renderable" };
         }
 
         public void initialize()
         {
-            clientContext.startServer("http://localhost/projects/test-client/kiara/fives.json", registerClientMethods);
+            clientService = ServiceFactory.createByURI("http://localhost/projects/test-client/kiara/fives.json");
+            clientService["kiara.implements"] = (Func<List<string>, List<bool>>)implements;
+            clientService["clientsync.listObjects"] = (Func<List<string>>)listObjects;
+            clientService["clientsync.getObjectLocation"] = (Func<string, Location>)getObjectLocation;
+            clientService["clientsync.getObjectMesh"] = (Func<string, Mesh>)getObjectMesh;
+            clientService["clientsync.notifyAboutNewObjects"] = (Action<FuncWrapper>)notifyAboutNewObjects;
+            clientService["clientsync.notifyAboutRemovedObjects"] = (Action<FuncWrapper>)notifyAboutRemovedObjects;
 
-            // {
-            //   'info': 'ClientSyncPlugin',
-            //   'idlContent': '...',
-            //   'servers': [{
-            //     'services': '*',
-            //     'protocol': {
-            //       'name': 'direct-call',
-            //       'id': 'clientsync',
-            //     },
-            //   }],
-            // }
-            string pluginConfig = "data:text/json;base64,ewogICdpbmZvJzogJ0NsaWVudFN5bmNQbHVnaW4nLAogICdpZGxDb250ZW50" +
-                "JzogJy4uLicsCiAgJ3NlcnZlcnMnOiBbewogICAgJ3NlcnZpY2VzJzogJyonLAogICAgJ3Byb3RvY29sJzogewogICAgICAnbmFt" +
-                "ZSc6ICdkaXJlY3QtY2FsbCcsCiAgICAgICdpZCc6ICdjbGllbnRzeW5jJywKICAgICB9LAogIH1dLAp9Cg==";
-            pluginContext.startServer(pluginConfig, registerPluginMethods);
+            // DEBUG
+            clientService["scripting.createServerScriptFor"] = (Action<string, string>)createServerScriptFor;
+//            clientService.OnNewClient += delegate(Connection connection) {
+//                var getAnswer = connection.generateFuncWrapper("getAnswer");
+//                getAnswer((Action<int>) delegate(int answer) { Console.WriteLine("The answer is {0}", answer); });
+//            };
+
+            var pluginService = ServiceFactory.createByName("clientsync", ContextFactory.getContext("inter-plugin"));
+            pluginService["registerClientMethod"] = (Action<string, Delegate>)registerClientMethod;
         }
 
         #endregion
+
+        private void notifyAboutNewObjects(FuncWrapper callback)
+        {
+            EntityRegistry.Instance.OnEntityAdded += (sender, e) => callback(e.elementId.ToString());
+        }
+
+        private void notifyAboutRemovedObjects(FuncWrapper callback)
+        {
+            EntityRegistry.Instance.OnEntityRemoved += (sender, e) => callback(e.elementId.ToString());
+        }
+
+        private void notifyAboutObjectUpdates(Action<string> callback)
+        {
+            throw new NotImplementedException();
+        }
 
         private readonly List<string> supportedServices = new List<string> {
             "kiara",
@@ -52,7 +67,7 @@ namespace ClientSync {
 
         private List<bool> implements(List<string> services)
         {
-            return services.ConvertAll(service => supportedServices.Contains(service));
+            return services.ConvertAll(supportedServices.Contains);
         }
 
         private List<string> listObjects()
@@ -64,51 +79,59 @@ namespace ClientSync {
             return objects;
         }
 
-        private class Position {
+        private struct Vector {
             public float x, y, z;
         }
 
-        private Position getObjectPosition(string guid) {
-            dynamic entity = EntityRegistry.Instance.getEntity(new Guid(guid));
-            var pos = new Position();
-            pos.x = entity.position.x;
-            pos.y = entity.position.y;
-            pos.z = entity.position.z;
-            return pos;
+        private struct Quat {
+            public float x, y, z, w;
         }
 
-        private void registerClientMethods(Connection connection)
-        {
-            connection.registerFuncImplementation("kiara.implements", (Func<List<string>, List<bool>>)implements);
-            connection.registerFuncImplementation("clientsync.listObjects", (Func<List<string>>)listObjects);
-            connection.registerFuncImplementation("clientsync.getObjectPosition",
-                                                  (Func<string, Position>)getObjectPosition);
-            connection.registerFuncImplementation("scripting.createServerScriptFor",
-                                                  (Action<string,string>)delegate(string guid, string script) {
-                dynamic entity = EntityRegistry.Instance.getEntity(guid);
-                entity["scripting"]["serverScript"] = script;
-            });
+        private struct Location {
+            public Vector position;
+            public Quat orientation;
+        }
 
-            // Register custom client methods.
-            foreach (var entry in clientMethods)
-                connection.registerFuncImplementation(entry.Key, entry.Value);
+        private Location getObjectLocation(string guid) {
+            dynamic entity = EntityRegistry.Instance.getEntity(new Guid(guid));
+            var loc = new Location();
+            loc.position.x = entity.position.x;
+            loc.position.y = entity.position.y;
+            loc.position.z = entity.position.z;
+            loc.orientation.x = entity.orientation.x;
+            loc.orientation.y = entity.orientation.y;
+            loc.orientation.z = entity.orientation.z;
+            loc.orientation.w = entity.orientation.w;
+            return loc;
+        }
+
+        private struct Mesh {
+            public string uri;
+            public Vector scale;
+        }
+
+        private Mesh getObjectMesh(string guid) {
+            dynamic entity = EntityRegistry.Instance.getEntity(new Guid(guid));
+            var mesh = new Mesh();
+            mesh.uri = entity.meshResource.uri;
+            mesh.scale.x = entity.scale.x;
+            mesh.scale.y = entity.scale.y;
+            mesh.scale.z = entity.scale.z;
+            return mesh;
+        }
+
+        private void createServerScriptFor(string guid, string script)
+        {
+            dynamic entity = EntityRegistry.Instance.getEntity(guid);
+            entity["scripting"]["serverScript"] = script;
         }
 
         private void registerClientMethod(string name, Delegate handler)
         {
-            clientMethods.Add(name, handler);
+            clientService[name] = handler;
         }
 
-        private void registerPluginMethods(Connection connection)
-        {
-            connection.registerFuncImplementation("registerClientMethod",
-                                                  (Action<string, Delegate>)registerClientMethod);
-        }
-
-        private Dictionary<string, Delegate> clientMethods = new Dictionary<string, Delegate>();
-
-        private Context clientContext = new Context();
-        private Context pluginContext = new Context();
+        private ServiceImpl clientService;
     }
 
 }

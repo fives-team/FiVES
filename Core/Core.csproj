@@ -77,6 +77,15 @@
     <Compile Include="KIARA\ProtocolUtilsTest.cs" />
     <Compile Include="KIARA\ProtocolRegistryTest.cs" />
     <Compile Include="KIARA\TestingWrappers.cs" />
+    <Compile Include="KIARA\Service.cs" />
+    <Compile Include="KIARA\ServiceImpl.cs" />
+    <Compile Include="KIARA\ServiceWrapper.cs" />
+    <Compile Include="KIARA\ContextFactory.cs" />
+    <Compile Include="KIARA\ServiceFactory.cs" />
+    <Compile Include="KIARA\ServiceImplTest.cs" />
+    <Compile Include="KIARA\ServiceWrapperTest.cs" />
+    <Compile Include="KIARA\ServiceTest.cs" />
+    <Compile Include="KIARA\ContextFactoryTest.cs" />
     <Compile Include="Events\EntityAddedOrRemovedEventArgs.cs" />
     <Compile Include="Events\AttributeChangedEventArgs.cs" />
     <Compile Include="Events\EventTests.cs" />

@@ -1,0 +1,18 @@
+using System;
+using System.Collections.Generic;
+
+namespace KIARA
+{
+    public class ContextFactory
+    {
+        public static Context getContext(string name)
+        {
+            if (contextCache.ContainsKey(name))
+                return contextCache[name];
+            return contextCache[name] = new Context();
+        }
+
+        private static Dictionary<string, Context> contextCache = new Dictionary<string, Context>();
+    }
+}
+

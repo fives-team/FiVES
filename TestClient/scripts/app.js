@@ -1,13 +1,16 @@
 requirejs(['kiara', 'jquery', 'websocket-json'],
 function(KIARA, $) {
     var listObjects;
-    var getObjectPosition;
+    var getObjectLocation;
     var createEntityAt;
     var createServerScriptFor;
+    var notifyAboutNewObjects;
 
-    function requestPosition(guid) {
-        getObjectPosition(guid).on("result", function(error, position) {
-           alert("Object " + guid + " is located at (" + position.x + ", " + position.y + ", " + position.z + ").");
+    function requestLocation(guid) {
+        getObjectLocation(guid).on("result", function(error, loc) {
+           alert("Object " + guid + " is located at pos: (" + loc.position.x + ", " + loc.position.y + ", " +
+                 loc.position.z + ") and rot: (" + loc.orientation.x + ", " + loc.orientation.y + ", " +
+                 loc.orientation.z + ", " + loc.orientation.w + ").");
         });
     }
 
@@ -31,10 +34,7 @@ function(KIARA, $) {
         var x = promptFloat("x = ");
         var y = promptFloat("y = ");
         var z = promptFloat("z = ");
-
-        createEntityAt(x, y, z).on("result", function() {
-            location.reload();
-        });
+        createEntityAt(x, y, z);
     }
 
     function setScript(guid) {
@@ -42,6 +42,15 @@ function(KIARA, $) {
         var script = "console.log('hello from client');";
         createServerScriptFor(guid, script);
         return false;
+    }
+
+    function addObjectButton(guid) {
+        var div = document.createElement("div");
+        div.appendChild(document.createTextNode(guid));
+        div.addEventListener("click", requestLocation.bind(null, guid));
+        //div.addEventListener("click", setScript.bind(null, guid));
+        div.setAttribute("style", "border: 1px solid black; background-color: gray; margin: 2px;");
+        document.body.appendChild(div);
     }
 
     function main() {
@@ -52,25 +61,28 @@ function(KIARA, $) {
             implements(["clientsync"]).on("result", function(error, supported) {
                if (supported[0]) {
                    listObjects = conn.generateFuncWrapper("clientsync.listObjects");
-                   getObjectPosition = conn.generateFuncWrapper("clientsync.getObjectPosition");
+                   getObjectLocation = conn.generateFuncWrapper("clientsync.getObjectLocation");
                    createEntityAt = conn.generateFuncWrapper("editing.createEntityAt");
                    createServerScriptFor = conn.generateFuncWrapper("scripting.createServerScriptFor");
+                   notifyAboutNewObjects = conn.generateFuncWrapper("clientsync.notifyAboutNewObjects");
                    listObjects().on("result", function(error, objects) {
-                       for (var i = 0; i < objects.length; i++) {
-                           var div = document.createElement("div");
-                           var guid = objects[i];
-                           div.appendChild(document.createTextNode(guid));
-                           //div.addEventListener("click", requestPosition.bind(null, guid));
-                           div.addEventListener("click", setScript.bind(null, guid));
-                           div.setAttribute("style", "border: 1px solid black; background-color: gray; margin: 2px;");
-                           document.body.appendChild(div);
-                       }
-
+                       // Create a button for adding a new object.
                        var createButton = document.createElement("button");
                        createButton.appendChild(document.createTextNode("Create entity"));
-                       createButton.addEventListener("click", createNewEntity.bind(conn));
+                       createButton.addEventListener("click", createNewEntity.bind(null, conn));
                        document.body.appendChild(createButton);
+
+                       // Add existing objects.
+                       for (var i = 0; i < objects.length; i++)
+                           addObjectButton(objects[i]);
+
+                       // Listen for new objects.
+                       notifyAboutNewObjects(addObjectButton);
                    })
+
+//                   conn.registerFuncImplementation("getAnswer", "", function(callback) {
+//                       callback(42);
+//                   });
                }
             });
         });

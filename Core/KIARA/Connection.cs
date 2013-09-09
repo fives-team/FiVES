@@ -7,17 +7,17 @@ using System.Net;
 namespace KIARA
 {
     /// <summary>
+    /// Represents a generated function wrapper. It allows calling the function with arbitrary arguments.
+    /// </summary>
+    /// <returns>An object representing a call.</returns>
+    public delegate IFuncCall FuncWrapper(params object[] args);
+
+    /// <summary>
     /// This class represenents a connection to the remote end. It may be used to load new IDL definition files,
     /// generate callable remote function  wrappers and to register local functions as implementations for remote calls.
     /// </summary>
     public class Connection
     {
-        /// <summary>
-        /// Represents a generated function wrapper. It allows calling the function with arbitrary arguments.
-        /// </summary>
-        /// <returns>An object representing a call.</returns>
-        public delegate IFuncCall FuncWrapper(params object[] args);
-
         /// <summary>
         /// Constructs connection given a protocol implementation. This for internal use only - please use
         /// <see cref="KIARA.Context.openConnection"/> or <see cref="KIARA.Context.startServer"/> instead.

@@ -29,10 +29,18 @@ namespace KIARA
     /// </summary>
     public class Context
     {
+        public static Context GlobalContext = new Context();
+
         /// <summary>
         /// Initializes a new instance of the <see cref="KIARA.Context"/> class.
         /// </summary>
         public Context() : this(ProtocolRegistry.Instance, new WebClientWrapper()) {}
+
+        public void initialize(string hint)
+        {
+            // Currently we use hint as a config template, where {0} will be replaced with a service name.
+            configTemplate = hint;
+        }
 
         /// <summary>
         /// Opens a connection to a server specified in the config file retrived from <paramref name="configURI"/>.
@@ -53,7 +61,7 @@ namespace KIARA
 
             string protocolName = server.protocol["name"].ToString();
             IProtocolFactory protocolFactory = protocolRegistry.getProtocolFactory(protocolName);
-            protocolFactory.openConnection(server, delegate(IProtocol p) {
+            protocolFactory.openConnection(server, this, delegate(IProtocol p) {
                 Connection conn = new Connection(p);
                 onConnected(conn);
             });
@@ -82,11 +90,13 @@ namespace KIARA
 
             string protocolName = server.protocol["name"].ToString();
             IProtocolFactory protocolFactory = protocolRegistry.getProtocolFactory(protocolName);
-            protocolFactory.startServer(server, delegate(IProtocol p) {
+            protocolFactory.startServer(server, this, delegate(IProtocol p) {
                 Connection conn = new Connection(p);
                 onNewClient(conn);
             });
         }
+
+        public Dictionary<string, object> ProtocolData = new Dictionary<string, object>();
 
         private Config retrieveConfig(string configURI, out string fragment)
         {
@@ -141,8 +151,9 @@ namespace KIARA
             return config.servers[serverNum];
         }
 
-        IProtocolRegistry protocolRegistry;
-        IWebClient webClient;
+        private IProtocolRegistry protocolRegistry;
+        private IWebClient webClient;
+        internal string configTemplate;
 
         #region Testing
         internal Context(IProtocolRegistry customProtocolRegistry, IWebClient customWebClient) {
