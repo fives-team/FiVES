@@ -4,8 +4,24 @@ namespace KIARA
 {
     public class ServiceWrapper : Service
     {
+        /// <summary>
+        /// Occurs when connection is established. New handlers are also invoked, even if connection have been 
+        /// established before they were added.
+        /// </summary>
         public delegate void Connected(Connection connection);
-        public event Connected OnConnected;
+        private event Connected InternalOnConnected;
+        public event Connected OnConnected {
+            add {
+                if (connection == null)
+                    InternalOnConnected += value;
+                else
+                    value(connection);
+            }
+            remove {
+                if (connection == null)
+                    InternalOnConnected -= value;
+            }
+        }
 
         public FuncWrapper this[string name]
         {
@@ -23,13 +39,13 @@ namespace KIARA
         {
             connection = aConnection;
 
-            if (OnConnected != null)
-                OnConnected(aConnection);
+            if (InternalOnConnected != null)
+                InternalOnConnected(aConnection);
         }
 
         internal ServiceWrapper(Context context) : base(context) {}
 
-        private Connection connection;
+        private Connection connection = null;
     }
 }
 

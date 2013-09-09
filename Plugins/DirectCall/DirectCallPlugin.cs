@@ -30,7 +30,7 @@ namespace DirectCall
 
             // Create inter-plugin context and initialize it with this protocol.
             Context interPluginContext = ContextFactory.getContext("inter-plugin");
-            interPluginContext.initialize("{servers:[{protocol:{name:'direct-call', id:{0}}}]}");
+            interPluginContext.initialize("{{servers:[{{protocol:{{name:'direct-call', id:'{0}'}}}}]}}");
         }
 
         #endregion

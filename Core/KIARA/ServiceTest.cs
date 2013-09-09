@@ -11,14 +11,6 @@ namespace KIARA
         }
 
         [Test()]
-        public void shouldInitializeUUID()
-        {
-            TestService service = new TestService(null);
-            Assert.NotNull(service.uuid);
-        }
-
-
-        [Test()]
         public void shouldStoreAssociatedContext()
         {
             Context context = new Context();
