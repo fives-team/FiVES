@@ -13,6 +13,7 @@ function(KIARA, $) {
     var createEntityAt;
     var createServerScriptFor;
     var notifyAboutNewObjects;
+    var getObjectMesh;
     var connection;
 
     function requestLocation(guid) {
@@ -20,6 +21,12 @@ function(KIARA, $) {
            alert("Object " + guid + " is located at pos: (" + loc.position.x + ", " + loc.position.y + ", " +
                  loc.position.z + ") and rot: (" + loc.orientation.x + ", " + loc.orientation.y + ", " +
                  loc.orientation.z + ", " + loc.orientation.w + ").");
+        });
+    }
+
+    function requestMeshData(guid) {
+        getObjectMesh(guid).on("result", function(error, mesh) {
+
         });
     }
 
