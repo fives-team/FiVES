@@ -1,0 +1,11 @@
+/* bootstrap-editable path corrections.
+ * When the bootstrap-editable library is updated, this should be checked and updated,
+ * if necessary.
+ */
+.editableform-loading {
+    background: url('../../../img/lib/bootstrap-editable-1.4.3/loading.gif') center center no-repeat;
+}
+
+.editable-clear-x {
+   background: url('../../../img/lib/bootstrap-editable-1.4.3/clear.png') center center no-repeat;
+}
