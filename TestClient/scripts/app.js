@@ -13,6 +13,7 @@ function(KIARA, $) {
     var createEntityAt;
     var createServerScriptFor;
     var notifyAboutNewObjects;
+    var connection;
 
     function requestLocation(guid) {
         getObjectLocation(guid).on("result", function(error, loc) {
@@ -78,17 +79,19 @@ function(KIARA, $) {
 
     var clientSyncCallback = function(error, supported) {
         if (supported[0]) {
-            listObjects = conn.generateFuncWrapper("clientsync.listObjects");
-            getObjectLocation = conn.generateFuncWrapper("clientsync.getObjectLocation");
-            createEntityAt = conn.generateFuncWrapper("editing.createEntityAt");
-            createServerScriptFor = conn.generateFuncWrapper("scripting.createServerScriptFor");
-            notifyAboutNewObjects = conn.generateFuncWrapper("clientsync.notifyAboutNewObjects");
+            listObjects = connection.generateFuncWrapper("clientsync.listObjects");
+            getObjectLocation = connection.generateFuncWrapper("clientsync.getObjectLocation");
+            createEntityAt = connection.generateFuncWrapper("editing.createEntityAt");
+            createServerScriptFor = connection.generateFuncWrapper("scripting.createServerScriptFor");
+            notifyAboutNewObjects = connection.generateFuncWrapper("clientsync.notifyAboutNewObjects");
+            getObjectMesh = connection.generateFuncWrapper("clientsync.getObjectMesh");
             listObjects().on("result", listObjectsCallback);
         }
     };
 
     var callbackFunction = function(error, conn) {
-            var implements = conn.generateFuncWrapper("kiara.implements");
+            connection = conn;
+            var implements = connection.generateFuncWrapper("kiara.implements");
             implements(["clientsync"]).on("result", clientSyncCallback);
     }
 
