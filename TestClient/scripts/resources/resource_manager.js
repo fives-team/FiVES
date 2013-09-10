@@ -27,9 +27,9 @@ FIVES.Resources = FIVES.Resources || {};
         this._onNextDocumentLoadedCallback(adaptedDoc);
     };
 
-    rm._adaptIdAttributes = function(doc) {
+    rm._adaptIdAttributes = function(xml3dElement) {
         var that = this;
-        var rootElementWithReplacedReferences = $(doc).children("xml3d");
+        var rootElementWithReplacedReferences = $(xml3dElement);
         var elementsWithSrcAttributes = rootElementWithReplacedReferences.find("[src]");
         var elementsWithShaderAttributes = rootElementWithReplacedReferences.find("[shader]");
         var elementsWithTransformAttributes = rootElementWithReplacedReferences.find("[transform]");

@@ -25,7 +25,7 @@ CARAMEL.Utility = CARAMEL.Utility || {};
                 type: "GET",
                 url: url,
                 success: function(response) {
-                    loadedCB(response)
+                    self._handleLoadedXML3D(url, response, loadedCB);
                 },
                 error: function(status) {console.error(status)}
             });
@@ -34,8 +34,10 @@ CARAMEL.Utility = CARAMEL.Utility || {};
         /** Convert all references to point to the correct server and 
          *  notify the load requester using loadedCB. 
          */
-        _handleLoadedXML3D: function(url, loadedXML3DEl, loadedCB)
-        {                   
+        _handleLoadedXML3D: function(url, loadedDocument, loadedCB)
+        {
+            var loadedXML3DEl = $(loadedDocument).children("xml3d")[0];
+
             // construct full path to the files by analysing urlOnServer
             var urlLastSlash = url.lastIndexOf("/"); 
             var urlPath = url.slice(0,  urlLastSlash + 1);
@@ -43,7 +45,7 @@ CARAMEL.Utility = CARAMEL.Utility || {};
             this._adjustReferences(loadedXML3DEl, urlPath); 
 
             // notify load requester
-            loadedCB(url, loadedXML3DEl); 
+            loadedCB(loadedXML3DEl);
         },
         
         /** Up to now convert all img's and mesh's elements' src attributes 
