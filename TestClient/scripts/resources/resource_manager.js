@@ -16,14 +16,15 @@ FIVES.Resources = FIVES.Resources || {};
     var ResourceManager = function() {};
     var rm = ResourceManager.prototype;
 
-    rm.loadExternalResource = function(fivesObject) {
+    rm.loadExternalResource = function(fivesObject, onResourceLoadedCallback) {
         this._instanceIdSuffix = fivesObject.guid;
+        this._onNextDocumentLoadedCallback = onResourceLoadedCallback;
         CARAMEL.Utility.RemoteXML3DLoader.loadXML3D(fivesObject.mesh.url, this._onLoadedDocument.bind(this));
     };
 
     rm._onLoadedDocument = function(doc) {
         var adaptedDoc = this._adaptIdAttributes(doc)[0];
-        console.log(adaptedDoc);
+        this._onNextDocumentLoadedCallback(adaptedDoc);
     };
 
     rm._adaptIdAttributes = function(doc) {
