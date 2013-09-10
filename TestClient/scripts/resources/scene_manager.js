@@ -28,8 +28,11 @@ FIVES.Resources = FIVES.Resources || {};
         if(!fivesObject.mesh.url)
             console.error("[ERROR] (SceneManager).addMeshForObject : No Resource URI specified for object " + fivesObject.guid);
         else
-            FIVES.Resources.ResourceManager.loadExternalResource(fivesObject);
+            FIVES.Resources.ResourceManager.loadExternalResource(fivesObject, this._addMeshToScene.bind(this));
     };
 
+    scm._addMeshToScene = function(meshGroup) {
+        _xml3dElement.appendChild(meshGroup);
+    }
     FIVES.Resources.SceneManager = new SceneManager();
 }());
