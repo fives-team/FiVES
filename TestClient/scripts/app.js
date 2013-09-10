@@ -1,3 +1,11 @@
+require.config({
+    paths: {
+        'jquery' : 'lib/jquery',
+        'kiara' : 'lib/kiara',
+        'websocket-json' : 'lib/websocket-json'
+    }
+});
+
 requirejs(['kiara', 'jquery', 'websocket-json'],
 function(KIARA, $) {
     var listObjects;
