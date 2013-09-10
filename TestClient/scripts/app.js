@@ -39,7 +39,7 @@ function(KIARA, $) {
         return value.toString();
     }
 
-    function createNewEntity(conn) {
+    function createNewEntity() {
         var x = promptFloat("x = ");
         var y = promptFloat("y = ");
         var z = promptFloat("z = ");
@@ -66,7 +66,7 @@ function(KIARA, $) {
         // Create a button for adding a new object.
         var createButton = document.createElement("button");
         createButton.appendChild(document.createTextNode("Create entity"));
-        createButton.addEventListener("click", createNewEntity.bind(null, conn));
+        createButton.addEventListener("click", createNewEntity);
         document.body.appendChild(createButton);
 
         // Add existing objects.
