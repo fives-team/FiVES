@@ -61,39 +61,41 @@ function(KIARA, $) {
         document.body.appendChild(div);
     }
 
+    var listObjectsCallback =  function(error, objects) {
+        // Create a button for adding a new object.
+        var createButton = document.createElement("button");
+        createButton.appendChild(document.createTextNode("Create entity"));
+        createButton.addEventListener("click", createNewEntity.bind(null, conn));
+        document.body.appendChild(createButton);
+
+        // Add existing objects.
+        for (var i = 0; i < objects.length; i++)
+            addObjectButton(objects[i]);
+
+        // Listen for new objects.
+        notifyAboutNewObjects(addObjectButton);
+    };
+
+    var clientSyncCallback = function(error, supported) {
+        if (supported[0]) {
+            listObjects = conn.generateFuncWrapper("clientsync.listObjects");
+            getObjectLocation = conn.generateFuncWrapper("clientsync.getObjectLocation");
+            createEntityAt = conn.generateFuncWrapper("editing.createEntityAt");
+            createServerScriptFor = conn.generateFuncWrapper("scripting.createServerScriptFor");
+            notifyAboutNewObjects = conn.generateFuncWrapper("clientsync.notifyAboutNewObjects");
+            listObjects().on("result", listObjectsCallback);
+        }
+    };
+
+    var callbackFunction = function(error, conn) {
+            var implements = conn.generateFuncWrapper("kiara.implements");
+            implements(["clientsync"]).on("result", clientSyncCallback);
+    }
+
     function main() {
         context = KIARA.createContext();
         service = "kiara/fives.json";
-        context.openConnection(service, function(error, conn) {
-            var implements = conn.generateFuncWrapper("kiara.implements");
-            implements(["clientsync"]).on("result", function(error, supported) {
-               if (supported[0]) {
-                   listObjects = conn.generateFuncWrapper("clientsync.listObjects");
-                   getObjectLocation = conn.generateFuncWrapper("clientsync.getObjectLocation");
-                   createEntityAt = conn.generateFuncWrapper("editing.createEntityAt");
-                   createServerScriptFor = conn.generateFuncWrapper("scripting.createServerScriptFor");
-                   notifyAboutNewObjects = conn.generateFuncWrapper("clientsync.notifyAboutNewObjects");
-                   listObjects().on("result", function(error, objects) {
-                       // Create a button for adding a new object.
-                       var createButton = document.createElement("button");
-                       createButton.appendChild(document.createTextNode("Create entity"));
-                       createButton.addEventListener("click", createNewEntity.bind(null, conn));
-                       document.body.appendChild(createButton);
-
-                       // Add existing objects.
-                       for (var i = 0; i < objects.length; i++)
-                           addObjectButton(objects[i]);
-
-                       // Listen for new objects.
-                       notifyAboutNewObjects(addObjectButton);
-                   })
-
-//                   conn.registerFuncImplementation("getAnswer", "", function(callback) {
-//                       callback(42);
-//                   });
-               }
-            });
-        });
+        context.openConnection(service, callbackFunction );
     }
 
     $(document).ready(main);
