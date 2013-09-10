@@ -21,15 +21,14 @@ CARAMEL.Utility = CARAMEL.Utility || {};
         {            
             var self = this;  
             
-            $.ajax({url: url})
-                .done(function(xmlData, succCode, jqXHR){
-                    var remoteXml3d = jqXHR.responseXML.documentElement; 
-                    self._handleLoadedXML3D(url, remoteXml3d, loadedCB);  
-                })
-                .fail(function(jqXHR, textStatus){
-                    loadedCB(url, null); 
-                })
-            ;
+            $.ajax({
+                type: "GET",
+                url: url,
+                success: function(response) {
+                    loadedCB(response)
+                },
+                error: function(status) {console.error(status)}
+            });
         }, 
         
         /** Convert all references to point to the correct server and 
