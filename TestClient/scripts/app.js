@@ -86,7 +86,7 @@ function(KIARA, $) {
             entityDocument.mesh.scale.y = 1;
             entityDocument.mesh.scale.z = 1;
 
-            entityDocument.mesh.uri = mesh.uri || "/models/firetruck/xml3d/firetruck.xml";
+            entityDocument.mesh.uri = mesh.uri || "models/firetruck/xml3d/firetruck.xml";
 
             FIVES.Resources.SceneManager.addMeshForObject(entityDocument);
         })

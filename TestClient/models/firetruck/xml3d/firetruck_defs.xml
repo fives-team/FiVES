@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xml3d xmlns="http://www.xml3d.org/2009/xml3d" style="width: 800px;height:600px;background-color:lightblue;" activeView="#defaultView">
+  <defs>
+    <transform id="root_transform" scale="0.1 0.1 0.1" rotation="0 1 0 3.14"/>
+    <transform id="t_FACESET_FACESET___1043-FACES_1-node" translation="5.366324 0.0 -1.814402"/>
+    <shader id="MAT_MAT_Surface_21_1-fx" script="urn:xml3d:shader:phong">
+      <float3 name="emissiveColor">0.0 0.0 0.0</float3>
+      <float3 name="diffuseColor">0.0 0.0 0.0</float3>
+      <float3 name="specularColor">0.0 0.0 0.0</float3>
+      <float name="shininess">0.0</float>
+      <float name="ambientIntensity">0.0</float>
+      <float name="transparency">0.0</float>
+    </shader>
+    <transform id="t_FACESET_FACESET___1078-FACES_1-node" translation="5.366324 0.0 -1.814402"/>
+    <shader id="MAT_MAT_Surface_3_1-fx" script="urn:xml3d:shader:phong">
+      <float3 name="emissiveColor">0.0 0.0 0.0</float3>
+      <float3 name="diffuseColor">0.03137 0.2392 0.5412</float3>
+      <float3 name="specularColor">0.0 0.0 0.0</float3>
+      <float name="shininess">0.0</float>
+      <float name="ambientIntensity">0.054118</float>
+      <float name="transparency">0.0</float>
+    </shader>
+    <transform id="t_FACESET_FACESET___964-FACES_1-node" translation="5.366324 0.0 -1.814402"/>
+    <shader id="MAT_MAT_Surface_13_1-fx" script="urn:xml3d:shader:phong">
+      <float3 name="emissiveColor">0.0 0.0 0.0</float3>
+      <float3 name="diffuseColor">0.3373 0.3373 0.3373</float3>
+      <float3 name="specularColor">0.0 0.0 0.0</float3>
+      <float name="shininess">0.0</float>
+      <float name="ambientIntensity">0.06746</float>
+      <float name="transparency">0.0</float>
+    </shader>
+    <transform id="t_FACESET_FACESET___985-FACES_1-node" translation="5.366324 0.0 -1.814402"/>
+    <shader id="MAT_MAT_Surface_15_1-fx" script="urn:xml3d:shader:phong">
+      <float3 name="emissiveColor">0.0 0.0 0.0</float3>
+      <float3 name="diffuseColor">0.8941 0.8392 0.6</float3>
+      <float3 name="specularColor">0.0 0.0 0.0</float3>
+      <float name="shininess">0.0</float>
+      <float name="ambientIntensity">0.15555333</float>
+      <float name="transparency">0.0</float>
+    </shader>
+    <transform id="t_FACESET_FACESET___986-FACES_1-node" translation="5.366324 0.0 -1.814402"/>
+    <shader id="MAT_MAT_Surface_11_1-fx" script="urn:xml3d:shader:phong">
+      <float3 name="emissiveColor">0.0 0.0 0.0</float3>
+      <float3 name="diffuseColor">0.8784 0.7765 0.3412</float3>
+      <float3 name="specularColor">0.0 0.0 0.0</float3>
+      <float name="shininess">0.0</float>
+      <float name="ambientIntensity">0.13307333</float>
+      <float name="transparency">0.0</float>
+    </shader>
+    <transform id="t_FACESET_FACESET___991-FACES_1-node" translation="5.366324 0.0 -1.814402"/>
+    <shader id="MAT_MAT_Surface_7_1-fx" script="urn:xml3d:shader:phong">
+      <float3 name="emissiveColor">0.0 0.0 0.0</float3>
+      <float3 name="diffuseColor">0.6902 0.102 0.102</float3>
+      <float3 name="specularColor">0.0 0.0 0.0</float3>
+      <float name="shininess">0.0</float>
+      <float name="ambientIntensity">0.059613332</float>
+      <float name="transparency">0.0</float>
+    </shader>
+    <transform id="t_FACESET_FACESET___993-FACES_1-node" translation="5.366324 0.0 -1.814402"/>
+    <shader id="MAT_MAT_Surface_9_1-fx" script="urn:xml3d:shader:phong">
+      <float3 name="emissiveColor">0.0 0.0 0.0</float3>
+      <float3 name="diffuseColor">1.0 1.0 1.0</float3>
+      <float3 name="specularColor">0.0 0.0 0.0</float3>
+      <float name="shininess">0.0</float>
+      <float name="ambientIntensity">0.2</float>
+      <float name="transparency">0.0</float>
+    </shader>
+    <transform id="t_FACESET_FACESET___997-FACES_1-node" translation="5.366324 0.0 -1.814402"/>
+    <shader id="MAT_MAT_Surface_17_1-fx" script="urn:xml3d:shader:phong">
+      <float3 name="emissiveColor">0.0 0.0 0.0</float3>
+      <float3 name="diffuseColor">0.6941 0.3451 0.102</float3>
+      <float3 name="specularColor">0.0 0.0 0.0</float3>
+      <float name="shininess">0.0</float>
+      <float name="ambientIntensity">0.07608</float>
+      <float name="transparency">0.0</float>
+    </shader>
+    <transform id="t_FACESET_FACESET___998-FACES_1-node" translation="5.366324 0.0 -1.814402"/>
+    <shader id="MAT_MAT_Surface_19_1-fx" script="urn:xml3d:shader:phong">
+      <float3 name="emissiveColor">0.0 0.0 0.0</float3>
+      <float3 name="diffuseColor">0.5255 0.02353 0.02353</float3>
+      <float3 name="specularColor">0.0 0.0 0.0</float3>
+      <float name="shininess">0.0</float>
+      <float name="ambientIntensity">0.038170666</float>
+      <float name="transparency">0.0</float>
+    </shader>
+    <transform id="t_FACESET_FACESET___999-FACES_1-node" translation="5.366324 0.0 -1.814402"/>
+    <shader id="MAT_MAT_Surface_1_1-fx" script="urn:xml3d:shader:phong">
+      <float3 name="emissiveColor">0.0 0.0 0.0</float3>
+      <float3 name="diffuseColor">0.451 0.451 0.451</float3>
+      <float3 name="specularColor">0.0 0.0 0.0</float3>
+      <float name="shininess">0.0</float>
+      <float name="ambientIntensity">0.0902</float>
+      <float name="transparency">0.0</float>
+    </shader>
+    <transform id="t_FACESET_FACESET___999-FACES_11-node" translation="5.366324 0.0 -1.814402"/>
+    <shader id="MAT_MAT_Surface_5_1-fx" script="urn:xml3d:shader:phong">
+      <float3 name="emissiveColor">0.0 0.0 0.0</float3>
+      <float3 name="diffuseColor">0.1098 0.349 0.6941</float3>
+      <float3 name="specularColor">0.0 0.0 0.0</float3>
+      <float name="shininess">0.0</float>
+      <float name="ambientIntensity">0.07686</float>
+      <float name="transparency">0.0</float>
+    </shader>
+    <transform id="t_FACESET_FACESET___999-FACES_12-node" translation="5.366324 0.0 -1.814402"/>
+    <transform id="t_FACESET_FACESET_scheiben-FACES-node" translation="5.366324 0.0 -1.814402"/>
+  </defs>  
+</xml3d>
