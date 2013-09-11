@@ -17,15 +17,15 @@ CARAMEL.Utility = CARAMEL.Utility || {};
          * @param {string} url the url to load
          * @param {function(url: string, xml3d: <Object>)} loadedCB the callback to invoke when loading finished.
          */
-        loadXML3D: function(url, loadedCB)
+        loadXML3D: function(fivesObject, loadedCB)
         {            
             var self = this;  
             
             $.ajax({
                 type: "GET",
-                url: url,
+                url: fivesObject.mesh.uri,
                 success: function(response) {
-                    self._handleLoadedXML3D(url, response, loadedCB);
+                    self._handleLoadedXML3D(fivesObject, response, loadedCB);
                 },
                 error: function(status) {console.error(status)}
             });
@@ -34,18 +34,17 @@ CARAMEL.Utility = CARAMEL.Utility || {};
         /** Convert all references to point to the correct server and 
          *  notify the load requester using loadedCB. 
          */
-        _handleLoadedXML3D: function(url, loadedDocument, loadedCB)
+        _handleLoadedXML3D: function(fivesObject, loadedDocument, loadedCB)
         {
             var loadedXML3DEl = $(loadedDocument).children("xml3d")[0];
 
             // construct full path to the files by analysing urlOnServer
+            var url = fivesObject.mesh.uri;
             var urlLastSlash = url.lastIndexOf("/"); 
             var urlPath = url.slice(0,  urlLastSlash + 1);
-
-            this._adjustReferences(loadedXML3DEl, urlPath); 
-
+            this._adjustReferences(loadedXML3DEl, urlPath);
             // notify load requester
-            loadedCB(loadedXML3DEl);
+            loadedCB(loadedXML3DEl, fivesObject.guid);
         },
         
         /** Up to now convert all img's and mesh's elements' src attributes 

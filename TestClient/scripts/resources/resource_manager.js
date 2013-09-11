@@ -19,15 +19,15 @@ FIVES.Resources = FIVES.Resources || {};
     rm.loadExternalResource = function(fivesObject, onResourceLoadedCallback) {
         this._instanceIdSuffix = fivesObject.guid;
         this._onNextDocumentLoadedCallback = onResourceLoadedCallback;
-        CARAMEL.Utility.RemoteXML3DLoader.loadXML3D(fivesObject.mesh.url, this._onLoadedDocument.bind(this));
+        CARAMEL.Utility.RemoteXML3DLoader.loadXML3D(fivesObject, this._onLoadedDocument.bind(this));
     };
 
-    rm._onLoadedDocument = function(doc) {
-        var adaptedDoc = this._adaptIdAttributes(doc)[0];
+    rm._onLoadedDocument = function(responseDocument, idSuffix) {
+        var adaptedDoc = this._adaptIdAttributes(responseDocument, idSuffix)[0];
         this._onNextDocumentLoadedCallback(adaptedDoc);
     };
 
-    rm._adaptIdAttributes = function(xml3dElement) {
+    rm._adaptIdAttributes = function(xml3dElement, idSuffix) {
         var that = this;
         var rootElementWithReplacedReferences = $(xml3dElement);
         var elementsWithSrcAttributes = rootElementWithReplacedReferences.find("[src]");
@@ -48,7 +48,7 @@ FIVES.Resources = FIVES.Resources || {};
 
         var elementsWithIdAttributes = rootElementWithReplacedReferences.find("[id]");
         elementsWithIdAttributes.each( function(position,element){
-            that._applyReplacementToIdAttribute(element, rootElementWithReplacedReferences);
+            that._applyReplacementToIdAttribute(element, rootElementWithReplacedReferences, idSuffix);
         } );
         return rootElementWithReplacedReferences.children("group");
     };
@@ -78,12 +78,12 @@ FIVES.Resources = FIVES.Resources || {};
         return (srcValue.indexOf(".json") !== -1  || srcValue.indexOf(".xml") !== -1 );
     };
 
-    rm._applyReplacementToIdAttribute = function(element, rootElement) {
+    rm._applyReplacementToIdAttribute = function(element, rootElement, idSuffix) {
         var e = $(element);
         var oldAttributeValue = e.attr("id");
         if(oldAttributeValue)
         {
-            var adaptedAttributeValue = oldAttributeValue + "-" + this._instanceIdSuffix;
+            var adaptedAttributeValue = oldAttributeValue + "-" + idSuffix;
             e.attr("id", adaptedAttributeValue);
             if(element.tagName !== "group")
             {
