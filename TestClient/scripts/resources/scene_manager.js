@@ -48,9 +48,29 @@ FIVES.Resources = FIVES.Resources || {};
     };
 
     scm._createTransformForEntityGroup = function(fivesObject) {
+        var transformStyle = "";
+        transformStyle += this._createTranslationForEntityGroup(fivesObject);
+        transformStyle += " " + this._createOrientationForEntityGroup(fivesObject);
+        transformStyle += " " + this._createScaleForEntityGroup(fivesObject);
+        return transformStyle;
+    };
+
+    scm._createTranslationForEntityGroup = function(fivesObject) {
         var position = fivesObject.location.position;
         var translationStyle = "translate3d(" + position.x + "px, " + position.y + "px, " + position.z + "px)";
         return translationStyle;
+    };
+
+    scm._createOrientationForEntityGroup = function(fivesObject) {
+        var orientation = fivesObject.location.orientation;
+        var orientationStyle = "rotate3d(" + orientation.x + ", " + orientation.y + ", " + orientation.z + ", " + orientation.w + "rad)";
+        return orientationStyle;
+    };
+
+    scm._createScaleForEntityGroup = function(fivesObject) {
+        var scale = fivesObject.mesh.scale;
+        var scaleStyle = "scale(" + scale.x + ", " + scale.y + ", " + scale.z + ")";
+        return scaleStyle;
     };
 
     FIVES.Resources.SceneManager = new SceneManager();
