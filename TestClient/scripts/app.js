@@ -69,6 +69,30 @@ function(KIARA, $) {
         document.body.appendChild(div);
     }
 
+    function retrieveEntityData(guid) {
+        var entityDocument = {};
+        entityDocument.guid = guid;
+        console.log("Adding new entity document with guid " + guid);
+        getObjectLocation(guid).on("result", function(error, location) {
+            entityDocument.location = {};
+            entityDocument.location.position = location.position;
+            entityDocument.location.orientation = location.orientation;
+        });
+
+        getObjectMesh(guid).on("result", function(error, mesh) {
+            entityDocument.mesh = {};
+            entityDocument.mesh.scale = mesh.scale;
+            entityDocument.mesh.scale.x = 1;
+            entityDocument.mesh.scale.y = 1;
+            entityDocument.mesh.scale.z = 1;
+
+            entityDocument.mesh.uri = mesh.uri || "/models/firetruck/xml3d/firetruck.xml";
+
+            FIVES.Resources.SceneManager.addMeshForObject(entityDocument);
+        })
+
+    }
+
     var listObjectsCallback =  function(error, objects) {
         // Create a button for adding a new object.
         var createButton = document.createElement("button");
@@ -78,10 +102,10 @@ function(KIARA, $) {
 
         // Add existing objects.
         for (var i = 0; i < objects.length; i++)
-            addObjectButton(objects[i]);
+            retrieveEntityData(objects[i]);
 
         // Listen for new objects.
-        notifyAboutNewObjects(addObjectButton);
+        notifyAboutNewObjects(retrieveEntityData);
     };
 
     var clientSyncCallback = function(error, supported) {
@@ -105,6 +129,7 @@ function(KIARA, $) {
     function main() {
         context = KIARA.createContext();
         service = "kiara/fives.json";
+        FIVES.Resources.SceneManager.initialize("xml3dView");
         context.openConnection(service, callbackFunction );
     }
 
