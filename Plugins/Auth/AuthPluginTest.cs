@@ -9,29 +9,29 @@ namespace Auth
         AuthPlugin plugin = new AuthPlugin();
 
         [Test()]
-        public void shouldReturnCorrectName()
+        public void ShouldReturnCorrectName()
         {
-            Assert.AreEqual("Auth", plugin.getName());
+            Assert.AreEqual("Auth", plugin.GetName());
         }
 
         [Test()]
-        public void shouldReturnCorrectDeps()
+        public void ShouldReturnCorrectDeps()
         {
-            Assert.AreEqual(plugin.getDependencies().Count, 0);
+            Assert.AreEqual(plugin.GetDependencies().Count, 0);
         }
 
         [Test()]
-        public void shouldReturnLoginNameBySecurityToken()
+        public void ShouldReturnLoginNameBySecurityToken()
         {
-            var secToken = plugin.authenticate("test_user", "123");
+            var secToken = plugin.Authenticate("test_user", "123");
             Assert.AreEqual("test_user", plugin.getLoginName(secToken));
         }
 
         [Test()]
-        public void shouldAcceptAnyCombinationsOfLoginAndPassword()
+        public void ShouldAcceptAnyCombinationsOfLoginAndPassword()
         {
-            Assert.AreNotEqual(Guid.Empty, plugin.authenticate("test_user", "123"));
-            Assert.AreNotEqual(Guid.Empty, plugin.authenticate("test_user", "321"));
+            Assert.AreNotEqual(Guid.Empty, plugin.Authenticate("test_user", "123"));
+            Assert.AreNotEqual(Guid.Empty, plugin.Authenticate("test_user", "321"));
         }
     }
 }

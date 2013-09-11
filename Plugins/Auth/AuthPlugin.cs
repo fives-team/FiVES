@@ -9,20 +9,20 @@ namespace Auth
     {
         #region IPluginInitializer implementation
 
-        public string getName ()
+        public string GetName ()
         {
             return "Auth";
         }
 
-        public System.Collections.Generic.List<string> getDependencies ()
+        public System.Collections.Generic.List<string> GetDependencies ()
         {
             return new System.Collections.Generic.List<string>();
         }
 
-        public void initialize ()
+        public void Initialize ()
         {
-            var auth = ServiceFactory.createByName("auth", ContextFactory.getContext("inter-plugin"));
-            auth["authenticate"] = (Func<string, string, Guid>)authenticate;
+            var auth = ServiceFactory.CreateByName("auth", ContextFactory.GetContext("inter-plugin"));
+            auth["authenticate"] = (Func<string, string, Guid>)Authenticate;
             auth["getLoginName"] = (Func<Guid, string>)getLoginName;
         }
         #endregion
@@ -34,7 +34,7 @@ namespace Auth
         /// <param name="login">Login.</param>
         /// <param name="password">Password.</param>
         /// <returns>The associated security token.</returns>
-        internal Guid authenticate(string login, string password)
+        internal Guid Authenticate(string login, string password)
         {
             // Currently we just accept any login/password combinations.
             var securityToken = Guid.NewGuid();

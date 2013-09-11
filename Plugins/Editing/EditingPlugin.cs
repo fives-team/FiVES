@@ -58,8 +58,9 @@ namespace Editing
         private void RegisterEditingAPI() {
             var clientSync = ServiceFactory.DiscoverByName("clientsync", ContextFactory.GetContext("inter-plugin"));
             clientSync.OnConnected += delegate(Connection connection) {
-                var registerClientMethod = clientSync["registerClientMethod"];
-                registerClientMethod("editing.createEntityAt", (Action<float, float, float>)CreateEntityAt);
+                clientSync["registerClientService"]("editing", new Dictionary<string, Delegate> {
+                    {"createEntityAt", (Action<float, float, float>)CreateEntityAt}
+                });
             };
         }
     }
