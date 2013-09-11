@@ -34,8 +34,24 @@ FIVES.Resources = FIVES.Resources || {};
             FIVES.Resources.ResourceManager.loadExternalResource(fivesObject, this._addMeshToScene.bind(this));
     };
 
-    scm._addMeshToScene = function(meshGroup) {
-        _xml3dElement.appendChild(meshGroup);
-    }
+    scm._addMeshToScene = function(meshGroup, idSuffix) {
+        var entityGroup = this._createParentGroupForEntity(EntityRegistry[idSuffix]);
+        _xml3dElement.appendChild(entityGroup);
+        entityGroup.appendChild(meshGroup);
+    };
+
+    scm._createParentGroupForEntity = function(fivesObject) {
+        var entityGroup = XML3D.createElement("group");
+        entityGroup.setAttribute("id", "Entity-" + fivesObject.guid);
+        entityGroup.setAttribute("style", "transform: " + this._createTransformForEntityGroup(fivesObject));
+        return entityGroup;
+    };
+
+    scm._createTransformForEntityGroup = function(fivesObject) {
+        var position = fivesObject.location.position;
+        var translationStyle = "translate3d(" + position.x + "px, " + position.y + "px, " + position.z + "px)";
+        return translationStyle;
+    };
+
     FIVES.Resources.SceneManager = new SceneManager();
 }());
