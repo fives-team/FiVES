@@ -18,6 +18,8 @@ FIVES.Resources = FIVES.Resources || {};
 
     var _xml3dElement;
 
+    var EntityRegistry = {};
+
     scm.initialize = function(xml3dElementId) {
         _xml3dElement = document.getElementById(xml3dElementId);
         if(!_xml3dElement || _xml3dElement.tagName != "xml3d")
@@ -25,6 +27,7 @@ FIVES.Resources = FIVES.Resources || {};
     };
 
     scm.addMeshForObject = function(fivesObject) {
+        EntityRegistry[fivesObject.guid] = fivesObject;
         if(!fivesObject.mesh.uri)
             console.error("[ERROR] (SceneManager).addMeshForObject : No Resource URI specified for object " + fivesObject.guid);
         else
