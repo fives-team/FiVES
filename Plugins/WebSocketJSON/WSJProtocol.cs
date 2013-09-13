@@ -5,6 +5,8 @@ using Newtonsoft.Json.Linq;
 using SuperWebSocket;
 using Newtonsoft.Json;
 using System.Reflection;
+using System.Dynamic;
+using ImpromptuInterface;
 
 namespace WebSocketJSON
 {
@@ -142,6 +144,23 @@ namespace WebSocketJSON
             }
         }
 
+        // Used to wrap dynamic delegate generated for callbacks.
+        private class AnyInvokeObject : DynamicObject
+        {
+            public AnyInvokeObject(Func<object[], object> aFunc)
+            {
+                func = aFunc;
+            }
+
+            public override bool TryInvoke(InvokeBinder binder, object[] args, out object result)
+            {
+                result = func(args);
+                return true;
+            }
+
+            Func<object[], object> func;
+        }
+
         private void handleCall(List<JToken> data)
         {
             int callID = data[1].ToObject<int>();
@@ -167,24 +186,21 @@ namespace WebSocketJSON
                             } else if (typeof(Delegate).IsAssignableFrom(paramInfo[i].ParameterType)) {
                                 string funcName = args[i].ToObject<string>();
                                 Type retType = paramInfo[i].ParameterType.GetMethod("Invoke").ReturnType;
-                                // TODO: Implement wrapping of generic delegates.
-                                throw new NotImplementedException();
 
-                                // This doesn't work, but parts of this code may be reused when correct solution is
-                                // implemented.
-//                                Func<object[], object> tmpObj = arguments => {
-//                                    if (retType == typeof(void)) {
-//                                        callFunc(funcName, arguments).wait();
-//                                        return null;
-//                                    } else {
-//                                        object result = null;
-//                                        callFunc(funcName, arguments)
-//                                          .onSuccess(delegate(JToken res) { result = res.ToObject(retType); })
-//                                          .wait();
-//                                        return result;
-//                                    }
-//                                };
-//                                parameters[i] = Delegate.CreateDelegate(paramInfo[i].ParameterType, tmpObj.Method);
+                                AnyInvokeObject tmpObj = new AnyInvokeObject(arguments => {
+                                    if (retType == typeof(void)) {
+                                        callFunc(funcName, arguments).wait();
+                                        return null;
+                                    } else {
+                                        object result = null;
+                                        callFunc(funcName, arguments)
+                                          .onSuccess(delegate(JToken res) { result = res.ToObject(retType); })
+                                          .wait();
+                                        return result;
+                                    }
+                                });
+
+                                parameters[i] = Impromptu.CoerceToDelegate(tmpObj, paramInfo[i].ParameterType);
                             } else {
                                 throw new Exception("Callback parameter is neither a delegate nor a FuncWrapper.");
                             }

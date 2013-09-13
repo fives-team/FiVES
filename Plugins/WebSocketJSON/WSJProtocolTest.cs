@@ -25,6 +25,7 @@ namespace WebSocketJSON
         public interface IHandlers {
             float testFunc(int i, string s);
             void testCallback(int i, FuncWrapper callback);
+            void testCallback2(string a, Action<string> hello);
         }
 
         WSJProtocolWrapper protocol;
@@ -125,6 +126,20 @@ namespace WebSocketJSON
             mockHandlers.Verify(h => h.testCallback(42, It.IsAny<FuncWrapper>()), Times.Once());
             generatedFuncWrapper(42);
             Assert.AreEqual(protocol.sentMessages[1], "[\"call\",0,\"99095a90-1997-11e3-8ffd-0800200c9a66\",[],42]");
+        }
+
+        [Test()]
+        public void shouldGenerateDynamicDelegatesForCallbacks()
+        {
+            protocol.registerHandler("testCallback2", (Action<string,Action<string>>)mockHandlers.Object.testCallback2);
+            Action<string> generatedDelegate = null;
+            mockHandlers.Setup(h => h.testCallback2("foobar", It.IsAny<Action<string>>()))
+                .Callback((string s, Action<string> f) => generatedDelegate = f);
+            protocol.handleMessage("['call',0,'testCallback2',[1],'foobar','28abd5c5-14a8-4b4d-8569-7d009bc37f31']");
+            mockHandlers.Verify(h => h.testCallback2("foobar", It.IsAny<Action<string>>()), Times.Once());
+            generatedDelegate("barfoo");
+            Assert.AreEqual("[\"call\",0,\"28abd5c5-14a8-4b4d-8569-7d009bc37f31\",[],\"barfoo\"]",
+                            protocol.sentMessages[1]);
         }
 
         [Test()]

@@ -58,6 +58,10 @@
     <Reference Include="Moq">
       <HintPath>..\..\ThirdParty\Moq\NET40\Moq.dll</HintPath>
     </Reference>
+    <Reference Include="System.Core" />
+    <Reference Include="ImpromptuInterface">
+      <HintPath>..\..\ThirdParty\ImpromptuInterface\ImpromptuInterface.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
