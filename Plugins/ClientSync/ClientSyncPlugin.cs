@@ -36,8 +36,8 @@ namespace ClientSync {
             clientService["kiara.implements"] = (Func<List<string>, List<bool>>)Implements;
             clientService["clientsync.listObjects"] = (Func<List<EntityInfo>>)ListObjects;
             clientService["clientsync.setEntityLocation"] = (Action<string, Vector, Quat>)SetEntityLocation;
-            clientService["clientsync.notifyAboutNewObjects"] = (Action<FuncWrapper>)NotifyAboutNewObjects;
-            clientService["clientsync.notifyAboutRemovedObjects"] = (Action<FuncWrapper>)NotifyAboutRemovedObjects;
+            clientService["clientsync.notifyAboutNewObjects"] = (Action<Action<EntityInfo>>)NotifyAboutNewObjects;
+            clientService["clientsync.notifyAboutRemovedObjects"] = (Action<Action<string>>)NotifyAboutRemovedObjects;
             clientService["clientsync.notifyAboutEntityLocationUpdates"] =
                 (Action<string, Action<Vector, Quat>>)NotifyAboutEntityLocationUpdates;
 
@@ -87,7 +87,7 @@ namespace ClientSync {
             return entityInfo;
         }
 
-        void SetEntityLocation (string guid, Vector position, Quat orientation)
+        private void SetEntityLocation (string guid, Vector position, Quat orientation)
         {
             dynamic entity = EntityRegistry.Instance.GetEntity(guid) as dynamic;
             entity.position.x = position.x;
@@ -99,12 +99,12 @@ namespace ClientSync {
             entity.orientation.w = orientation.w;
         }
 
-        private void NotifyAboutNewObjects(FuncWrapper callback)
+        private void NotifyAboutNewObjects(Action<EntityInfo> callback)
         {
             EntityRegistry.Instance.OnEntityAdded += (sender, e) => callback(ConstuctEntityInfo(e.elementId));
         }
 
-        private void NotifyAboutRemovedObjects(FuncWrapper callback)
+        private void NotifyAboutRemovedObjects(Action<string> callback)
         {
             EntityRegistry.Instance.OnEntityRemoved += (sender, e) => callback(e.elementId.ToString());
         }
