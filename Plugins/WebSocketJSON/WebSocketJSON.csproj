@@ -59,8 +59,8 @@
       <HintPath>..\..\ThirdParty\Moq\NET40\Moq.dll</HintPath>
     </Reference>
     <Reference Include="System.Core" />
-    <Reference Include="ImpromptuInterface">
-      <HintPath>..\..\ThirdParty\ImpromptuInterface\ImpromptuInterface.dll</HintPath>
+    <Reference Include="Dynamitey">
+      <HintPath>..\..\packages\Dynamitey.1.0.2.0\lib\net40\Dynamitey.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -82,5 +82,8 @@
       <Project>{627CCFC6-4071-4119-92C6-8BC96E4310C8}</Project>
       <Name>Core</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
   </ItemGroup>
 </Project>

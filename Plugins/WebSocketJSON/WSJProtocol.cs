@@ -6,7 +6,7 @@ using SuperWebSocket;
 using Newtonsoft.Json;
 using System.Reflection;
 using System.Dynamic;
-using ImpromptuInterface;
+using Dynamitey;
 
 namespace WebSocketJSON
 {
@@ -184,7 +184,7 @@ namespace WebSocketJSON
                                     }
                                 });
 
-                                parameters[i] = Impromptu.CoerceToDelegate(genericWrapper, paramInfo[i].ParameterType);
+                                parameters[i] = Dynamic.CoerceToDelegate(genericWrapper, paramInfo[i].ParameterType);
                             } else {
                                 throw new Exception("Callback parameter is neither a delegate nor a FuncWrapper.");
                             }
