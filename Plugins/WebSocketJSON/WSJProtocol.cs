@@ -144,23 +144,7 @@ namespace WebSocketJSON
             }
         }
 
-        // Used to wrap dynamic delegate generated for callbacks.
-        private class AnyInvokeObject : DynamicObject
-        {
-            public AnyInvokeObject(Func<object[], object> aFunc)
-            {
-                func = aFunc;
-            }
-
-            public override bool TryInvoke(InvokeBinder binder, object[] args, out object result)
-            {
-                result = func(args);
-                return true;
-            }
-
-            Func<object[], object> func;
-        }
-
+        public delegate object GenericWrapper(params object[] arguments);
         private void handleCall(List<JToken> data)
         {
             int callID = data[1].ToObject<int>();
@@ -187,7 +171,7 @@ namespace WebSocketJSON
                                 string funcName = args[i].ToObject<string>();
                                 Type retType = paramInfo[i].ParameterType.GetMethod("Invoke").ReturnType;
 
-                                AnyInvokeObject tmpObj = new AnyInvokeObject(arguments => {
+                                var genericWrapper = new GenericWrapper(arguments => {
                                     if (retType == typeof(void)) {
                                         callFunc(funcName, arguments).wait();
                                         return null;
@@ -200,7 +184,7 @@ namespace WebSocketJSON
                                     }
                                 });
 
-                                parameters[i] = Impromptu.CoerceToDelegate(tmpObj, paramInfo[i].ParameterType);
+                                parameters[i] = Impromptu.CoerceToDelegate(genericWrapper, paramInfo[i].ParameterType);
                             } else {
                                 throw new Exception("Callback parameter is neither a delegate nor a FuncWrapper.");
                             }
