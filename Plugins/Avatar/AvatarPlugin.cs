@@ -17,7 +17,7 @@ namespace Avatar
 
         public List<string> GetDependencies ()
         {
-            return new List<string> { "ClientSync", "Auth" };
+            return new List<string> { "ClientSync", "Auth", "DirectCall" };
         }
 
         public void Initialize ()

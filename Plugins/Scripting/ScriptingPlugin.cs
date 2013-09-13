@@ -30,7 +30,7 @@ namespace Scripting
         /// <returns>The list of names of the plugins that this plugin depends on.</returns>
         public List<string> GetDependencies()
         {
-            return new List<string>();
+            return new List<string> { "DirectCall" };
         }
 
         /// <summary>

@@ -14,9 +14,9 @@ namespace Auth
             return "Auth";
         }
 
-        public System.Collections.Generic.List<string> GetDependencies ()
+        public List<string> GetDependencies ()
         {
-            return new System.Collections.Generic.List<string>();
+            return new List<string> { "DirectCall" };
         }
 
         public void Initialize ()
