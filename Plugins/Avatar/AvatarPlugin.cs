@@ -10,17 +10,17 @@ namespace Avatar
     {
         #region IPluginInitializer implementation
 
-        public string getName ()
+        public string GetName ()
         {
             return "Avatar";
         }
 
-        public List<string> getDependencies ()
+        public List<string> GetDependencies ()
         {
             return new List<string> { "ClientSync", "Auth" };
         }
 
-        public void initialize ()
+        public void Initialize ()
         {
             var clientSync = ServiceFactory.discoverByName("clientsync", ContextFactory.getContext("inter-plugin"));
             clientSync.OnConnected += delegate(Connection connection) {

@@ -25,6 +25,14 @@ namespace KIARA
         /// <param name="aProtocol">Protocol implementation.</param>
         internal Connection(IProtocol aProtocol) : this(aProtocol, new WebClientWrapper()) {}
 
+        public FuncWrapper this[string name]
+        {
+            get
+            {
+                return generateFuncWrapper(name);
+            }
+        }
+
         /// <summary>
         /// Loads an IDL definition file at <paramref name="uri"/> into the connection.
         /// </summary>

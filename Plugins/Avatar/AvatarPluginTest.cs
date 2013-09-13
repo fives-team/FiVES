@@ -11,15 +11,15 @@ namespace Avatar
         [Test()]
         public void shouldReturnCorrectName()
         {
-            Assert.AreEqual("Avatar", plugin.getName());
+            Assert.AreEqual("Avatar", plugin.GetName());
         }
 
         [Test()]
         public void shouldReturnCorrectDeps()
         {
-            Assert.AreEqual(plugin.getDependencies().Count, 2);
-            Assert.Contains("ClientSync", plugin.getDependencies());
-            Assert.Contains("Auth", plugin.getDependencies());
+            Assert.AreEqual(plugin.GetDependencies().Count, 2);
+            Assert.Contains("ClientSync", plugin.GetDependencies());
+            Assert.Contains("Auth", plugin.GetDependencies());
         }
     }
 }

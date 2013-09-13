@@ -22,26 +22,12 @@ namespace KIARA
         }
 
         [Test()]
-        public void ShouldGenerateCorrectMethodWrappers()
-        {
-            service.HandleConnected(connection);
-            service["foobar"](123);
-            protocolMock.Verify(p => p.CallFunc("foobar", 123), Times.Once());
-        }
-
-        [Test()]
         public void ShouldInvokeOnConnected()
         {
             bool connected = false;
             service.OnConnected += (c) => connected = true;
             service.HandleConnected(connection);
             Assert.IsTrue(connected);
-        }
-
-        [Test()]
-        public void ShouldThrowExceptionOnGetterBeforeConnected()
-        {
-            Assert.Throws<Error>(() => service["foobar"]());
         }
     }
 }

@@ -18,11 +18,12 @@ namespace ClientSync
         [Test()]
         public void ShouldReturnCorrectDeps()
         {
-            Assert.AreEqual(plugin.GetDependencies().Count, 4);
+            Assert.AreEqual(plugin.GetDependencies().Count, 5);
             Assert.Contains("WebSocketJSON", plugin.GetDependencies());
             Assert.Contains("DirectCall", plugin.GetDependencies());
             Assert.Contains("Location", plugin.GetDependencies());
             Assert.Contains("Renderable", plugin.GetDependencies());
+            Assert.Contains("Auth", plugin.GetDependencies());
         }
     }
 }
