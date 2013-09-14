@@ -11,7 +11,7 @@ namespace FIVES
         public EntityHasNoChildrenException(string message) {}
     }
 
-    public class Entity : DynamicObject
+    public class Entity
     {
         public Guid Guid { get; private set; }
         private IDictionary<string, Component> Components { get; set; }
@@ -100,12 +100,6 @@ namespace FIVES
             internal set {
                 Components[componentName] = value;
             }
-        }
-
-        public override bool TryGetMember(GetMemberBinder binder, out object result)
-        {
-            result = this[binder.Name];
-            return true;
         }
 
         private void instantiateNewComponent(string componentName) {
