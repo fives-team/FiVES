@@ -17,26 +17,26 @@ namespace FIVES
         [Test()]
         public void shouldAddEntitites() {
             var e1 = new Entity();
-            registry.addEntity(e1);
-            Assert.NotNull(registry.getEntity(e1.Guid));
+            registry.AddEntity(e1);
+            Assert.NotNull(registry.GetEntity(e1.Guid));
         }
 
         [Test()]
         public void shouldRemoveEntities() {
             var e1 = new Entity();
-            registry.addEntity(e1);
-            Assert.NotNull(registry.getEntity(e1.Guid));
-            Assert.True(registry.removeEntity(e1));
-            Assert.Null(registry.getEntity(e1.Guid));
+            registry.AddEntity(e1);
+            Assert.NotNull(registry.GetEntity(e1.Guid));
+            Assert.True(registry.RemoveEntity(e1));
+            Assert.Null(registry.GetEntity(e1.Guid));
         }
 
         [Test()]
         public void shouldRemoveEntitiesByGuid() {
             var e1 = new Entity();
-            registry.addEntity(e1);
-            Assert.NotNull(registry.getEntity(e1.Guid));
-            Assert.True(registry.removeEntity(e1.Guid));
-            Assert.Null(registry.getEntity(e1.Guid));
+            registry.AddEntity(e1);
+            Assert.NotNull(registry.GetEntity(e1.Guid));
+            Assert.True(registry.RemoveEntity(e1.Guid));
+            Assert.Null(registry.GetEntity(e1.Guid));
         }
 
         [Test()]
@@ -44,11 +44,11 @@ namespace FIVES
             var e1 = new Entity();
             var e2 = new Entity();
             var e3 = new Entity();
-            registry.addEntity(e1);
-            registry.addEntity(e2);
-            registry.addEntity(e3);
+            registry.AddEntity(e1);
+            registry.AddEntity(e2);
+            registry.AddEntity(e3);
 
-            var allGUIDs = registry.getAllGUIDs();
+            var allGUIDs = registry.GetAllGUIDs();
 
             Assert.True(allGUIDs.Contains(e1.Guid));
             Assert.True(allGUIDs.Contains(e2.Guid));

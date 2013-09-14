@@ -16,8 +16,8 @@ namespace FIVES
         {
             Entity parentEntity = new Entity ();
             var EntityToAdd = new Entity ();
-            Assert.True(parentEntity.addChildNode (EntityToAdd));
-            Assert.False(parentEntity.addChildNode (EntityToAdd));
+            Assert.True(parentEntity.AddChildNode (EntityToAdd));
+            Assert.False(parentEntity.AddChildNode (EntityToAdd));
             Assert.IsTrue (parentEntity.getAllChildren () [0] == EntityToAdd);
             Assert.IsTrue (parentEntity.getAllChildren ().Count == 1);
         }
@@ -27,8 +27,8 @@ namespace FIVES
         {
             Entity parentEntity = new Entity ();
             Entity childEntity = new Entity ();
-            parentEntity.addChildNode (childEntity);
-            Assert.IsTrue (childEntity.parent == parentEntity);
+            parentEntity.AddChildNode (childEntity);
+            Assert.IsTrue (childEntity.Parent == parentEntity);
         }
 
         [Test()]
@@ -36,11 +36,11 @@ namespace FIVES
         {
             Entity parentEntity = new Entity ();
             Entity childEntity = new Entity ();
-            parentEntity.addChildNode (childEntity);
+            parentEntity.AddChildNode (childEntity);
 
-            Assert.True (parentEntity.removeChild (childEntity));
+            Assert.True (parentEntity.RemoveChild (childEntity));
             Assert.IsEmpty (parentEntity.getAllChildren ());
-            Assert.IsNull (childEntity.parent);
+            Assert.IsNull (childEntity.Parent);
         }
 
         [Test()]
@@ -49,12 +49,12 @@ namespace FIVES
             Entity parentEntity_1 = new Entity ();
             Entity parentEntity_2 = new Entity ();
             Entity childEntity = new Entity ();
-            parentEntity_1.addChildNode (childEntity);
-            parentEntity_2.addChildNode (childEntity);
+            parentEntity_1.AddChildNode (childEntity);
+            parentEntity_2.AddChildNode (childEntity);
 
             Assert.IsEmpty (parentEntity_1.getAllChildren ());
             Assert.Contains (childEntity, parentEntity_2.getAllChildren ());
-            Assert.IsTrue (childEntity.parent == parentEntity_2);
+            Assert.IsTrue (childEntity.Parent == parentEntity_2);
         }
         [Test()]
         public void shouldCorrectlyRetrieveFirstAndLast()
@@ -63,8 +63,8 @@ namespace FIVES
             Entity firstChildEntity = new Entity ();
             Entity lastChildEntity = new Entity ();
 
-            parentEntity.addChildNode (firstChildEntity);
-            parentEntity.addChildNode (lastChildEntity);
+            parentEntity.AddChildNode (firstChildEntity);
+            parentEntity.AddChildNode (lastChildEntity);
 
             Assert.IsTrue (parentEntity.getFirstChild () == firstChildEntity);
             Assert.IsTrue (parentEntity.getLastChild () == lastChildEntity);
@@ -76,28 +76,28 @@ namespace FIVES
             // Define new component type "myComponent" with one int attribute "attr".
             ComponentRegistry myRegistry = new ComponentRegistry();
             ComponentLayout layout = new ComponentLayout();
-            layout.addAttribute<int> ("attr");
-            myRegistry.defineComponent("myComponent", Guid.NewGuid(), layout);
+            layout.AddAttribute<int> ("attr");
+            myRegistry.DefineComponent("myComponent", Guid.NewGuid(), layout);
 
-            dynamic entity = new Entity(myRegistry);
-            entity.myComponent.attr =  42;
+            Entity entity = new Entity(myRegistry);
+            entity["myComponent"]["attr"] =  42;
         }
 
         [Test()]
         public void shouldThrowExceptionWhenAccessingUnregisteredComponent()
         {
-            dynamic entity = new Entity();
+            Entity entity = new Entity();
             Assert.Throws<ComponentIsNotDefinedException>(delegate() {
-                var component = entity.myComponent;
+                Component component = entity["myComponent"];
             });
         }
 
         [Test()]
         public void shouldThrowExceptionWhenCreatingUnregisteredComponent()
         {
-            dynamic entity = new Entity();
+			Entity entity = new Entity();
             Assert.Throws<ComponentIsNotDefinedException>(delegate() {
-                var component = entity.myComponent;
+				Component component = entity["myComponent"];
             });
         }
     }

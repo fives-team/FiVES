@@ -17,13 +17,13 @@ namespace Location
         [Test()]
         public void shouldRegisterPositionComponent()
         {
-            Assert.True(ComponentRegistry.Instance.isRegistered("position"));
+            Assert.True(ComponentRegistry.Instance.IsRegistered("position"));
         }
 
         [Test()]
         public void shouldRegisterOrientationComponent()
         {
-            Assert.True(ComponentRegistry.Instance.isRegistered("orientation"));
+            Assert.True(ComponentRegistry.Instance.IsRegistered("orientation"));
         }
 
         [Test()]
