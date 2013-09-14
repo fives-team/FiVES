@@ -19,7 +19,7 @@ namespace FIVES
         public AttributeIsNotDefinedException(string message) : base(message) { }
     }
 
-    public class Component : DynamicObject
+    public class Component
     {
         public Guid Id {get; set; }
 
@@ -52,18 +52,6 @@ namespace FIVES
                         this.OnAttributeChanged(this, new AttributeChangedEventArgs(attributeName, value));
                 }
             }
-        }
-
-        public override bool TryGetMember(GetMemberBinder binder, out object result)
-        {
-            result = this[binder.Name];
-            return true;
-        }
-
-        public override bool TrySetMember(SetMemberBinder binder, object value)
-        {
-            this[binder.Name] = value;
-            return true;
         }
 
         public int Version { get; internal set; }
