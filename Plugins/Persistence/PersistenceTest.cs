@@ -52,7 +52,7 @@ namespace Persistence
             if (plugin == null) {
                 Console.WriteLine (" ==== [SHOULD STORE AND RETRIEVE COMPONENTS]: Initializing Plugin");
                 plugin = new PersistencePlugin ();
-                plugin.initialize ();
+                plugin.Initialize ();
             }
 
             Entity entity = new Entity();
@@ -65,10 +65,10 @@ namespace Persistence
 
             // De-Activate on-remove event handler, as for tests, we only want to remove the entity from the local registry, not from the
             // persistence storage
-            entityRegistry.OnEntityRemoved -= plugin.onEntityRemoved;
+            entityRegistry.OnEntityRemoved -= plugin.OnEntityRemoved;
             entityRegistry.RemoveEntity (entity.Guid);
 
-            plugin.retrieveEntitiesFromDatabase ();
+            plugin.RetrieveEntitiesFromDatabase ();
 
 			Entity storedEntity = entityRegistry.GetEntity(entity.Guid);
 			Assert.IsTrue ((int) entity["myComponent"]["IntAttribute"] == 42);
@@ -86,7 +86,7 @@ namespace Persistence
             if (plugin == null) {
                 Console.WriteLine (" ==== [SHOULD STORE AND RETRIEVE ENTITIES]: Initializing Plugin ");
                 plugin = new PersistencePlugin ();
-                plugin.initialize ();
+                plugin.Initialize ();
             }
 
             Console.WriteLine (" ==== [SHOULD STORE AND RETRIEVE ENTITIES]: Adding Entity " + entity.Guid);
@@ -96,11 +96,11 @@ namespace Persistence
 
             // De-Activate on-remove event handler, as for tests, we only want to remove the entity from the local registry, not from the
             // persistence storage
-            entityRegistry.OnEntityRemoved -= plugin.onEntityRemoved;
+            entityRegistry.OnEntityRemoved -= plugin.OnEntityRemoved;
             entityRegistry.RemoveEntity (childEntity.Guid);
             entityRegistry.RemoveEntity (entity.Guid);
 
-            plugin.retrieveEntitiesFromDatabase ();
+            plugin.RetrieveEntitiesFromDatabase ();
 
             ISet<Guid> guidsInRegistry = entityRegistry.GetAllGUIDs ();
             Console.WriteLine (guidsInRegistry.ToString ());
@@ -129,7 +129,7 @@ namespace Persistence
             session.Save (persist);
             trans.Commit ();
 
-            plugin.retrieveComponentRegistryFromDatabase ();
+            plugin.RetrieveComponentRegistryFromDatabase ();
 
             Assert.IsTrue (componentRegistry.GetAttributeType ("myComponent", "IntAttribute") == typeof(int));
             Assert.IsTrue (componentRegistry.GetAttributeType ("myComponent", "StringAttribute") == typeof(string));
@@ -145,7 +145,7 @@ namespace Persistence
             if (plugin == null) {
                 Console.WriteLine (" ==== [SHOULD STORE AND RETRIEVE ENTITIES]: Initializing Plugin ");
                 plugin = new PersistencePlugin ();
-                plugin.initialize ();
+                plugin.Initialize ();
             }
 
             Console.WriteLine (" ==== [SHOULD STORE AND RETRIEVE ENTITIES]: Adding Entity " + entity.Guid);
@@ -156,7 +156,7 @@ namespace Persistence
             entityRegistry.RemoveEntity (childEntity.Guid);
             entityRegistry.RemoveEntity (entity.Guid);
 
-            plugin.retrieveEntitiesFromDatabase ();
+            plugin.RetrieveEntitiesFromDatabase ();
 
             ISet<Guid> guidsInRegistry = entityRegistry.GetAllGUIDs ();
             Console.WriteLine (guidsInRegistry.ToString ());
@@ -212,10 +212,10 @@ namespace Persistence
             entity[name]["b"] = false;
 
             componentRegistry.UpgradeComponent(name, plugin.pluginGuid, layout, 2, testUpgrader);
-            entityRegistry.OnEntityRemoved -= plugin.onEntityRemoved;
+            entityRegistry.OnEntityRemoved -= plugin.OnEntityRemoved;
             entityRegistry.RemoveEntity (entityGuid);
 
-            plugin.retrieveEntitiesFromDatabase ();
+            plugin.RetrieveEntitiesFromDatabase ();
 
             ISet<Guid> guidsInRegistry = entityRegistry.GetAllGUIDs ();
             Assert.IsTrue(guidsInRegistry.Contains(entityGuid));

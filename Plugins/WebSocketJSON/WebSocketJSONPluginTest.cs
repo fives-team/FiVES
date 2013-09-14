@@ -11,7 +11,7 @@ namespace WebSocketJSON
 
         public WebSocketJSONPluginTest()
         {
-            plugin.initialize();
+            plugin.Initialize();
         }
 
         [Test()]
@@ -23,13 +23,13 @@ namespace WebSocketJSON
         [Test()]
         public void shouldReturnCorrectName()
         {
-            Assert.AreEqual("WebSocketJSON", plugin.getName());
+            Assert.AreEqual("WebSocketJSON", plugin.GetName());
         }
 
         [Test()]
         public void shouldReturnCorrectDeps()
         {
-            Assert.IsEmpty(plugin.getDependencies());
+            Assert.IsEmpty(plugin.GetDependencies());
         }
     }
 }

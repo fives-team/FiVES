@@ -12,7 +12,7 @@ namespace DirectCall
 
         public DirectCallPluginTest()
         {
-            plugin.initialize();
+            plugin.Initialize();
         }
 
         [Test()]
@@ -24,13 +24,13 @@ namespace DirectCall
         [Test()]
         public void shouldReturnCorrectName()
         {
-            Assert.AreEqual("DirectCall", plugin.getName());
+            Assert.AreEqual("DirectCall", plugin.GetName());
         }
 
         [Test()]
         public void shouldReturnCorrectDeps()
         {
-            Assert.IsEmpty(plugin.getDependencies());
+            Assert.IsEmpty(plugin.GetDependencies());
         }
     }
 }

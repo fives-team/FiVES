@@ -11,7 +11,7 @@ namespace Location
 
         public LocationPluginTest()
         {
-            plugin.initialize();
+            plugin.Initialize();
         }
 
         [Test()]
@@ -29,13 +29,13 @@ namespace Location
         [Test()]
         public void shouldReturnCorrectName()
         {
-            Assert.AreEqual("Location", plugin.getName());
+            Assert.AreEqual("Location", plugin.GetName());
         }
 
         [Test()]
         public void shouldReturnCorrectDeps()
         {
-            Assert.IsEmpty(plugin.getDependencies());
+            Assert.IsEmpty(plugin.GetDependencies());
         }
     }
 }
