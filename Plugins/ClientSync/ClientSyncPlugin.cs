@@ -12,17 +12,17 @@ namespace ClientSync {
     {
         #region IPluginInitializer implementation
 
-        public string getName()
+        public string GetName()
         {
             return "ClientSync";
         }
 
-        public List<string> getDependencies()
+        public List<string> GetDependencies()
         {
             return new List<string>() { "WebSocketJSON", "DirectCall", "Location", "Renderable" };
         }
 
-        public void initialize()
+        public void Initialize()
         {
             clientService = ServiceFactory.createByURI("http://localhost/projects/test-client/kiara/fives.json");
             clientService["kiara.implements"] = (Func<List<string>, List<bool>>)implements;

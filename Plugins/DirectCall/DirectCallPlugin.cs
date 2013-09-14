@@ -13,17 +13,17 @@ namespace DirectCall
     {
         #region IPluginInitializer implementation
 
-        public string getName()
+        public string GetName()
         {
             return "DirectCall";
         }
 
-        public List<string> getDependencies()
+        public List<string> GetDependencies()
         {
             return new List<string>();
         }
 
-        public void initialize()
+        public void Initialize()
         {
             // Register the protocol factory in the protocol registry.
             ProtocolRegistry.Instance.registerProtocolFactory("direct-call", new DCProtocolFactory());

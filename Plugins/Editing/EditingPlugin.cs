@@ -13,19 +13,19 @@ namespace Editing
     {
         #region IPluginInitializer implementation
 
-        public string getName()
+        public string GetName()
         {
             return "Editing";
         }
 
-        public List<string> getDependencies()
+        public List<string> GetDependencies()
         {
             return new List<string>() { "Location" };
         }
 
-        public void initialize()
+        public void Initialize()
         {
-            if (PluginManager.Instance.isPluginLoaded("ClientSync")) {
+            if (PluginManager.Instance.IsPluginLoaded("ClientSync")) {
                 registerEditingAPI();
             } else {
                 PluginManager.Instance.OnPluginInitialized += delegate(Object sender, PluginLoadedEventArgs e) {

@@ -8,17 +8,17 @@ namespace Renderable
     {
         #region IPluginInitializer implementation
 
-        public string getName()
+        public string GetName()
         {
             return "Renderable";
         }
 
-        public List<string> getDependencies()
+        public List<string> GetDependencies()
         {
             return new List<string>() {"Location"};
         }
 
-        public void initialize()
+        public void Initialize()
         {
             registerComponent ();
         }

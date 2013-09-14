@@ -11,17 +11,17 @@ namespace Location
     {
         #region IPluginInitializer implementation
 
-        public string getName()
+        public string GetName()
         {
             return "Location";
         }
 
-        public List<string> getDependencies()
+        public List<string> GetDependencies()
         {
             return new List<string>();
         }
 
-        public void initialize()
+        public void Initialize()
         {
             // Position is represented as a vector (x,y,z) from the default position, which is at (0,0,0).
             ComponentLayout positionLayout = new ComponentLayout();
