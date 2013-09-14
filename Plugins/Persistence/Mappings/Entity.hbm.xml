@@ -5,8 +5,8 @@
     <class name="Entity" lazy="false">
         <id name="Guid" type="Guid">
           </id>
-        <many-to-one name="parent" class="Entity" column="parent_id" />
-        <map name="components" table = "components_to_entity" cascade = "all">
+        <many-to-one name="Parent" class="Entity" column="parent_id" />
+        <map name="Components" table = "components_to_entity" cascade = "all">
           <key column = "entityID" />
           <index type = "string" column = "componentName" />
           <many-to-many column = "componentID" class="Component" />
