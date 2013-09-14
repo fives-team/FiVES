@@ -14,10 +14,10 @@ namespace FIVES
     public class Entity : DynamicObject
     {
         public Guid Guid { get; private set; }
-        private IDictionary<string, Component> components { get; set; }
-        public Entity parent { get; set; }
-        private List<Entity> children  = new List<Entity> ();
-        private ComponentRegistry componentRegistry;
+        private IDictionary<string, Component> Components { get; set; }
+        public Entity Parent { get; set; }
+		private List<Entity> Children { get; set; }
+        private ComponentRegistry ComponentRegistry;
 
         public delegate void AttributeInComponentChanged (Object sender, AttributeInComponentEventArgs e);
         public event AttributeInComponentChanged OnAttributeInComponentChanged;
@@ -27,77 +27,78 @@ namespace FIVES
 
         public Entity ()
         {
-            componentRegistry = ComponentRegistry.Instance;
-            components = new Dictionary<string, Component>();
+            ComponentRegistry = ComponentRegistry.Instance;
+            Components = new Dictionary<string, Component>();
 
             // Generate new GUID for this entity.
             Guid = Guid.NewGuid();
+			Children = new List<Entity> ();
         }
 
-        public bool addChildNode(Entity childEntity)
+        public bool AddChildNode(Entity childEntity)
         {
-            if (this.children.Contains (childEntity))
+            if (this.Children.Contains (childEntity))
                 return false;
 
-            if (childEntity.parent != null)
-                childEntity.parent.removeChild (childEntity);
+            if (childEntity.Parent != null)
+                childEntity.Parent.RemoveChild (childEntity);
 
-            childEntity.parent = this;
-            this.children.Add (childEntity);
+            childEntity.Parent = this;
+            this.Children.Add (childEntity);
             return true;
         }
 
-        public bool removeChild(Entity entity)
+        public bool RemoveChild(Entity entity)
         {
-            if (!this.children.Contains (entity))
+            if (!this.Children.Contains (entity))
                 return false;
 
-            entity.parent = null;
-            this.children.Remove (entity);
+            entity.Parent = null;
+            this.Children.Remove (entity);
             return true;
         }
 
         public List<Entity> getAllChildren()
         {
-            return children;
+            return Children;
         }
 
         public Entity getFirstChild()
         {
-            if(children.Count == 0)
+            if(Children.Count == 0)
                 throw(new EntityHasNoChildrenException("List of children for Entity is empty"));
-            return children[0];
+            return Children[0];
         }
 
         public Entity getLastChild()
         {
-            if(children.Count == 0)
+            if(Children.Count == 0)
                 throw(new EntityHasNoChildrenException("List of children for Entity is empty"));
-            return children [children.Count -1];
+            return Children [Children.Count -1];
         }
 
         public bool hasComponent(string name)
         {
-            return this.components.ContainsKey (name);
+            return this.Components.ContainsKey (name);
         }
 
         public Component this[string componentName]
         {
             get
             {
-                if (!components.ContainsKey(componentName))
+                if (!Components.ContainsKey(componentName))
                 {
-                    if (componentRegistry.isRegistered(componentName))
+                    if (ComponentRegistry.IsRegistered(componentName))
                         instantiateNewComponent(componentName);
                     else
                         throw new ComponentIsNotDefinedException("Cannot create component '" + componentName + "' as its " +
                             "type is not registered with the ComponentRegistry");
                 }
-                return this.components[componentName];
+                return this.Components[componentName];
             }
 
             internal set {
-                components[componentName] = value;
+                Components[componentName] = value;
             }
         }
 
@@ -108,12 +109,12 @@ namespace FIVES
         }
 
         private void instantiateNewComponent(string componentName) {
-            Component newComponent = componentRegistry.getComponentInstance (componentName);
+            Component newComponent = ComponentRegistry.GetComponentInstance (componentName);
             newComponent.OnAttributeChanged += delegate(object sender, AttributeChangedEventArgs e) {
                 if (this.OnAttributeInComponentChanged != null)
                     this.OnAttributeInComponentChanged (this, new AttributeInComponentEventArgs (componentName, e.attributeName, e.value));
             };
-            components [componentName] = newComponent;
+            Components [componentName] = newComponent;
             if (this.OnComponentCreated != null)
                 this.OnComponentCreated (this, new ComponentCreatedEventArgs (componentName, newComponent.Id));
         }
@@ -121,8 +122,8 @@ namespace FIVES
         // Used for testing to separate component registry database for different tests.
         internal Entity(ComponentRegistry customComponentRegistry)
         {
-            componentRegistry = customComponentRegistry;
-            this.components = new Dictionary<string, Component> ();
+            ComponentRegistry = customComponentRegistry;
+            this.Components = new Dictionary<string, Component> ();
         }
     }
 }
