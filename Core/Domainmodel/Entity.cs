@@ -110,7 +110,7 @@ namespace FIVES
             };
             Components [componentName] = newComponent;
             if (this.OnComponentCreated != null)
-                this.OnComponentCreated (this, new ComponentCreatedEventArgs (componentName, newComponent.Id));
+                this.OnComponentCreated (this, new ComponentCreatedEventArgs (componentName, newComponent.Guid));
         }
 
         // Used for testing to separate component registry database for different tests.
