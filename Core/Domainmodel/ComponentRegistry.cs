@@ -60,21 +60,21 @@ namespace FIVES
         /// <param name="name">Name under which the new component should be registered</param>
         /// <param name="owner">Guid of the owner that introduces the component, usually a plugin or user script</param>
         /// <param name="layout">Layout used by the component, defining the set of attributes and their types</param>
-        public void defineComponent(string name, Guid owner, ComponentLayout layout) {
-            if (registeredComponents.ContainsKey(name)) {
+        public void DefineComponent(string name, Guid owner, ComponentLayout layout) {
+            if (RegisteredComponents.ContainsKey(name)) {
                 // We should only raise an error when we try to register a different layout or the different owner for
                 // the same name. Otherwise, this can happen normally when the registry was restored from the
                 // persistance database and plugin/script re-registers the layout.
-                if (registeredComponents[name].owner == owner && registeredComponents[name].layout == layout)
+                if (RegisteredComponents[name].Owner == owner && RegisteredComponents[name].Layout == layout)
                     return;
 
                 throw new ComponentAlreadyDefinedException("There is already a component with name '" + name + "'");
             }
 
-            registeredComponents[name] = new ComponentInfo();
-            registeredComponents[name].owner = owner;
-            registeredComponents[name].layout = layout;
-            registeredComponents[name].version = 1;
+            RegisteredComponents[name] = new ComponentInfo();
+            RegisteredComponents[name].Owner = owner;
+            RegisteredComponents[name].Layout = layout;
+            RegisteredComponents[name].Version = 1;
         }
 
         public delegate void ComponentLayoutUpgradeStarted(Object sender, 
@@ -115,37 +115,37 @@ namespace FIVES
         /// <param name="newLayout">New Layout used to be used by the component</param>
         /// <param name="version">New version. Must be larger than the previous. The first version is always 1</param>
         /// <param name="upgrader">Upgrader function. Will be called for every component present in the database</param>
-        public void upgradeComponent(string name, Guid owner, ComponentLayout newLayout, int version,
+        public void UpgradeComponent(string name, Guid owner, ComponentLayout newLayout, int version,
                                      ComponentUpgrader upgrader)
         {
-            if (!registeredComponents.ContainsKey(name))
+            if (!RegisteredComponents.ContainsKey(name))
                 throw new ComponentIsNotDefinedException("Undefined component " + name + " cannot be upgraded.");
 
-            ComponentInfo currentInfo = registeredComponents[name];
-            if (version <= currentInfo.version)
+            ComponentInfo currentInfo = RegisteredComponents[name];
+            if (version <= currentInfo.Version)
                 throw new InvalidUpgradeVersion("Version must be larger than the one already registered.");
 
-            if (owner != currentInfo.owner)
+            if (owner != currentInfo.Owner)
                 throw new InvalidUpgradeOwner("Owner of the upgraded component must remain the same.");
 
             if (upgrader == null)
                 throw new ArgumentNullException("upgrader");
 
-            var oldVersion = registeredComponents[name].version;
-            registeredComponents[name].version = version;
-            registeredComponents[name].layout = newLayout;
+            var oldVersion = RegisteredComponents[name].Version;
+            RegisteredComponents[name].Version = version;
+            RegisteredComponents[name].Layout = newLayout;
 
             if (OnComponentLayoutUpgradeStarted != null)
                 OnComponentLayoutUpgradeStarted(this, new ComponentLayoutUpgradeStartedOrFinishedEventArgs(name));
 
-            foreach (var guid in entityRegistry.getAllGUIDs()) {
-                var entity = entityRegistry.getEntity(guid);
+            foreach (var guid in entityRegistry.GetAllGUIDs()) {
+                var entity = entityRegistry.GetEntity(guid);
                 if (entity.hasComponent(name)) {
                     Component oldComponent = entity[name];
                     if (oldComponent.Version != oldVersion)
                         continue;
 
-                    Component newComponent = getComponentInstance(name);
+                    Component newComponent = GetComponentInstance(name);
                     upgrader(oldComponent, ref newComponent);
 
                     entity[name] = newComponent;
@@ -164,30 +164,29 @@ namespace FIVES
         /// </summary>
         /// <returns><c>true</c>, if a component with <b>name</b> is already registered, <c>false</c> otherwise.</returns>
         /// <param name="name">Component name to check for</param>
-        public bool isRegistered(string name)
+        public bool IsRegistered(string name)
         {
-            return registeredComponents.ContainsKey(name);
+            return RegisteredComponents.ContainsKey(name);
         }
 
         /// <summary>
         /// Returns all names of already registered components.
         /// </summary>
         /// <returns>The array of registered component names.</returns>
-        public string[] getArrayOfRegisteredComponentNames()
-        {
-            return this.registeredComponents.Keys.ToArray ();;
-        }
+		public string[] RegisteredComponentNames {
+			get {return this.RegisteredComponents.Keys.ToArray ();}
+		}
 
         /// <summary>
         /// Gets the component owner.
         /// </summary>
         /// <returns>Guid of the component owner.</returns>
         /// <param name="name">Name of the component of which to return the owner</param>
-        public Guid getComponentOwner(string name)
+        public Guid GetComponentOwner(string name)
         {
-            if(!isRegistered(name))
+            if(!IsRegistered(name))
                 throw new ComponentIsNotDefinedException("Component '" + name + "' is not defined.");
-            return this.registeredComponents [name].owner;
+            return this.RegisteredComponents [name].Owner;
         }
 
         /// <summary>
@@ -195,11 +194,11 @@ namespace FIVES
         /// </summary>
         /// <returns>The component version.</returns>
         /// <param name="name">Name of the component of which to return the version</param>
-        public int getComponentVersion(string name)
+        public int GetComponentVersion(string name)
         {
-            if(!isRegistered(name))
+            if(!IsRegistered(name))
                 throw new ComponentIsNotDefinedException("Component '" + name + "' is not defined.");
-            return this.registeredComponents [name].version;
+            return this.RegisteredComponents [name].Version;
         }
 
         /// <summary>
@@ -207,12 +206,12 @@ namespace FIVES
         /// </summary>
         /// <returns>The names of registered attributes of a component as array</returns>
         /// <param name="componentName">Component name</param>
-        public string[] getRegisteredAttributesOfComponent(string componentName)
+        public string[] GetRegisteredAttributesOfComponent(string componentName)
         {
-            if(!isRegistered(componentName))
+            if(!IsRegistered(componentName))
                 throw new ComponentIsNotDefinedException("Component '" + componentName + "' is not defined.");
-            ComponentLayout layout = this.registeredComponents [componentName].layout;
-            return layout.attributes.Keys.ToArray ();
+            ComponentLayout layout = this.RegisteredComponents [componentName].Layout;
+            return layout.Attributes.Keys.ToArray ();
         }
 
         /// <summary>
@@ -221,12 +220,12 @@ namespace FIVES
         /// <returns>The attribute type.</returns>
         /// <param name="componentName">Component name.</param>
         /// <param name="attributeName">Attribute name.</param>
-        public Type getAttributeType(string componentName, string attributeName)
+        public Type GetAttributeType(string componentName, string attributeName)
         {
-            if(!isRegistered(componentName))
+            if(!IsRegistered(componentName))
                 throw new ComponentIsNotDefinedException("Component '" + componentName + "' is not defined.");
 
-            return this.registeredComponents [componentName].layout.attributes [attributeName].type;
+            return this.RegisteredComponents [componentName].Layout.Attributes [attributeName].Type;
         }
 
         /// <summary>
@@ -234,24 +233,24 @@ namespace FIVES
         /// </summary>
         /// <returns>New component instance of specific layout</returns>
         /// <param name="componentName">Component name.</param>
-        internal Component getComponentInstance(string componentName) {
-            if(!isRegistered(componentName))
+        internal Component GetComponentInstance(string componentName) {
+            if(!IsRegistered(componentName))
                 throw new ComponentIsNotDefinedException("Component '" + componentName + "' is not defined.");
 
             Component newComponent = new Component(componentName);
-            ComponentInfo info = registeredComponents[componentName];
-            foreach (var entry in info.layout.attributes)
-                newComponent.addAttribute(entry.Key, entry.Value.type, entry.Value.defaultValue);
+            ComponentInfo info = RegisteredComponents[componentName];
+            foreach (var entry in info.Layout.Attributes)
+                newComponent.AddAttribute(entry.Key, entry.Value.Type, entry.Value.DefaultValue);
 
-			newComponent.Version = info.version;
+			newComponent.Version = info.Version;
             return newComponent;
         }
 
 
         private class ComponentInfo {
-            public Guid owner { get; set; }
-            public ComponentLayout layout { get; set; }
-            public int version;
+            public Guid Owner { get; set; }
+            public ComponentLayout Layout { get; set; }
+            public int Version;
         }
 
         // Users should not construct ComponentRegistry on their own, but use ComponentRegistry.Instance instead.
@@ -260,7 +259,7 @@ namespace FIVES
         /// <summary>
         /// The registered components
         /// </summary>
-        private Dictionary<string, ComponentInfo> registeredComponents = new Dictionary<string, ComponentInfo>();
+        private Dictionary<string, ComponentInfo> RegisteredComponents = new Dictionary<string, ComponentInfo>();
 
         /// <summary>
         /// The registry GUID.
