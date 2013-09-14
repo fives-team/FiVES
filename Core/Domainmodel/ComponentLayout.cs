@@ -16,74 +16,74 @@ namespace FIVES
         {
             public AttributeDefinition(Type type, object defaultValue)
             {
-                this.type = type;
-                this.defaultValue = defaultValue;
+                this.Type = type;
+                this.DefaultValue = defaultValue;
             }
-            public Type type { get; set; }
-            public object defaultValue { get; set; }
+            public Type Type { get; set; }
+            public object DefaultValue { get; set; }
         }
 
         public ComponentLayout() {
-            this.attributes = new Dictionary<string, AttributeDefinition> ();
+            this.Attributes = new Dictionary<string, AttributeDefinition> ();
         }
 
         public AttributeDefinition this [string name]
         {
-            get { return attributes[name]; }
-            set { attributes[name] = value; }
+            get { return Attributes[name]; }
+            set { Attributes[name] = value; }
         }
 
-        public void addAttribute<T>(string name, object defaultValue)
+        public void AddAttribute<T>(string name, object defaultValue)
         {
-            this.attributes [name] = new AttributeDefinition(typeof(T), defaultValue);
+            this.Attributes [name] = new AttributeDefinition(typeof(T), defaultValue);
         }
 
-        public void addAttribute<T>(string name)
+        public void AddAttribute<T>(string name)
         {
-            this.attributes [name] = new AttributeDefinition(typeof(T), default(T));
+            this.Attributes [name] = new AttributeDefinition(typeof(T), default(T));
         }
 
         public static bool operator ==(ComponentLayout layout_1, ComponentLayout layout_2)
         {
             bool isEqual = true;
             AttributeDefinition attribute1, attribute2;
-            foreach(KeyValuePair<string, AttributeDefinition> entry in layout_1.attributes)
+            foreach(KeyValuePair<string, AttributeDefinition> entry in layout_1.Attributes)
             {
-                if (!layout_2.attributes.ContainsKey (entry.Key))
+                if (!layout_2.Attributes.ContainsKey (entry.Key))
                     return false;
 
-                attribute1 = layout_1.attributes [entry.Key];
-                attribute2 = layout_2.attributes [entry.Key];
+                attribute1 = layout_1.Attributes [entry.Key];
+                attribute2 = layout_2.Attributes [entry.Key];
 
                 isEqual = isEqual
-                    && typeIsEqual (attribute1, attribute2)
-                    && valueIsEqual (attribute1, attribute2);
+                    && TypeIsEqual (attribute1, attribute2)
+                    && ValueIsEqual (attribute1, attribute2);
             }
-            foreach(KeyValuePair<string, AttributeDefinition> entry in layout_2.attributes)
+            foreach(KeyValuePair<string, AttributeDefinition> entry in layout_2.Attributes)
             {
-                if (!layout_1.attributes.ContainsKey (entry.Key))
+                if (!layout_1.Attributes.ContainsKey (entry.Key))
                     return false;
 
-                attribute1 = layout_1.attributes [entry.Key];
-                attribute2 = layout_2.attributes [entry.Key];
+                attribute1 = layout_1.Attributes [entry.Key];
+                attribute2 = layout_2.Attributes [entry.Key];
 
                 isEqual = isEqual
-                        && typeIsEqual (attribute1, attribute2)
-                        && valueIsEqual (attribute1, attribute2);
+                        && TypeIsEqual (attribute1, attribute2)
+                        && ValueIsEqual (attribute1, attribute2);
             }
 
             return isEqual;
         }
 
-        internal static bool typeIsEqual (AttributeDefinition attribute1, AttributeDefinition attribute2) {
-            return attribute1.type == attribute2.type;
+        internal static bool TypeIsEqual (AttributeDefinition attribute1, AttributeDefinition attribute2) {
+            return attribute1.Type == attribute2.Type;
         }
 
-        internal static bool valueIsEqual(AttributeDefinition attribute1, AttributeDefinition attribute2) {
-            if (attribute1.defaultValue == null || attribute2.defaultValue == null)
-                return attribute1.defaultValue == attribute2.defaultValue;
+        internal static bool ValueIsEqual(AttributeDefinition attribute1, AttributeDefinition attribute2) {
+            if (attribute1.DefaultValue == null || attribute2.DefaultValue == null)
+                return attribute1.DefaultValue == attribute2.DefaultValue;
             else
-                return attribute1.defaultValue.Equals (attribute2.defaultValue);
+                return attribute1.DefaultValue.Equals (attribute2.DefaultValue);
         }
 
         public static bool operator !=(ComponentLayout layout_1, ComponentLayout layout_2)
@@ -92,8 +92,8 @@ namespace FIVES
         }
         // We need to access this internally to be able to iterate over the list of the attributes when constructing a 
         // new component in ComponentRegistry::createComponent.
-        private Guid Id { get; set; }
-        internal IDictionary<string, AttributeDefinition> attributes { get; set; }
+        private Guid Guid { get; set; }
+        internal IDictionary<string, AttributeDefinition> Attributes { get; set; }
     }
     #pragma warning restore 660, 661
 }
