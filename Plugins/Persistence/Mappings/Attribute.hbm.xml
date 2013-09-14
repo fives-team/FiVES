@@ -3,10 +3,10 @@
                    assembly="Core"
                    namespace="FIVES">
     <class name="Attribute" lazy="false">
-        <id name="Id" type = "Guid">
+        <id name="Guid" type = "Guid">
             <generator class = "guid" />
         </id>
-        <property name = "value" type = "Serializable" />
-        <property name = "type" type = "Type" />
+        <property name = "Value" type = "Serializable" />
+        <property name = "Type" type = "Type" />
     </class>
 </hibernate-mapping>

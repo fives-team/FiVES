@@ -3,10 +3,10 @@
                    assembly="Core"
                    namespace="FIVES">
     <class name="ComponentLayout" lazy="false">
-        <id name="Id" type = "Guid">
+        <id name="Guid" type = "Guid">
             <generator class = "guid" />
         </id>
-        <map name="attributes" table = "attributeDefinitions" cascade = "all">
+        <map name="Attributes" table = "attributeDefinitions" cascade = "all">
           <key column = "layoutID" />
           <index type = "string" column = "attributeName" />
           <element column = "attributeType" type="Type" />
