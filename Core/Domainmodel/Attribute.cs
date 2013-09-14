@@ -17,13 +17,13 @@ namespace FIVES
         /// Gets or sets the type of the Attribute.
         /// </summary>
         /// <value>The type of the attribute.</value>
-        public Type type { get; set; }
+        public Type Type { get; set; }
 
         /// <summary>
         /// Gets or sets the value of the Attribute.
         /// </summary>
         /// <value>The value of the Attribute.</value>
-        public object value { get; set; }
+        public object Value { get; set; }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="FIVES.Attribute"/> class.
@@ -39,8 +39,8 @@ namespace FIVES
         /// <param name="value">Value the attribute should have</param>
         public Attribute(Type type, object value)
         {
-            this.type = type;
-            this.value = value;
+            this.Type = type;
+            this.Value = value;
         }
     }
 }

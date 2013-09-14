@@ -47,7 +47,7 @@ namespace FIVES
             {
                 if (checkAttributeExistsAndTypeMatches(attributeName, value.GetType()))
                 {
-                    this.attributes[attributeName].value = value;
+                    this.Attributes[attributeName].Value = value;
                     if (this.OnAttributeChanged != null)
                         this.OnAttributeChanged(this, new AttributeChangedEventArgs(attributeName, value));
                 }
@@ -91,7 +91,7 @@ namespace FIVES
                     "Attribute '" + attributeName + "' is not defined in the component '" + componentName + "'.");
             }
 
-            Type attributeType = attributes[attributeName].type;
+            Type attributeType = Attributes[attributeName].Type;
             if (attributeType != requestedType) {
                 throw new RuntimeBinderException(
                     "Attribute '\" + attributeName + \"' has a different type in the component '" + componentName +
