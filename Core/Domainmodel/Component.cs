@@ -26,7 +26,7 @@ namespace FIVES
         public delegate void AttributeChanged (Object sender, AttributeChangedEventArgs e);
         public event AttributeChanged OnAttributeChanged;
 
-        public void subscribeToAttributeChanged(AttributeChanged eventHandler)
+        public void SubscribeToAttributeChanged(AttributeChanged eventHandler)
         {
             this.OnAttributeChanged += eventHandler;
         }
@@ -35,17 +35,17 @@ namespace FIVES
         {
             get
             {
-                if (!attributes.ContainsKey(attributeName))
+                if (!Attributes.ContainsKey(attributeName))
                 {
                     throw new AttributeIsNotDefinedException(
-                        "Attribute '" + attributeName + "' is not defined in the component '" + componentName + "'.");
+                        "Attribute '" + attributeName + "' is not defined in the component '" + ComponentName + "'.");
                 }
 
-                return attributes[attributeName].value;
+                return Attributes[attributeName].Value;
             }
             set
             {
-                if (checkAttributeExistsAndTypeMatches(attributeName, value.GetType()))
+                if (CheckAttributeExistsAndTypeMatches(attributeName, value.GetType()))
                 {
                     this.Attributes[attributeName].Value = value;
                     if (this.OnAttributeChanged != null)
@@ -73,28 +73,28 @@ namespace FIVES
         // Can only be constructed by ComponentRegistry.createComponent to ensure correct attributes.
         internal Component (string name)
         {
-            componentName = name;
-            this.attributes = new Dictionary<string, Attribute> ();
+            ComponentName = name;
+            this.Attributes = new Dictionary<string, Attribute> ();
         }
 
         // This is used to populate the attributes into a component based on it's layout.
-        internal void addAttribute(string attributeName, Type type, object defaultValue) {
+        internal void AddAttribute(string attributeName, Type type, object defaultValue) {
             // If the attribute already exists, then it's an internal error (probably in ComponentRegistry).
-            Debug.Assert(!attributes.ContainsKey(attributeName));
+            Debug.Assert(!Attributes.ContainsKey(attributeName));
 
-            attributes.Add(attributeName, new Attribute(type, defaultValue));
+            Attributes.Add(attributeName, new Attribute(type, defaultValue));
         }
 
-        private bool checkAttributeExistsAndTypeMatches(string attributeName, Type requestedType) {
-            if (!attributes.ContainsKey(attributeName)) {
+        private bool CheckAttributeExistsAndTypeMatches(string attributeName, Type requestedType) {
+            if (!Attributes.ContainsKey(attributeName)) {
                 throw new AttributeIsNotDefinedException(
-                    "Attribute '" + attributeName + "' is not defined in the component '" + componentName + "'.");
+                    "Attribute '" + attributeName + "' is not defined in the component '" + ComponentName + "'.");
             }
 
             Type attributeType = Attributes[attributeName].Type;
             if (attributeType != requestedType) {
                 throw new RuntimeBinderException(
-                    "Attribute '\" + attributeName + \"' has a different type in the component '" + componentName +
+                    "Attribute '\" + attributeName + \"' has a different type in the component '" + ComponentName +
                     "'. Requested type is " + requestedType.ToString() + ", but attribute type is " +
                     attributeType.ToString() + ".");
             }
@@ -102,7 +102,7 @@ namespace FIVES
             return true;
         }
 
-        private IDictionary<string, Attribute> attributes {get ; set;}
-        private string componentName;
+        private IDictionary<string, Attribute> Attributes {get ; set;}
+        private string ComponentName;
     }
 }
