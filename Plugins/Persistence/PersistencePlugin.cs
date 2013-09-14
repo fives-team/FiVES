@@ -77,7 +77,7 @@ namespace Persistence
         /// <param name="sender">Sender of the event (the EntityRegistry)</param>
         /// <param name="e">Event arguments</param>
         internal void onEntityAdded(Object sender, EntityAddedOrRemovedEventArgs e) {
-            Entity addedEntity = EntityRegistry.Instance.getEntity (e.elementId);
+            Entity addedEntity = EntityRegistry.Instance.GetEntity (e.elementId);
             addedEntity.OnAttributeInComponentChanged += onComponentChanged;
             // Only persist entities if they are not added during intialization on Startup
             if (!entitiesToInitialize.Contains (e.elementId)) {
@@ -94,7 +94,7 @@ namespace Persistence
         /// <param name="sender">Sender of the event (the EntityRegistry)</param>
         /// <param name="e">Event Arguments</param>
         internal void onEntityRemoved(Object sender, EntityAddedOrRemovedEventArgs e) {
-            Entity entityToRemove = EntityRegistry.Instance.getEntity (e.elementId);
+            Entity entityToRemove = EntityRegistry.Instance.GetEntity (e.elementId);
             removeEntityFromDatabase (entityToRemove);
         }
 
@@ -180,7 +180,7 @@ namespace Persistence
             entitiesInDatabase = globalSession.CreateQuery ("from " + typeof(Entity)).List<Entity> ();
             foreach (Entity e in entitiesInDatabase) {
                 entitiesToInitialize.Add (e.Guid);
-                EntityRegistry.Instance.addEntity (e);
+                EntityRegistry.Instance.AddEntity (e);
             }
         }
 

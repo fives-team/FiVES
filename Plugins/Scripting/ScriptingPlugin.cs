@@ -45,15 +45,15 @@ namespace Scripting
 
             // Register 'scripting' component.
             ComponentLayout layout = new ComponentLayout();
-            layout.addAttribute<string>(ownerScriptAttributeName);
-            layout.addAttribute<string>(serverScriptAttributeName);
-            layout.addAttribute<string> (clientScriptAttributeName);
-            ComponentRegistry.Instance.defineComponent(scriptingComponentName, pluginGUID, layout);
+            layout.AddAttribute<string>(ownerScriptAttributeName);
+            layout.AddAttribute<string>(serverScriptAttributeName);
+            layout.AddAttribute<string> (clientScriptAttributeName);
+            ComponentRegistry.Instance.DefineComponent(scriptingComponentName, pluginGUID, layout);
 
             EntityRegistry.Instance.OnEntityAdded += handleOnEntityAdded;
 
             // Register event handlers for all entities that were created before this plugin was loaded.
-            var guids = EntityRegistry.Instance.getAllGUIDs();
+            var guids = EntityRegistry.Instance.GetAllGUIDs();
             foreach (var guid in guids)
                 handleOnEntityAdded(EntityRegistry.Instance, new EntityAddedOrRemovedEventArgs(guid));
 
@@ -72,7 +72,7 @@ namespace Scripting
 
         private void handleOnEntityAdded(object sender, EntityAddedOrRemovedEventArgs e)
         {
-            Entity newEntity = EntityRegistry.Instance.getEntity(e.elementId);
+            Entity newEntity = EntityRegistry.Instance.GetEntity(e.elementId);
             // FIXME: This is not very efficient. Would be nice to be triggered only when anything in "scripting" 
             // component is changed, but without the need to create one. Essentially we need an event
             // OnComponentCreated.

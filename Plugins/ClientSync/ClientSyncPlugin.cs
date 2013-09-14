@@ -72,7 +72,7 @@ namespace ClientSync {
 
         private List<string> listObjects()
         {
-            HashSet<Guid> guids = EntityRegistry.Instance.getAllGUIDs();
+            HashSet<Guid> guids = EntityRegistry.Instance.GetAllGUIDs();
             List<string> objects = new List<string>();
             foreach (var guid in guids)
                 objects.Add(guid.ToString());
@@ -93,7 +93,7 @@ namespace ClientSync {
         }
 
         private Location getObjectLocation(string guid) {
-            dynamic entity = EntityRegistry.Instance.getEntity(new Guid(guid));
+            dynamic entity = EntityRegistry.Instance.GetEntity(new Guid(guid));
             var loc = new Location();
             loc.position.x = entity.position.x;
             loc.position.y = entity.position.y;
@@ -111,7 +111,7 @@ namespace ClientSync {
         }
 
         private Mesh getObjectMesh(string guid) {
-            dynamic entity = EntityRegistry.Instance.getEntity(new Guid(guid));
+            dynamic entity = EntityRegistry.Instance.GetEntity(new Guid(guid));
             var mesh = new Mesh();
             mesh.uri = entity.meshResource.uri;
             mesh.scale.x = entity.scale.x;
@@ -122,7 +122,7 @@ namespace ClientSync {
 
         private void createServerScriptFor(string guid, string script)
         {
-            dynamic entity = EntityRegistry.Instance.getEntity(guid);
+            dynamic entity = EntityRegistry.Instance.GetEntity(guid);
             entity["scripting"]["serverScript"] = script;
         }
 

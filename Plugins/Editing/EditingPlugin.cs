@@ -49,7 +49,7 @@ namespace Editing
             e.position.x = x;
             e.position.y = y;
             e.position.z = z;
-            EntityRegistry.Instance.addEntity(e);
+            EntityRegistry.Instance.AddEntity(e);
         }
 
         /// <summary>
