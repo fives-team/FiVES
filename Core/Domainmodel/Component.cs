@@ -18,6 +18,11 @@ namespace FIVES
         public AttributeIsNotDefinedException(string message) : base(message) { }
     }
 
+    /// <summary>
+    /// Component. Contains a set of typed Attributes. Components of attributes and attributes of components are
+    /// accessed via the [] operator. Components are registered via the <see cref="ComponentRegistry"/>
+    /// at hand of a previously created <see cref="ComponentLayout"/>
+    /// </summary>
     public class Component
     {
         public Guid Guid {get; set; }
@@ -67,6 +72,12 @@ namespace FIVES
             Attributes.Add(attributeName, new Attribute(type, defaultValue));
         }
 
+        /// <summary>
+        /// Checks the attribute exists and type matches when trying to access an attribute of the component
+        /// </summary>
+        /// <returns><c>true</c>, if attribute exists and type matches, <c>false</c> otherwise.</returns>
+        /// <param name="attributeName">Attribute name.</param>
+        /// <param name="requestedType">Requested type.</param>
         private bool CheckAttributeExistsAndTypeMatches(string attributeName, Type requestedType) {
             if (!Attributes.ContainsKey(attributeName)) {
                 throw new AttributeIsNotDefinedException(
@@ -84,7 +95,15 @@ namespace FIVES
             return true;
         }
 
+        /// <summary>
+        /// Attributes of the component. Stored by their names
+        /// </summary>
+        /// <value>The attributes.</value>
         private IDictionary<string, Attribute> Attributes {get ; set;}
+
+        /// <summary>
+        /// Name under which a Component can be accessed
+        /// </summary>
         private string ComponentName;
     }
 }
