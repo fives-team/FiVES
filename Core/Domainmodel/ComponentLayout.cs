@@ -33,16 +33,33 @@ namespace FIVES
             set { Attributes[name] = value; }
         }
 
+        /// <summary>
+        /// Adds the definition of a new Attribute of given type and with set default value to the componentlayout
+        /// </summary>
+        /// <param name="name">Name of the new Attribute.</param>
+        /// <param name="defaultValue">Default value.</param>
+        /// <typeparam name="T">Type of the attribute.</typeparam>
         public void AddAttribute<T>(string name, object defaultValue)
         {
             this.Attributes [name] = new AttributeDefinition(typeof(T), defaultValue);
         }
 
+        /// <summary>
+        /// Adds the definition of a new attribute without default value to the componentLayout.
+        /// </summary>
+        /// <param name="name">Name of the new Attribute.</param>
+        /// <typeparam name="T">Type of the Attribute.</typeparam>
         public void AddAttribute<T>(string name)
         {
             this.Attributes [name] = new AttributeDefinition(typeof(T), default(T));
         }
 
+        /// <summary>
+        /// Compares equality of two ComponentLayouts. Layouts are equal, when they both contain the same AttributeDefinitions
+        /// with equal names, types and default values.
+        /// </summary>
+        /// <param name="layout_1">Layout_1.</param>
+        /// <param name="layout_2">Layout_2.</param>
         public static bool operator ==(ComponentLayout layout_1, ComponentLayout layout_2)
         {
             bool isEqual = true;
@@ -75,10 +92,22 @@ namespace FIVES
             return isEqual;
         }
 
+        /// <summary>
+        /// Checks the type of two AttributeDefinitions for Equality
+        /// </summary>
+        /// <returns><c>true</c>, if type is equal, <c>false</c> otherwise.</returns>
+        /// <param name="attribute1">Attribute1.</param>
+        /// <param name="attribute2">Attribute2.</param>
         internal static bool TypeIsEqual (AttributeDefinition attribute1, AttributeDefinition attribute2) {
             return attribute1.Type == attribute2.Type;
         }
 
+        /// <summary>
+        /// Checks the default value of two AttributeDefinitions for Equality
+        /// </summary>
+        /// <returns><c>true</c>, if default value is equal, <c>false</c> otherwise.</returns>
+        /// <param name="attribute1">Attribute1.</param>
+        /// <param name="attribute2">Attribute2.</param>
         internal static bool ValueIsEqual(AttributeDefinition attribute1, AttributeDefinition attribute2) {
             if (attribute1.DefaultValue == null || attribute2.DefaultValue == null)
                 return attribute1.DefaultValue == attribute2.DefaultValue;
