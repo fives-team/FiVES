@@ -25,11 +25,6 @@ namespace FIVES
         public delegate void AttributeChanged (Object sender, AttributeChangedEventArgs e);
         public event AttributeChanged OnAttributeChanged;
 
-        public void SubscribeToAttributeChanged(AttributeChanged eventHandler)
-        {
-            this.OnAttributeChanged += eventHandler;
-        }
-
         public object this[string attributeName]
         {
             get
