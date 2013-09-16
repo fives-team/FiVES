@@ -26,19 +26,19 @@ namespace FIVES
         /// Returns the name of the plugin.
         /// </summary>
         /// <returns>The name of the plugin.</returns>
-        string getName();
+        string GetName();
 
         /// <summary>
         /// Returns the list of names of the plugins that this plugin depends on.
         /// </summary>
         /// <returns>The list of names of the plugins that this plugin depends on.</returns>
-        List<string> getDependencies();
+        List<string> GetDependencies();
 
         /// <summary>
         /// Initializes the plugin. This method will be called by the plugin manager when all dependency plugins have
         /// been loaded.
         /// </summary>
-        void initialize();
+        void Initialize();
 
     }
 }

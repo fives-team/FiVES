@@ -8,17 +8,17 @@ namespace Renderable
     {
         #region IPluginInitializer implementation
 
-        public string getName()
+        public string GetName()
         {
             return "Renderable";
         }
 
-        public List<string> getDependencies()
+        public List<string> GetDependencies()
         {
             return new List<string>() {"Location"};
         }
 
-        public void initialize()
+        public void Initialize()
         {
             registerComponent ();
         }
@@ -26,15 +26,15 @@ namespace Renderable
         private void registerComponent()
         {
             ComponentLayout rendereableComponentLayout = new ComponentLayout ();
-            rendereableComponentLayout.addAttribute<string>("uri");
+            rendereableComponentLayout.AddAttribute<string>("uri");
 
             ComponentLayout scaleLayout = new ComponentLayout ();
-            scaleLayout.addAttribute<float>("x");
-            scaleLayout.addAttribute<float>("y");
-            scaleLayout.addAttribute<float>("z");
+            scaleLayout.AddAttribute<float>("x");
+            scaleLayout.AddAttribute<float>("y");
+            scaleLayout.AddAttribute<float>("z");
 
-            ComponentRegistry.Instance.defineComponent ("meshResource", this.pluginGUID, rendereableComponentLayout);
-            ComponentRegistry.Instance.defineComponent ("scale", this.pluginGUID, scaleLayout);
+            ComponentRegistry.Instance.DefineComponent ("meshResource", this.pluginGUID, rendereableComponentLayout);
+            ComponentRegistry.Instance.DefineComponent ("scale", this.pluginGUID, scaleLayout);
         }
 
         #endregion

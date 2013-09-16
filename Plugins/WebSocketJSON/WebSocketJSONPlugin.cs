@@ -12,17 +12,17 @@ namespace WebSocketJSON
     {
         #region IPluginInitializer implementation
 
-        public string getName()
+        public string GetName()
         {
             return "WebSocketJSON";
         }
 
-        public System.Collections.Generic.List<string> getDependencies()
+        public System.Collections.Generic.List<string> GetDependencies()
         {
             return new System.Collections.Generic.List<string>();
         }
 
-        public void initialize()
+        public void Initialize()
         {
             ProtocolRegistry.Instance.registerProtocolFactory("websocket-json", new WSJProtocolFactory());
         }

@@ -17,7 +17,7 @@ namespace FIVES
             try {
                 string pluginDir = ConfigurationManager.AppSettings["PluginsDir"].ToString();
                 if (Directory.Exists(pluginDir))
-                    PluginManager.Instance.loadPluginsFrom(pluginDir);
+                    PluginManager.Instance.LoadPluginsFrom(pluginDir);
             } catch (NullReferenceException) {
                 logger.Error("Plugins dir is not specified.");
             } catch (ConfigurationErrorsException) {

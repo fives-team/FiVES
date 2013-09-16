@@ -44,36 +44,36 @@ namespace Persistence
         public void shouldStoreAndRetrieveComponent()
         {
             ComponentLayout layout = new ComponentLayout();
-            layout.addAttribute<int>("IntAttribute");
-            layout.addAttribute<string>("StringAttribute");
+            layout.AddAttribute<int>("IntAttribute");
+            layout.AddAttribute<string>("StringAttribute");
 
-            componentRegistry.defineComponent("myComponent", Guid.NewGuid(), layout);
+            componentRegistry.DefineComponent("myComponent", Guid.NewGuid(), layout);
 
             if (plugin == null) {
                 Console.WriteLine (" ==== [SHOULD STORE AND RETRIEVE COMPONENTS]: Initializing Plugin");
                 plugin = new PersistencePlugin ();
-                plugin.initialize ();
+                plugin.Initialize ();
             }
 
-            dynamic entity = new Entity();
+            Entity entity = new Entity();
 
             Console.WriteLine (" ==== [SHOULD STORE AND RETRIEVE COMPONENTS]: Adding Entity " + entity.Guid);
-            entityRegistry.addEntity(entity);
+            entityRegistry.AddEntity(entity);
             Console.WriteLine (" ==== [SHOULD STORE AND RETRIEVE COMPONENTS]: Setting Attributes for " + entity.Guid);
-            entity.myComponent.IntAttribute = 42;
-            entity.myComponent.StringAttribute= "Hello World!";
+            entity["myComponent"]["IntAttribute"] = 42;
+            entity["myComponent"]["StringAttribute"] = "Hello World!";
 
             // De-Activate on-remove event handler, as for tests, we only want to remove the entity from the local registry, not from the
             // persistence storage
-            entityRegistry.OnEntityRemoved -= plugin.onEntityRemoved;
-            entityRegistry.removeEntity (entity.Guid);
+            entityRegistry.OnEntityRemoved -= plugin.OnEntityRemoved;
+            entityRegistry.RemoveEntity (entity.Guid);
 
-            plugin.retrieveEntitiesFromDatabase ();
+            plugin.RetrieveEntitiesFromDatabase ();
 
-            dynamic storedEntity = entityRegistry.getEntity(entity.Guid);
-            Assert.IsTrue (storedEntity.myComponent.IntAttribute == 42);
-            Assert.IsTrue (storedEntity.myComponent.StringAttribute == "Hello World!");
-            Assert.AreEqual(1, storedEntity.myComponent.Version);
+			Entity storedEntity = entityRegistry.GetEntity(entity.Guid);
+			Assert.IsTrue ((int) entity["myComponent"]["IntAttribute"] == 42);
+			Assert.IsTrue ((string) entity["myComponent"]["StringAttribute"] == "Hello World!");
+            Assert.AreEqual(1, storedEntity["myComponent"].Version);
         }
 
         [Test()]
@@ -81,44 +81,44 @@ namespace Persistence
         {
             Entity entity = new Entity();
             Entity childEntity = new Entity ();
-            Assert.True(entity.addChildNode (childEntity));
+            Assert.True(entity.AddChildNode (childEntity));
 
             if (plugin == null) {
                 Console.WriteLine (" ==== [SHOULD STORE AND RETRIEVE ENTITIES]: Initializing Plugin ");
                 plugin = new PersistencePlugin ();
-                plugin.initialize ();
+                plugin.Initialize ();
             }
 
             Console.WriteLine (" ==== [SHOULD STORE AND RETRIEVE ENTITIES]: Adding Entity " + entity.Guid);
-            entityRegistry.addEntity (entity);
+            entityRegistry.AddEntity (entity);
             Console.WriteLine (" ==== [SHOULD STORE AND RETRIEVE ENTITIES]: Adding Entity " + childEntity.Guid);
-            entityRegistry.addEntity (childEntity);
+            entityRegistry.AddEntity (childEntity);
 
             // De-Activate on-remove event handler, as for tests, we only want to remove the entity from the local registry, not from the
             // persistence storage
-            entityRegistry.OnEntityRemoved -= plugin.onEntityRemoved;
-            entityRegistry.removeEntity (childEntity.Guid);
-            entityRegistry.removeEntity (entity.Guid);
+            entityRegistry.OnEntityRemoved -= plugin.OnEntityRemoved;
+            entityRegistry.RemoveEntity (childEntity.Guid);
+            entityRegistry.RemoveEntity (entity.Guid);
 
-            plugin.retrieveEntitiesFromDatabase ();
+            plugin.RetrieveEntitiesFromDatabase ();
 
-            ISet<Guid> guidsInRegistry = entityRegistry.getAllGUIDs ();
+            ISet<Guid> guidsInRegistry = entityRegistry.GetAllGUIDs ();
             Console.WriteLine (guidsInRegistry.ToString ());
 
             Assert.True(guidsInRegistry.Contains(entity.Guid));
             Assert.True(guidsInRegistry.Contains(childEntity.Guid));
-            Assert.IsTrue (entityRegistry.getEntity (childEntity.Guid).parent.Guid == entity.Guid);
+            Assert.IsTrue (entityRegistry.GetEntity (childEntity.Guid).Parent.Guid == entity.Guid);
         }
 
         [Test()]
         public void shouldStoreAndRetrieveComponentRegistry ()
         {
-            if(!componentRegistry.isRegistered("myComponent"))
+            if(!componentRegistry.IsRegistered("myComponent"))
             {
                 ComponentLayout layout = new ComponentLayout();
-                layout.addAttribute<int>("IntAttribute");
-                layout.addAttribute<string>("StringAttribute");
-                componentRegistry.defineComponent("myComponent", Guid.NewGuid(), layout);
+                layout.AddAttribute<int>("IntAttribute");
+                layout.AddAttribute<string>("StringAttribute");
+                componentRegistry.DefineComponent("myComponent", Guid.NewGuid(), layout);
             }
 
             ComponentRegistryPersistence persist = new ComponentRegistryPersistence ();
@@ -129,10 +129,10 @@ namespace Persistence
             session.Save (persist);
             trans.Commit ();
 
-            plugin.retrieveComponentRegistryFromDatabase ();
+            plugin.RetrieveComponentRegistryFromDatabase ();
 
-            Assert.IsTrue (componentRegistry.getAttributeType ("myComponent", "IntAttribute") == typeof(int));
-            Assert.IsTrue (componentRegistry.getAttributeType ("myComponent", "StringAttribute") == typeof(string));
+            Assert.IsTrue (componentRegistry.GetAttributeType ("myComponent", "IntAttribute") == typeof(int));
+            Assert.IsTrue (componentRegistry.GetAttributeType ("myComponent", "StringAttribute") == typeof(string));
         }
 
         [Test()]
@@ -140,25 +140,25 @@ namespace Persistence
         {
             Entity entity = new Entity();
             Entity childEntity = new Entity ();
-            Assert.True(entity.addChildNode (childEntity));
+            Assert.True(entity.AddChildNode (childEntity));
 
             if (plugin == null) {
                 Console.WriteLine (" ==== [SHOULD STORE AND RETRIEVE ENTITIES]: Initializing Plugin ");
                 plugin = new PersistencePlugin ();
-                plugin.initialize ();
+                plugin.Initialize ();
             }
 
             Console.WriteLine (" ==== [SHOULD STORE AND RETRIEVE ENTITIES]: Adding Entity " + entity.Guid);
-            entityRegistry.addEntity (entity);
+            entityRegistry.AddEntity (entity);
             Console.WriteLine (" ==== [SHOULD STORE AND RETRIEVE ENTITIES]: Adding Entity " + childEntity.Guid);
-            entityRegistry.addEntity (childEntity);
+            entityRegistry.AddEntity (childEntity);
 
-            entityRegistry.removeEntity (childEntity.Guid);
-            entityRegistry.removeEntity (entity.Guid);
+            entityRegistry.RemoveEntity (childEntity.Guid);
+            entityRegistry.RemoveEntity (entity.Guid);
 
-            plugin.retrieveEntitiesFromDatabase ();
+            plugin.RetrieveEntitiesFromDatabase ();
 
-            ISet<Guid> guidsInRegistry = entityRegistry.getAllGUIDs ();
+            ISet<Guid> guidsInRegistry = entityRegistry.GetAllGUIDs ();
             Console.WriteLine (guidsInRegistry.ToString ());
 
             Assert.True(!guidsInRegistry.Contains(entity.Guid));
@@ -195,32 +195,32 @@ namespace Persistence
         public void shouldPersistUpgradedEntity() {
 
             ComponentLayout layout = new ComponentLayout ();
-            layout.addAttribute<int> ("i");
-            layout.addAttribute<float> ("f");
-            layout.addAttribute<string> ("s");
-            layout.addAttribute<bool> ("b");
+            layout.AddAttribute<int> ("i");
+            layout.AddAttribute<float> ("f");
+            layout.AddAttribute<string> ("s");
+            layout.AddAttribute<bool> ("b");
 
             string name = "ComponentToUpgrade";
-            componentRegistry.defineComponent (name, plugin.pluginGuid, layout);
+            componentRegistry.DefineComponent (name, plugin.pluginGuid, layout);
             Entity entity = new Entity ();
             Guid entityGuid = entity.Guid;
 
-            entityRegistry.addEntity (entity);
+            entityRegistry.AddEntity (entity);
             entity[name]["i"] = 42;
             entity[name]["f"] = 3.14f;
             entity[name]["s"] = "foobar";
             entity[name]["b"] = false;
 
-            componentRegistry.upgradeComponent(name, plugin.pluginGuid, layout, 2, testUpgrader);
-            entityRegistry.OnEntityRemoved -= plugin.onEntityRemoved;
-            entityRegistry.removeEntity (entityGuid);
+            componentRegistry.UpgradeComponent(name, plugin.pluginGuid, layout, 2, testUpgrader);
+            entityRegistry.OnEntityRemoved -= plugin.OnEntityRemoved;
+            entityRegistry.RemoveEntity (entityGuid);
 
-            plugin.retrieveEntitiesFromDatabase ();
+            plugin.RetrieveEntitiesFromDatabase ();
 
-            ISet<Guid> guidsInRegistry = entityRegistry.getAllGUIDs ();
+            ISet<Guid> guidsInRegistry = entityRegistry.GetAllGUIDs ();
             Assert.IsTrue(guidsInRegistry.Contains(entityGuid));
 
-            Entity retrievedEntity = entityRegistry.getEntity (entityGuid);
+            Entity retrievedEntity = entityRegistry.GetEntity (entityGuid);
 
             Assert.AreEqual(retrievedEntity[name]["i"], 3);
             Assert.AreEqual(retrievedEntity[name]["f"], 42);

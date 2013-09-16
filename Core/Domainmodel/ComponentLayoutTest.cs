@@ -16,16 +16,16 @@ namespace FIVES
         public void differentEntriesShouldBeNotEqual()
         {
             ComponentLayout layout1 = new ComponentLayout ();
-            layout1.addAttribute <int>("attribute1");
-            layout1.addAttribute <float> ("attribute2");
+            layout1.AddAttribute <int>("attribute1");
+            layout1.AddAttribute <float> ("attribute2");
 
             ComponentLayout layout2 = new ComponentLayout ();
-            layout1.addAttribute <int>("attribute1");
-            layout1.addAttribute <int> ("attribute2");
+            layout1.AddAttribute <int>("attribute1");
+            layout1.AddAttribute <int> ("attribute2");
 
             ComponentLayout layout3 = new ComponentLayout ();
-            layout1.addAttribute <int>("attribute1");
-            layout1.addAttribute <float> ("attribute3");
+            layout1.AddAttribute <int>("attribute1");
+            layout1.AddAttribute <float> ("attribute3");
 
             Assert.IsFalse (layout1 == layout2);
             Assert.IsFalse (layout1 == layout3);
@@ -38,12 +38,12 @@ namespace FIVES
         public void sameEntriesShouldBeEqual()
         {
             ComponentLayout layout1 = new ComponentLayout ();
-            layout1.addAttribute <int>("attribute1");
-            layout1.addAttribute <float> ("attribute2");
+            layout1.AddAttribute <int>("attribute1");
+            layout1.AddAttribute <float> ("attribute2");
 
             ComponentLayout layout2 = new ComponentLayout ();
-            layout2.addAttribute <int>("attribute1");
-            layout2.addAttribute <float> ("attribute2");
+            layout2.AddAttribute <int>("attribute1");
+            layout2.AddAttribute <float> ("attribute2");
           
             Assert.IsTrue (layout1 == layout2);
             Assert.IsFalse (layout1 != layout2);

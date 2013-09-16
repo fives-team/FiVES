@@ -28,7 +28,7 @@ namespace Events
                 wasRaised = true;
                 Assert.AreEqual(newEntity.Guid, e.elementId);
             };
-            EntityRegistry.Instance.addEntity (newEntity);
+            EntityRegistry.Instance.AddEntity (newEntity);
             Assert.IsTrue(wasRaised);
         }
 
@@ -41,8 +41,8 @@ namespace Events
                 wasRaised = true;
                 Assert.AreEqual(newEntity.Guid, e.elementId);
            };
-            EntityRegistry.Instance.addEntity (newEntity);
-            EntityRegistry.Instance.removeEntity (newEntity.Guid);
+            EntityRegistry.Instance.AddEntity (newEntity);
+            EntityRegistry.Instance.RemoveEntity (newEntity.Guid);
             Assert.IsTrue (wasRaised);
         }
 
@@ -50,13 +50,13 @@ namespace Events
         public void shouldRaiseAttributeChanged()
         {
             ComponentLayout layout = new ComponentLayout ();
-            layout.addAttribute<int> ("a");
-            ComponentRegistry.Instance.defineComponent ("MyComponent", new Guid (), layout);
-            dynamic newEntity = new Entity ();
+            layout.AddAttribute<int> ("a");
+            ComponentRegistry.Instance.DefineComponent ("MyComponent", new Guid (), layout);
+            Entity newEntity = new Entity ();
 
             Component.AttributeChanged attributeChanged = new Component.AttributeChanged (attributeChangedHandler);
-            newEntity.MyComponent.OnAttributeChanged += attributeChanged;
-            newEntity.MyComponent.a = 42;
+            newEntity["MyComponent"].OnAttributeChanged += attributeChanged;
+			newEntity["MyComponent"]["a"] = 42;
             Assert.IsTrue (eventWasRaised);
         }
 
@@ -71,11 +71,11 @@ namespace Events
         public void shouldRaiseComponentCreated()
         {
             ComponentLayout layout = new ComponentLayout ();
-            layout.addAttribute<int> ("a");
-            ComponentRegistry.Instance.defineComponent ("MyComponent", new Guid (), layout);
-            dynamic newEntity = new Entity ();
+            layout.AddAttribute<int> ("a");
+            ComponentRegistry.Instance.DefineComponent ("MyComponent", new Guid (), layout);
+            Entity newEntity = new Entity ();
             newEntity.OnComponentCreated += new Entity.ComponentCreated(componentCreatedEventHandler);
-            newEntity.MyComponent.a = 5;
+            newEntity["MyComponent"]["a"] = 5;
             Assert.IsTrue (eventWasRaised);
         }
 
@@ -89,13 +89,13 @@ namespace Events
         public void shouldRaiseAttributeInComponentChanged()
         {
             ComponentLayout layout = new ComponentLayout ();
-            layout.addAttribute<int> ("a");
-            ComponentRegistry.Instance.defineComponent ("MyComponent", new Guid (), layout);
-            dynamic newEntity = new Entity ();
+            layout.AddAttribute<int> ("a");
+            ComponentRegistry.Instance.DefineComponent ("MyComponent", new Guid (), layout);
+            Entity newEntity = new Entity ();
 
             Entity.AttributeInComponentChanged attributeInComponentChanged = new Entity.AttributeInComponentChanged (attributeInComponentChangedHandler);
             newEntity.OnAttributeInComponentChanged += attributeInComponentChanged;                         
-            newEntity .MyComponent.a = 42;
+            newEntity["MyComponent"]["a"] = 42;
             Assert.IsTrue (eventWasRaised);
         }
 

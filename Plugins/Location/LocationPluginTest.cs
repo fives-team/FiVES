@@ -11,31 +11,31 @@ namespace Location
 
         public LocationPluginTest()
         {
-            plugin.initialize();
+            plugin.Initialize();
         }
 
         [Test()]
         public void shouldRegisterPositionComponent()
         {
-            Assert.True(ComponentRegistry.Instance.isRegistered("position"));
+            Assert.True(ComponentRegistry.Instance.IsRegistered("position"));
         }
 
         [Test()]
         public void shouldRegisterOrientationComponent()
         {
-            Assert.True(ComponentRegistry.Instance.isRegistered("orientation"));
+            Assert.True(ComponentRegistry.Instance.IsRegistered("orientation"));
         }
 
         [Test()]
         public void shouldReturnCorrectName()
         {
-            Assert.AreEqual("Location", plugin.getName());
+            Assert.AreEqual("Location", plugin.GetName());
         }
 
         [Test()]
         public void shouldReturnCorrectDeps()
         {
-            Assert.IsEmpty(plugin.getDependencies());
+            Assert.IsEmpty(plugin.GetDependencies());
         }
     }
 }

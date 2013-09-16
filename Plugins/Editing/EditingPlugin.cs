@@ -13,19 +13,19 @@ namespace Editing
     {
         #region IPluginInitializer implementation
 
-        public string getName()
+        public string GetName()
         {
             return "Editing";
         }
 
-        public List<string> getDependencies()
+        public List<string> GetDependencies()
         {
             return new List<string>() { "Location" };
         }
 
-        public void initialize()
+        public void Initialize()
         {
-            if (PluginManager.Instance.isPluginLoaded("ClientSync")) {
+            if (PluginManager.Instance.IsPluginLoaded("ClientSync")) {
                 registerEditingAPI();
             } else {
                 PluginManager.Instance.OnPluginInitialized += delegate(Object sender, PluginLoadedEventArgs e) {
@@ -45,11 +45,11 @@ namespace Editing
         /// <param name="z">The z coordinate.</param>
         public void createEntityAt(float x, float y, float z)
         {
-            dynamic e = new Entity();
-            e.position.x = x;
-            e.position.y = y;
-            e.position.z = z;
-            EntityRegistry.Instance.addEntity(e);
+			Entity entity = new Entity();
+            entity["position"]["x"] = x;
+            entity["position"]["y"] = y;
+            entity["position"]["z"] = z;
+			EntityRegistry.Instance.AddEntity(entity);
         }
 
         /// <summary>

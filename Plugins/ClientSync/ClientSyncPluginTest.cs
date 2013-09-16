@@ -12,17 +12,17 @@ namespace ClientSync
         [Test()]
         public void shouldReturnCorrectName()
         {
-            Assert.AreEqual("ClientSync", plugin.getName());
+            Assert.AreEqual("ClientSync", plugin.GetName());
         }
 
         [Test()]
         public void shouldReturnCorrectDeps()
         {
-            Assert.AreEqual(plugin.getDependencies().Count, 4);
-            Assert.Contains("WebSocketJSON", plugin.getDependencies());
-            Assert.Contains("DirectCall", plugin.getDependencies());
-            Assert.Contains("Location", plugin.getDependencies());
-            Assert.Contains("Renderable", plugin.getDependencies());
+            Assert.AreEqual(plugin.GetDependencies().Count, 4);
+            Assert.Contains("WebSocketJSON", plugin.GetDependencies());
+            Assert.Contains("DirectCall", plugin.GetDependencies());
+            Assert.Contains("Location", plugin.GetDependencies());
+            Assert.Contains("Renderable", plugin.GetDependencies());
         }
     }
 }

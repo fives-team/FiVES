@@ -12,14 +12,14 @@ namespace Editing
         [Test()]
         public void shouldReturnCorrectName()
         {
-            Assert.AreEqual("Editing", plugin.getName());
+            Assert.AreEqual("Editing", plugin.GetName());
         }
 
         [Test()]
         public void shouldReturnCorrectDeps()
         {
-            Assert.AreEqual(plugin.getDependencies().Count, 1);
-            Assert.Contains("Location", plugin.getDependencies());
+            Assert.AreEqual(plugin.GetDependencies().Count, 1);
+            Assert.Contains("Location", plugin.GetDependencies());
         }
     }
 }

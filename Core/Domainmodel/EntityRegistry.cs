@@ -9,8 +9,8 @@ namespace FIVES
     #region Testing
     public interface IEntityRegistry
     {
-        Entity getEntity(Guid guid);
-        HashSet<Guid> getAllGUIDs();
+        Entity GetEntity(Guid guid);
+        HashSet<Guid> GetAllGUIDs();
     }
     #endregion
 
@@ -31,9 +31,9 @@ namespace FIVES
         /// Adds a new entity to the database.
         /// </summary>
         /// <param name="entity">Entity that is to be added to the registry</param>
-        public void addEntity(Entity entity)
+        public void AddEntity(Entity entity)
         {
-            entities[entity.Guid] = entity;
+            Entities[entity.Guid] = entity;
             if (OnEntityAdded != null)
                 OnEntityAdded(this, new EntityAddedOrRemovedEventArgs(entity.Guid));
         }
@@ -43,9 +43,9 @@ namespace FIVES
         /// </summary>
         /// <returns><c>true</c>, if entity was removed, <c>false</c> otherwise.</returns>
         /// <param name="entity">Entity that should be removed.</param>
-        public bool removeEntity(Entity entity)
+        public bool RemoveEntity(Entity entity)
         {
-            return removeEntity(entity.Guid);         
+            return RemoveEntity(entity.Guid);
         }
 
         /// <summary>
@@ -53,12 +53,12 @@ namespace FIVES
         /// </summary>
         /// <returns><c>true</c>, if entity was removed, <c>false</c> otherwise.</returns>
         /// <param name="guid">GUID of the entity that should be removed</param>
-        public bool removeEntity(Guid guid)
+        public bool RemoveEntity(Guid guid)
         {
-            if (entities.ContainsKey(guid)) {
+            if (Entities.ContainsKey(guid)) {
                 if (OnEntityRemoved != null)
                     OnEntityRemoved(this, new EntityAddedOrRemovedEventArgs(guid));
-                entities.Remove(guid);
+                Entities.Remove(guid);
                 return true;
             }
 
@@ -70,10 +70,10 @@ namespace FIVES
         /// </summary>
         /// <returns>The entity by GUID.</returns>
         /// <param name="guid">GUID.</param>
-        public Entity getEntity(Guid guid)
+        public Entity GetEntity(Guid guid)
         {
-            if (entities.ContainsKey(guid))
-                return entities[guid];
+            if (Entities.ContainsKey(guid))
+                return Entities[guid];
             return null;
         }
 
@@ -82,40 +82,40 @@ namespace FIVES
         /// </summary>
         /// <returns>The entity.</returns>
         /// <param name="guid">GUID as a string.</param>
-        public Entity getEntity(string guid)
+        public Entity GetEntity(string guid)
         {
-            return getEntity(new Guid(guid));
+            return GetEntity(new Guid(guid));
         }
 
         /// <summary>
         ///  Returns a list of all entities' GUIDs.
         /// </summary>
         /// <returns>The all GUI ds.</returns>
-        public HashSet<Guid> getAllGUIDs()
+        public HashSet<Guid> GetAllGUIDs()
         {
             HashSet<Guid> res = new HashSet<Guid>();
-            foreach (Guid guid in entities.Keys)
+            foreach (Guid guid in Entities.Keys)
                 res.Add(guid);
             return res;
         }
 
         // Users should not construct EntityRegistry on their own, but use EntityRegistry.Instance instead.
         internal EntityRegistry() {
-            OnEntityAdded += new EntityAdded (handleOnNewEntity);
-            OnEntityRemoved += new EntityRemoved (handleOnEntityRemoved);
+            OnEntityAdded += new EntityAdded (HandleOnNewEntity);
+            OnEntityRemoved += new EntityRemoved (HandleOnEntityRemoved);
         }
 
-        private void handleOnNewEntity(Object sender, EntityAddedOrRemovedEventArgs e) {
+        private void HandleOnNewEntity(Object sender, EntityAddedOrRemovedEventArgs e) {
             Debug.WriteLine ("Added Entity " + e.elementId);
         }
 
-        private void handleOnEntityRemoved(Object sender, EntityAddedOrRemovedEventArgs e) {
+        private void HandleOnEntityRemoved(Object sender, EntityAddedOrRemovedEventArgs e) {
             Debug.WriteLine ("Removed Entity " + e.elementId);
         }
         /// <summary>
         /// All registered entities, indexed by their Guids
         /// </summary>
-        private IDictionary<Guid, Entity> entities = new Dictionary<Guid, Entity>();
+        private IDictionary<Guid, Entity> Entities = new Dictionary<Guid, Entity>();
 
         /// <summary>
         /// The registry GUID.

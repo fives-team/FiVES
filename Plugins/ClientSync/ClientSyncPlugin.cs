@@ -12,17 +12,17 @@ namespace ClientSync {
     {
         #region IPluginInitializer implementation
 
-        public string getName()
+        public string GetName()
         {
             return "ClientSync";
         }
 
-        public List<string> getDependencies()
+        public List<string> GetDependencies()
         {
             return new List<string>() { "WebSocketJSON", "DirectCall", "Location", "Renderable" };
         }
 
-        public void initialize()
+        public void Initialize()
         {
             clientService = ServiceFactory.createByURI("http://localhost/projects/test-client/kiara/fives.json");
             clientService["kiara.implements"] = (Func<List<string>, List<bool>>)implements;
@@ -72,7 +72,7 @@ namespace ClientSync {
 
         private List<string> listObjects()
         {
-            HashSet<Guid> guids = EntityRegistry.Instance.getAllGUIDs();
+            HashSet<Guid> guids = EntityRegistry.Instance.GetAllGUIDs();
             List<string> objects = new List<string>();
             foreach (var guid in guids)
                 objects.Add(guid.ToString());
@@ -93,15 +93,15 @@ namespace ClientSync {
         }
 
         private Location getObjectLocation(string guid) {
-            dynamic entity = EntityRegistry.Instance.getEntity(new Guid(guid));
+			Entity entity = EntityRegistry.Instance.GetEntity(new Guid(guid));
             var loc = new Location();
-            loc.position.x = entity.position.x;
-            loc.position.y = entity.position.y;
-            loc.position.z = entity.position.z;
-            loc.orientation.x = entity.orientation.x;
-            loc.orientation.y = entity.orientation.y;
-            loc.orientation.z = entity.orientation.z;
-            loc.orientation.w = entity.orientation.w;
+            loc.position.x = (float)entity["position"]["x"];
+			loc.position.y = (float)entity["position"]["y"];
+			loc.position.z = (float)entity["position"]["z"];
+			loc.orientation.x = (float)entity["orientation"]["x"];
+			loc.orientation.y = (float)entity["orientation"]["y"];
+			loc.orientation.z = (float)entity["orientation"]["z"];
+			loc.orientation.w = (float)entity["orientation"]["w"];
             return loc;
         }
 
@@ -111,18 +111,18 @@ namespace ClientSync {
         }
 
         private Mesh getObjectMesh(string guid) {
-            dynamic entity = EntityRegistry.Instance.getEntity(new Guid(guid));
+            Entity entity = EntityRegistry.Instance.GetEntity(new Guid(guid));
             var mesh = new Mesh();
-            mesh.uri = entity.meshResource.uri;
-            mesh.scale.x = entity.scale.x;
-            mesh.scale.y = entity.scale.y;
-            mesh.scale.z = entity.scale.z;
+            mesh.uri = (string)entity["meshResource"]["uri"];
+			mesh.scale.x = (float)entity["scale"]["x"];
+			mesh.scale.y = (float)entity["scale"]["y"];
+			mesh.scale.z = (float)entity["scale"]["z"];
             return mesh;
         }
 
         private void createServerScriptFor(string guid, string script)
         {
-            dynamic entity = EntityRegistry.Instance.getEntity(guid);
+            Entity entity = EntityRegistry.Instance.GetEntity(guid);
             entity["scripting"]["serverScript"] = script;
         }
 

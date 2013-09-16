@@ -3,10 +3,10 @@
                    assembly="Persistence"
                    namespace="Persistence">
     <class name="ComponentRegistryPersistence" lazy="false">
-        <id name="Id" type = "Guid">
+        <id name="Guid" type = "Guid">
         </id>
-        <map name="ownerRegisteredComponents" table = "compinfo_in_registries" cascade = "all">
-          <key column = "registryId" />
+        <map name="OwnerRegisteredComponents" table = "compinfo_in_registries" cascade = "all">
+          <key column = "RegistryId" />
           <index type = "string" column = "registryName" />
           <many-to-many column = "layoutID" class="ComponentOwnerLayout" />
         </map>
