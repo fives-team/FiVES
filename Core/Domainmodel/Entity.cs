@@ -57,26 +57,26 @@ namespace FIVES
             return true;
         }
 
-        public List<Entity> getAllChildren()
+        public List<Entity> GetAllChildren()
         {
             return Children;
         }
 
-        public Entity getFirstChild()
+        public Entity GetFirstChild()
         {
             if(Children.Count == 0)
                 throw(new EntityHasNoChildrenException("List of children for Entity is empty"));
             return Children[0];
         }
 
-        public Entity getLastChild()
+        public Entity GetLastChild()
         {
             if(Children.Count == 0)
                 throw(new EntityHasNoChildrenException("List of children for Entity is empty"));
             return Children [Children.Count -1];
         }
 
-        public bool hasComponent(string name)
+        public bool HasComponent(string name)
         {
             return this.Components.ContainsKey (name);
         }
@@ -88,7 +88,7 @@ namespace FIVES
                 if (!Components.ContainsKey(componentName))
                 {
                     if (ComponentRegistry.IsRegistered(componentName))
-                        instantiateNewComponent(componentName);
+                        InstantiateNewComponent(componentName);
                     else
                         throw new ComponentIsNotDefinedException("Cannot create component '" + componentName + "' as its " +
                             "type is not registered with the ComponentRegistry");
@@ -101,7 +101,7 @@ namespace FIVES
             }
         }
 
-        private void instantiateNewComponent(string componentName) {
+        private void InstantiateNewComponent(string componentName) {
             Component newComponent = ComponentRegistry.GetComponentInstance (componentName);
             newComponent.OnAttributeChanged += delegate(object sender, AttributeChangedEventArgs e) {
                 if (this.OnAttributeInComponentChanged != null)

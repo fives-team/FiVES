@@ -140,7 +140,7 @@ namespace FIVES
 
             foreach (var guid in entityRegistry.GetAllGUIDs()) {
                 var entity = entityRegistry.GetEntity(guid);
-                if (entity.hasComponent(name)) {
+                if (entity.HasComponent(name)) {
                     Component oldComponent = entity[name];
                     if (oldComponent.Version != oldVersion)
                         continue;

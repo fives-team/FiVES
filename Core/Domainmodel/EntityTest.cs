@@ -18,8 +18,8 @@ namespace FIVES
             var EntityToAdd = new Entity ();
             Assert.True(parentEntity.AddChildNode (EntityToAdd));
             Assert.False(parentEntity.AddChildNode (EntityToAdd));
-            Assert.IsTrue (parentEntity.getAllChildren () [0] == EntityToAdd);
-            Assert.IsTrue (parentEntity.getAllChildren ().Count == 1);
+            Assert.IsTrue (parentEntity.GetAllChildren () [0] == EntityToAdd);
+            Assert.IsTrue (parentEntity.GetAllChildren ().Count == 1);
         }
 
         [Test()]
@@ -39,7 +39,7 @@ namespace FIVES
             parentEntity.AddChildNode (childEntity);
 
             Assert.True (parentEntity.RemoveChild (childEntity));
-            Assert.IsEmpty (parentEntity.getAllChildren ());
+            Assert.IsEmpty (parentEntity.GetAllChildren ());
             Assert.IsNull (childEntity.Parent);
         }
 
@@ -52,8 +52,8 @@ namespace FIVES
             parentEntity_1.AddChildNode (childEntity);
             parentEntity_2.AddChildNode (childEntity);
 
-            Assert.IsEmpty (parentEntity_1.getAllChildren ());
-            Assert.Contains (childEntity, parentEntity_2.getAllChildren ());
+            Assert.IsEmpty (parentEntity_1.GetAllChildren ());
+            Assert.Contains (childEntity, parentEntity_2.GetAllChildren ());
             Assert.IsTrue (childEntity.Parent == parentEntity_2);
         }
         [Test()]
@@ -66,8 +66,8 @@ namespace FIVES
             parentEntity.AddChildNode (firstChildEntity);
             parentEntity.AddChildNode (lastChildEntity);
 
-            Assert.IsTrue (parentEntity.getFirstChild () == firstChildEntity);
-            Assert.IsTrue (parentEntity.getLastChild () == lastChildEntity);
+            Assert.IsTrue (parentEntity.GetFirstChild () == firstChildEntity);
+            Assert.IsTrue (parentEntity.GetLastChild () == lastChildEntity);
         }
 
         [Test()]
