@@ -10,19 +10,19 @@ namespace KIARA
         private string idlURL = "http://www.example.com/my.idl";
 
         [Test()]
-        public void shouldCallFuncInProtocol()
+        public void ShouldCallFuncInProtocol()
         {
             var mockProtocol = new Mock<IProtocol>();
 
             Connection c = new Connection(mockProtocol.Object);
-            var testFunc = c.generateFuncWrapper("testFunc");
+            var testFunc = c.GenerateFuncWrapper("testFunc");
             testFunc("testArg", 42);
 
-            mockProtocol.Verify(protocol => protocol.callFunc("testFunc", "testArg", 42), Times.Once());
+            mockProtocol.Verify(protocol => protocol.CallFunc("testFunc", "testArg", 42), Times.Once());
         }
 
         [Test()]
-        public void shouldDownloadIDLAndCallProcessIDLInProtocol()
+        public void ShouldDownloadIDLAndCallProcessIDLInProtocol()
         {
             var mockProtocol = new Mock<IProtocol>();
             var mockWebClient = new Mock<IWebClient>();
@@ -30,22 +30,22 @@ namespace KIARA
             mockWebClient.Setup(client => client.DownloadString(idlURL)).Returns("{}");
 
             Connection c = new Connection(mockProtocol.Object, mockWebClient.Object);
-            c.loadIDL(idlURL);
+            c.LoadIDL(idlURL);
 
             mockWebClient.Verify(client => client.DownloadString(idlURL), Times.Once());
-            mockProtocol.Verify(protocol => protocol.processIDL("{}"), Times.Once());
+            mockProtocol.Verify(protocol => protocol.ProcessIDL("{}"), Times.Once());
         }
 
         [Test()]
-        public void shouldCallRegisterHandlerInProtocol()
+        public void ShouldCallRegisterHandlerInProtocol()
         {
             var mockProtocol = new Mock<IProtocol>();
 
             Connection c = new Connection(mockProtocol.Object);
             Delegate d = (Func<int, string>)delegate(int x) { return ""; };
-            c.registerFuncImplementation("testFunc", d);
+            c.RegisterFuncImplementation("testFunc", d);
 
-            mockProtocol.Verify(protocol => protocol.registerHandler("testFunc", d), Times.Once());
+            mockProtocol.Verify(protocol => protocol.RegisterHandler("testFunc", d), Times.Once());
         }
 
         // TODO: Tests for type mapping

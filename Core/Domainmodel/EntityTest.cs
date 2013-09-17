@@ -12,7 +12,7 @@ namespace FIVES
         }
 
         [Test()]
-        public void shouldAddOneChildren()
+        public void ShouldAddOneChildren()
         {
             Entity parentEntity = new Entity ();
             var EntityToAdd = new Entity ();
@@ -23,7 +23,7 @@ namespace FIVES
         }
 
         [Test()]
-        public void shouldCorrectlyAssignParent()
+        public void ShouldCorrectlyAssignParent()
         {
             Entity parentEntity = new Entity ();
             Entity childEntity = new Entity ();
@@ -32,7 +32,7 @@ namespace FIVES
         }
 
         [Test()]
-        public void shouldCorrectlyRemoveChild()
+        public void ShouldCorrectlyRemoveChild()
         {
             Entity parentEntity = new Entity ();
             Entity childEntity = new Entity ();
@@ -44,7 +44,7 @@ namespace FIVES
         }
 
         [Test()]
-        public void shouldCorrectlyChangeParenthood()
+        public void ShouldCorrectlyChangeParenthood()
         {
             Entity parentEntity_1 = new Entity ();
             Entity parentEntity_2 = new Entity ();
@@ -57,7 +57,7 @@ namespace FIVES
             Assert.IsTrue (childEntity.Parent == parentEntity_2);
         }
         [Test()]
-        public void shouldCorrectlyRetrieveFirstAndLast()
+        public void ShouldCorrectlyRetrieveFirstAndLast()
         {
             Entity parentEntity = new Entity ();
             Entity firstChildEntity = new Entity ();
@@ -71,7 +71,7 @@ namespace FIVES
         }
 
         [Test()]
-        public void shouldCreateRegisteredComponent()
+        public void ShouldCreateRegisteredComponent()
         {
             // Define new component type "myComponent" with one int attribute "attr".
             ComponentRegistry myRegistry = new ComponentRegistry();
@@ -84,7 +84,7 @@ namespace FIVES
         }
 
         [Test()]
-        public void shouldThrowExceptionWhenAccessingUnregisteredComponent()
+        public void ShouldThrowExceptionWhenAccessingUnregisteredComponent()
         {
             Entity entity = new Entity();
             Assert.Throws<ComponentIsNotDefinedException>(delegate() {
@@ -93,11 +93,9 @@ namespace FIVES
         }
 
         [Test()]
-        public void shouldThrowExceptionWhenCreatingUnregisteredComponent()
-        {
-			Entity entity = new Entity();
-            Assert.Throws<ComponentIsNotDefinedException>(delegate() {
-				Component component = entity["myComponent"];
+        public void ShouldThrowExceptionWhenCreatingUnregisteredComponent()
+        {            Entity entity = new Entity();
+            Assert.Throws<ComponentIsNotDefinedException>(delegate() {                Component component = entity["myComponent"];
             });
         }
     }

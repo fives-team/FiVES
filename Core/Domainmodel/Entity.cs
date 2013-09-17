@@ -14,8 +14,7 @@ namespace FIVES
     {
         public Guid Guid { get; private set; }
         private IDictionary<string, Component> Components { get; set; }
-        public Entity Parent { get; set; }
-		private List<Entity> Children { get; set; }
+        public Entity Parent { get; set; }        private List<Entity> Children { get; set; }
         private ComponentRegistry ComponentRegistry;
 
         public delegate void AttributeInComponentChanged (Object sender, AttributeInComponentEventArgs e);
@@ -38,8 +37,7 @@ namespace FIVES
             Components = new Dictionary<string, Component>();
 
             // Generate new GUID for this entity.
-            Guid = Guid.NewGuid();
-			Children = new List<Entity> ();
+            Guid = Guid.NewGuid();            Children = new List<Entity> ();
         }
 
         /// <summary>

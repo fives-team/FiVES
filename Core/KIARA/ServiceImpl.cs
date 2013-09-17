@@ -22,7 +22,7 @@ namespace KIARA
         internal void HandleNewClient(Connection connection)
         {
             foreach (var entry in registeredMethods)
-                connection.registerFuncImplementation(entry.Key, entry.Value);
+                connection.RegisterFuncImplementation(entry.Key, entry.Value);
 
             if (OnNewClient != null)
                 OnNewClient(connection);

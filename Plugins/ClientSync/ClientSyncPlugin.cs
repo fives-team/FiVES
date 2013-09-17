@@ -24,38 +24,38 @@ namespace ClientSync {
 
         public void Initialize()
         {
-            clientService = ServiceFactory.createByURI("http://localhost/projects/test-client/kiara/fives.json");
-            clientService["kiara.implements"] = (Func<List<string>, List<bool>>)implements;
-            clientService["clientsync.listObjects"] = (Func<List<string>>)listObjects;
-            clientService["clientsync.getObjectLocation"] = (Func<string, Location>)getObjectLocation;
-            clientService["clientsync.getObjectMesh"] = (Func<string, Mesh>)getObjectMesh;
-            clientService["clientsync.notifyAboutNewObjects"] = (Action<FuncWrapper>)notifyAboutNewObjects;
-            clientService["clientsync.notifyAboutRemovedObjects"] = (Action<FuncWrapper>)notifyAboutRemovedObjects;
+            clientService = ServiceFactory.CreateByURI("http://localhost/projects/test-client/kiara/fives.json");
+            clientService["kiara.implements"] = (Func<List<string>, List<bool>>)Implements;
+            clientService["clientsync.listObjects"] = (Func<List<string>>)ListObjects;
+            clientService["clientsync.getObjectLocation"] = (Func<string, Location>)GetObjectLocation;
+            clientService["clientsync.getObjectMesh"] = (Func<string, Mesh>)GetObjectMesh;
+            clientService["clientsync.notifyAboutNewObjects"] = (Action<FuncWrapper>)NotifyAboutNewObjects;
+            clientService["clientsync.notifyAboutRemovedObjects"] = (Action<FuncWrapper>)NotifyAboutRemovedObjects;
 
             // DEBUG
-            clientService["scripting.createServerScriptFor"] = (Action<string, string>)createServerScriptFor;
+            clientService["scripting.createServerScriptFor"] = (Action<string, string>)CreateServerScriptFor;
 //            clientService.OnNewClient += delegate(Connection connection) {
 //                var getAnswer = connection.generateFuncWrapper("getAnswer");
 //                getAnswer((Action<int>) delegate(int answer) { Console.WriteLine("The answer is {0}", answer); });
 //            };
 
-            var pluginService = ServiceFactory.createByName("clientsync", ContextFactory.getContext("inter-plugin"));
-            pluginService["registerClientMethod"] = (Action<string, Delegate>)registerClientMethod;
+            var pluginService = ServiceFactory.CreateByName("clientsync", ContextFactory.GetContext("inter-plugin"));
+            pluginService["registerClientMethod"] = (Action<string, Delegate>)RegisterClientMethod;
         }
 
         #endregion
 
-        private void notifyAboutNewObjects(FuncWrapper callback)
+        private void NotifyAboutNewObjects(FuncWrapper callback)
         {
             EntityRegistry.Instance.OnEntityAdded += (sender, e) => callback(e.elementId.ToString());
         }
 
-        private void notifyAboutRemovedObjects(FuncWrapper callback)
+        private void NotifyAboutRemovedObjects(FuncWrapper callback)
         {
             EntityRegistry.Instance.OnEntityRemoved += (sender, e) => callback(e.elementId.ToString());
         }
 
-        private void notifyAboutObjectUpdates(Action<string> callback)
+        private void NotifyAboutObjectUpdates(Action<string> callback)
         {
             throw new NotImplementedException();
         }
@@ -65,12 +65,12 @@ namespace ClientSync {
             "clientsync"
         };
 
-        private List<bool> implements(List<string> services)
+        private List<bool> Implements(List<string> services)
         {
             return services.ConvertAll(supportedServices.Contains);
         }
 
-        private List<string> listObjects()
+        private List<string> ListObjects()
         {
             HashSet<Guid> guids = EntityRegistry.Instance.GetAllGUIDs();
             List<string> objects = new List<string>();
@@ -92,16 +92,16 @@ namespace ClientSync {
             public Quat orientation;
         }
 
-        private Location getObjectLocation(string guid) {
-			Entity entity = EntityRegistry.Instance.GetEntity(new Guid(guid));
+        private Location GetObjectLocation(string guid) {
+            Entity entity = EntityRegistry.Instance.GetEntity(new Guid(guid));
             var loc = new Location();
             loc.position.x = (float)entity["position"]["x"];
-			loc.position.y = (float)entity["position"]["y"];
-			loc.position.z = (float)entity["position"]["z"];
-			loc.orientation.x = (float)entity["orientation"]["x"];
-			loc.orientation.y = (float)entity["orientation"]["y"];
-			loc.orientation.z = (float)entity["orientation"]["z"];
-			loc.orientation.w = (float)entity["orientation"]["w"];
+            loc.position.y = (float)entity["position"]["y"];
+            loc.position.z = (float)entity["position"]["z"];
+            loc.orientation.x = (float)entity["orientation"]["x"];
+            loc.orientation.y = (float)entity["orientation"]["y"];
+            loc.orientation.z = (float)entity["orientation"]["z"];
+            loc.orientation.w = (float)entity["orientation"]["w"];
             return loc;
         }
 
@@ -110,23 +110,23 @@ namespace ClientSync {
             public Vector scale;
         }
 
-        private Mesh getObjectMesh(string guid) {
+        private Mesh GetObjectMesh(string guid) {
             Entity entity = EntityRegistry.Instance.GetEntity(new Guid(guid));
             var mesh = new Mesh();
             mesh.uri = (string)entity["meshResource"]["uri"];
-			mesh.scale.x = (float)entity["scale"]["x"];
-			mesh.scale.y = (float)entity["scale"]["y"];
-			mesh.scale.z = (float)entity["scale"]["z"];
+            mesh.scale.x = (float)entity["scale"]["x"];
+            mesh.scale.y = (float)entity["scale"]["y"];
+            mesh.scale.z = (float)entity["scale"]["z"];
             return mesh;
         }
 
-        private void createServerScriptFor(string guid, string script)
+        private void CreateServerScriptFor(string guid, string script)
         {
             Entity entity = EntityRegistry.Instance.GetEntity(guid);
             entity["scripting"]["serverScript"] = script;
         }
 
-        private void registerClientMethod(string name, Delegate handler)
+        private void RegisterClientMethod(string name, Delegate handler)
         {
             clientService[name] = handler;
         }

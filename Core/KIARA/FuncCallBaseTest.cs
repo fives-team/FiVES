@@ -13,7 +13,7 @@ namespace KIARA
         {
             #region implemented abstract members of FuncCallBase
 
-            protected override object convertResult(object result, Type type)
+            protected override object ConvertResult(object result, Type type)
             {
                 return result;
             }
@@ -22,9 +22,9 @@ namespace KIARA
         }
 
         public interface IHandler {
-            void success(float value);
-            void exception(Exception exception);
-            void error(string reason);
+            void Success(float value);
+            void Exception(Exception exception);
+            void Error(string reason);
         }
 
         private MockFuncCall call;
@@ -34,104 +34,104 @@ namespace KIARA
         private Mock<IHandler> handler;
 
         [SetUp()]
-        public void init()
+        public void Init()
         {
             call = new MockFuncCall();
             handler = new Mock<IHandler>();
         }
 
         [Test()]
-        public void shouldExecuteSuccessHandlers()
+        public void ShouldExecuteSuccessHandlers()
         {
-            call.onSuccess((Action<float>)handler.Object.success).onSuccess((Action<float>)handler.Object.success);
-            call.handleSuccess(value);
-            handler.Verify(h => h.success(value), Times.Exactly(2));
+            call.OnSuccess((Action<float>)handler.Object.Success).OnSuccess((Action<float>)handler.Object.Success);
+            call.HandleSuccess(value);
+            handler.Verify(h => h.Success(value), Times.Exactly(2));
         }
 
         [Test()]
-        public void shouldExecuteExceptionHandlers()
+        public void ShouldExecuteExceptionHandlers()
         {
-            call.onException(handler.Object.exception).onException(handler.Object.exception);
-            call.handleException(exception);
-            handler.Verify(h => h.exception(exception), Times.Exactly(2));
+            call.OnException(handler.Object.Exception).OnException(handler.Object.Exception);
+            call.HandleException(exception);
+            handler.Verify(h => h.Exception(exception), Times.Exactly(2));
         }
 
         [Test()]
-        public void shouldExecuteErrorHandlers()
+        public void ShouldExecuteErrorHandlers()
         {
-            call.onError(handler.Object.error).onError(handler.Object.error);
-            call.handleError(reason);
-            handler.Verify(h => h.error(reason), Times.Exactly(2));
+            call.OnError(handler.Object.Error).OnError(handler.Object.Error);
+            call.HandleError(reason);
+            handler.Verify(h => h.Error(reason), Times.Exactly(2));
         }
 
         [Test()]
-        public void shouldExecuteSuccessHandlerAddedAfterCallWasCompleted()
+        public void ShouldExecuteSuccessHandlerAddedAfterCallWasCompleted()
         {
-            call.handleSuccess(value);
-            call.onSuccess((Action<float>)handler.Object.success);
-            handler.Verify(h => h.success(value), Times.Once());
+            call.HandleSuccess(value);
+            call.OnSuccess((Action<float>)handler.Object.Success);
+            handler.Verify(h => h.Success(value), Times.Once());
         }
 
         [Test()]
-        public void shouldExecuteExceptionHandlerAddedAfterCallWasCompleted()
+        public void ShouldExecuteExceptionHandlerAddedAfterCallWasCompleted()
         {
-            call.handleException(exception);
-            call.onException(handler.Object.exception);
-            handler.Verify(h => h.exception(exception), Times.Once());
+            call.HandleException(exception);
+            call.OnException(handler.Object.Exception);
+            handler.Verify(h => h.Exception(exception), Times.Once());
         }
 
         [Test()]
-        public void shouldExecuteErrorHandlerAddedAfterCallWasCompleted()
+        public void ShouldExecuteErrorHandlerAddedAfterCallWasCompleted()
         {
-            call.handleError(reason);
-            call.onError(handler.Object.error);
-            handler.Verify(h => h.error(reason), Times.Once());
+            call.HandleError(reason);
+            call.OnError(handler.Object.Error);
+            handler.Verify(h => h.Error(reason), Times.Once());
         }
 
         [Test()]
-        public void shouldPassReturnValueFromWait()
+        public void ShouldPassReturnValueFromWait()
         {
-            call.handleSuccess(value);
-            Assert.AreEqual(call.wait<float>(), value);
+            call.HandleSuccess(value);
+            Assert.AreEqual(call.Wait<float>(), value);
         }
 
         [Test()]
-        public void shouldRaiseExceptionFromWait()
+        public void ShouldRaiseExceptionFromWait()
         {
-            call.handleException(exception);
-            var thrownException = Assert.Throws<Exception>(() => call.wait());
+            call.HandleException(exception);
+            var thrownException = Assert.Throws<Exception>(() => call.Wait());
             Assert.AreEqual(thrownException, exception);
         }
 
         [Test()]
-        public void shouldRaiseErrorFromWait()
+        public void ShouldRaiseErrorFromWait()
         {
-            call.handleError(reason);
-            Error thrownException = Assert.Throws<Error>(() => call.wait());
+            call.HandleError(reason);
+            Error thrownException = Assert.Throws<Error>(() => call.Wait());
             Assert.True(thrownException.Reason.Contains(reason));
         }
 
         [Test()]
-        public void shouldWaitForCompletionOnOtherThread()
+        public void ShouldWaitForCompletionOnOtherThread()
         {
             var haveBeenInsideOtherThread = false;
             Task.Factory.StartNew(delegate(object c) {
                 Thread.Sleep(100);
                 haveBeenInsideOtherThread = true;
-                ((FuncCallBase)c).handleSuccess(value);
+                ((FuncCallBase)c).HandleSuccess(value);
             }, call);
-            Assert.AreEqual(call.wait<float>(), value);
+            Assert.AreEqual(call.Wait<float>(), value);
             Assert.True(haveBeenInsideOtherThread);
         }
 
         [Test()]
-        public void shouldTimeoutOnWait()
+        public void ShouldTimeoutOnWait()
         {
             Task.Factory.StartNew(delegate(object c) {
                 Thread.Sleep(200);
-                ((FuncCallBase)c).handleSuccess(value);
+                ((FuncCallBase)c).HandleSuccess(value);
             }, call);
-            Assert.Throws<TimeoutException>(() => call.wait(100));
+            Assert.Throws<TimeoutException>(() => call.Wait(100));
         }
     }
 }

@@ -19,7 +19,7 @@ namespace KIARA
         /// Currently an unparsed string is used as parsing was not implemented yet.
         /// </remarks>
         /// <param name="parsedIDL">Parsed KIARA IDL file.</param>
-        void processIDL(string parsedIDL);
+        void ProcessIDL(string parsedIDL);
 
         /// <summary>
         /// Calls the function <paramref name="name"/> with <paramref name="args"/> as parameters on the remote end.
@@ -27,7 +27,7 @@ namespace KIARA
         /// <returns>The call object representing started call.</returns>
         /// <param name="name">Name of the function to be called.</param>
         /// <param name="args">Arguments to be passed as parameters into function.</param>
-        IFuncCall callFunc(string name, params object[] args);
+        IFuncCall CallFunc(string name, params object[] args);
 
         // Registers a |handler| for the function |name|, which is called when remote end requests the function to be
         // called. Returned value from |handler| (if any) is returned back to the caller. If called again for the same
@@ -40,6 +40,6 @@ namespace KIARA
         /// </summary>
         /// <param name="name">Name of the function.</param>
         /// <param name="handler">Handler to be executed upon a call.</param>
-        void registerHandler(string name, Delegate handler);
+        void RegisterHandler(string name, Delegate handler);
     }
 }

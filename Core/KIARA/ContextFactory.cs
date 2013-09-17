@@ -5,7 +5,7 @@ namespace KIARA
 {
     public class ContextFactory
     {
-        public static Context getContext(string name)
+        public static Context GetContext(string name)
         {
             if (contextCache.ContainsKey(name))
                 return contextCache[name];

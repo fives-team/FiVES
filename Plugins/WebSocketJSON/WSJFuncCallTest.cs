@@ -9,11 +9,11 @@ namespace WebSocketJSON
     public class WSJFuncCallTest : WSJFuncCall
     {
         [Test()]
-        public void shouldConvertResults()
+        public void ShouldConvertResults()
         {
-            Assert.AreEqual(base.convertResult(JsonConvert.DeserializeObject<JToken>("42"), typeof(int)), 42);
-            Assert.AreEqual(base.convertResult(JsonConvert.DeserializeObject<JToken>("'abc'"), typeof(string)), "abc");
-            Assert.AreEqual(base.convertResult(JsonConvert.DeserializeObject<JToken>("3.14"), typeof(float)), 3.14f);
+            Assert.AreEqual(base.ConvertResult(JsonConvert.DeserializeObject<JToken>("42"), typeof(int)), 42);
+            Assert.AreEqual(base.ConvertResult(JsonConvert.DeserializeObject<JToken>("'abc'"), typeof(string)), "abc");
+            Assert.AreEqual(base.ConvertResult(JsonConvert.DeserializeObject<JToken>("3.14"), typeof(float)), 3.14f);
         }
     }
 }

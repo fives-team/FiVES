@@ -12,13 +12,13 @@ namespace FIVES
         private string pathToPlugins = "../../PluginManager/";
 
         [SetUp()]
-        public void init()
+        public void Init()
         {
             pm = new PluginManager();
         }
 
         [Test()]
-        public void shouldLoadAllValidPluginsInDirectory()
+        public void ShouldLoadAllValidPluginsInDirectory()
         {
             pm.LoadPluginsFrom(pathToPlugins + "TestPlugins");
             Assert.IsTrue(pm.IsPathLoaded(pathToPlugins + "TestPlugins/valid_plugin.dll"));
@@ -28,7 +28,7 @@ namespace FIVES
         }
 
         [Test()]
-        public void shouldOmitInvalidPluginsInDirectory()
+        public void ShouldOmitInvalidPluginsInDirectory()
         {
             pm.LoadPluginsFrom(pathToPlugins + "TestPlugins");
             Assert.IsFalse(pm.IsPathLoaded(pathToPlugins + "TestPlugins/invalid_plugin.dll"));
@@ -36,7 +36,7 @@ namespace FIVES
         }
 
         [Test()]
-        public void shouldRecognizeDifferentPathsToTheSamePlugin()
+        public void ShouldRecognizeDifferentPathsToTheSamePlugin()
         {
             pm.LoadPlugin(pathToPlugins + "TestPlugins/valid_plugin.dll");
             Assert.IsTrue(pm.IsPathLoaded(pathToPlugins + "TestPlugins/../TestPlugins/valid_plugin.dll"));
@@ -45,7 +45,7 @@ namespace FIVES
         }
 
         [Test()]
-        public void shouldReturnNullOnMissingFile()
+        public void ShouldReturnNullOnMissingFile()
         {
             var testPlugin = pathToPlugins + "TestPlugins/non-existing-file.dll";
             pm.LoadPlugin(testPlugin);
@@ -53,7 +53,7 @@ namespace FIVES
         }
 
         [Test()]
-        public void shouldReturnNullOnInvalidPlugin()
+        public void ShouldReturnNullOnInvalidPlugin()
         {
             var testPlugin = pathToPlugins + "TestPlugins/invalid_plugin.dll";
             pm.LoadPlugin(testPlugin);
@@ -61,7 +61,7 @@ namespace FIVES
         }
 
         [Test()]
-        public void shouldReturnNullOnInvalidAssembly()
+        public void ShouldReturnNullOnInvalidAssembly()
         {
             var testPlugin = pathToPlugins + "TestPlugins/invalid_assembly.dll";
             pm.LoadPlugin(testPlugin);
@@ -69,7 +69,7 @@ namespace FIVES
         }
 
         [Test()]
-        public void shouldLoadPluginsInDependencyOrder()
+        public void ShouldLoadPluginsInDependencyOrder()
         {
             pm.LoadPlugin(pathToPlugins + "TestPlugins/valid_plugin2.dll");
             Assert.IsFalse(pm.IsPathLoaded(pathToPlugins + "TestPlugins/valid_plugin2.dll"));

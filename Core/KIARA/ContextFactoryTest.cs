@@ -7,16 +7,16 @@ namespace KIARA
     public class ContextFactoryTest
     {
         [Test()]
-        public void shouldCreateNewContexts()
+        public void ShouldCreateNewContexts()
         {
-            Assert.NotNull(ContextFactory.getContext("test-context-1"));
+            Assert.NotNull(ContextFactory.GetContext("test-context-1"));
         }
 
         [Test()]
-        public void shouldReturnSameContextForSameName()
+        public void ShouldReturnSameContextForSameName()
         {
-            Context ctx = ContextFactory.getContext("test-context-2");
-            Assert.AreEqual(ctx, ContextFactory.getContext("test-context-2"));
+            Context ctx = ContextFactory.GetContext("test-context-2");
+            Assert.AreEqual(ctx, ContextFactory.GetContext("test-context-2"));
         }
     }
 }

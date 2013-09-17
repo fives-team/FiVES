@@ -24,7 +24,7 @@ namespace KIARA
         /// <returns>This call object.</returns>
         /// <param name="handler">Handler to be executed upon successful completion of the call.</param>
         /// <typeparam name="T">Type to which return value should be converted.</typeparam>
-        IFuncCall onSuccess<T>(Action<T> handler);
+        IFuncCall OnSuccess<T>(Action<T> handler);
 
         /// <summary>
         /// Same as <see cref="onSuccess<T>"/> except that returned value (if any) is ignored and the handler is called
@@ -32,7 +32,7 @@ namespace KIARA
         /// </summary>
         /// <returns>This call object.</returns>
         /// <param name="handler">Handler to be executed upon successful completion of the call.</param>
-        IFuncCall onSuccess(Action handler);
+        IFuncCall OnSuccess(Action handler);
 
         /// <summary>
         /// Adds a <paramref name="handler"/> to be called when an exception was thrown from the call. Exception is
@@ -40,7 +40,7 @@ namespace KIARA
         /// </summary>
         /// <returns>This call object.</returns>
         /// <param name="handler">Handler to be executed when exception is thrown.</param>
-        IFuncCall onException(Action<Exception> handler);
+        IFuncCall OnException(Action<Exception> handler);
 
         /// <summary>
         /// Adds a <paramref name="handler"/> to be called when an error happened during the call. The reason for the
@@ -49,7 +49,7 @@ namespace KIARA
         /// </summary>
         /// <returns>This call object.</returns>
         /// <param name="handler">Handler to be executed when error happened during the call.</param>
-        IFuncCall onError(Action<string> handler);
+        IFuncCall OnError(Action<string> handler);
 
         /// <summary>
         /// Executes the call syncrhonously. Converts a value returned from the call into type <typeparamref name="T">
@@ -60,7 +60,7 @@ namespace KIARA
         /// </summary>
         /// <param name="millisecondsTimeout">Timeout in milliseconds.</param>
         /// <typeparam name="T">Type to which returned value should be converted.</typeparam>
-        T wait<T>(int millisecondsTimeout = -1);
+        T Wait<T>(int millisecondsTimeout = -1);
 
         // Executes the call syncrhonously. Return value (if any) is ignored. On error a KIARA.Error exception is
         // raised. Remote exceptions are raised locally. All assigned handlers for this call are executed before
@@ -71,7 +71,7 @@ namespace KIARA
         /// Same as <see cref="wait<T>"/> except that returned value (if any) is ignored.
         /// </summary>
         /// <param name="millisecondsTimeout">Timeout in milliseconds.</param>
-        void wait(int millisecondsTimeout = -1);
+        void Wait(int millisecondsTimeout = -1);
     }
 }
 

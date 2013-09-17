@@ -26,11 +26,11 @@ namespace DirectCall
         public void Initialize()
         {
             // Register the protocol factory in the protocol registry.
-            ProtocolRegistry.Instance.registerProtocolFactory("direct-call", new DCProtocolFactory());
+            ProtocolRegistry.Instance.RegisterProtocolFactory("direct-call", new DCProtocolFactory());
 
             // Create inter-plugin context and initialize it with this protocol.
-            Context interPluginContext = ContextFactory.getContext("inter-plugin");
-            interPluginContext.initialize("{{servers:[{{protocol:{{name:'direct-call', id:'{0}'}}}}]}}");
+            Context interPluginContext = ContextFactory.GetContext("inter-plugin");
+            interPluginContext.Initialize("{{servers:[{{protocol:{{name:'direct-call', id:'{0}'}}}}]}}");
         }
 
         #endregion

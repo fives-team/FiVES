@@ -10,24 +10,24 @@ namespace KIARA
         private ProtocolRegistry protocolRegistry;
 
         [SetUp()]
-        public void init()
+        public void Init()
         {
             protocolRegistry = new ProtocolRegistry();
         }
 
         [Test()]
-        public void shouldRegisterNewProtocols()
+        public void ShouldRegisterNewProtocols()
         {
             var protocolFactory = new Mock<IProtocolFactory>();
-            protocolRegistry.registerProtocolFactory("test", protocolFactory.Object);
-            Assert.True(protocolRegistry.isRegistered("test"));
-            Assert.AreEqual(protocolRegistry.getProtocolFactory("test"), protocolFactory.Object);
+            protocolRegistry.RegisterProtocolFactory("test", protocolFactory.Object);
+            Assert.True(protocolRegistry.IsRegistered("test"));
+            Assert.AreEqual(protocolRegistry.GetProtocolFactory("test"), protocolFactory.Object);
         }
 
-        public void shouldThrowExceptionWhenAskingForNonRegisteredProtocol()
+        public void ShouldThrowExceptionWhenAskingForNonRegisteredProtocol()
         {
-            Assert.False(protocolRegistry.isRegistered("unregistered-protocol"));
-            Assert.Throws<Error>(() => protocolRegistry.getProtocolFactory("unregistered-protocol"));
+            Assert.False(protocolRegistry.IsRegistered("unregistered-protocol"));
+            Assert.Throws<Error>(() => protocolRegistry.GetProtocolFactory("unregistered-protocol"));
         }
     }
 }

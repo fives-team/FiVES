@@ -13,7 +13,7 @@ namespace FIVES
         }
 
         [Test()]
-        public void differentEntriesShouldBeNotEqual()
+        public void DifferentEntriesShouldBeNotEqual()
         {
             ComponentLayout layout1 = new ComponentLayout ();
             layout1.AddAttribute <int>("attribute1");
@@ -35,7 +35,7 @@ namespace FIVES
         }
 
         [Test()]
-        public void sameEntriesShouldBeEqual()
+        public void SameEntriesShouldBeEqual()
         {
             ComponentLayout layout1 = new ComponentLayout ();
             layout1.AddAttribute <int>("attribute1");

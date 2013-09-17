@@ -24,7 +24,7 @@ namespace WebSocketJSON
 
         public void Initialize()
         {
-            ProtocolRegistry.Instance.registerProtocolFactory("websocket-json", new WSJProtocolFactory());
+            ProtocolRegistry.Instance.RegisterProtocolFactory("websocket-json", new WSJProtocolFactory());
         }
 
         #endregion

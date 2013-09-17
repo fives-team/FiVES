@@ -12,12 +12,12 @@ namespace DirectCall
     {
         #region IProtocol implementation
 
-        public void processIDL(string parsedIDL)
+        public void ProcessIDL(string parsedIDL)
         {
             // TODO
         }
 
-        public IFuncCall callFunc(string name, params object[] args)
+        public IFuncCall CallFunc(string name, params object[] args)
         {
             if (!registeredHandlers.ContainsKey(name))
                 throw new Error(ErrorCode.INVALID_ARGUMENT, "Handler for the " + name + " is not registered");
@@ -25,14 +25,14 @@ namespace DirectCall
             var call = new DCFuncCall();
             try {
                 var retValue = registeredHandlers[name].DynamicInvoke(args);
-                call.handleSuccess(retValue);
+                call.HandleSuccess(retValue);
             } catch (Exception e) {
-                call.handleException(e);
+                call.HandleException(e);
             }
             return call;
         }
 
-        public void registerHandler(string name, Delegate handler)
+        public void RegisterHandler(string name, Delegate handler)
         {
             if (registeredHandlers.ContainsKey(name))
                 throw new Error(ErrorCode.INVALID_ARGUMENT, "Handler for the " + name + " is already registered");

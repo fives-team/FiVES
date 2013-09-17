@@ -11,7 +11,7 @@ namespace KIARA
         }
 
         [Test()]
-        public void shouldStoreAssociatedContext()
+        public void ShouldStoreAssociatedContext()
         {
             Context context = new Context();
             TestService service = new TestService(context);

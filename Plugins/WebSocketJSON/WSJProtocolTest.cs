@@ -23,9 +23,9 @@ namespace WebSocketJSON
         }
 
         public interface IHandlers {
-            float testFunc(int i, string s);
-            void testCallback(int i, FuncWrapper callback);
-            void testCallback2(string a, Action<string> hello);
+            float TestFunc(int i, string s);
+            void TestCallback(int i, FuncWrapper callback);
+            void TestCallback2(string a, Action<string> hello);
         }
 
         WSJProtocolWrapper protocol;
@@ -34,130 +34,130 @@ namespace WebSocketJSON
         Mock<IHandlers> mockHandlers;
 
         [SetUp()]
-        public void init()
+        public void Init()
         {
             mockWSJFuncCallFactory = new Mock<IWSJFuncCallFactory>();
             mockWSJFuncCall = new Mock<IWSJFuncCall>();
-            mockWSJFuncCallFactory.Setup(f => f.construct()).Returns(mockWSJFuncCall.Object);
+            mockWSJFuncCallFactory.Setup(f => f.Construct()).Returns(mockWSJFuncCall.Object);
             mockHandlers = new Mock<IHandlers>();
 
             protocol = new WSJProtocolWrapper(mockWSJFuncCallFactory.Object);
         }
 
         [Test()]
-        public void shouldCorrectlyFormatCallMessage()
+        public void ShouldCorrectlyFormatCallMessage()
         {
-            protocol.callFunc("testFunc", 42, "test-string");
+            protocol.CallFunc("testFunc", 42, "test-string");
             Assert.AreEqual(protocol.sentMessages[0], "[\"call\",0,\"testFunc\",[],42,\"test-string\"]");
         }
 
         [Test()]
-        public void shouldCorrectlyEncodeNativeCallbacksToTheMessage()
+        public void ShouldCorrectlyEncodeNativeCallbacksToTheMessage()
         {
-            protocol.callFunc("testFunc", 42, "test-string", (Action)delegate() {});
+            protocol.CallFunc("testFunc", 42, "test-string", (Action)delegate() {});
             Assert.That(protocol.sentMessages[0],
                 Is.StringMatching("\\[\"call\",0,\"testFunc\",\\[2\\],42,\"test-string\",\"[0-9a-feA-F\\-]+\"\\]"));
         }
 
         [Test()]
-        public void shouldSendCallReplies()
+        public void ShouldSendCallReplies()
         {
-            protocol.registerHandler("testFunc", (Func<int, string, float>)mockHandlers.Object.testFunc);
-            mockHandlers.Setup(h => h.testFunc(42, "test-string")).Returns(3.14f);
-            protocol.handleMessage("['call',0,'testFunc',[],42,'test-string']");
+            protocol.RegisterHandler("testFunc", (Func<int, string, float>)mockHandlers.Object.TestFunc);
+            mockHandlers.Setup(h => h.TestFunc(42, "test-string")).Returns(3.14f);
+            protocol.HandleMessage("['call',0,'testFunc',[],42,'test-string']");
             Assert.AreEqual(protocol.sentMessages[0], "[\"call-reply\",0,true,3.14]");
         }
 
         [Test()]
-        public void shouldHandleSuccessCallReply()
+        public void ShouldHandleSuccessCallReply()
         {
-            protocol.callFunc("testFunc", 42, "test-string");
-            protocol.handleMessage("['call-reply',0,true,3.14]");
-            mockWSJFuncCall.Verify(c => c.handleSuccess(It.IsAny<JToken>()), Times.Once());
+            protocol.CallFunc("testFunc", 42, "test-string");
+            protocol.HandleMessage("['call-reply',0,true,3.14]");
+            mockWSJFuncCall.Verify(c => c.HandleSuccess(It.IsAny<JToken>()), Times.Once());
         }
 
         [Test()]
-        public void shouldHandleExceptionCallReply()
+        public void ShouldHandleExceptionCallReply()
         {
-            protocol.callFunc("testFunc", 42, "test-string");
-            protocol.handleMessage("['call-reply',0,false,'oops!']");
-            mockWSJFuncCall.Verify(c => c.handleException(It.IsAny<JToken>()), Times.Once());
+            protocol.CallFunc("testFunc", 42, "test-string");
+            protocol.HandleMessage("['call-reply',0,false,'oops!']");
+            mockWSJFuncCall.Verify(c => c.HandleException(It.IsAny<JToken>()), Times.Once());
         }
 
         [Test()]
-        public void shouldFailAllActiveCallsWithErrorOnClose()
+        public void ShouldFailAllActiveCallsWithErrorOnClose()
         {
-            protocol.callFunc("testFunc1", 42, "test-string");
-            protocol.callFunc("testFunc2", "foobar", 123);
-            protocol.handleClose(SuperSocket.SocketBase.CloseReason.InternalError);
+            protocol.CallFunc("testFunc1", 42, "test-string");
+            protocol.CallFunc("testFunc2", "foobar", 123);
+            protocol.HandleClose(SuperSocket.SocketBase.CloseReason.InternalError);
 
-            mockWSJFuncCall.Verify(c => c.handleError(It.IsAny<string>()), Times.Exactly(2));
+            mockWSJFuncCall.Verify(c => c.HandleError(It.IsAny<string>()), Times.Exactly(2));
         }
 
         [Test()]
-        public void shouldProcessConcurrentCallsCorrectly()
+        public void ShouldProcessConcurrentCallsCorrectly()
         {
-            protocol.callFunc("testFunc1", 42, "test-string");
-            protocol.callFunc("testFunc2", "foobar", 123);
-            protocol.handleMessage("['call-reply',0,true,'ret-val-1']");
-            mockWSJFuncCall.Verify(c => c.handleSuccess(It.IsAny<JToken>()), Times.Once());
-            protocol.callFunc("testFunc3");
-            protocol.handleMessage("['call-reply',2,false,'oops!']");
-            mockWSJFuncCall.Verify(c => c.handleException(It.IsAny<JToken>()), Times.Once());
-            protocol.handleMessage("['call-reply',1,true,'ret-val-2']");
-            mockWSJFuncCall.Verify(c => c.handleSuccess(It.IsAny<JToken>()), Times.Exactly(2));
+            protocol.CallFunc("testFunc1", 42, "test-string");
+            protocol.CallFunc("testFunc2", "foobar", 123);
+            protocol.HandleMessage("['call-reply',0,true,'ret-val-1']");
+            mockWSJFuncCall.Verify(c => c.HandleSuccess(It.IsAny<JToken>()), Times.Once());
+            protocol.CallFunc("testFunc3");
+            protocol.HandleMessage("['call-reply',2,false,'oops!']");
+            mockWSJFuncCall.Verify(c => c.HandleException(It.IsAny<JToken>()), Times.Once());
+            protocol.HandleMessage("['call-reply',1,true,'ret-val-2']");
+            mockWSJFuncCall.Verify(c => c.HandleSuccess(It.IsAny<JToken>()), Times.Exactly(2));
         }
 
         [Test()]
-        public void shouldProcessCallReplyWithNoRetValueCorrectly()
+        public void ShouldProcessCallReplyWithNoRetValueCorrectly()
         {
-            protocol.callFunc("testFunc1", 42, "test-string");
-            protocol.handleMessage("['call-reply',0,true]");
+            protocol.CallFunc("testFunc1", 42, "test-string");
+            protocol.HandleMessage("['call-reply',0,true]");
         }
 
         [Test()]
-        public void shouldHandleRemoteCallbacksCorrectly()
+        public void ShouldHandleRemoteCallbacksCorrectly()
         {
-            protocol.registerHandler("testCallback", (Action<int, FuncWrapper>)mockHandlers.Object.testCallback);
+            protocol.RegisterHandler("testCallback", (Action<int, FuncWrapper>)mockHandlers.Object.TestCallback);
             FuncWrapper generatedFuncWrapper = null;
-            mockHandlers.Setup(h => h.testCallback(42, It.IsAny<FuncWrapper>()))
+            mockHandlers.Setup(h => h.TestCallback(42, It.IsAny<FuncWrapper>()))
                 .Callback((int i, FuncWrapper f) => generatedFuncWrapper = f);
-            protocol.handleMessage("['call',0,'testCallback',[1],42,'99095a90-1997-11e3-8ffd-0800200c9a66']");
-            mockHandlers.Verify(h => h.testCallback(42, It.IsAny<FuncWrapper>()), Times.Once());
+            protocol.HandleMessage("['call',0,'testCallback',[1],42,'99095a90-1997-11e3-8ffd-0800200c9a66']");
+            mockHandlers.Verify(h => h.TestCallback(42, It.IsAny<FuncWrapper>()), Times.Once());
             generatedFuncWrapper(42);
             Assert.AreEqual(protocol.sentMessages[1], "[\"call\",0,\"99095a90-1997-11e3-8ffd-0800200c9a66\",[],42]");
         }
 
         [Test()]
-        public void shouldGenerateDynamicDelegatesForCallbacks()
+        public void ShouldGenerateDynamicDelegatesForCallbacks()
         {
-            protocol.registerHandler("testCallback2", (Action<string,Action<string>>)mockHandlers.Object.testCallback2);
+            protocol.RegisterHandler("testCallback2", (Action<string,Action<string>>)mockHandlers.Object.TestCallback2);
             Action<string> generatedDelegate = null;
-            mockHandlers.Setup(h => h.testCallback2("foobar", It.IsAny<Action<string>>()))
+            mockHandlers.Setup(h => h.TestCallback2("foobar", It.IsAny<Action<string>>()))
                 .Callback((string s, Action<string> f) => generatedDelegate = f);
-            protocol.handleMessage("['call',0,'testCallback2',[1],'foobar','28abd5c5-14a8-4b4d-8569-7d009bc37f31']");
-            mockHandlers.Verify(h => h.testCallback2("foobar", It.IsAny<Action<string>>()), Times.Once());
+            protocol.HandleMessage("['call',0,'testCallback2',[1],'foobar','28abd5c5-14a8-4b4d-8569-7d009bc37f31']");
+            mockHandlers.Verify(h => h.TestCallback2("foobar", It.IsAny<Action<string>>()), Times.Once());
             generatedDelegate("barfoo");
             Assert.AreEqual("[\"call\",0,\"28abd5c5-14a8-4b4d-8569-7d009bc37f31\",[],\"barfoo\"]",
                             protocol.sentMessages[1]);
         }
 
         [Test()]
-        public void shouldCorrectlyHandleRemoteCallRequestForRegisteredFunctionName()
+        public void ShouldCorrectlyHandleRemoteCallRequestForRegisteredFunctionName()
         {
-            protocol.registerHandler("testFunc", (Func<int, string, float>)mockHandlers.Object.testFunc);
-            protocol.handleMessage("['call',0,'testFunc',[],42,'test-string']");
-            mockHandlers.Verify(h => h.testFunc(42, "test-string"), Times.Once());
+            protocol.RegisterHandler("testFunc", (Func<int, string, float>)mockHandlers.Object.TestFunc);
+            protocol.HandleMessage("['call',0,'testFunc',[],42,'test-string']");
+            mockHandlers.Verify(h => h.TestFunc(42, "test-string"), Times.Once());
         }
 
         [Test()]
-        public void shouldFailOnRemoteCallRequestForUnregisteredFunctionName()
+        public void ShouldFailOnRemoteCallRequestForUnregisteredFunctionName()
         {
-            Assert.Throws<UnregisteredMethod>(() => protocol.handleMessage("['call',0,'unknownFunc',[]]"));
+            Assert.Throws<UnregisteredMethod>(() => protocol.HandleMessage("['call',0,'unknownFunc',[]]"));
         }
 
 //        [Test()]
-//        public void shouldReturnErrorToCallerOnInvalidNumberOfArgs()
+//        public void ShouldReturnErrorToCallerOnInvalidNumberOfArgs()
 //        {
 //            protocol.registerHandler("testFunc", (Func<int, string, float>)mockHandlers.Object.testFunc);
 //            protocol.handleMessage("['call',0,'testFunc',[],42]");
@@ -165,18 +165,18 @@ namespace WebSocketJSON
 //        }
 
         [Test()]
-        public void shouldFailOnCallReplyWithUnknownCallID()
+        public void ShouldFailOnCallReplyWithUnknownCallID()
         {
-            protocol.registerHandler("testFunc", (Func<int, string, float>)mockHandlers.Object.testFunc);
-            Assert.Throws<UnknownCallID>(() => protocol.handleMessage("['call-reply',100,'testFunc',[],42,'foobar']"));
+            protocol.RegisterHandler("testFunc", (Func<int, string, float>)mockHandlers.Object.TestFunc);
+            Assert.Throws<UnknownCallID>(() => protocol.HandleMessage("['call-reply',100,'testFunc',[],42,'foobar']"));
         }
 
         [Test()]
-        public void shouldFailToReregisterHandlerForTheSameFunctionName()
+        public void ShouldFailToReregisterHandlerForTheSameFunctionName()
         {
-            protocol.registerHandler("testFunc", (Func<int, string, float>)mockHandlers.Object.testFunc);
+            protocol.RegisterHandler("testFunc", (Func<int, string, float>)mockHandlers.Object.TestFunc);
             Assert.Throws<HandlerAlreadyRegistered>(
-                () => protocol.registerHandler("testFunc", (Func<int, string, float>)mockHandlers.Object.testFunc));
+                () => protocol.RegisterHandler("testFunc", (Func<int, string, float>)mockHandlers.Object.TestFunc));
         }
 
         // TODO: Should process IDL (when implemented).

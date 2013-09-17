@@ -173,9 +173,9 @@ namespace FIVES
         /// Returns all names of already registered components.
         /// </summary>
         /// <returns>The array of registered component names.</returns>
-		public string[] RegisteredComponentNames {
-			get {return this.RegisteredComponents.Keys.ToArray ();}
-		}
+        public string[] RegisteredComponentNames {
+            get { return this.RegisteredComponents.Keys.ToArray(); }
+        }
 
         /// <summary>
         /// Gets the component owner.
@@ -241,8 +241,7 @@ namespace FIVES
             ComponentInfo info = RegisteredComponents[componentName];
             foreach (var entry in info.Layout.Attributes)
                 newComponent.AddAttribute(entry.Key, entry.Value.Type, entry.Value.DefaultValue);
-
-			newComponent.Version = info.Version;
+            newComponent.Version = info.Version;
             return newComponent;
         }
 

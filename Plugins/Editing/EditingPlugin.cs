@@ -26,11 +26,11 @@ namespace Editing
         public void Initialize()
         {
             if (PluginManager.Instance.IsPluginLoaded("ClientSync")) {
-                registerEditingAPI();
+                RegisterEditingAPI();
             } else {
                 PluginManager.Instance.OnPluginInitialized += delegate(Object sender, PluginLoadedEventArgs e) {
                     if (e.pluginName == "ClientSync")
-                        registerEditingAPI();
+                        RegisterEditingAPI();
                 };
             }
         }
@@ -43,23 +43,21 @@ namespace Editing
         /// <param name="x">The x coordinate.</param>
         /// <param name="y">The y coordinate.</param>
         /// <param name="z">The z coordinate.</param>
-        public void createEntityAt(float x, float y, float z)
-        {
-			Entity entity = new Entity();
+        public void CreateEntityAt(float x, float y, float z)
+        {            Entity entity = new Entity();
             entity["position"]["x"] = x;
             entity["position"]["y"] = y;
-            entity["position"]["z"] = z;
-			EntityRegistry.Instance.AddEntity(entity);
+            entity["position"]["z"] = z;            EntityRegistry.Instance.AddEntity(entity);
         }
 
         /// <summary>
         /// Registers editing APIs with the ClientSync plugin.
         /// </summary>
-        private void registerEditingAPI() {
-            var clientSync = ServiceFactory.discoverByName("clientsync", ContextFactory.getContext("inter-plugin"));
+        private void RegisterEditingAPI() {
+            var clientSync = ServiceFactory.DiscoverByName("clientsync", ContextFactory.GetContext("inter-plugin"));
             clientSync.OnConnected += delegate(Connection connection) {
                 var registerClientMethod = clientSync["registerClientMethod"];
-                registerClientMethod("editing.createEntityAt", (Action<float, float, float>)createEntityAt);
+                registerClientMethod("editing.createEntityAt", (Action<float, float, float>)CreateEntityAt);
             };
         }
     }

@@ -6,9 +6,9 @@ namespace KIARA
     #region Testing
     public interface IProtocolRegistry
     {
-        void registerProtocolFactory(string protocol, IProtocolFactory factory);
-        IProtocolFactory getProtocolFactory(string protocol);
-        bool isRegistered(string protocol);
+        void RegisterProtocolFactory(string protocol, IProtocolFactory factory);
+        IProtocolFactory GetProtocolFactory(string protocol);
+        bool IsRegistered(string protocol);
     }
     #endregion
 
@@ -27,12 +27,12 @@ namespace KIARA
         /// </summary>
         /// <param name="protocol">Protocol name.</param>
         /// <param name="factory">Protocol factory.</param>
-        public void registerProtocolFactory(string protocol, IProtocolFactory factory)
+        public void RegisterProtocolFactory(string protocol, IProtocolFactory factory)
         {
             if (protocol == null)
                 throw new Error(ErrorCode.INVALID_VALUE, "Protocol name must not be null.");
 
-            if (isRegistered(protocol))
+            if (IsRegistered(protocol))
                 throw new Error(ErrorCode.INVALID_VALUE, "Protocol " + protocol + " is already registered.");
 
             registeredProtocols[protocol] = factory;
@@ -44,8 +44,8 @@ namespace KIARA
         /// </summary>
         /// <returns>The protocol factory.</returns>
         /// <param name="protocol">Protocol name.</param>
-        public IProtocolFactory getProtocolFactory(string protocol) {
-            if (isRegistered(protocol))
+        public IProtocolFactory GetProtocolFactory(string protocol) {
+            if (IsRegistered(protocol))
                 return registeredProtocols[protocol];
             throw new Error(ErrorCode.GENERIC_ERROR, "Protocol " + protocol + " is not registered.");
         }
@@ -55,7 +55,7 @@ namespace KIARA
         /// </summary>
         /// <returns><c>true</c>, if <paramref name="protocol"/> is registered, <c>false</c> otherwise.</returns>
         /// <param name="protocol">Protocol name.</param>
-        public bool isRegistered(string protocol) {
+        public bool IsRegistered(string protocol) {
             return registeredProtocols.ContainsKey(protocol);
         }
 

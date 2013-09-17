@@ -8,14 +8,14 @@ namespace DirectCall
     public class DCFuncCallTest : DCFuncCall
     {
         [Test()]
-        public void shouldNotConvertResults()
+        public void ShouldNotConvertResults()
         {
             int iValue = 42;
             float fValue = 3.14f;
             string sValue = "test";
-            Assert.AreEqual(base.convertResult(iValue, typeof(string)), iValue);
-            Assert.AreEqual(base.convertResult(fValue, typeof(int)), fValue);
-            Assert.AreEqual(base.convertResult(sValue, typeof(float)), sValue);
+            Assert.AreEqual(base.ConvertResult(iValue, typeof(string)), iValue);
+            Assert.AreEqual(base.ConvertResult(fValue, typeof(int)), fValue);
+            Assert.AreEqual(base.ConvertResult(sValue, typeof(float)), sValue);
         }
     }
 }

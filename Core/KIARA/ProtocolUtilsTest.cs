@@ -11,14 +11,14 @@ namespace KIARA
             "{ services: '*', protocol: { name: 'test', port: 1234 } }");
 
         [Test()]
-        public void shouldRetrieveProtocolSetting()
+        public void ShouldRetrieveProtocolSetting()
         {
             Assert.AreEqual(ProtocolUtils.retrieveProtocolSetting<string>(serverConfig, "name", ""), "test");
             Assert.AreEqual(ProtocolUtils.retrieveProtocolSetting<int>(serverConfig, "port", 4321), 1234);
         }
 
         [Test()]
-        public void shouldUseDefaultValueWhenPropertyIsNotAvailable()
+        public void ShouldUseDefaultValueWhenPropertyIsNotAvailable()
         {
             Assert.AreEqual(
                 ProtocolUtils.retrieveProtocolSetting<string>(serverConfig, "host", "localhost"), "localhost");

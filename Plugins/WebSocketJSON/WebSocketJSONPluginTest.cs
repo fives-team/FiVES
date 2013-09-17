@@ -15,19 +15,19 @@ namespace WebSocketJSON
         }
 
         [Test()]
-        public void shouldRegisterDirectCallProtocol()
+        public void ShouldRegisterDirectCallProtocol()
         {
-            Assert.True(ProtocolRegistry.Instance.isRegistered("websocket-json"));
+            Assert.True(ProtocolRegistry.Instance.IsRegistered("websocket-json"));
         }
 
         [Test()]
-        public void shouldReturnCorrectName()
+        public void ShouldReturnCorrectName()
         {
             Assert.AreEqual("WebSocketJSON", plugin.GetName());
         }
 
         [Test()]
-        public void shouldReturnCorrectDeps()
+        public void ShouldReturnCorrectDeps()
         {
             Assert.IsEmpty(plugin.GetDependencies());
         }

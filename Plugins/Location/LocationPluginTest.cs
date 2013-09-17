@@ -15,25 +15,25 @@ namespace Location
         }
 
         [Test()]
-        public void shouldRegisterPositionComponent()
+        public void ShouldRegisterPositionComponent()
         {
             Assert.True(ComponentRegistry.Instance.IsRegistered("position"));
         }
 
         [Test()]
-        public void shouldRegisterOrientationComponent()
+        public void ShouldRegisterOrientationComponent()
         {
             Assert.True(ComponentRegistry.Instance.IsRegistered("orientation"));
         }
 
         [Test()]
-        public void shouldReturnCorrectName()
+        public void ShouldReturnCorrectName()
         {
             Assert.AreEqual("Location", plugin.GetName());
         }
 
         [Test()]
-        public void shouldReturnCorrectDeps()
+        public void ShouldReturnCorrectDeps()
         {
             Assert.IsEmpty(plugin.GetDependencies());
         }

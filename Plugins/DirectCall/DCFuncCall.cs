@@ -8,7 +8,7 @@ namespace DirectCall
     /// </summary>
     public class DCFuncCall : FuncCallBase
     {
-        protected override object convertResult(object result, Type type)
+        protected override object ConvertResult(object result, Type type)
         {
             // No need to convert. This is a direct call.
             return result;

@@ -36,7 +36,7 @@ namespace KIARA
         /// </summary>
         public Context() : this(ProtocolRegistry.Instance, new WebClientWrapper()) {}
 
-        public void initialize(string hint)
+        public void Initialize(string hint)
         {
             // Currently we use hint as a config template, where {0} will be replaced with a service name.
             configTemplate = hint;
@@ -53,15 +53,15 @@ namespace KIARA
         /// URI where config is to be found. Data URIs starting with <c>"data:text/json;base64,"</c> are supported.
         /// </param>
         /// <param name="onConnected">Handler to be invoked when connection is established.</param>
-        public void openConnection(string configURI, Action<Connection> onConnected)
+        public void OpenConnection(string configURI, Action<Connection> onConnected)
         {
             string fragment = "";
-            Config config = retrieveConfig(configURI, out fragment);
-            Server server = selectServer(fragment, config);
+            Config config = RetrieveConfig(configURI, out fragment);
+            Server server = SelectServer(fragment, config);
 
             string protocolName = server.protocol["name"].ToString();
-            IProtocolFactory protocolFactory = protocolRegistry.getProtocolFactory(protocolName);
-            protocolFactory.openConnection(server, this, delegate(IProtocol p) {
+            IProtocolFactory protocolFactory = protocolRegistry.GetProtocolFactory(protocolName);
+            protocolFactory.OpenConnection(server, this, delegate(IProtocol p) {
                 Connection conn = new Connection(p);
                 onConnected(conn);
             });
@@ -82,15 +82,15 @@ namespace KIARA
         /// URI where config is to be found. Data URIs starting with <c>"data:text/json;base64,"</c> are supported.
         /// </param>
         /// <param name="onNewClient">Handler to be invoked for each new client.</param>
-        public void startServer(string configURI, Action<Connection> onNewClient)
+        public void StartServer(string configURI, Action<Connection> onNewClient)
         {
             string fragment = "";
-            Config config = retrieveConfig(configURI, out fragment);
-            Server server = selectServer(fragment, config);
+            Config config = RetrieveConfig(configURI, out fragment);
+            Server server = SelectServer(fragment, config);
 
             string protocolName = server.protocol["name"].ToString();
-            IProtocolFactory protocolFactory = protocolRegistry.getProtocolFactory(protocolName);
-            protocolFactory.startServer(server, this, delegate(IProtocol p) {
+            IProtocolFactory protocolFactory = protocolRegistry.GetProtocolFactory(protocolName);
+            protocolFactory.StartServer(server, this, delegate(IProtocol p) {
                 Connection conn = new Connection(p);
                 onNewClient(conn);
             });
@@ -98,7 +98,7 @@ namespace KIARA
 
         public Dictionary<string, object> ProtocolData = new Dictionary<string, object>();
 
-        private Config retrieveConfig(string configURI, out string fragment)
+        private Config RetrieveConfig(string configURI, out string fragment)
         {
             // Extract fragment.
             int hashIndex = configURI.IndexOf("#");
@@ -123,7 +123,7 @@ namespace KIARA
             return JsonConvert.DeserializeObject<Config>(configContent);
         }
 
-        private bool isSupportedServerProtocol(Server server) {
+        private bool IsSupportedServerProtocol(Server server) {
             if (server.protocol == null)
                 return false;
 
@@ -131,18 +131,18 @@ namespace KIARA
             if (protocolName == null)
                 return false;
 
-            return protocolRegistry.isRegistered(protocolName.ToString());
+            return protocolRegistry.IsRegistered(protocolName.ToString());
         }
 
-        private Server selectServer(string fragment, Config config)
+        private Server SelectServer(string fragment, Config config)
         {
             if (config.servers == null)
                 throw new Error(ErrorCode.INIT_ERROR, "Configuration file contains no servers.");
 
             int serverNum = -1;
             if (!Int32.TryParse(fragment, out serverNum) || serverNum < 0 || serverNum >= config.servers.Count ||
-                !isSupportedServerProtocol(config.servers[serverNum])) {
-                serverNum = config.servers.FindIndex(s => isSupportedServerProtocol(s));
+                !IsSupportedServerProtocol(config.servers[serverNum])) {
+                serverNum = config.servers.FindIndex(s => IsSupportedServerProtocol(s));
             }
 
             if (serverNum == -1)

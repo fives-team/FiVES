@@ -20,26 +20,26 @@ namespace FIVES
             layout.AddAttribute<bool>("b");
         }
 
-        public static void testUpgrader(Component oldComponent, ref Component newComponent) {
+        public static void TestUpgrader(Component oldComponent, ref Component newComponent) {
             newComponent["f"] = (float)(int)oldComponent["i"];
             newComponent["i"] = (int)(float)oldComponent["f"];
             newComponent["b"] = oldComponent["b"];
         }
 
         [SetUp()]
-        public void init() {
+        public void Init() {
             mockEntityRegistry = new Mock<IEntityRegistry>();
             componentRegistry = new ComponentRegistry(mockEntityRegistry.Object);
         }
 
         [Test()]
-        public void shouldDefineComponentsWithoutException()
+        public void ShouldDefineComponentsWithoutException()
         {
             componentRegistry.DefineComponent(name, Guid.NewGuid(), layout);
         }
 
         [Test()]
-        public void shouldNotThrowExceptionWhenRedefiningSameComponent()
+        public void ShouldNotThrowExceptionWhenRedefiningSameComponent()
         {
             Guid owner = Guid.NewGuid();
             componentRegistry.DefineComponent(name, owner, layout);
@@ -47,7 +47,7 @@ namespace FIVES
         }
 
         [Test()]
-        public void shouldThrowExceptionWhenRedefiningComponentWithDifferentLayout()
+        public void ShouldThrowExceptionWhenRedefiningComponentWithDifferentLayout()
         {
             Guid owner = Guid.NewGuid();
 
@@ -60,7 +60,7 @@ namespace FIVES
         }
 
         [Test()]
-        public void shouldThrowExceptionWhenRedefiningComponentWithDifferentOwner()
+        public void ShouldThrowExceptionWhenRedefiningComponentWithDifferentOwner()
         {
             componentRegistry.DefineComponent(name, Guid.NewGuid(), layout);
             Assert.Throws<ComponentAlreadyDefinedException>(
@@ -69,13 +69,13 @@ namespace FIVES
         }
 
         [Test()]
-        public void shouldFailToConstructUndefinedComponent() {
+        public void ShouldFailToConstructUndefinedComponent() {
             Assert.Throws<ComponentIsNotDefinedException>(
                 delegate() { componentRegistry.GetComponentInstance("foobar"); } );
         }
 
         [Test()]
-        public void shouldCreateDefinedLayoutAttributesInNewComponents()
+        public void ShouldCreateDefinedLayoutAttributesInNewComponents()
         {
             componentRegistry.DefineComponent(name, Guid.NewGuid(), layout);
             Component c = componentRegistry.GetComponentInstance(name);
@@ -86,7 +86,7 @@ namespace FIVES
         }
 
         [Test()]
-        public void shouldNotCreateUndefinedAttributesInNewComponents()
+        public void ShouldNotCreateUndefinedAttributesInNewComponents()
         {
             componentRegistry.DefineComponent(name, Guid.NewGuid(), layout);
             Component c = componentRegistry.GetComponentInstance(name);
@@ -95,42 +95,42 @@ namespace FIVES
         }
 
         [Test]
-        public void shouldFailToUpgradeUndefinedComponent()
+        public void ShouldFailToUpgradeUndefinedComponent()
         {
             Assert.Throws<ComponentIsNotDefinedException>(delegate() {
-                componentRegistry.UpgradeComponent(name, Guid.NewGuid(), layout, 5, testUpgrader);
+                componentRegistry.UpgradeComponent(name, Guid.NewGuid(), layout, 5, TestUpgrader);
             });
         }
 
         [Test]
-        public void shouldFailToUpgradeToInvalidVersion()
+        public void ShouldFailToUpgradeToInvalidVersion()
         {
             Guid owner = Guid.NewGuid();
             componentRegistry.DefineComponent(name, owner, layout);
             Assert.Throws<InvalidUpgradeVersion>(delegate() {
-                componentRegistry.UpgradeComponent(name, owner, layout, -1, testUpgrader);
+                componentRegistry.UpgradeComponent(name, owner, layout, -1, TestUpgrader);
             });
 
             Assert.Throws<InvalidUpgradeVersion>(delegate() {
-                componentRegistry.UpgradeComponent(name, owner, layout, 1, testUpgrader);
+                componentRegistry.UpgradeComponent(name, owner, layout, 1, TestUpgrader);
             });
 
             Assert.Throws<InvalidUpgradeVersion>(delegate() {
-                componentRegistry.UpgradeComponent(name, owner, layout, 0, testUpgrader);
+                componentRegistry.UpgradeComponent(name, owner, layout, 0, TestUpgrader);
             });
         }
 
         [Test]
-        public void shouldFailToUpgradeToADifferentOwner()
+        public void ShouldFailToUpgradeToADifferentOwner()
         {
             componentRegistry.DefineComponent(name, Guid.NewGuid(), layout);
             Assert.Throws<InvalidUpgradeOwner>(delegate() {
-                componentRegistry.UpgradeComponent(name, Guid.NewGuid(), layout, 2, testUpgrader);
+                componentRegistry.UpgradeComponent(name, Guid.NewGuid(), layout, 2, TestUpgrader);
             });
         }
 
         [Test]
-        public void shouldFailToUpgradeWithoutAnUpgrader()
+        public void ShouldFailToUpgradeWithoutAnUpgrader()
         {
             Guid owner = Guid.NewGuid();
             componentRegistry.DefineComponent(name, owner, layout);
@@ -140,7 +140,7 @@ namespace FIVES
         }
 
         [Test]
-        public void shouldUpgradeComponentsCorrectly()
+        public void ShouldUpgradeComponentsCorrectly()
         {
             Guid owner = Guid.NewGuid();
             componentRegistry.DefineComponent(name, owner, layout);
@@ -155,7 +155,7 @@ namespace FIVES
             entity[name]["s"] = "foobar";
             entity[name]["b"] = false;
 
-            componentRegistry.UpgradeComponent(name, owner, layout, 2, testUpgrader);
+            componentRegistry.UpgradeComponent(name, owner, layout, 2, TestUpgrader);
 
             mockEntityRegistry.Verify(r => r.GetAllGUIDs(), Times.Once());
             mockEntityRegistry.Verify(r => r.GetEntity(entity.Guid), Times.Once());
@@ -173,7 +173,7 @@ namespace FIVES
         }
 
         [Test]
-        public void shouldGenerateUpgradeEventsInOrder()
+        public void ShouldGenerateUpgradeEventsInOrder()
         {
             // These flags and following callbacks are used to verify that appropriate events are generated in order.
             // For example, upgraded flag is only set when it happens after a started event, but before finished. Later
@@ -209,7 +209,7 @@ namespace FIVES
             entity[name]["s"] = "foobar";
             entity[name]["b"] = false;
 
-            componentRegistry.UpgradeComponent(name, owner, layout, 2, testUpgrader);
+            componentRegistry.UpgradeComponent(name, owner, layout, 2, TestUpgrader);
 
             tester.Verify(t => t.HandleStarted(componentRegistry, 
                 It.Is<ComponentLayoutUpgradeStartedOrFinishedEventArgs>(a => a.componentName == name)), Times.Once());
@@ -225,7 +225,7 @@ namespace FIVES
         }
 
         [Test]
-        public void shouldOnlyUpgradeOutdatedComponents()
+        public void ShouldOnlyUpgradeOutdatedComponents()
         {
             Guid owner = Guid.NewGuid();
             componentRegistry.DefineComponent(name, owner, layout);
@@ -241,7 +241,7 @@ namespace FIVES
             entity[name]["b"] = false;
             entity[name].Version = 2;
 
-            componentRegistry.UpgradeComponent(name, owner, layout, 2, testUpgrader);
+            componentRegistry.UpgradeComponent(name, owner, layout, 2, TestUpgrader);
 
             mockEntityRegistry.Verify(r => r.GetAllGUIDs(), Times.Once());
             mockEntityRegistry.Verify(r => r.GetEntity(entity.Guid), Times.Once());

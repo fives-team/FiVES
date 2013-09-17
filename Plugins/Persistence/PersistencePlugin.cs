@@ -150,7 +150,7 @@ namespace Persistence
         /// Persists the component to database.
         /// </summary>
         /// <param name="component">Component.</param>
-        private void persistComponentToDatabase(Component component) {
+        private void PersistComponentToDatabase(Component component) {
             using(ISession session = SessionFactory.OpenSession()) {
                 var transaction = session.BeginTransaction ();
                 session.SaveOrUpdate (component);
@@ -167,7 +167,7 @@ namespace Persistence
             using(ISession session = SessionFactory.OpenSession())
                 session.Get<ComponentRegistryPersistence> (ComponentRegistry.Instance.RegistryGuid);
             if(persistedRegistry != null)
-                persistedRegistry.registerPersistedComponents ();
+                persistedRegistry.RegisterPersistedComponents ();
 
         }
 

@@ -34,8 +34,8 @@ namespace WebSocketJSON
         public WSJServer(Action<IProtocol> onNewClient)
         {
             NewSessionConnected += (session) => onNewClient(session);
-            NewMessageReceived += (session, value) => session.handleMessage(value);
-            SessionClosed += (session, reason) => session.handleClose(reason);
+            NewMessageReceived += (session, value) => session.HandleMessage(value);
+            SessionClosed += (session, reason) => session.HandleClose(reason);
         }
     }
 }

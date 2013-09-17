@@ -10,19 +10,19 @@ namespace FIVES
         EntityRegistry registry;
 
         [SetUp()]
-        public void init() {
+        public void Init() {
             registry = new EntityRegistry();
         }
 
         [Test()]
-        public void shouldAddEntitites() {
+        public void ShouldAddEntitites() {
             var e1 = new Entity();
             registry.AddEntity(e1);
             Assert.NotNull(registry.GetEntity(e1.Guid));
         }
 
         [Test()]
-        public void shouldRemoveEntities() {
+        public void ShouldRemoveEntities() {
             var e1 = new Entity();
             registry.AddEntity(e1);
             Assert.NotNull(registry.GetEntity(e1.Guid));
@@ -31,7 +31,7 @@ namespace FIVES
         }
 
         [Test()]
-        public void shouldRemoveEntitiesByGuid() {
+        public void ShouldRemoveEntitiesByGuid() {
             var e1 = new Entity();
             registry.AddEntity(e1);
             Assert.NotNull(registry.GetEntity(e1.Guid));
@@ -40,7 +40,7 @@ namespace FIVES
         }
 
         [Test()]
-        public void shouldReturnAllGUIDs() {
+        public void ShouldReturnAllGUIDs() {
             var e1 = new Entity();
             var e2 = new Entity();
             var e3 = new Entity();

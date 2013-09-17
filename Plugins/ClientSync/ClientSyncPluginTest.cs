@@ -10,13 +10,13 @@ namespace ClientSync
         ClientSyncPlugin plugin = new ClientSyncPlugin();
 
         [Test()]
-        public void shouldReturnCorrectName()
+        public void ShouldReturnCorrectName()
         {
             Assert.AreEqual("ClientSync", plugin.GetName());
         }
 
         [Test()]
-        public void shouldReturnCorrectDeps()
+        public void ShouldReturnCorrectDeps()
         {
             Assert.AreEqual(plugin.GetDependencies().Count, 4);
             Assert.Contains("WebSocketJSON", plugin.GetDependencies());

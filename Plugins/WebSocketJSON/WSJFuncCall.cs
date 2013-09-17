@@ -12,9 +12,9 @@ namespace WebSocketJSON
 
     public interface IWSJFuncCall : IFuncCall
     {
-        void handleSuccess(JToken retValue);
-        void handleException(JToken exception);
-        void handleError(string error);
+        void HandleSuccess(JToken retValue);
+        void HandleException(JToken exception);
+        void HandleError(string error);
     }
 
     #endregion
@@ -24,7 +24,7 @@ namespace WebSocketJSON
     /// </summary>
     public class WSJFuncCall : FuncCallBase, IWSJFuncCall
     {
-        protected override object convertResult(object result, Type type)
+        protected override object ConvertResult(object result, Type type)
         {
             if (type == typeof(JToken))
                 return result;
@@ -35,18 +35,18 @@ namespace WebSocketJSON
         /// Handles the successful completion of the call.
         /// </summary>
         /// <param name="retValue">Ret value returned from the call.</param>
-        public void handleSuccess(JToken retValue)
+        public void HandleSuccess(JToken retValue)
         {
-            base.handleSuccess((object)retValue);
+            base.HandleSuccess((object)retValue);
         }
 
         /// <summary>
         /// Handles the exception thrown from the call.
         /// </summary>
         /// <param name="exception">Exception that was thrown.</param>
-        public void handleException(JToken exception)
+        public void HandleException(JToken exception)
         {
-            base.handleException(new Exception(exception.ToString()));
+            base.HandleException(new Exception(exception.ToString()));
         }
     }
     

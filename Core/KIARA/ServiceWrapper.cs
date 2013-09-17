@@ -28,7 +28,7 @@ namespace KIARA
             get
             {
                 if (connection != null)
-                    return connection.generateFuncWrapper(name);
+                    return connection.GenerateFuncWrapper(name);
                 else
                     throw new Error(ErrorCode.CONNECTION_ERROR,
                                     "Connection is not established yet. Please use OnConnected event.");

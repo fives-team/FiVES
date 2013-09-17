@@ -16,11 +16,11 @@ namespace DirectCall
     {
         #region IProtocolFactory implementation
 
-        public void openConnection(Server serverConfig, Context context, Action<IProtocol> onConnected)
+        public void OpenConnection(Server serverConfig, Context context, Action<IProtocol> onConnected)
         {
-            Dictionary<string, Action<IProtocol>> serverList = getServerList(context);
+            Dictionary<string, Action<IProtocol>> serverList = GetServerList(context);
 
-            string id = validateServerConfigAndRetrieveId(serverConfig);
+            string id = ValidateServerConfigAndRetrieveId(serverConfig);
             if (!serverList.ContainsKey(id))
                 throw new Error(ErrorCode.CONNECTION_ERROR, "Server with id '" + id + "' is not started.");
 
@@ -34,18 +34,18 @@ namespace DirectCall
             onConnected(protocol);
         }
 
-        public void startServer(Server serverConfig, Context context, Action<IProtocol> onNewClient)
+        public void StartServer(Server serverConfig, Context context, Action<IProtocol> onNewClient)
         {
-            Dictionary<string, Action<IProtocol>> serverList = getServerList(context);
+            Dictionary<string, Action<IProtocol>> serverList = GetServerList(context);
 
-            string id = validateServerConfigAndRetrieveId(serverConfig);
+            string id = ValidateServerConfigAndRetrieveId(serverConfig);
             if (serverList.ContainsKey(id))
                 throw new Error(ErrorCode.CONNECTION_ERROR, "Server with id '" + id + "' is already started.");
 
             serverList.Add(id, onNewClient);
         }
 
-        private string validateServerConfigAndRetrieveId(Server serverConfig)
+        private string ValidateServerConfigAndRetrieveId(Server serverConfig)
         {
             string protocol = ProtocolUtils.retrieveProtocolSetting<string>(serverConfig, "name", null);
             if (protocol != "direct-call")
@@ -58,7 +58,7 @@ namespace DirectCall
         }
 
 
-        private Dictionary<string, Action<IProtocol>> getServerList(Context context)
+        private Dictionary<string, Action<IProtocol>> GetServerList(Context context)
         {
             if (!context.ProtocolData.ContainsKey("direct-call"))
                 context.ProtocolData["direct-call"] = new Dictionary<string, Action<IProtocol>>();

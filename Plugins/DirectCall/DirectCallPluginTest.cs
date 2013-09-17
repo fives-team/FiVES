@@ -16,19 +16,19 @@ namespace DirectCall
         }
 
         [Test()]
-        public void shouldRegisterDirectCallProtocol()
+        public void ShouldRegisterDirectCallProtocol()
         {
-            Assert.True(ProtocolRegistry.Instance.isRegistered("direct-call"));
+            Assert.True(ProtocolRegistry.Instance.IsRegistered("direct-call"));
         }
 
         [Test()]
-        public void shouldReturnCorrectName()
+        public void ShouldReturnCorrectName()
         {
             Assert.AreEqual("DirectCall", plugin.GetName());
         }
 
         [Test()]
-        public void shouldReturnCorrectDeps()
+        public void ShouldReturnCorrectDeps()
         {
             Assert.IsEmpty(plugin.GetDependencies());
         }

@@ -23,13 +23,13 @@ namespace Persistence
         }
 
         [SetUp()]
-        public void setUpDatabaseTest() {
+        public void SetUpDatabaseTest() {
             entityRegistry = EntityRegistry.Instance;
             componentRegistry = ComponentRegistry.Instance;
         }
 
         [Test()]
-        public void shouldSetupDatabase()
+        public void ShouldSetupDatabase()
         {
             cfg = new Configuration ();
             cfg.Configure ();
@@ -41,7 +41,7 @@ namespace Persistence
         }
 
         [Test()]
-        public void shouldStoreAndRetrieveComponent()
+        public void ShouldStoreAndRetrieveComponent()
         {
             ComponentLayout layout = new ComponentLayout();
             layout.AddAttribute<int>("IntAttribute");
@@ -69,15 +69,12 @@ namespace Persistence
             entityRegistry.RemoveEntity (entity.Guid);
 
             plugin.RetrieveEntitiesFromDatabase ();
-
-			Entity storedEntity = entityRegistry.GetEntity(entity.Guid);
-			Assert.IsTrue ((int) entity["myComponent"]["IntAttribute"] == 42);
-			Assert.IsTrue ((string) entity["myComponent"]["StringAttribute"] == "Hello World!");
+            Entity storedEntity = entityRegistry.GetEntity(entity.Guid);            Assert.IsTrue ((int) entity["myComponent"]["IntAttribute"] == 42);            Assert.IsTrue ((string) entity["myComponent"]["StringAttribute"] == "Hello World!");
             Assert.AreEqual(1, storedEntity["myComponent"].Version);
         }
 
         [Test()]
-        public void shouldStoreAndRetrieveEntities()
+        public void ShouldStoreAndRetrieveEntities()
         {
             Entity entity = new Entity();
             Entity childEntity = new Entity ();
@@ -111,7 +108,7 @@ namespace Persistence
         }
 
         [Test()]
-        public void shouldStoreAndRetrieveComponentRegistry ()
+        public void ShouldStoreAndRetrieveComponentRegistry ()
         {
             if(!componentRegistry.IsRegistered("myComponent"))
             {
@@ -122,7 +119,7 @@ namespace Persistence
             }
 
             ComponentRegistryPersistence persist = new ComponentRegistryPersistence ();
-            persist.getComponentsFromRegistry ();
+            persist.GetComponentsFromRegistry ();
 
             var session = sessionFactory.OpenSession ();
             var trans = session.BeginTransaction ();
@@ -136,7 +133,7 @@ namespace Persistence
         }
 
         [Test()]
-        public void shouldDeleteEntity()
+        public void ShouldDeleteEntity()
         {
             Entity entity = new Entity();
             Entity childEntity = new Entity ();
@@ -165,7 +162,7 @@ namespace Persistence
             Assert.True(!guidsInRegistry.Contains(childEntity.Guid));
         }
 
-/*        public void shouldPersistUpgradedComponentLayout() {
+/*        public void ShouldPersistUpgradedComponentLayout() {
 
             ComponentLayout layout_1 = new ComponentLayout ();
             ComponentLayout layout_2 = new ComponentLayout ();
@@ -192,7 +189,7 @@ namespace Persistence
         }
 */
         [Test()]
-        public void shouldPersistUpgradedEntity() {
+        public void ShouldPersistUpgradedEntity() {
 
             ComponentLayout layout = new ComponentLayout ();
             layout.AddAttribute<int> ("i");
@@ -211,7 +208,7 @@ namespace Persistence
             entity[name]["s"] = "foobar";
             entity[name]["b"] = false;
 
-            componentRegistry.UpgradeComponent(name, plugin.pluginGuid, layout, 2, testUpgrader);
+            componentRegistry.UpgradeComponent(name, plugin.pluginGuid, layout, 2, TestUpgrader);
             entityRegistry.OnEntityRemoved -= plugin.OnEntityRemoved;
             entityRegistry.RemoveEntity (entityGuid);
 
@@ -229,7 +226,7 @@ namespace Persistence
 
         }
 
-        public static void testUpgrader(Component oldComponent, ref Component newComponent) {
+        public static void TestUpgrader(Component oldComponent, ref Component newComponent) {
             newComponent["f"] = (float)(int)oldComponent["i"];
             newComponent["i"] = (int)(float)oldComponent["f"];
             newComponent["b"] = oldComponent["b"];

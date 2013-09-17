@@ -13,7 +13,7 @@ namespace KIARA
         Mock<IProtocol> protocolMock;
 
         [SetUp()]
-        public void init()
+        public void Init()
         {
             context = new Context();
             service = new ServiceWrapper(context);
@@ -22,15 +22,15 @@ namespace KIARA
         }
 
         [Test()]
-        public void shouldGenerateCorrectMethodWrappers()
+        public void ShouldGenerateCorrectMethodWrappers()
         {
             service.HandleConnected(connection);
             service["foobar"](123);
-            protocolMock.Verify(p => p.callFunc("foobar", 123), Times.Once());
+            protocolMock.Verify(p => p.CallFunc("foobar", 123), Times.Once());
         }
 
         [Test()]
-        public void shouldInvokeOnConnected()
+        public void ShouldInvokeOnConnected()
         {
             bool connected = false;
             service.OnConnected += (c) => connected = true;
@@ -39,7 +39,7 @@ namespace KIARA
         }
 
         [Test()]
-        public void shouldThrowExceptionOnGetterBeforeConnected()
+        public void ShouldThrowExceptionOnGetterBeforeConnected()
         {
             Assert.Throws<Error>(() => service["foobar"]());
         }

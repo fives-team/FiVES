@@ -24,7 +24,7 @@ namespace Persistence
             this.OwnerRegisteredComponents = new Dictionary<string, ComponentOwnerLayout> ();
         }
 
-        internal void registerPersistedComponents()
+        internal void RegisterPersistedComponents()
         {
             foreach (KeyValuePair<string, ComponentOwnerLayout> definitionPair in this.OwnerRegisteredComponents) {
                 ComponentOwnerLayout currentDefinition = definitionPair.Value;
@@ -32,20 +32,20 @@ namespace Persistence
             }
         }
 
-        internal void getComponentsFromRegistry()
+        internal void GetComponentsFromRegistry()
         {
             string[] definedComponentNames = Registry.RegisteredComponentNames;
             foreach (string componentName in definedComponentNames) {
                 ComponentOwnerLayout ownedLayout = new ComponentOwnerLayout ();
 
                 ownedLayout.Owner = Registry.GetComponentOwner (componentName);
-                ownedLayout.Layout = this.createLayoutToPersistForComponent (componentName);
+                ownedLayout.Layout = this.CreateLayoutToPersistForComponent (componentName);
                 ownedLayout.Version = Registry.GetComponentVersion (componentName);
                 this.OwnerRegisteredComponents [componentName] = ownedLayout;
             }
         }
 
-        private ComponentLayout createLayoutToPersistForComponent(string componentName)
+        private ComponentLayout CreateLayoutToPersistForComponent(string componentName)
         {
             ComponentLayout layout = new ComponentLayout ();
             string[] registeredAttributes = Registry.GetRegisteredAttributesOfComponent (componentName);

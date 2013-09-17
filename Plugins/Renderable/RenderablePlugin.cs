@@ -20,10 +20,10 @@ namespace Renderable
 
         public void Initialize()
         {
-            registerComponent ();
+            RegisterComponent ();
         }
 
-        private void registerComponent()
+        private void RegisterComponent()
         {
             ComponentLayout rendereableComponentLayout = new ComponentLayout ();
             rendereableComponentLayout.AddAttribute<string>("uri");

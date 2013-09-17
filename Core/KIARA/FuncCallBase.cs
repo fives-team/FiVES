@@ -12,16 +12,16 @@ namespace KIARA
     {
         #region IFuncCall implementation
 
-        public IFuncCall onSuccess<T>(Action<T> handler)
+        public IFuncCall OnSuccess<T>(Action<T> handler)
         {
             if (state == State.InProgress)
                 successHandlers.Add(handler);
             else if (state == State.Success)
-                handler((T)convertResult(cachedResult, typeof(T)));
+                handler((T)ConvertResult(cachedResult, typeof(T)));
             return this;
         }
 
-        public IFuncCall onSuccess(Action handler)
+        public IFuncCall OnSuccess(Action handler)
         {
             if (state == State.InProgress)
                 successHandlers.Add(handler);
@@ -30,7 +30,7 @@ namespace KIARA
             return this;
         }
 
-        public IFuncCall onException(Action<Exception> handler)
+        public IFuncCall OnException(Action<Exception> handler)
         {
             if (state == State.InProgress)
                 exceptionHandlers.Add(handler);
@@ -39,7 +39,7 @@ namespace KIARA
             return this;
         }
 
-        public IFuncCall onError(Action<string> handler)
+        public IFuncCall OnError(Action<string> handler)
         {
             if (state == State.InProgress)
                 errorHandlers.Add(handler);
@@ -48,15 +48,15 @@ namespace KIARA
             return this;
         }
 
-        public T wait<T>(int millisecondsTimeout = -1)
+        public T Wait<T>(int millisecondsTimeout = -1)
         {
             T result = default(T);
-            onSuccess<T>(delegate (T value) { result = value; });
-            wait(millisecondsTimeout);
+            OnSuccess<T>(delegate (T value) { result = value; });
+            Wait(millisecondsTimeout);
             return result;
         }
 
-        public void wait(int millisecondsTimeout = -1)
+        public void Wait(int millisecondsTimeout = -1)
         {
             if (millisecondsTimeout == -1)
                 callFinished.WaitOne();
@@ -78,7 +78,7 @@ namespace KIARA
         /// is passed into success handlers.
         /// </summary>
         /// <param name="retValue">Value returned by the call.</param>
-        public virtual void handleSuccess(object retValue)
+        public virtual void HandleSuccess(object retValue)
         {
             state = State.Success;
             cachedResult = retValue;
@@ -89,7 +89,7 @@ namespace KIARA
                     handler.DynamicInvoke();
                 } else {
                     Type argType = handler.Method.GetParameters()[0].GetType();
-                    handler.DynamicInvoke(convertResult(retValue, argType));
+                    handler.DynamicInvoke(ConvertResult(retValue, argType));
                 }
             }
 
@@ -102,7 +102,7 @@ namespace KIARA
         /// <paramref name="exception"/> is passed into exception handlers.
         /// </summary>
         /// <param name="exception">Exception that was thrown.</param>
-        public virtual void handleException(Exception exception)
+        public virtual void HandleException(Exception exception)
         {
             state = State.Exception;
             cachedResult = exception;
@@ -119,7 +119,7 @@ namespace KIARA
         /// is passed into error handlers.
         /// </summary>
         /// <param name="reason">The reason for the error.</param>
-        public virtual void handleError(string reason)
+        public virtual void HandleError(string reason)
         {
             state = State.Error;
             cachedResult = reason;
@@ -137,7 +137,7 @@ namespace KIARA
         /// <returns>The converted result.</returns>
         /// <param name="result">Result.</param>
         /// <param name="type">Type to which the result must be converted.</param>
-        protected abstract object convertResult(object result, Type type);
+        protected abstract object ConvertResult(object result, Type type);
 
         /// <summary>
         /// The registered success handlers.

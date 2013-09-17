@@ -29,11 +29,11 @@ namespace KIARA
         /// Loads an IDL definition file at <paramref name="uri"/> into the connection.
         /// </summary>
         /// <param name="uri">URI of the IDL definition file.</param>
-        public void loadIDL(string uri)
+        public void LoadIDL(string uri)
         {
             string contents = webClient.DownloadString(uri);
             // TODO: Parse the IDL and pass parsed structure into processIDL.
-            protocol.processIDL(contents);
+            protocol.ProcessIDL(contents);
         }
 
         /// <summary>
@@ -43,11 +43,11 @@ namespace KIARA
         /// <returns>The generated func wrapper.</returns>
         /// <param name="funcName">Name of the function to be wrapped.</param>
         /// <param name="typeMapping">Type mapping string.</param>
-        public FuncWrapper generateFuncWrapper(string funcName, string typeMapping = "")
+        public FuncWrapper GenerateFuncWrapper(string funcName, string typeMapping = "")
         {
             // TODO: implement type mapping and add respective tests
             return (FuncWrapper) delegate(object[] args) {
-                return protocol.callFunc(funcName, args);
+                return protocol.CallFunc(funcName, args);
             };
         }
 
@@ -58,10 +58,10 @@ namespace KIARA
         /// <param name="funcName">Name of the implemented function.</param>
         /// <param name="handler">Handler to be invoked upon remote call.</param>
         /// <param name="typeMapping">Type mapping string.</param>
-        public void registerFuncImplementation(string funcName, Delegate handler, string typeMapping = "")
+        public void RegisterFuncImplementation(string funcName, Delegate handler, string typeMapping = "")
         {
             // TODO: implement type mapping and add respective tests
-            protocol.registerHandler(funcName, handler);
+            protocol.RegisterHandler(funcName, handler);
         }
 
         private IProtocol protocol;

@@ -57,12 +57,12 @@ namespace WebSocketJSON
 
         #region IProtocol implementation
 
-        public void processIDL(string parsedIDL)
+        public void ProcessIDL(string parsedIDL)
         {
             // TODO
         }
 
-        public IFuncCall callFunc(string name, params object[] args)
+        public IFuncCall CallFunc(string name, params object[] args)
         {
             int callID = nextCallID++;
             List<object> callMessage = new List<object>();
@@ -97,16 +97,16 @@ namespace WebSocketJSON
             string serializedMessage = JsonConvert.SerializeObject(callMessage);
             Send(serializedMessage);
 
-            if (isOneWay(name))
+            if (IsOneWay(name))
                 return null;
 
-            IWSJFuncCall callObj = wsjFuncCallFactory.construct();
+            IWSJFuncCall callObj = wsjFuncCallFactory.Construct();
 
             activeCalls.Add(callID, callObj);
             return callObj;
         }
 
-        public void registerHandler(string name, Delegate handler)
+        public void RegisterHandler(string name, Delegate handler)
         {
             if (registeredFunctions.ContainsKey(name))
                 throw new HandlerAlreadyRegistered("Handler with " + name + " is already registered.");
@@ -120,23 +120,23 @@ namespace WebSocketJSON
         /// Handles the close event. All calls are completely with an error.
         /// </summary>
         /// <param name="reason">The reason for the close event.</param>
-        public void handleClose(SuperSocket.SocketBase.CloseReason reason)
+        public void HandleClose(SuperSocket.SocketBase.CloseReason reason)
         {
             foreach (var call in activeCalls)
-                call.Value.handleError("Connection closed. Reason: " + reason.ToString());
+                call.Value.HandleError("Connection closed. Reason: " + reason.ToString());
             activeCalls.Clear();
         }
 
-        private void handleCallReply(List<JToken> data)
+        private void HandleCallReply(List<JToken> data)
         {
             int callID = Convert.ToInt32(data[1]);
             if (activeCalls.ContainsKey(callID)) {
                 bool success = data[2].ToObject<bool>();
                 JToken result = data.Count == 4 ? data[3] : new JValue((object)null);
                 if (success)
-                    activeCalls[callID].handleSuccess(result);
+                    activeCalls[callID].HandleSuccess(result);
                 else
-                    activeCalls[callID].handleException(result);
+                    activeCalls[callID].HandleException(result);
                 activeCalls.Remove(callID);
             } else {
                 // TODO: Report error to another side.
@@ -145,7 +145,7 @@ namespace WebSocketJSON
         }
 
         public delegate object GenericWrapper(params object[] arguments);
-        private void handleCall(List<JToken> data)
+        private void HandleCall(List<JToken> data)
         {
             int callID = data[1].ToObject<int>();
             string methodName = data[2].ToObject<string>();
@@ -165,7 +165,7 @@ namespace WebSocketJSON
                             if (paramInfo[i].ParameterType == typeof(FuncWrapper)) {
                                 var remoteCallbackUUID = args[i].ToObject<string>();
                                 parameters[i] = (FuncWrapper)delegate(object[] arguments) {
-                                    return callFunc(remoteCallbackUUID, arguments);
+                                    return CallFunc(remoteCallbackUUID, arguments);
                                 };
                             } else if (typeof(Delegate).IsAssignableFrom(paramInfo[i].ParameterType)) {
                                 string funcName = args[i].ToObject<string>();
@@ -173,13 +173,13 @@ namespace WebSocketJSON
 
                                 var genericWrapper = new GenericWrapper(arguments => {
                                     if (retType == typeof(void)) {
-                                        callFunc(funcName, arguments).wait();
+                                        CallFunc(funcName, arguments).Wait();
                                         return null;
                                     } else {
                                         object result = null;
-                                        callFunc(funcName, arguments)
-                                          .onSuccess(delegate(JToken res) { result = res.ToObject(retType); })
-                                          .wait();
+                                        CallFunc(funcName, arguments)
+                                          .OnSuccess(delegate(JToken res) { result = res.ToObject(retType); })
+                                          .Wait();
                                         return result;
                                     }
                                 });
@@ -209,7 +209,7 @@ namespace WebSocketJSON
                     success = false;
                 }
 
-                if (!isOneWay(methodName)) {
+                if (!IsOneWay(methodName)) {
                     // Send call-reply message.
                     List<object> callReplyMessage = new List<object>();
                     callReplyMessage.Add("call-reply");
@@ -231,7 +231,7 @@ namespace WebSocketJSON
         /// Handles an incoming message.
         /// </summary>
         /// <param name="message">The incoming message.</param>
-        public void handleMessage(string message)
+        public void HandleMessage(string message)
         {
             List<JToken> data = null;
 
@@ -245,14 +245,14 @@ namespace WebSocketJSON
 
             string msgType = data[0].ToObject<string>();
             if (msgType == "call-reply")
-                handleCallReply(data);
+                HandleCallReply(data);
             else if (msgType == "call")
-                handleCall(data);
+                HandleCall(data);
             else
                 throw new Error(ErrorCode.CONNECTION_ERROR, "Unknown message type: " + msgType);
         }
 
-        private bool isOneWay(string qualifiedMethodName)
+        private bool IsOneWay(string qualifiedMethodName)
         {
             List<string> onewayMethods = new List<string> {
                 // Add new one-way calls here

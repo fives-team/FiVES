@@ -39,9 +39,9 @@ namespace Scripting
         /// </summary>
         public void Initialize()
         {
-            var pluginService = ServiceFactory.createByName("scripting", ContextFactory.getContext("inter-plugin"));
-            pluginService["registerGlobalObject"] = (Action<string, object>)registerGlobalObject;
-            pluginService["addNewContextHandler"] = (Action<Action<IJSContext>>)addNewContextHandler;
+            var pluginService = ServiceFactory.CreateByName("scripting", ContextFactory.GetContext("inter-plugin"));
+            pluginService["registerGlobalObject"] = (Action<string, object>)RegisterGlobalObject;
+            pluginService["addNewContextHandler"] = (Action<Action<IJSContext>>)AddNewContextHandler;
 
             // Register 'scripting' component.
             ComponentLayout layout = new ComponentLayout();
@@ -50,12 +50,12 @@ namespace Scripting
             layout.AddAttribute<string> (clientScriptAttributeName);
             ComponentRegistry.Instance.DefineComponent(scriptingComponentName, pluginGUID, layout);
 
-            EntityRegistry.Instance.OnEntityAdded += handleOnEntityAdded;
+            EntityRegistry.Instance.OnEntityAdded += HandleOnEntityAdded;
 
             // Register event handlers for all entities that were created before this plugin was loaded.
             var guids = EntityRegistry.Instance.GetAllGUIDs();
             foreach (var guid in guids)
-                handleOnEntityAdded(EntityRegistry.Instance, new EntityAddedOrRemovedEventArgs(guid));
+                HandleOnEntityAdded(EntityRegistry.Instance, new EntityAddedOrRemovedEventArgs(guid));
 
             // FIXME: This is for debugging purposes only. Remove in release.
             registeredGlobalObjects["console"] = new CLRConsole();
@@ -70,24 +70,24 @@ namespace Scripting
         private const string serverScriptAttributeName = "serverScript";
         private const string clientScriptAttributeName = "clientScript";
 
-        private void handleOnEntityAdded(object sender, EntityAddedOrRemovedEventArgs e)
+        private void HandleOnEntityAdded(object sender, EntityAddedOrRemovedEventArgs e)
         {
             Entity newEntity = EntityRegistry.Instance.GetEntity(e.elementId);
             // FIXME: This is not very efficient. Would be nice to be triggered only when anything in "scripting" 
             // component is changed, but without the need to create one. Essentially we need an event
             // OnComponentCreated.
-            newEntity.OnAttributeInComponentChanged += handleOnAttributeInComponentChanged;
-            initEntityContext(newEntity);
+            newEntity.OnAttributeInComponentChanged += HandleOnAttributeInComponentChanged;
+            InitEntityContext(newEntity);
         }
 
-        private void handleOnAttributeInComponentChanged(object sender, AttributeInComponentEventArgs e)
+        private void HandleOnAttributeInComponentChanged(object sender, AttributeInComponentEventArgs e)
         {
             if (e.componentName == scriptingComponentName)
-                initEntityContext((Entity)sender);
+                InitEntityContext((Entity)sender);
         }
 
 
-        private void initEntityContext(Entity entity)
+        private void InitEntityContext(Entity entity)
         {
             // Remove previous context if any.
             entityContexts.Remove(entity.Guid);
@@ -144,14 +144,14 @@ namespace Scripting
             };
         }
 
-        private void registerGlobalObject(string name, object csObject)
+        private void RegisterGlobalObject(string name, object csObject)
         {
             if (registeredGlobalObjects.ContainsKey(name))
                 throw new Exception("The object with " + name + " is already registered");
             registeredGlobalObjects[name] = csObject;
         }
 
-        private void addNewContextHandler(Action<IJSContext> handler)
+        private void AddNewContextHandler(Action<IJSContext> handler)
         {
             newContextHandlers.Add(handler);
         }

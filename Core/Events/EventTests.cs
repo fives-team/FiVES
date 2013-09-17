@@ -14,13 +14,13 @@ namespace Events
         }
 
         [SetUp()]
-        public void setUpTests()
+        public void SetUpTests()
         {
             eventWasRaised = false;
         }
 
         [Test()]
-        public void shouldRaiseNewEntityEventWithCorrectGuid()
+        public void ShouldRaiseNewEntityEventWithCorrectGuid()
         {
             Entity newEntity = new Entity ();
             bool wasRaised = false;
@@ -33,7 +33,7 @@ namespace Events
         }
 
         [Test()]
-        public void shouldRaiseEntityRemovedWithCorrectGuid()
+        public void ShouldRaiseEntityRemovedWithCorrectGuid()
         {
             Entity newEntity = new Entity ();
             bool wasRaised = false;
@@ -47,20 +47,19 @@ namespace Events
         }
 
         [Test()]
-        public void shouldRaiseAttributeChanged()
+        public void ShouldRaiseAttributeChanged()
         {
             ComponentLayout layout = new ComponentLayout ();
             layout.AddAttribute<int> ("a");
             ComponentRegistry.Instance.DefineComponent ("MyComponent", new Guid (), layout);
             Entity newEntity = new Entity ();
 
-            Component.AttributeChanged attributeChanged = new Component.AttributeChanged (attributeChangedHandler);
-            newEntity["MyComponent"].OnAttributeChanged += attributeChanged;
-			newEntity["MyComponent"]["a"] = 42;
+            Component.AttributeChanged attributeChanged = new Component.AttributeChanged (AttributeChangedHandler);
+            newEntity["MyComponent"].OnAttributeChanged += attributeChanged;            newEntity["MyComponent"]["a"] = 42;
             Assert.IsTrue (eventWasRaised);
         }
 
-        private void attributeChangedHandler(Object sender, AttributeChangedEventArgs e) {
+        private void AttributeChangedHandler(Object sender, AttributeChangedEventArgs e) {
             eventWasRaised = true;
             Assert.AreEqual(e.attributeName, "a");
             Assert.AreEqual(e.value, 42);
@@ -68,38 +67,38 @@ namespace Events
 
 
         [Test()]
-        public void shouldRaiseComponentCreated()
+        public void ShouldRaiseComponentCreated()
         {
             ComponentLayout layout = new ComponentLayout ();
             layout.AddAttribute<int> ("a");
             ComponentRegistry.Instance.DefineComponent ("MyComponent", new Guid (), layout);
             Entity newEntity = new Entity ();
-            newEntity.OnComponentCreated += new Entity.ComponentCreated(componentCreatedEventHandler);
+            newEntity.OnComponentCreated += new Entity.ComponentCreated(ComponentCreatedEventHandler);
             newEntity["MyComponent"]["a"] = 5;
             Assert.IsTrue (eventWasRaised);
         }
 
-        private void componentCreatedEventHandler(Object sender, ComponentCreatedEventArgs e)
+        private void ComponentCreatedEventHandler(Object sender, ComponentCreatedEventArgs e)
         {
            if (e.newComponentName == "MyComponent")
                 eventWasRaised = true;
         }
 
         [Test()]
-        public void shouldRaiseAttributeInComponentChanged()
+        public void ShouldRaiseAttributeInComponentChanged()
         {
             ComponentLayout layout = new ComponentLayout ();
             layout.AddAttribute<int> ("a");
             ComponentRegistry.Instance.DefineComponent ("MyComponent", new Guid (), layout);
             Entity newEntity = new Entity ();
 
-            Entity.AttributeInComponentChanged attributeInComponentChanged = new Entity.AttributeInComponentChanged (attributeInComponentChangedHandler);
+            Entity.AttributeInComponentChanged attributeInComponentChanged = new Entity.AttributeInComponentChanged (AttributeInComponentChangedHandler);
             newEntity.OnAttributeInComponentChanged += attributeInComponentChanged;                         
             newEntity["MyComponent"]["a"] = 42;
             Assert.IsTrue (eventWasRaised);
         }
 
-        private void attributeInComponentChangedHandler(Object sender, AttributeInComponentEventArgs e) {
+        private void AttributeInComponentChangedHandler(Object sender, AttributeInComponentEventArgs e) {
             eventWasRaised = true;
             Assert.AreEqual(e.componentName, "MyComponent");
             Assert.AreEqual(e.attributeName, "a");

@@ -9,39 +9,39 @@ namespace DirectCall
     public class DCProtocolTest
     {
         public interface IHandlers {
-            void function1(int x);
+            void Function1(int x);
         }
 
         private DCProtocol protocol;
         private Mock<IHandlers> mockHandlers;
 
         [SetUp()]
-        public void init()
+        public void Init()
         {
             protocol = new DCProtocol();
             mockHandlers = new Mock<IHandlers>();
         }
 
         [Test()]
-        public void shouldCallRegisteredFunctions()
+        public void ShouldCallRegisteredFunctions()
         {
-            protocol.registerHandler("function1", (Action<int>)mockHandlers.Object.function1);
-            protocol.callFunc("function1", 42);
-            mockHandlers.Verify(h => h.function1(42), Times.Once());
+            protocol.RegisterHandler("function1", (Action<int>)mockHandlers.Object.Function1);
+            protocol.CallFunc("function1", 42);
+            mockHandlers.Verify(h => h.Function1(42), Times.Once());
         }
 
         [Test()]
-        public void shouldFailToCallUnregisteredFunctions()
+        public void ShouldFailToCallUnregisteredFunctions()
         {
-            Assert.Throws<Error>(() => protocol.callFunc("unregisteredFunc"));
+            Assert.Throws<Error>(() => protocol.CallFunc("unregisteredFunc"));
         }
 
         [Test()]
-        public void shouldFailToReregisterFunction()
+        public void ShouldFailToReregisterFunction()
         {
-            protocol.registerHandler("function1", (Action<int>)mockHandlers.Object.function1);
+            protocol.RegisterHandler("function1", (Action<int>)mockHandlers.Object.Function1);
             Assert.Throws<Error>(
-                () => protocol.registerHandler("function1", (Action<int>)mockHandlers.Object.function1));
+                () => protocol.RegisterHandler("function1", (Action<int>)mockHandlers.Object.Function1));
         }
 
         // TODO: Should process IDL (when implemented).

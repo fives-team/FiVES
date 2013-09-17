@@ -10,9 +10,9 @@ namespace KIARA
         ///  <returns>Created service.</returns>
         /// <param name="name">The name of the service.</param>
         /// <param name="context">The context.</param>
-        public static ServiceImpl createByName(string name, Context context)
+        public static ServiceImpl CreateByName(string name, Context context)
         {
-            return createByURI(createConfigDataURI(name, context), context);
+            return CreateByURI(CreateConfigDataURI(name, context), context);
         }
 
         /// <summary>
@@ -20,9 +20,9 @@ namespace KIARA
         /// </summary>
         /// <returns>Created service.</returns>
         /// <param name="configURI">Configuration URI.</param>
-        public static ServiceImpl createByURI(string configURI)
+        public static ServiceImpl CreateByURI(string configURI)
         {
-            return createByURI(configURI, Context.GlobalContext);
+            return CreateByURI(configURI, Context.GlobalContext);
         }
 
         /// <summary>
@@ -32,10 +32,10 @@ namespace KIARA
         /// <returns>Created service.</returns>
         /// <param name="configURI">Configuration URI.</param>
         /// <param name="context">The context.</param>
-        public static ServiceImpl createByURI(string configURI, Context context)
+        public static ServiceImpl CreateByURI(string configURI, Context context)
         {
             ServiceImpl service = new ServiceImpl(context);
-            context.startServer(configURI, service.HandleNewClient);
+            context.StartServer(configURI, service.HandleNewClient);
             return service;
         }
 
@@ -46,15 +46,15 @@ namespace KIARA
         /// <returns>Discovered service.</returns>
         /// <param name="name">Service name.</param>
         /// <param name="context">The context.</param>
-        public static ServiceWrapper discoverByName(string name, Context context)
+        public static ServiceWrapper DiscoverByName(string name, Context context)
         {
-            var uri = createConfigDataURI(name, context);
+            var uri = CreateConfigDataURI(name, context);
             ServiceWrapper service = new ServiceWrapper(context);
-            context.openConnection(uri, service.HandleConnected);
+            context.OpenConnection(uri, service.HandleConnected);
             return service;
         }
 
-        private static string createConfigDataURI(string name, Context context)
+        private static string CreateConfigDataURI(string name, Context context)
         {
             string config = String.Format(context.configTemplate, name);
             byte[] configBytes = System.Text.Encoding.ASCII.GetBytes(config);

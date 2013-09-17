@@ -9,7 +9,7 @@ namespace Scripting
 {
     public class CLRConsole
     {
-        public void log(string s)
+        public void Log(string s)
         {
             Console.WriteLine(s);
         }

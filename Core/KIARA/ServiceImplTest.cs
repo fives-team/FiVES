@@ -13,7 +13,7 @@ namespace KIARA
         Mock<IProtocol> protocolMock;
 
         [SetUp()]
-        public void init()
+        public void Init()
         {
             context = new Context();
             service = new ServiceImpl(context);
@@ -22,7 +22,7 @@ namespace KIARA
         }
 
         [Test()]
-        public void shouldInvokeOnNewClient()
+        public void ShouldInvokeOnNewClient()
         {
             int numConnectedClients =  0;
             service.OnNewClient += (c) => numConnectedClients++;
@@ -31,7 +31,7 @@ namespace KIARA
         }
 
         [Test()]
-        public void shouldRegisterMethodsForNewConnections()
+        public void ShouldRegisterMethodsForNewConnections()
         {
             Delegate d1 = (Action) delegate {};
             Delegate d2 = (Func<string, int>) delegate(string arg) { return 42; };
@@ -39,8 +39,8 @@ namespace KIARA
             service["foobar"] = d1;
             service["barfoo"] = d2;
             service.HandleNewClient(connection);
-            protocolMock.Verify(p => p.registerHandler("foobar", d1));
-            protocolMock.Verify(p => p.registerHandler("barfoo", d2));
+            protocolMock.Verify(p => p.RegisterHandler("foobar", d1));
+            protocolMock.Verify(p => p.RegisterHandler("barfoo", d2));
         }
     }
 }

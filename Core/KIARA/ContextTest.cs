@@ -31,7 +31,7 @@ namespace KIARA
         Context context;
 
         [SetUp()]
-        public void init()
+        public void Init()
         {
             mockProtocolFactory = new Mock<IProtocolFactory>();
             mockProtocolRegistry = new Mock<IProtocolRegistry>();
@@ -42,79 +42,79 @@ namespace KIARA
                 .Setup(client => client.DownloadString(configURL))
                 .Returns(testConfig);
             mockProtocolRegistry
-                .Setup(registry => registry.isRegistered("test-protocol"))
+                .Setup(registry => registry.IsRegistered("test-protocol"))
                 .Returns(false);
             mockProtocolRegistry
-                .Setup(registry => registry.isRegistered("test-protocol-2"))
+                .Setup(registry => registry.IsRegistered("test-protocol-2"))
                 .Returns(true);
             mockProtocolRegistry
-                .Setup(registry => registry.getProtocolFactory("test-protocol-2"))
+                .Setup(registry => registry.GetProtocolFactory("test-protocol-2"))
                 .Returns(mockProtocolFactory.Object);
 
             context = new Context(mockProtocolRegistry.Object, mockWebClient.Object);
         }
 
         [Test()]
-        public void shouldRetrieveConfigOnConnect()
+        public void ShouldRetrieveConfigOnConnect()
         {
-            context.openConnection(configURL, callback);
+            context.OpenConnection(configURL, callback);
             mockWebClient.Verify(client => client.DownloadString(configURL), Times.Once());
         }
 
         [Test()]
-        public void shouldRetrieveConfigOnStartServer()
+        public void ShouldRetrieveConfigOnStartServer()
         {
-            context.startServer(configURL, callback);
+            context.StartServer(configURL, callback);
             mockWebClient.Verify(client => client.DownloadString(configURL), Times.Once());
         }
 
         [Test()]
-        public void shouldSearchForSupportedServer()
+        public void ShouldSearchForSupportedServer()
         {
-            context.openConnection(configURL, callback);
-            mockProtocolRegistry.Verify(registry => registry.isRegistered("test-protocol"), Times.Once());
-            mockProtocolRegistry.Verify(registry => registry.isRegistered("test-protocol-2"), Times.Once());
-            mockProtocolRegistry.Verify(registry => registry.getProtocolFactory("test-protocol-2"), Times.Once());
+            context.OpenConnection(configURL, callback);
+            mockProtocolRegistry.Verify(registry => registry.IsRegistered("test-protocol"), Times.Once());
+            mockProtocolRegistry.Verify(registry => registry.IsRegistered("test-protocol-2"), Times.Once());
+            mockProtocolRegistry.Verify(registry => registry.GetProtocolFactory("test-protocol-2"), Times.Once());
         }
 
         [Test()]
-        public void shouldChooseServerAccordingToTheFragment()
+        public void ShouldChooseServerAccordingToTheFragment()
         {
-            context.openConnection(configURL + "#1", callback);
-            mockProtocolRegistry.Verify(registry => registry.isRegistered("test-protocol"), Times.Never());
-            mockProtocolRegistry.Verify(registry => registry.isRegistered("test-protocol-2"), Times.Once());
-            mockProtocolRegistry.Verify(registry => registry.getProtocolFactory("test-protocol-2"), Times.Once());
+            context.OpenConnection(configURL + "#1", callback);
+            mockProtocolRegistry.Verify(registry => registry.IsRegistered("test-protocol"), Times.Never());
+            mockProtocolRegistry.Verify(registry => registry.IsRegistered("test-protocol-2"), Times.Once());
+            mockProtocolRegistry.Verify(registry => registry.GetProtocolFactory("test-protocol-2"), Times.Once());
         }
 
         [Test()]
-        public void shouldOpenConnectionToTheServer()
+        public void ShouldOpenConnectionToTheServer()
         {
-            context.openConnection(configURL, callback);
-            mockProtocolFactory.Verify(factory => factory.openConnection(It.IsAny<Server>(),
+            context.OpenConnection(configURL, callback);
+            mockProtocolFactory.Verify(factory => factory.OpenConnection(It.IsAny<Server>(),
                                                                          context,
                                                                          It.IsAny<Action<IProtocol>>()), Times.Once());
         }
 
         [Test()]
-        public void shouldStartServer()
+        public void ShouldStartServer()
         {
-            context.startServer(configURL, callback);
-            mockProtocolFactory.Verify(factory => factory.startServer(It.IsAny<Server>(), 
+            context.StartServer(configURL, callback);
+            mockProtocolFactory.Verify(factory => factory.StartServer(It.IsAny<Server>(), 
                                                                       context,
                                                                       It.IsAny<Action<IProtocol>>()), Times.Once());
         }
 
         [Test()]
-        public void shouldStoreAndReturnProtocolData()
+        public void ShouldStoreAndReturnProtocolData()
         {
             context.ProtocolData["test-protocol-2"] = 42;
             Assert.AreEqual(42, context.ProtocolData["test-protocol-2"]);
         }
 
         [Test()]
-        public void shouldUseHintAsConfigTemplate()
+        public void ShouldUseHintAsConfigTemplate()
         {
-            context.initialize("test {0} template");
+            context.Initialize("test {0} template");
             Assert.AreEqual("test {0} template", context.configTemplate);
         }
     }

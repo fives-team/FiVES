@@ -16,13 +16,13 @@ namespace WebSocketJSON
 
         #region IProtocolFactory implementation
 
-        public void openConnection(Server serverConfig, Context context, Action<IProtocol> onConnected)
+        public void OpenConnection(Server serverConfig, Context context, Action<IProtocol> onConnected)
         {
             // TODO
             throw new NotImplementedException();
         }
 
-        public void startServer(Server serverConfig, Context context, Action<IProtocol> onNewClient)
+        public void StartServer(Server serverConfig, Context context, Action<IProtocol> onNewClient)
         {
             string protocol = ProtocolUtils.retrieveProtocolSetting<string>(serverConfig, "name", null);
             if (protocol != "websocket-json")
@@ -31,7 +31,7 @@ namespace WebSocketJSON
             int port = ProtocolUtils.retrieveProtocolSetting(serverConfig, "port", 34837);
             string ip = ProtocolUtils.retrieveProtocolSetting(serverConfig, "ip", "Any");
 
-            IWSJServer server = wsjServerFactory.construct(onNewClient);
+            IWSJServer server = wsjServerFactory.Construct(onNewClient);
             server.Setup(ip, port);
             server.Start();
         }
