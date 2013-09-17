@@ -22,23 +22,23 @@ namespace Avatar
 
         public void Initialize ()
         {
-            var clientSync = ServiceFactory.discoverByName("clientsync", ContextFactory.getContext("inter-plugin"));
+            var clientSync = ServiceFactory.DiscoverByName("clientsync", ContextFactory.GetContext("inter-plugin"));
             clientSync.OnConnected += delegate(Connection connection) {
                 connection["registerClientService"]("avatar", new Dictionary<string, Delegate> {
-                    {"create", (Func<string, string>)createAvatar},
-                    {"create", (Func<string, Vector, Quat, Vector, string>)createAvatar}
+                    {"create", (Func<string, string>)CreateAvatar},
+                    {"create", (Func<string, Vector, Quat, Vector, string>)CreateAvatar}
                 });
             };
         }
 
         #endregion
 
-        internal string createAvatar(string meshURI)
+        internal string CreateAvatar(string meshURI)
         {
             throw new NotImplementedException();
         }
 
-        internal string createAvatar(string meshURI, Vector position, Quat orientation, Vector scale)
+        internal string CreateAvatar(string meshURI, Vector position, Quat orientation, Vector scale)
         {
             throw new NotImplementedException();
         }

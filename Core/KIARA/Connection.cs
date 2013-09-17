@@ -29,7 +29,7 @@ namespace KIARA
         {
             get
             {
-                return generateFuncWrapper(name);
+                return GenerateFuncWrapper(name);
             }
         }
 

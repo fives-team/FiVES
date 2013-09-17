@@ -9,16 +9,16 @@ namespace Scripting
         ScriptingPlugin plugin = new ScriptingPlugin();
 
         [Test()]
-        public void shouldReturnCorrectName()
+        public void ShouldReturnCorrectName()
         {
-            Assert.AreEqual("Scripting", plugin.getName());
+            Assert.AreEqual("Scripting", plugin.GetName());
         }
 
         [Test()]
-        public void shouldReturnCorrectDeps()
+        public void ShouldReturnCorrectDeps()
         {
-            Assert.AreEqual(plugin.getDependencies().Count, 1);
-            Assert.Contains("DirectCall", plugin.getDependencies());
+            Assert.AreEqual(plugin.GetDependencies().Count, 1);
+            Assert.Contains("DirectCall", plugin.GetDependencies());
         }
     }
 }

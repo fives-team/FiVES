@@ -9,13 +9,13 @@ namespace Avatar
         AvatarPlugin plugin = new AvatarPlugin();
 
         [Test()]
-        public void shouldReturnCorrectName()
+        public void ShouldReturnCorrectName()
         {
             Assert.AreEqual("Avatar", plugin.GetName());
         }
 
         [Test()]
-        public void shouldReturnCorrectDeps()
+        public void ShouldReturnCorrectDeps()
         {
             Assert.AreEqual(plugin.GetDependencies().Count, 3);
             Assert.Contains("ClientSync", plugin.GetDependencies());
