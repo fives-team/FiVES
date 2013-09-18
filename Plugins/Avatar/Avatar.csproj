@@ -49,9 +49,9 @@
       <Project>{627CCFC6-4071-4119-92C6-8BC96E4310C8}</Project>
       <Name>Core</Name>
     </ProjectReference>
-    <ProjectReference Include="..\ClientSync\ClientSync.csproj">
+    <ProjectReference Include="..\ClientManager\ClientManager.csproj">
       <Project>{E1955FF2-6109-4C71-9F13-486A48DE6C17}</Project>
-      <Name>ClientSync</Name>
+      <Name>ClientManager</Name>
     </ProjectReference>
   </ItemGroup>
 </Project>

@@ -1,18 +1,17 @@
-
 using NUnit.Framework;
 using System;
 
-namespace ClientSync
+namespace ClientManager
 {
     [TestFixture()]
-    public class ClientSyncPluginTest
+    public class ClientManagerPluginTest
     {
-        ClientSyncPlugin plugin = new ClientSyncPlugin();
+        ClientManagerPlugin plugin = new ClientManagerPlugin();
 
         [Test()]
         public void ShouldReturnCorrectName()
         {
-            Assert.AreEqual("ClientSync", plugin.GetName());
+            Assert.AreEqual("ClientManager", plugin.GetName());
         }
 
         [Test()]

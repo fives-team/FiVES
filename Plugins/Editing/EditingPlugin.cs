@@ -25,11 +25,11 @@ namespace Editing
 
         public void Initialize()
         {
-            if (PluginManager.Instance.IsPluginLoaded("ClientSync")) {
+            if (PluginManager.Instance.IsPluginLoaded("ClientManager")) {
                 RegisterEditingAPI();
             } else {
                 PluginManager.Instance.OnPluginInitialized += delegate(Object sender, PluginLoadedEventArgs e) {
-                    if (e.pluginName == "ClientSync")
+                    if (e.pluginName == "ClientManager")
                         RegisterEditingAPI();
                 };
             }
@@ -53,11 +53,11 @@ namespace Editing
         }
 
         /// <summary>
-        /// Registers editing APIs with the ClientSync plugin.
+        /// Registers editing APIs with the ClientManager plugin.
         /// </summary>
         private void RegisterEditingAPI() {
-            var clientSync = ServiceFactory.DiscoverByName("clientsync", ContextFactory.GetContext("inter-plugin"));
-            clientSync.OnConnected += delegate(Connection connection) {
+            var clientManager = ServiceFactory.DiscoverByName("clientmanager", ContextFactory.GetContext("inter-plugin"));
+            clientManager.OnConnected += delegate(Connection connection) {
                 connection["registerClientService"]("editing", new Dictionary<string, Delegate> {
                     {"createEntityAt", (Action<float, float, float>)CreateEntityAt}
                 });

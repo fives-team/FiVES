@@ -7,8 +7,8 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{E1955FF2-6109-4C71-9F13-486A48DE6C17}</ProjectGuid>
     <OutputType>Library</OutputType>
-    <RootNamespace>ClientSync</RootNamespace>
-    <AssemblyName>ClientSync</AssemblyName>
+    <RootNamespace>ClientManager</RootNamespace>
+    <AssemblyName>ClientManager</AssemblyName>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>True</DebugSymbols>
@@ -42,8 +42,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AssemblyInfo.cs" />
-    <Compile Include="ClientSyncPlugin.cs" />
-    <Compile Include="ClientSyncPluginTest.cs" />
+    <Compile Include="ClientManagerPlugin.cs" />
+    <Compile Include="ClientManagerPluginTest.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

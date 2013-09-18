@@ -3,7 +3,7 @@ using KIARA;
 using System.Collections.Generic;
 using FIVES;
 
-namespace ClientSync {
+namespace ClientManager {
 
     public struct Vector {
         public float x, y, z;
@@ -16,13 +16,13 @@ namespace ClientSync {
     /// <summary>
     /// Implements a plugin that can be used to communicate with clients using KIARA.
     /// </summary>
-    public class ClientSyncPlugin : IPluginInitializer
+    public class ClientManagerPlugin : IPluginInitializer
     {
         #region IPluginInitializer implementation
 
         public string GetName()
         {
-            return "ClientSync";
+            return "ClientManager";
         }
 
         public List<string> GetDependencies()
@@ -34,11 +34,11 @@ namespace ClientSync {
         {
             clientService = ServiceFactory.CreateByURI("http://localhost/projects/test-client/kiara/fives.json");
             clientService["kiara.implements"] = (Func<List<string>, List<bool>>)Implements;
-            clientService["clientsync.listObjects"] = (Func<List<EntityInfo>>)ListObjects;
-            clientService["clientsync.setEntityLocation"] = (Action<string, Vector, Quat>)SetEntityLocation;
-            clientService["clientsync.notifyAboutNewObjects"] = (Action<Action<EntityInfo>>)NotifyAboutNewObjects;
-            clientService["clientsync.notifyAboutRemovedObjects"] = (Action<Action<string>>)NotifyAboutRemovedObjects;
-            clientService["clientsync.notifyAboutEntityLocationUpdates"] =
+            clientService["objectsync.listObjects"] = (Func<List<EntityInfo>>)ListObjects;
+            clientService["objectsync.setEntityLocation"] = (Action<string, Vector, Quat>)SetEntityLocation;
+            clientService["objectsync.notifyAboutNewObjects"] = (Action<Action<EntityInfo>>)NotifyAboutNewObjects;
+            clientService["objectsync.notifyAboutRemovedObjects"] = (Action<Action<string>>)NotifyAboutRemovedObjects;
+            clientService["objectsync.notifyAboutEntityLocationUpdates"] =
                 (Action<string, Action<Vector, Quat>>)NotifyAboutEntityLocationUpdates;
 
 
@@ -49,7 +49,7 @@ namespace ClientSync {
 //                getAnswer((Action<int>) delegate(int answer) { Console.WriteLine("The answer is {0}", answer); });
 //            };
 
-            var pluginService = ServiceFactory.CreateByName("clientsync", ContextFactory.GetContext("inter-plugin"));
+            var pluginService = ServiceFactory.CreateByName("objectsync", ContextFactory.GetContext("inter-plugin"));
             pluginService["registerClientMethod"] = (Action<string, Delegate>)RegisterClientMethod;
             pluginService["registerClientService"] = (Action<string,Dictionary<string, Delegate>>)RegisterClientService;
             pluginService["notifyWhenClientDisconnected"] = (Action<Guid,Action<Guid>>)NotifyWhenClientDisconnected;
@@ -120,7 +120,7 @@ namespace ClientSync {
             };
         }
 
-        private List<string> supportedServices = new List<string> { "kiara", "clientsync" };
+        private List<string> supportedServices = new List<string> { "kiara", "objectsync" };
         private List<bool> Implements(List<string> services)
         {
             return services.ConvertAll(supportedServices.Contains);
