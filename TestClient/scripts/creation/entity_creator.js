@@ -31,6 +31,15 @@ FIVES.Creation = FIVES.Creation || {};
         return {x: posX, y: posY, z: posZ};
     }
 
+    var _retrieveOrientation = function () {
+        var rotX = _getValidFloatFieldValue("input-position-x");
+        var rotY = _getValidFloatFieldValue("input-position-y");
+        var rotZ = _getValidFloatFieldValue("input-position-z");
+        var rotW = _getValidFloatFieldValue("input-position-w");
+
+        return {x: rotX, y: rotY, z: rotZ, w: rotW};
+    }
+
     var _getValidFloatFieldValue = function (fieldName) {
         var field = $("#" + fieldName);
         if (!field) {
