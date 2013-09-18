@@ -47,5 +47,11 @@ FIVES.Models = FIVES.Models || {};
         FIVES.Resources.SceneManager.addMeshForObject(this);
     };
 
+    e.setOrientation = function(x, y, z, w) {
+        var newOrientation = { x: x, y: y, z: z, w: w};
+        this.location.orientation = newOrientation;
+        FIVES.SceneManager.updateOrientation(this);
+    };
+
     FIVES.Models.Entity = Entity;
 }());
