@@ -17,6 +17,7 @@ FIVES.Resources = FIVES.Resources || {};
     var scm = SceneManager.prototype;
 
     var _xml3dElement;
+    var _mainDefs;
 
     var EntityRegistry = {};
 
@@ -24,6 +25,8 @@ FIVES.Resources = FIVES.Resources || {};
         _xml3dElement = document.getElementById(xml3dElementId);
         if(!_xml3dElement || _xml3dElement.tagName != "xml3d")
             console.error("[ERROR] (SceneManager) : Cannot find XML3D element with id " + xml3dElementId);
+        _mainDefs = XML3D.createElement("defs");
+        _xml3dElement.appendChild(_mainDefs);
     };
 
     scm.addMeshForObject = function(fivesObject) {
@@ -35,7 +38,9 @@ FIVES.Resources = FIVES.Resources || {};
     };
 
     scm._addMeshToScene = function(meshGroup, idSuffix) {
-        var entityGroup = this._createParentGroupForEntity(EntityRegistry[idSuffix]);
+        var entity = EntityRegistry[idSuffix];
+        var transformGroup = this._createTransformForEntityGroup(entity);
+        var entityGroup = this._createParentGroupForEntity(entity);
         _xml3dElement.appendChild(entityGroup);
         entityGroup.appendChild(meshGroup);
     };
@@ -43,34 +48,35 @@ FIVES.Resources = FIVES.Resources || {};
     scm._createParentGroupForEntity = function(fivesObject) {
         var entityGroup = XML3D.createElement("group");
         entityGroup.setAttribute("id", "Entity-" + fivesObject.guid);
-        entityGroup.setAttribute("style", "transform: " + this._createTransformForEntityGroup(fivesObject));
+        entityGroup.setAttribute("transform", "#transform-" + fivesObject.guid );
         return entityGroup;
     };
 
     scm._createTransformForEntityGroup = function(fivesObject) {
-        var transformStyle = "";
-        transformStyle += this._createTranslationForEntityGroup(fivesObject);
-        transformStyle += " " + this._createOrientationForEntityGroup(fivesObject);
-        transformStyle += " " + this._createScaleForEntityGroup(fivesObject);
-        return transformStyle;
+        var transformTag = XML3D.createElement("transform");
+        transformTag.setAttribute("id", "transform-" + fivesObject.guid) ;
+        transformTag.setAttribute("translation", this._createTranslationForEntityGroup(fivesObject));
+        transformTag.setAttribute("orientation", this._createOrientationForEntityGroup(fivesObject));
+        transformTag.setAttribute("scale", this._createScaleForEntityGroup(fivesObject));
+        _mainDefs.appendChild(transformTag);
     };
 
     scm._createTranslationForEntityGroup = function(fivesObject) {
         var position = fivesObject.location.position;
-        var translationStyle = "translate3d(" + position.x + "px, " + position.y + "px, " + position.z + "px)";
-        return translationStyle;
+        var translationAttribute = position.x + " " + position.y + " " + position.z;
+        return translationAttribute;
     };
 
     scm._createOrientationForEntityGroup = function(fivesObject) {
         var orientation = fivesObject.location.orientation;
-        var orientationStyle = "rotate3d(" + orientation.x + ", " + orientation.y + ", " + orientation.z + ", " + orientation.w + "rad)";
-        return orientationStyle;
+        var orientationAttribute =  orientation.x + " " + orientation.y + " " + orientation.z + " " + orientation.w;
+        return orientationAttribute;
     };
 
     scm._createScaleForEntityGroup = function(fivesObject) {
         var scale = fivesObject.mesh.scale;
-        var scaleStyle = "scale(" + scale.x + ", " + scale.y + ", " + scale.z + ")";
-        return scaleStyle;
+        var scaleAttribute = scale.x + " " + scale.y + " " + scale.z;
+        return scaleAttribute;
     };
 
     FIVES.Resources.SceneManager = new SceneManager();
