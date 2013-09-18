@@ -78,5 +78,10 @@ FIVES.Resources = FIVES.Resources || {};
         return scaleAttribute;
     };
 
+    scm.updateOrientation = function(entity) {
+        var transformationForEntity = $("#transform-" + entity.guid);
+        transformationForEntity.attr("orientation", this._createOrientationForEntityGroup(entity));
+    }
+
     FIVES.Resources.SceneManager = new SceneManager();
 }());

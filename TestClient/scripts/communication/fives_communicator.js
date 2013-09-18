@@ -23,6 +23,7 @@ FIVES.Communication = FIVES.Communication || {};
     c.createServerScriptFor = function() {};
     c.notifyAboutNewObjects = function() {};
     c.getObjectMesh = function() {};
+    c.setEntityOrientation = function() {};
 
     c.initialize = function(context, service) {
         this.context = context;
@@ -114,15 +115,16 @@ FIVES.Communication = FIVES.Communication || {};
             FIVES.Models.EntityRegistry.addEntityFromServer(objects[i]);
     };
 
-    var _createFunctionWrappers = function() {
-        this.listObjects = this.connection.generateFuncWrapper("objectsync.listObjects");
-        this.getObjectLocation = this.connection.generateFuncWrapper("objectsync.getObjectLocation");
-        this.createEntityAt = this.connection.generateFuncWrapper("editing.createEntityAt");
-        this.createServerScriptFor = this.connection.generateFuncWrapper("scripting.createServerScriptFor");
-        this.notifyAboutNewObjects = this.connection.generateFuncWrapper("objectsync.notifyAboutNewObjects");
-        this.getObjectMesh = this.connection.generateFuncWrapper("objectsync.getObjectMesh");
-        this.notifyAboutNewObjects(FIVES.Models.EntityRegistry.addEntityFromServer);
-        this.listObjects().on("result", _listObjectsCallback.bind(this));
+    var _createFunctionWrappers = function(error, supported) {
+            this.listObjects = connection.generateFuncWrapper("objectsync.listObjects");
+            this.getObjectLocation = connection.generateFuncWrapper("objectsync.getObjectLocation");
+            this.createEntityAt = connection.generateFuncWrapper("editing.createEntityAt");
+            this.createServerScriptFor = connection.generateFuncWrapper("scripting.createServerScriptFor");
+            this.notifyAboutNewObjects = connection.generateFuncWrapper("objectsync.notifyAboutNewObjects");
+            this.getObjectMesh = connection.generateFuncWrapper("objectsync.getObjectMesh");
+            this.setEntityOrientation = connection.generateFuncWrapper("objectsync.setEntityOrientation")
+            this.notifyAboutNewObjects(FIVES.Models.EntityRegistry.addEntityFromServer);
+            this.listObjects().on("result", _listObjectsCallback.bind(this));
     };
 
     // Expose Communicator to namespace
