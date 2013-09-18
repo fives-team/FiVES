@@ -51,7 +51,6 @@ function(KIARA, $) {
         var service = "kiara/fives.json";
         FIVES.Resources.SceneManager.initialize("xml3dView");
         FIVES.Communication.FivesCommunicator.initialize(context, service);
-        addButton();
     }
     $(document).ready(main);
 });
