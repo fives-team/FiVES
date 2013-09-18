@@ -55,7 +55,7 @@ FIVES.Resources = FIVES.Resources || {};
         var transformTag = XML3D.createElement("transform");
         transformTag.setAttribute("id", "transform-" + entity.guid) ;
         transformTag.setAttribute("translation", this._createTranslationForEntityGroup(entity));
-        transformTag.setAttribute("orientation", this._createOrientationForEntityGroup(entity));
+        transformTag.setAttribute("rotation", this._createOrientationForEntityGroup(entity));
         transformTag.setAttribute("scale", this._createScaleForEntityGroup(entity));
         _mainDefs.appendChild(transformTag);
     };
@@ -80,7 +80,7 @@ FIVES.Resources = FIVES.Resources || {};
 
     scm.updateOrientation = function(entity) {
         var transformationForEntity = $("#transform-" + entity.guid);
-        transformationForEntity.attr("orientation", this._createOrientationForEntityGroup(entity));
+        transformationForEntity.attr("rotation", this._createOrientationForEntityGroup(entity));
     }
 
     FIVES.Resources.SceneManager = new SceneManager();
