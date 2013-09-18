@@ -25,6 +25,8 @@ namespace KIARA
         /// <param name="aProtocol">Protocol implementation.</param>
         internal Connection(IProtocol aProtocol) : this(aProtocol, new WebClientWrapper()) {}
 
+        // TODO: OnClose, Disconnect.
+
         public FuncWrapper this[string name]
         {
             get

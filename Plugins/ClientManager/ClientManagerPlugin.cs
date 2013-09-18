@@ -33,14 +33,38 @@ namespace ClientManager {
         public void Initialize()
         {
             clientService = ServiceFactory.CreateByURI("http://localhost/projects/test-client/kiara/fives.json");
-            clientService["kiara.implements"] = (Func<List<string>, List<bool>>)Implements;
-            clientService["objectsync.listObjects"] = (Func<List<EntityInfo>>)ListObjects;
-            clientService["objectsync.setEntityLocation"] = (Action<string, Vector, Quat>)SetEntityLocation;
-            clientService["objectsync.notifyAboutNewObjects"] = (Action<Action<EntityInfo>>)NotifyAboutNewObjects;
-            clientService["objectsync.notifyAboutRemovedObjects"] = (Action<Action<string>>)NotifyAboutRemovedObjects;
-            clientService["objectsync.notifyAboutEntityLocationUpdates"] =
-                (Action<string, Action<Vector, Quat>>)NotifyAboutEntityLocationUpdates;
+            var authService = ServiceFactory.DiscoverByName("auth", ContextFactory.GetContext("inter-plugin"));
+            authService.OnConnected += (connection) => authPlugin = connection;
 
+            RegisterClientService("kiara", new Dictionary<string, Delegate>(), false);
+            RegisterClientMethod("kiara.implements", (Func<List<string>, List<bool>>)Implements, false);
+            RegisterClientMethod("kiara.implements", (Func<List<string>, List<bool>>)AuthenticatedImplements);
+
+            RegisterClientService("auth", new Dictionary<string, Delegate>(), false);
+            clientService.OnNewClient += delegate(Connection connection) {
+                connection.RegisterFuncImplementation("auth.login",
+                    (Func<string, string, string>) delegate(string login, string password) {
+                        Guid sessionKey = authPlugin["authenticate"](login, password).Wait<Guid>();
+                        if (sessionKey == Guid.Empty)
+                            return "";
+                        authenticatedClients[sessionKey] = connection;
+                        foreach (var entry in authenticatedMethods)
+                            connection.RegisterFuncImplementation(entry.Key, entry.Value);
+                        return sessionKey.ToString();
+                    }
+                );
+            };
+
+            RegisterClientService("objectsync", new Dictionary<string, Delegate> {
+                {"listObjects", (Func<List<EntityInfo>>) ListObjects},
+                {"setEntityLocation", (Action<string, Vector, Quat>) SetEntityLocation},
+                {"notifyAboutNewObjects", (Action<Action<EntityInfo>>) NotifyAboutNewObjects},
+                {"notifyAboutNewObjects", (Action<Action<string>>) NotifyAboutRemovedObjects},
+                {
+                    "notifyAboutEntityLocationUpdates",
+                    (Action<string, Action<Vector, Quat>>) NotifyAboutEntityLocationUpdates
+                },
+            });
 
             // DEBUG
 //            clientService["scripting.createServerScriptFor"] = (Action<string, string>)createServerScriptFor;
@@ -50,8 +74,9 @@ namespace ClientManager {
 //            };
 
             var pluginService = ServiceFactory.CreateByName("objectsync", ContextFactory.GetContext("inter-plugin"));
-            pluginService["registerClientMethod"] = (Action<string, Delegate>)RegisterClientMethod;
-            pluginService["registerClientService"] = (Action<string,Dictionary<string, Delegate>>)RegisterClientService;
+            pluginService["registerClientMethod"] = (Action<string, Delegate,bool>)RegisterClientMethod;
+            pluginService["registerClientService"] =
+                (Action<string,Dictionary<string, Delegate>,bool>)RegisterClientService;
             pluginService["notifyWhenClientDisconnected"] = (Action<Guid,Action<Guid>>)NotifyWhenClientDisconnected;
         }
 
@@ -109,7 +134,7 @@ namespace ClientManager {
             EntityRegistry.Instance.OnEntityRemoved += (sender, e) => callback(e.elementId.ToString());
         }
 
-        void NotifyAboutEntityLocationUpdates (string guid, Action<Vector, Quat> callback)
+        private void NotifyAboutEntityLocationUpdates (string guid, Action<Vector, Quat> callback)
         {
             var entity = EntityRegistry.Instance.GetEntity(guid);
             entity["position"].OnAttributeChanged += delegate(object sender, Events.AttributeChangedEventArgs ev) {
@@ -120,10 +145,16 @@ namespace ClientManager {
             };
         }
 
-        private List<string> supportedServices = new List<string> { "kiara", "objectsync" };
+        private List<string> basicClientServices = new List<string>();
         private List<bool> Implements(List<string> services)
         {
-            return services.ConvertAll(supportedServices.Contains);
+            return services.ConvertAll(basicClientServices.Contains);
+        }
+
+        private List<string> authenticatedClientServices = new List<string>();
+        private List<bool> AuthenticatedImplements(List<string> services)
+        {
+            return services.ConvertAll(authenticatedClientServices.Contains);
         }
 
         private List<EntityInfo> ListObjects()
@@ -141,25 +172,70 @@ namespace ClientManager {
             entity["scripting"]["serverScript"] = script;
         }
 
-        private ServiceImpl clientService;
+        /// <summary>
+        /// The client service.
+        /// </summary>
+        ServiceImpl clientService;
+
+        /// <summary>
+        /// Auth plugin service.
+        /// </summary>
+        Connection authPlugin;
+
+        /// <summary>
+        /// List of authenticated clients.
+        /// </summary>
+        Dictionary<Guid, Connection> authenticatedClients = new Dictionary<Guid, Connection>();
+
+        /// <summary>
+        /// Methods that required user to authenticate before they become available.
+        /// </summary>
+        Dictionary<string, Delegate> authenticatedMethods = new Dictionary<string, Delegate>();
 
         #endregion
 
         #region Plugin interface
 
-        private void RegisterClientService(string serviceName, Dictionary<string, Delegate> methods)
+        /// <summary>
+        /// Registers the client service.
+        /// </summary>
+        /// <example>
+        /// RegisterClientService("editing", new Dictionary<string, Delegate> {
+        ///   {"createObject", (Func<Location, MeshData, string>)CreateObject},
+        ///   {"deleteObject", (Action<string>)DeleteObject},
+        /// };
+        /// </example>
+        /// <param name="serviceName">Service name.</param>
+        /// <param name="methods">Methods (a map from the name to a delegate).</param>
+        /// <param name="requireAuthentication">If set to <c>true</c> require clients to authenticate.</param>
+        public void RegisterClientService(string serviceName, Dictionary<string, Delegate> methods,
+                                           bool requireAuthentication = true)
         {
             foreach (var method in methods)
-                RegisterClientMethod(serviceName + "." + method.Key, method.Value);
-            supportedServices.Add(serviceName);
+                RegisterClientMethod(serviceName + "." + method.Key, method.Value, requireAuthentication);
+            if (!requireAuthentication)
+                basicClientServices.Add(serviceName);
+            authenticatedClientServices.Add(serviceName);
         }
 
-        private void RegisterClientMethod(string name, Delegate handler)
+        /// <summary>
+        /// Registers the client method.
+        /// </summary>
+        /// <example>
+        /// RegisterClientMethod("login", (Func<string,string,bool>)LoginToServer, false);
+        /// </example>
+        /// <param name="methodName">Method name.</param>
+        /// <param name="handler">Delegate with implementation.</param>
+        /// <param name="requireAuthentication">If set to <c>true</c> require clients to authenticate.</param>
+        public void RegisterClientMethod(string methodName, Delegate handler, bool requireAuthentication = true)
         {
-            clientService[name] = handler;
+            if (requireAuthentication)
+                authenticatedMethods[methodName] = handler;
+            else
+                clientService[methodName] = handler;
         }
 
-        private void NotifyWhenClientDisconnected(Guid secToken, Action<Guid> callback)
+        public void NotifyWhenClientDisconnected(Guid secToken, Action<Guid> callback)
         {
             throw new NotImplementedException();
         }
