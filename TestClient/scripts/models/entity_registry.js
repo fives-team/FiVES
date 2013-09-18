@@ -26,5 +26,9 @@ FIVES.Models = FIVES.Models || {};
         _entities[guid] = entity;
     };
 
+    er.getEntity = function(guid) {
+        return _entities[guid];
+    }
+
     FIVES.Models.EntityRegistry = new EntityRegistry();
 }());
