@@ -20,7 +20,11 @@ FIVES.Creation = FIVES.Creation || {};
 
     ec.createEntityFromForm = function() {
         var position = _retrievePosition();
-        FIVES.Communication.FivesCommunicator.createEntityAt(position.x, position.y, position.z);
+        var call = FIVES.Communication.FivesCommunicator.createEntityAt(position.x, position.y, position.z);
+        call.on("result", function(guid) {
+            console.log("Created Entity with Guid " + newGuid);
+        });
+    };
     };
 
     var _retrievePosition = function () {

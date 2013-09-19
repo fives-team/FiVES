@@ -43,13 +43,13 @@ namespace Editing
             entity["position"]["y"] = y;
             entity["position"]["z"] = z;
             EntityRegistry.Instance.AddEntity(entity);
+            return entity.Guid.ToString ();
         }
 
         /// <summary>
         /// Registers editing APIs with the ClientManager plugin.
         /// </summary>
         private void RegisterEditingAPI() {
-
             var clientManager = ServiceFactory.DiscoverByName("clientmanager", ContextFactory.GetContext("inter-plugin"));
             clientManager.OnConnected += delegate(Connection connection) {
                 connection["registerClientService"]("editing", true, new Dictionary<string, Delegate> {
