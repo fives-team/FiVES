@@ -48,6 +48,8 @@ namespace ClientManager {
                         if (sessionKey == Guid.Empty)
                             return "";
                         authenticatedClients[sessionKey] = connection;
+                        if (OnAuthenticated != null)
+                            OnAuthenticated(sessionKey);
                         foreach (var entry in authenticatedMethods)
                             connection.RegisterFuncImplementation(entry.Key, entry.Value);
                         return sessionKey.ToString();
@@ -77,6 +79,7 @@ namespace ClientManager {
             pluginService["registerClientMethod"] = (Action<string, Delegate,bool>)RegisterClientMethod;
             pluginService["registerClientService"] =
                 (Action<string,Dictionary<string, Delegate>,bool>)RegisterClientService;
+            pluginService["notifyWhenAnyClientAuthenticated"] = (Action<Action<Guid>>)NotifyWhenAnyClientAuthenticated;
             pluginService["notifyWhenClientDisconnected"] = (Action<Guid,Action<Guid>>)NotifyWhenClientDisconnected;
         }
 
@@ -192,6 +195,8 @@ namespace ClientManager {
         /// </summary>
         Dictionary<string, Delegate> authenticatedMethods = new Dictionary<string, Delegate>();
 
+        event Action<Guid> OnAuthenticated;
+
         #endregion
 
         #region Plugin interface
@@ -241,6 +246,11 @@ namespace ClientManager {
                 throw new Exception("Client with with given session key {0} is not authenticated.");
 
             authenticatedClients[secToken].OnClose += (reason) => callback(secToken);
+        }
+
+        void NotifyWhenAnyClientAuthenticated(Action<Guid> callback)
+        {
+            OnAuthenticated += callback;
         }
 
         #endregion
