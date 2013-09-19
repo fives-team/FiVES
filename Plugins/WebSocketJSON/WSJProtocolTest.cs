@@ -24,6 +24,7 @@ namespace WebSocketJSON
 
         public interface IHandlers {
             float TestFunc(int i, string s);
+            void TestFunc2(float x);
             void TestCallback(int i, FuncWrapper callback);
             void TestCallback2(string a, Action<string> hello);
         }
@@ -172,11 +173,13 @@ namespace WebSocketJSON
         }
 
         [Test()]
-        public void ShouldFailToReregisterHandlerForTheSameFunctionName()
+        public void ShouldReregisterHandlerForTheSameFunctionName()
         {
             protocol.RegisterHandler("testFunc", (Func<int, string, float>)mockHandlers.Object.TestFunc);
-            Assert.Throws<HandlerAlreadyRegistered>(
-                () => protocol.RegisterHandler("testFunc", (Func<int, string, float>)mockHandlers.Object.TestFunc));
+            protocol.RegisterHandler("testFunc", (Action<float>)mockHandlers.Object.TestFunc2);
+            protocol.HandleMessage("['call',0,'testFunc',[],3.14]");
+            mockHandlers.Verify(h => h.TestFunc(It.IsAny<int>(), It.IsAny<string>()), Times.Never());
+            mockHandlers.Verify(h => h.TestFunc2(3.14f), Times.Once());
         }
 
         // TODO: Should process IDL (when implemented).

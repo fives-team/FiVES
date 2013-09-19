@@ -109,9 +109,6 @@ namespace WebSocketJSON
 
         public void RegisterHandler(string name, Delegate handler)
         {
-            if (registeredFunctions.ContainsKey(name))
-                throw new HandlerAlreadyRegistered("Handler with " + name + " is already registered.");
-
             registeredFunctions[name] = handler;
         }
 

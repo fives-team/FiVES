@@ -44,8 +44,9 @@ namespace KIARA
 
         /// <summary>
         /// Registers the <paramref name="handler"/> to be executed when function with <paramref name="name"/> is called
-        /// by the remote end. When called twice for the same <paramref name="name"/>, an exception is thrown. The value
-        /// returned from the <paramref name="handler"/> is passed back to the caller as a return value.
+        /// by the remote end. When called twice for the same <paramref name="name"/>, the <paramref name="handler"/>
+        /// replaces previous value. The value returned from the <paramref name="handler"/> is passed back to the caller
+        /// as a return value.
         /// </summary>
         /// <param name="name">Name of the function.</param>
         /// <param name="handler">Handler to be executed upon a call.</param>
