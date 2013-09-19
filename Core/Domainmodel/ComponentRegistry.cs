@@ -252,6 +252,12 @@ namespace FIVES
             public int Version;
         }
 
+        internal ComponentLayout GetComponentLayout(string componentName) {
+            if (!RegisteredComponents.ContainsKey(componentName))
+                throw new ComponentIsNotDefinedException("Component '" + componentName + "' is not defined.");
+            return RegisteredComponents[componentName].Layout;
+        }
+
         // Users should not construct ComponentRegistry on their own, but use ComponentRegistry.Instance instead.
         internal ComponentRegistry() {}
 

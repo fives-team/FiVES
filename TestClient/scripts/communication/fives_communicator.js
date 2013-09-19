@@ -35,7 +35,7 @@ FIVES.Communication = FIVES.Communication || {};
     var _onOpenedConnection = function(error, conn) {
         connection = conn;
         var implementsServices = connection.generateFuncWrapper("kiara.implements");
-        implementsServices(["clientsync"]).on("result", _createFunctionWrappers.bind(this));
+        implementsServices(["objectsync"]).on("result", _createFunctionWrappers.bind(this));
     };
 
     var _listObjectsCallback =  function(error, objects) {
@@ -45,12 +45,12 @@ FIVES.Communication = FIVES.Communication || {};
 
     var _createFunctionWrappers = function(error, supported) {
         if (supported[0]) {
-            this.listObjects = connection.generateFuncWrapper("clientsync.listObjects");
-            this.getObjectLocation = connection.generateFuncWrapper("clientsync.getObjectLocation");
+            this.listObjects = connection.generateFuncWrapper("objectsync.listObjects");
+            this.getObjectLocation = connection.generateFuncWrapper("objectsync.getObjectLocation");
             this.createEntityAt = connection.generateFuncWrapper("editing.createEntityAt");
             this.createServerScriptFor = connection.generateFuncWrapper("scripting.createServerScriptFor");
-            this.notifyAboutNewObjects = connection.generateFuncWrapper("clientsync.notifyAboutNewObjects");
-            this.getObjectMesh = connection.generateFuncWrapper("clientsync.getObjectMesh");
+            this.notifyAboutNewObjects = connection.generateFuncWrapper("objectsync.notifyAboutNewObjects");
+            this.getObjectMesh = connection.generateFuncWrapper("objectsync.getObjectMesh");
             this.notifyAboutNewObjects(FIVES.Models.EntityRegistry.addEntityFromServer);
             this.listObjects().on("result", _listObjectsCallback.bind(this));
         }

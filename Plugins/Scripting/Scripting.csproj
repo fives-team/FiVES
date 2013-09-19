@@ -45,6 +45,7 @@
     <Reference Include="NLog">
       <HintPath>..\..\ThirdParty\NLog\NLog.dll</HintPath>
     </Reference>
+    <Reference Include="nunit.framework" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -52,6 +53,7 @@
     <Compile Include="IJSContext.cs" />
     <Compile Include="V8NetContext.cs" />
     <Compile Include="CLRConsole.cs" />
+    <Compile Include="ScriptingPluginTest.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

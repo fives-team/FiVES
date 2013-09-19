@@ -27,11 +27,12 @@ namespace Renderable
         {
             ComponentLayout rendereableComponentLayout = new ComponentLayout ();
             rendereableComponentLayout.AddAttribute<string>("uri");
+            rendereableComponentLayout.AddAttribute<bool>("visible", true);
 
             ComponentLayout scaleLayout = new ComponentLayout ();
-            scaleLayout.AddAttribute<float>("x");
-            scaleLayout.AddAttribute<float>("y");
-            scaleLayout.AddAttribute<float>("z");
+            scaleLayout.AddAttribute<float>("x", 1);
+            scaleLayout.AddAttribute<float>("y", 1);
+            scaleLayout.AddAttribute<float>("z", 1);
 
             ComponentRegistry.Instance.DefineComponent ("meshResource", this.pluginGUID, rendereableComponentLayout);
             ComponentRegistry.Instance.DefineComponent ("scale", this.pluginGUID, scaleLayout);

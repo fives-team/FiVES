@@ -5,7 +5,6 @@ using Newtonsoft.Json.Linq;
 using SuperWebSocket;
 using Newtonsoft.Json;
 using System.Reflection;
-using System.Dynamic;
 using Dynamitey;
 
 namespace WebSocketJSON
@@ -56,6 +55,8 @@ namespace WebSocketJSON
         public WSJProtocol() : this(new WSJFuncCallFactory()) {}
 
         #region IProtocol implementation
+
+        public event Close OnClose;
 
         public void ProcessIDL(string parsedIDL)
         {
@@ -112,6 +113,11 @@ namespace WebSocketJSON
                 throw new HandlerAlreadyRegistered("Handler with " + name + " is already registered.");
 
             registeredFunctions[name] = handler;
+        }
+
+        public void Disconnect()
+        {
+            Close();
         }
 
         #endregion
@@ -259,6 +265,14 @@ namespace WebSocketJSON
             };
 
             return onewayMethods.Contains(qualifiedMethodName);
+        }
+
+        protected override void OnSessionClosed(SuperSocket.SocketBase.CloseReason reason)
+        {
+            base.OnSessionClosed(reason);
+
+            if (OnClose != null)
+                OnClose(reason.ToString());
         }
 
         private int nextCallID = 0;

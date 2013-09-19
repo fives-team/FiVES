@@ -20,7 +20,8 @@ namespace FIVES
         {
             // normally components must be created with ComponentRegistry, but since we are doing unit-test here, it's
             // better to remove dependency on yet another class
-            testComponent = new Component ("testComponent");            testComponent.AddAttribute("i", typeof(int), null);
+            testComponent = new Component ("testComponent");
+            testComponent.AddAttribute("i", typeof(int), null);
             testComponent.AddAttribute("f", typeof(float), null);
             testComponent.AddAttribute("b", typeof(bool), null);
             testComponent.AddAttribute("s", typeof(string), null);
@@ -34,6 +35,18 @@ namespace FIVES
             Assert.Null(testComponent["f"]);
             Assert.Null(testComponent["b"]);
             Assert.Null(testComponent["s"]);
+        }
+
+        [Test()]
+        public void ShouldResetAttributeToDefaultValue()
+        {
+            var layout = new ComponentLayout();
+            layout.AddAttribute<int>("i", 42);
+            ComponentRegistry.Instance.DefineComponent("testComponent", Guid.NewGuid(), layout);
+
+            testComponent["i"] = 33;
+            testComponent.ResetAttributeValue("i");
+            Assert.AreEqual(42, (int)testComponent["i"]);
         }
 
         #region Test for Setter functions of Attribute (pass if no exception)
@@ -113,7 +126,8 @@ namespace FIVES
             float result = testComponent["i"];
         }
 */
-        [Test()]        [ExpectedException(typeof(InvalidCastException))]
+        [Test()]
+        [ExpectedException(typeof(InvalidCastException))]
         public void ShouldThrowExceptionOnWrongTypeForString()
         {
             testComponent["b"] = false;

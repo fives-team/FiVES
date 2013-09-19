@@ -23,18 +23,6 @@ namespace KIARA
             }
         }
 
-        public FuncWrapper this[string name]
-        {
-            get
-            {
-                if (connection != null)
-                    return connection.GenerateFuncWrapper(name);
-                else
-                    throw new Error(ErrorCode.CONNECTION_ERROR,
-                                    "Connection is not established yet. Please use OnConnected event.");
-            }
-        }
-
         internal void HandleConnected(Connection aConnection)
         {
             connection = aConnection;

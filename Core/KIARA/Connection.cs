@@ -25,6 +25,16 @@ namespace KIARA
         /// <param name="aProtocol">Protocol implementation.</param>
         internal Connection(IProtocol aProtocol) : this(aProtocol, new WebClientWrapper()) {}
 
+        public event Close OnClose;
+
+        public FuncWrapper this[string name]
+        {
+            get
+            {
+                return GenerateFuncWrapper(name);
+            }
+        }
+
         /// <summary>
         /// Loads an IDL definition file at <paramref name="uri"/> into the connection.
         /// </summary>
@@ -64,6 +74,11 @@ namespace KIARA
             protocol.RegisterHandler(funcName, handler);
         }
 
+        public void Disconnect()
+        {
+            protocol.Disconnect();
+        }
+
         private IProtocol protocol;
         private IWebClient webClient;
 
@@ -73,6 +88,8 @@ namespace KIARA
         {
             protocol = aProtocol;
             webClient = client;
+
+            protocol.OnClose += (reason) => { if (OnClose != null) OnClose(reason); };
         }
 
         #endregion

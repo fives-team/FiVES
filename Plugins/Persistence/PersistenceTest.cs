@@ -184,7 +184,7 @@ namespace Persistence
             session.Save (persist);
             trans.Commit ();
 
-            dynamic newEntity = new Entity ();
+            var newEntity = new Entity ();
 
         }
 */

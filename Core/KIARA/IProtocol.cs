@@ -7,11 +7,20 @@ using System.Threading.Tasks;
 namespace KIARA
 {
     /// <summary>
+    /// Handler for OnClose event.
+    /// </summary>
+    /// <param name="reason">Reason for closing.</param>
+    public delegate void Close(string reason);
+
+    /// <summary>
     /// The interface that should be implemented by a protocol wrapper. Each object implementing this interface
     /// corresponds to a connection between two parties.
     /// </summary>
     public interface IProtocol
     {
+        // Triggered when the connection is closed.
+        event Close OnClose;
+
         /// <summary>
         /// Processes the parsed KIARA IDL file.
         /// </summary>
@@ -41,5 +50,10 @@ namespace KIARA
         /// <param name="name">Name of the function.</param>
         /// <param name="handler">Handler to be executed upon a call.</param>
         void RegisterHandler(string name, Delegate handler);
+
+        /// <summary>
+        /// Terminates the connection.
+        /// </summary>
+        void Disconnect();
     }
 }

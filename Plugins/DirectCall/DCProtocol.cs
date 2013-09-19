@@ -12,6 +12,8 @@ namespace DirectCall
     {
         #region IProtocol implementation
 
+        public event Close OnClose;
+
         public void ProcessIDL(string parsedIDL)
         {
             // TODO
@@ -38,6 +40,12 @@ namespace DirectCall
                 throw new Error(ErrorCode.INVALID_ARGUMENT, "Handler for the " + name + " is already registered");
 
             registeredHandlers[name] = handler;
+        }
+
+        public void Disconnect()
+        {
+            if (OnClose != null)
+                OnClose("Requested by user");
         }
 
         #endregion

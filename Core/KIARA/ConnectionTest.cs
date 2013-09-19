@@ -48,6 +48,16 @@ namespace KIARA
             mockProtocol.Verify(protocol => protocol.RegisterHandler("testFunc", d), Times.Once());
         }
 
+
+        [Test()]
+        public void ShouldMapBracketOperatorToGenerateFuncWrapper()
+        {
+            var mockProtocol = new Mock<IProtocol>();
+            Connection c = new Connection(mockProtocol.Object);
+            c["foo"](123);
+            mockProtocol.Verify(p => p.CallFunc("foo", 123), Times.Once());
+        }
+
         // TODO: Tests for type mapping
     }
 }

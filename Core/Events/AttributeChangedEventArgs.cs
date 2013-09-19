@@ -6,12 +6,12 @@ namespace Events
     {
         public AttributeChangedEventArgs (string attributeName, object value)
         {
-            this.attributeName = attributeName;
-            this.value = value;
+            this.AttributeName = attributeName;
+            this.NewValue = value;
         }
 
-        public string attributeName { get; private set; }
-        public object value { get; private set; }
+        public string AttributeName { get; private set; }
+        public object NewValue { get; private set; }
     }
 }
 

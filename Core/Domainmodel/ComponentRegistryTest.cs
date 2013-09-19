@@ -251,6 +251,13 @@ namespace FIVES
             Assert.AreEqual(entity[name]["s"], "foobar");
             Assert.AreEqual(entity[name]["b"], false);
         }
+
+        [Test()]
+        public void ShouldReturnRegisteredComponentLayout()
+        {
+            componentRegistry.DefineComponent(name, Guid.NewGuid(), layout);
+            Assert.AreEqual(componentRegistry.GetComponentLayout(name), layout);
+        }
     }
 }
 
