@@ -5,7 +5,6 @@ using Newtonsoft.Json.Linq;
 using SuperWebSocket;
 using Newtonsoft.Json;
 using System.Reflection;
-using System.Dynamic;
 using Dynamitey;
 
 namespace WebSocketJSON

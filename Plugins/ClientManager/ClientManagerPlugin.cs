@@ -98,35 +98,35 @@ namespace ClientManager {
 
         private EntityInfo ConstuctEntityInfo(Guid elementId)
         {
-            dynamic entity = EntityRegistry.Instance.GetEntity(elementId);
+            var entity = EntityRegistry.Instance.GetEntity(elementId);
 
             var entityInfo = new EntityInfo();
-            entityInfo.guid = entity.guid;
-            entityInfo.position.x = entity.position.x;
-            entityInfo.position.y = entity.position.y;
-            entityInfo.position.z = entity.position.z;
-            entityInfo.orientation.x = entity.orientation.x;
-            entityInfo.orientation.y = entity.orientation.y;
-            entityInfo.orientation.z = entity.orientation.z;
-            entityInfo.orientation.w = entity.orientation.w;
-            entityInfo.scale.x = entity.scale.x;
-            entityInfo.scale.y = entity.scale.y;
-            entityInfo.scale.z = entity.scale.z;
-            entityInfo.meshURI = entity.meshResource.uri;
-            entityInfo.meshVisible = entity.meshResource.visible;
+            entityInfo.guid = entity.Guid.ToString();
+            entityInfo.position.x = (float)entity["position"]["x"];
+            entityInfo.position.y = (float)entity["position"]["y"];
+            entityInfo.position.z = (float)entity["position"]["z"];
+            entityInfo.orientation.x = (float)entity["orientation"]["x"];
+            entityInfo.orientation.y = (float)entity["orientation"]["y"];
+            entityInfo.orientation.z = (float)entity["orientation"]["z"];
+            entityInfo.orientation.w = (float)entity["orientation"]["w"];
+            entityInfo.scale.x = (float)entity["scale"]["x"];
+            entityInfo.scale.y = (float)entity["scale"]["y"];
+            entityInfo.scale.z = (float)entity["scale"]["z"];
+            entityInfo.meshURI = (string)entity["meshResource"]["uri"];
+            entityInfo.meshVisible = (bool)entity["meshResource"]["visible"];
             return entityInfo;
         }
 
         private void SetEntityLocation (string guid, Vector position, Quat orientation)
         {
-            dynamic entity = EntityRegistry.Instance.GetEntity(guid) as dynamic;
-            entity.position.x = position.x;
-            entity.position.y = position.y;
-            entity.position.z = position.z;
-            entity.orientation.x = orientation.x;
-            entity.orientation.y = orientation.y;
-            entity.orientation.z = orientation.z;
-            entity.orientation.w = orientation.w;
+            var entity = EntityRegistry.Instance.GetEntity(guid);
+            entity["position"]["x"] = position.x;
+            entity["position"]["y"] = position.y;
+            entity["position"]["z"] = position.z;
+            entity["orientation"]["x"] = orientation.x;
+            entity["orientation"]["y"] = orientation.y;
+            entity["orientation"]["z"] = orientation.z;
+            entity["orientation"]["w"] = orientation.w;
         }
 
         private void NotifyAboutNewObjects(Action<EntityInfo> callback)
@@ -142,12 +142,25 @@ namespace ClientManager {
         private void NotifyAboutEntityLocationUpdates (string guid, Action<Vector, Quat> callback)
         {
             var entity = EntityRegistry.Instance.GetEntity(guid);
-            entity["position"].OnAttributeChanged += delegate(object sender, Events.AttributeChangedEventArgs ev) {
-                dynamic e = entity as dynamic;
-                callback(new Vector { x = e.position.x, y = e.position.y, z = e.position.z },
-                         new Quat { x = e.orientation.x, y = e.orientation.y, z = e.orientation.z,
-                                    w = e.orientation.w });
-            };
+            var attributeChangeHandler = new Component.AttributeChanged((sender, ev) => {
+                Vector position = new Vector {
+                    x = (float)entity["position"]["x"],
+                    y = (float)entity["position"]["y"],
+                    z = (float)entity["position"]["z"],
+                };
+
+                Quat orientation = new Quat {
+                    x = (float)entity["orientation"]["x"],
+                    y = (float)entity["orientation"]["y"],
+                    z = (float)entity["orientation"]["z"],
+                    w = (float)entity["orientation"]["w"],
+                };
+
+                callback(position, orientation);
+            });
+
+            entity["position"].OnAttributeChanged += attributeChangeHandler;
+            entity["orientation"].OnAttributeChanged += attributeChangeHandler;
         }
 
         private void NotifyAboutEntityVisibilityUpdates (string guid, Action<bool> callback)
@@ -182,7 +195,7 @@ namespace ClientManager {
 
         private void CreateServerScriptFor(string guid, string script)
         {
-            dynamic entity = EntityRegistry.Instance.GetEntity(guid);
+            var entity = EntityRegistry.Instance.GetEntity(guid);
             entity["scripting"]["serverScript"] = script;
         }
 
