@@ -10,25 +10,34 @@
 var FIVES = FIVES || {};
 FIVES.Models = FIVES.Models || {};
 
-(function(){
+(function () {
     "use strict";
 
-    var EntityRegistry = function() {};
+    var EntityRegistry = function () {
+    };
 
     var _entities = {};
 
     var er = EntityRegistry.prototype;
 
-    er.addEntityFromServer = function(guid) {
+    er.addEntityFromServer = function (guid) {
         var entity = new FIVES.Models.Entity();
         entity.guid = guid;
         entity.retrieveEntityDataFromServer();
         _entities[guid] = entity;
     };
 
-    er.getEntity = function(guid) {
+    er.getEntity = function (guid) {
         return _entities[guid];
     }
 
+    er.rotateAllEntities = function () {
+        for (var i in _entities) {
+            var entity = _entities[i];
+            entity.location.orientation.y = 1;
+            entity.location.orientation.w = 0.75;
+            FIVES.Resources.SceneManager.updateOrientation(entity);
+        }
+    }
     FIVES.Models.EntityRegistry = new EntityRegistry();
 }());
