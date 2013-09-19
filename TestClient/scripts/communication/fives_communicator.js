@@ -29,21 +29,73 @@ FIVES.Communication = FIVES.Communication || {};
 
     c.initialize = function(context, service) {
         this.context = context;
-        //context.openConnection(service, _onOpenedConnection.bind(this) );
+        context.openConnection(service, _onOpenedConnection.bind(this) );
     };
 
-    c.auth = function(login, password) {
-        return false;
+    // Attempts to authenticate. The `callback` is executed as a function with one argument - true if client was
+    // authenticated or false if any other error have happened.
+    c.auth = function(login, password, callback) {
+        var reportFailure = function() {
+            callback(false);
+        };
+
+        var loginCallback = function(error, result) {
+            if (error || result == "") {
+                reportFailure();
+            } else {
+                this.sessionKey = result;
+                callback(true);
+            }
+        };
+
+        var implementsCallback = function(error, result) {
+            if (error || !result[0] || !result[1]) {
+                reportFailure();
+            } else {
+                var login = this.connection.generateFuncWrapper("auth.login");
+                login(login, password)
+                    .on("result", loginCallback)
+                    .on("error", reportFailure);
+            }
+        };
+
+        this.implements(["kiara", "auth"])
+            .on("result", implementsCallback)
+            .on("error", reportFailure);
     }
 
-    c.connect = function() {
+    // Attempts to connect to the virtual world. Method `auth` must be used prior to this function to authenticate in
+    // the virtual world. The `callback` is executed with one argument - true if the client have been successfully
+    // connected or false if some error happened.
+    c.connect = function(callback) {
+        var requiredServices = ["kiara", "objectsync", "editing", "scripting", "avatar"];
+        var reportFailure = function() {
+            callback(false);
+        };
 
+        var implementsCallback = function(error, result) {
+            if (error) {
+                reportFailure();
+            } else {
+                for (var i in result) {
+                    if (result[i] === false) {
+                        reportFailure();
+                        return;
+                    }
+                }
+
+
+            }
+        };
+
+        this.implements(requiredServices)
+            .on("result", implementsCallback)
+            .on("error", reportFailure);
     }
 
     var _onOpenedConnection = function(error, conn) {
-        connection = conn;
-        var implementsServices = connection.generateFuncWrapper("kiara.implements");
-        implementsServices(["objectsync"]).on("result", _createFunctionWrappers.bind(this));
+        this.connection = conn;
+        this.implements = connection.generateFuncWrapper("kiara.implements");
     };
 
     var _listObjectsCallback =  function(error, objects) {

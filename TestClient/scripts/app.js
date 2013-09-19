@@ -16,18 +16,30 @@ function(KIARA, $) {
         return false;
     }
 
+    var loginComplete = false;
     function login() {
+        if (loginComplete)
+            return true;
+
         var login = $("#login").val();
         var password = $("#password").val();
 
-        if (!FIVES.Communication.FivesCommunicator.auth(login, password)) {
-            $("#login").val("");
-            $("#password").val("");
-            return false;
-        }
+        FIVES.Communication.FivesCommunicator.auth(login, password, function(success, sessionKey) {
+            if (success) {
+                FIVES.Communication.FivesCommunicator.connect(function() {
+                    loginComplete = true;
+                    $("singin").modal("hide");
+                });
+            } else {
+                $("#login").val("");
+                $("#password").val("");
+                // TODO: show "Error: Failed to sign in.", enable inputs and button
+            }
+        });
 
-        FIVES.Communication.FivesCommunicator.connect();
-        return true;
+        // TODO: show "Signing in...", disable inputs and button
+
+        return false;
     }
 
     function main() {
