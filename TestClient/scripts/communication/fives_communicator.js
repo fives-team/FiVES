@@ -11,7 +11,7 @@ var FIVES = FIVES || {};
 FIVES.Communication = FIVES.Communication || {};
 
 ( function(){
-     "use strict";
+    "use strict";
 
     var FivesCommunicator = function() {};
 
@@ -29,8 +29,16 @@ FIVES.Communication = FIVES.Communication || {};
 
     c.initialize = function(context, service) {
         this.context = context;
-        context.openConnection(service, _onOpenedConnection.bind(this) );
+        //context.openConnection(service, _onOpenedConnection.bind(this) );
     };
+
+    c.auth = function(login, password) {
+        return false;
+    }
+
+    c.connect = function() {
+
+    }
 
     var _onOpenedConnection = function(error, conn) {
         connection = conn;
