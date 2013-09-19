@@ -62,10 +62,10 @@ namespace ClientManager {
                 {"setEntityLocation", (Action<string, Vector, Quat>) SetEntityLocation},
                 {"notifyAboutNewObjects", (Action<Action<EntityInfo>>) NotifyAboutNewObjects},
                 {"notifyAboutNewObjects", (Action<Action<string>>) NotifyAboutRemovedObjects},
-                {
-                    "notifyAboutEntityLocationUpdates",
-                    (Action<string, Action<Vector, Quat>>) NotifyAboutEntityLocationUpdates
-                },
+                {"notifyAboutEntityLocationUpdates",
+                 (Action<string, Action<Vector, Quat>>) NotifyAboutEntityLocationUpdates},
+                {"notifyAboutEntityVisibilityUpdates",
+                 (Action<string, Action<bool>>) NotifyAboutEntityVisibilityUpdates},
             });
 
             // DEBUG
@@ -90,6 +90,7 @@ namespace ClientManager {
         private struct EntityInfo {
             public string guid;
             public string meshURI;
+            public bool meshVisible;
             public Vector position;
             public Quat orientation;
             public Vector scale;
@@ -112,6 +113,7 @@ namespace ClientManager {
             entityInfo.scale.y = entity.scale.y;
             entityInfo.scale.z = entity.scale.z;
             entityInfo.meshURI = entity.meshResource.uri;
+            entityInfo.meshVisible = entity.meshResource.visible;
             return entityInfo;
         }
 
@@ -145,6 +147,15 @@ namespace ClientManager {
                 callback(new Vector { x = e.position.x, y = e.position.y, z = e.position.z },
                          new Quat { x = e.orientation.x, y = e.orientation.y, z = e.orientation.z,
                                     w = e.orientation.w });
+            };
+        }
+
+        private void NotifyAboutEntityVisibilityUpdates (string guid, Action<bool> callback)
+        {
+            var entity = EntityRegistry.Instance.GetEntity(guid);
+            entity["meshResource"].OnAttributeChanged += delegate(object sender, Events.AttributeChangedEventArgs ev) {
+                if (ev.AttributeName == "visible")
+                    callback((bool)ev.NewValue);
             };
         }
 

@@ -61,8 +61,8 @@ namespace Events
 
         private void AttributeChangedHandler(Object sender, AttributeChangedEventArgs e) {
             eventWasRaised = true;
-            Assert.AreEqual(e.attributeName, "a");
-            Assert.AreEqual(e.value, 42);
+            Assert.AreEqual(e.AttributeName, "a");
+            Assert.AreEqual(e.NewValue, 42);
         }
 
 

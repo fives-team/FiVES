@@ -159,7 +159,7 @@ namespace FIVES
             Component newComponent = ComponentRegistry.GetComponentInstance (componentName);
             newComponent.OnAttributeChanged += delegate(object sender, AttributeChangedEventArgs e) {
                 if (this.OnAttributeInComponentChanged != null)
-                    this.OnAttributeInComponentChanged (this, new AttributeInComponentEventArgs (componentName, e.attributeName, e.value));
+                    this.OnAttributeInComponentChanged (this, new AttributeInComponentEventArgs (componentName, e.AttributeName, e.NewValue));
             };
             Components [componentName] = newComponent;
             if (this.OnComponentCreated != null)
