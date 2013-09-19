@@ -27,6 +27,7 @@ namespace Renderable
         {
             ComponentLayout rendereableComponentLayout = new ComponentLayout ();
             rendereableComponentLayout.AddAttribute<string>("uri");
+            rendereableComponentLayout.AddAttribute<bool>("visible", true);
 
             ComponentLayout scaleLayout = new ComponentLayout ();
             scaleLayout.AddAttribute<float>("x", 1);

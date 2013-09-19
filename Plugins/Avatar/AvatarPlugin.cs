@@ -24,8 +24,6 @@ namespace Avatar
         {
             ComponentLayout avatarLayout = new ComponentLayout();
             avatarLayout.AddAttribute<string>("userLogin", null);
-            avatarLayout.AddAttribute<string>("meshURI", avatarDefaultMesh);
-            avatarLayout.AddAttribute<bool>("active", false);
             ComponentRegistry.Instance.DefineComponent("avatar", pluginGuid, avatarLayout);
 
             var authService = ServiceFactory.DiscoverByName("auth", ContextFactory.GetContext("inter-plugin"));
@@ -40,7 +38,8 @@ namespace Avatar
                 });
 
                 connection["notifyWhenAnyClientAuthenticated"]((Action<Guid>)delegate(Guid sessionKey) {
-                    Activate(GetAvatarEntityBySessionKey(sessionKey));
+                    Activate(sessionKey);
+                    connection["notifyWhenClientDisconnected"](sessionKey, (Action<Guid>)Deactivate);
                 });
             };
 
@@ -59,30 +58,33 @@ namespace Avatar
             if (!avatarEntities.ContainsKey(userLogin)) {
                 Entity newAvatar = new Entity();
                 newAvatar["avatar"]["userLogin"] = userLogin;
+                newAvatar["meshResource"]["uri"] = defaultAvatarMesh;
+                newAvatar["meshResource"]["visible"] = false;
                 EntityRegistry.Instance.AddEntity(newAvatar);
                 avatarEntities[userLogin] = newAvatar;
             }
+
             return avatarEntities[userLogin];
         }
 
         /// <summary>
         /// Activates the avatar entity. Can also be used to update the mesh when its changed.
         /// </summary>
-        /// <param name="avatarEntity">Avatar entity.</param>
-        void Activate(Entity avatarEntity)
+        /// <param name="sessionKey">Client session key.</param>
+        void Activate(Guid sessionKey)
         {
-            avatarEntity["avatar"]["active"] = true;
-            avatarEntity["meshResource"]["uri"] = (string)avatarEntity["avatar"]["meshURI"];
+            var avatarEntity = GetAvatarEntityBySessionKey(sessionKey);
+            avatarEntity["meshResource"]["visible"] = true;
         }
 
         /// <summary>
         /// Deactivates the avatar entity.
         /// </summary>
-        /// <param name="avatarEntity">Avatar entity.</param>
-        void Deactivate(Entity avatarEntity)
+        /// <param name="sessionKey">Client session key.</param>
+        void Deactivate(Guid sessionKey)
         {
-            avatarEntity["avatar"]["active"] = false;
-            avatarEntity.RemoveComponent("meshResource");
+            var avatarEntity = GetAvatarEntityBySessionKey(sessionKey);
+            avatarEntity["meshResource"]["visible"] = false;
         }
 
         /// <summary>
@@ -95,9 +97,7 @@ namespace Avatar
         {
             var avatarEntity = GetAvatarEntityBySessionKey(Guid.Parse(sessionKey));
 
-            avatarEntity["avatar"]["meshURI"] = meshURI;
-            if ((bool)avatarEntity["avatar"]["active"])
-                avatarEntity["meshResource"]["uri"] = meshURI;
+            avatarEntity["meshResource"]["uri"] = meshURI;
 
             avatarEntity["scale"]["x"] = scale.x;
             avatarEntity["scale"]["y"] = scale.y;
@@ -125,7 +125,7 @@ namespace Avatar
         }
 
         Dictionary<string, Entity> avatarEntities = new Dictionary<string, Entity>();
-        string avatarDefaultMesh = "resources/models/defaultAvatar/avatar.xml3d";
+        string defaultAvatarMesh = "resources/models/defaultAvatar/avatar.xml3d";
         Guid pluginGuid = new Guid("54b1215e-22cc-44ed-bef4-c92e4fb4edb5");
         Connection authPlugin;
     }
