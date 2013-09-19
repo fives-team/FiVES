@@ -25,7 +25,7 @@ namespace FIVES
     /// </summary>
     public class Component
     {
-        public Guid Guid {get; set; }
+        public Guid Guid { get; set; }
 
         public delegate void AttributeChanged (Object sender, AttributeChangedEventArgs e);
         public event AttributeChanged OnAttributeChanged;
