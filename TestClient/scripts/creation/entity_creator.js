@@ -25,6 +25,15 @@ FIVES.Creation = FIVES.Creation || {};
             console.log("Created Entity with Guid " + newGuid);
         });
     };
+
+    ec.createRandomEntities = function(amount) {
+        var i = 0;
+        while(i < amount) {
+            var position = { x: Math.random() * 10, y: Math.random() * 10, z: Math.random() * 10};
+            var newGuid = FIVES.Communication.FivesCommunicator.createEntityAt(position.x, position.y, position.z);
+            console.log("Created Entity with Guid " + newGuid);
+            i ++;
+        }
     };
 
     var _retrievePosition = function () {
