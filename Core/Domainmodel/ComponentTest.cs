@@ -97,7 +97,8 @@ namespace FIVES
         #endregion
 
         #region Exception Test (Pass if Getter function for wrong type throws exception)
-        [Test()]        [ExpectedException(typeof(InvalidCastException))]
+        [Test()]
+        [ExpectedException(typeof(InvalidCastException))]
         public void ShouldThrowExceptionOnWrongTypeForInt()
         {
             testComponent["f"] = 1.0f;

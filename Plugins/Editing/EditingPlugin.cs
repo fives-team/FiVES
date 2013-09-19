@@ -44,10 +44,12 @@ namespace Editing
         /// <param name="y">The y coordinate.</param>
         /// <param name="z">The z coordinate.</param>
         public void CreateEntityAt(float x, float y, float z)
-        {            Entity entity = new Entity();
+        {
+            Entity entity = new Entity();
             entity["position"]["x"] = x;
             entity["position"]["y"] = y;
-            entity["position"]["z"] = z;            EntityRegistry.Instance.AddEntity(entity);
+            entity["position"]["z"] = z;
+            EntityRegistry.Instance.AddEntity(entity);
         }
 
         /// <summary>

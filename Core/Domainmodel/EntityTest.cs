@@ -94,8 +94,10 @@ namespace FIVES
 
         [Test()]
         public void ShouldThrowExceptionWhenCreatingUnregisteredComponent()
-        {            Entity entity = new Entity();
-            Assert.Throws<ComponentIsNotDefinedException>(delegate() {                Component component = entity["myComponent"];
+        {
+            Entity entity = new Entity();
+            Assert.Throws<ComponentIsNotDefinedException>(delegate() {
+                Component component = entity["myComponent"];
             });
         }
     }
