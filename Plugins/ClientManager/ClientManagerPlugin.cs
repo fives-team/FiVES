@@ -237,7 +237,10 @@ namespace ClientManager {
 
         public void NotifyWhenClientDisconnected(Guid secToken, Action<Guid> callback)
         {
-            throw new NotImplementedException();
+            if (!authenticatedClients.ContainsKey(secToken))
+                throw new Exception("Client with with given session key {0} is not authenticated.");
+
+            authenticatedClients[secToken].OnClose += (reason) => callback(secToken);
         }
 
         #endregion

@@ -25,7 +25,7 @@ namespace KIARA
         /// <param name="aProtocol">Protocol implementation.</param>
         internal Connection(IProtocol aProtocol) : this(aProtocol, new WebClientWrapper()) {}
 
-        // TODO: OnClose, Disconnect.
+        public event Close OnClose;
 
         public FuncWrapper this[string name]
         {
@@ -74,6 +74,11 @@ namespace KIARA
             protocol.RegisterHandler(funcName, handler);
         }
 
+        public void Disconnect()
+        {
+            protocol.Disconnect();
+        }
+
         private IProtocol protocol;
         private IWebClient webClient;
 
@@ -83,6 +88,8 @@ namespace KIARA
         {
             protocol = aProtocol;
             webClient = client;
+
+            protocol.OnClose += (reason) => { if (OnClose != null) OnClose(reason); };
         }
 
         #endregion

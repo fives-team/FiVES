@@ -57,6 +57,8 @@ namespace WebSocketJSON
 
         #region IProtocol implementation
 
+        public event Close OnClose;
+
         public void ProcessIDL(string parsedIDL)
         {
             // TODO
@@ -112,6 +114,11 @@ namespace WebSocketJSON
                 throw new HandlerAlreadyRegistered("Handler with " + name + " is already registered.");
 
             registeredFunctions[name] = handler;
+        }
+
+        public void Disconnect()
+        {
+            Close();
         }
 
         #endregion
@@ -259,6 +266,14 @@ namespace WebSocketJSON
             };
 
             return onewayMethods.Contains(qualifiedMethodName);
+        }
+
+        protected override void OnSessionClosed(SuperSocket.SocketBase.CloseReason reason)
+        {
+            base.OnSessionClosed(reason);
+
+            if (OnClose != null)
+                OnClose(reason.ToString());
         }
 
         private int nextCallID = 0;
