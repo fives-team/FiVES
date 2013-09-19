@@ -17,31 +17,117 @@ namespace Avatar
 
         public List<string> GetDependencies ()
         {
-            return new List<string> { "ClientManager", "Auth", "DirectCall" };
+            return new List<string> { "ClientManager", "Auth", "DirectCall", "Renderable", "Location" };
         }
 
         public void Initialize ()
         {
-            var clientManager = ServiceFactory.DiscoverByName("clientmanager", ContextFactory.GetContext("inter-plugin"));
+            ComponentLayout avatarLayout = new ComponentLayout();
+            avatarLayout.AddAttribute<string>("userLogin", null);
+            avatarLayout.AddAttribute<string>("meshURI", avatarDefaultMesh);
+            avatarLayout.AddAttribute<bool>("active", false);
+            ComponentRegistry.Instance.DefineComponent("avatar", pluginGuid, avatarLayout);
+
+            var authService = ServiceFactory.DiscoverByName("auth", ContextFactory.GetContext("inter-plugin"));
+            authService.OnConnected += (conn) => authPlugin = conn;
+
+            var clientManager =
+                ServiceFactory.DiscoverByName("clientmanager", ContextFactory.GetContext("inter-plugin"));
             clientManager.OnConnected += delegate(Connection connection) {
                 connection["registerClientService"]("avatar", new Dictionary<string, Delegate> {
-                    {"create", (Func<string, string>)CreateAvatar},
-                    {"create", (Func<string, Vector, Quat, Vector, string>)CreateAvatar}
+                    {"changeAppearance", (Action<string, string, Vector>)ChangeAppearance},
+                    {"teleport", (Action<string, Vector, Quat>)Teleport}
+                });
+
+                connection["notifyWhenAnyClientAuthenticated"]((Action<Guid>)delegate(Guid sessionKey) {
+                    Activate(GetAvatarEntityBySessionKey(sessionKey));
                 });
             };
+
+            foreach (var guid in EntityRegistry.Instance.GetAllGUIDs()) {
+                var entity = EntityRegistry.Instance.GetEntity(guid);
+                if (entity.HasComponent("avatar"))
+                    avatarEntities[(string)entity["avatar"]["userLogin"]] = entity;
+            }
         }
 
         #endregion
 
-        internal string CreateAvatar(string meshURI)
+        Entity GetAvatarEntityBySessionKey(Guid sessionKey)
         {
-            throw new NotImplementedException();
+            var userLogin = authPlugin["getLoginName"](sessionKey).Wait<string>();
+            if (!avatarEntities.ContainsKey(userLogin)) {
+                Entity newAvatar = new Entity();
+                newAvatar["avatar"]["userLogin"] = userLogin;
+                EntityRegistry.Instance.AddEntity(newAvatar);
+                avatarEntities[userLogin] = newAvatar;
+            }
+            return avatarEntities[userLogin];
         }
 
-        internal string CreateAvatar(string meshURI, Vector position, Quat orientation, Vector scale)
+        /// <summary>
+        /// Activates the avatar entity. Can also be used to update the mesh when its changed.
+        /// </summary>
+        /// <param name="avatarEntity">Avatar entity.</param>
+        void Activate(Entity avatarEntity)
         {
-            throw new NotImplementedException();
+            avatarEntity["avatar"]["active"] = true;
+            avatarEntity["meshResource"]["uri"] = (string)avatarEntity["avatar"]["meshURI"];
         }
+
+        /// <summary>
+        /// Deactivates the avatar entity.
+        /// </summary>
+        /// <param name="avatarEntity">Avatar entity.</param>
+        void Deactivate(Entity avatarEntity)
+        {
+            avatarEntity["avatar"]["active"] = false;
+            avatarEntity.RemoveComponent("meshResource");
+        }
+
+        /// <summary>
+        /// Changes the appearance of the avatar.
+        /// </summary>
+        /// <param name="sessionKey">Client session key.</param>
+        /// <param name="meshURI">New mesh URI.</param>
+        /// <param name="scale">New scale.</param>
+        void ChangeAppearance(string sessionKey, string meshURI, Vector scale)
+        {
+            var avatarEntity = GetAvatarEntityBySessionKey(Guid.Parse(sessionKey));
+
+            avatarEntity["avatar"]["meshURI"] = meshURI;
+            if ((bool)avatarEntity["avatar"]["active"])
+                avatarEntity["meshResource"]["uri"] = meshURI;
+
+            avatarEntity["scale"]["x"] = scale.x;
+            avatarEntity["scale"]["y"] = scale.y;
+            avatarEntity["scale"]["z"] = scale.z;
+        }
+
+        /// <summary>
+        /// Teleports the avatar to specific <paramref name="position"/> and <paramref name="orientation"/>.
+        /// </summary>
+        /// <param name="sessionKey">Client session key.</param>
+        /// <param name="position">New position.</param>
+        /// <param name="orientation">New orientation.</param>
+        void Teleport(string sessionKey, Vector position, Quat orientation)
+        {
+            var avatarEntity = GetAvatarEntityBySessionKey(Guid.Parse(sessionKey));
+
+            avatarEntity["position"]["x"] = position.x;
+            avatarEntity["position"]["y"] = position.y;
+            avatarEntity["position"]["z"] = position.z;
+
+            avatarEntity["orientation"]["x"] = orientation.x;
+            avatarEntity["orientation"]["y"] = orientation.y;
+            avatarEntity["orientation"]["z"] = orientation.z;
+            avatarEntity["orientation"]["w"] = orientation.w;
+        }
+
+        Dictionary<string, Entity> avatarEntities = new Dictionary<string, Entity>();
+        string avatarDefaultMesh = "resources/models/defaultAvatar/avatar.xml3d";
+        Guid pluginGuid = new Guid("54b1215e-22cc-44ed-bef4-c92e4fb4edb5");
+        Connection authPlugin;
     }
 }
 

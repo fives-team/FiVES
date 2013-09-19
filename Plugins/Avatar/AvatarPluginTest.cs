@@ -17,10 +17,12 @@ namespace Avatar
         [Test()]
         public void ShouldReturnCorrectDeps()
         {
-            Assert.AreEqual(plugin.GetDependencies().Count, 3);
+            Assert.AreEqual(plugin.GetDependencies().Count, 5);
             Assert.Contains("ClientManager", plugin.GetDependencies());
             Assert.Contains("Auth", plugin.GetDependencies());
             Assert.Contains("DirectCall", plugin.GetDependencies());
+            Assert.Contains("Renderable", plugin.GetDependencies());
+            Assert.Contains("Location", plugin.GetDependencies());
         }
     }
 }
