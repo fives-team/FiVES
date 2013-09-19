@@ -55,6 +55,20 @@ namespace FIVES
 
         public int Version { get; internal set; }
 
+        /// <summary>
+        /// Resets the attribute value to default.
+        /// </summary>
+        /// <param name="attributeName">Attribute name.</param>
+        public void ResetAttributeValue(string attributeName)
+        {
+            if (!Attributes.ContainsKey(attributeName))
+                throw new AttributeIsNotDefinedException(
+                    "Attribute '" + attributeName + "' is not defined in the component '" + ComponentName + "'.");
+
+            var layout = ComponentRegistry.Instance.GetComponentLayout(ComponentName);
+            this[attributeName] = layout[attributeName].DefaultValue;
+        }
+
         internal Component() {}
 
         // Can only be constructed by ComponentRegistry.createComponent to ensure correct attributes.

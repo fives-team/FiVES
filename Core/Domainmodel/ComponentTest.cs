@@ -36,6 +36,18 @@ namespace FIVES
             Assert.Null(testComponent["s"]);
         }
 
+        [Test()]
+        public void ShouldResetAttributeToDefaultValue()
+        {
+            var layout = new ComponentLayout();
+            layout.AddAttribute<int>("i", 42);
+            ComponentRegistry.Instance.DefineComponent("testComponent", Guid.NewGuid(), layout);
+
+            testComponent["i"] = 33;
+            testComponent.ResetAttributeValue("i");
+            Assert.AreEqual(42, (int)testComponent["i"]);
+        }
+
         #region Test for Setter functions of Attribute (pass if no exception)
         [Test()]
         public void ShouldSetIntAttribute()

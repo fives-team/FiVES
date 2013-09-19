@@ -116,6 +116,21 @@ namespace FIVES
             return this.Components.ContainsKey (name);
         }
 
+        /// <summary>
+        /// Removes the component.
+        /// </summary>
+        /// <returns><c>true</c>, if the component was removed, <c>false</c> otherwise.</returns>
+        /// <param name="name">Name of the component to be removed.</param>
+        public bool RemoveComponent(string name)
+        {
+            if (HasComponent(name)) {
+                Components.Remove(name);
+                return true;
+            }
+
+            return false;
+        }
+
         public Component this[string componentName]
         {
             get

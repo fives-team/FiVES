@@ -71,7 +71,7 @@ namespace FIVES
         }
 
         [Test()]
-        public void ShouldCreateRegisteredComponent()
+        public void ShouldCreateRegisteredComponentAutomatically()
         {
             // Define new component type "myComponent" with one int attribute "attr".
             ComponentRegistry myRegistry = new ComponentRegistry();
@@ -80,7 +80,7 @@ namespace FIVES
             myRegistry.DefineComponent("myComponent", Guid.NewGuid(), layout);
 
             Entity entity = new Entity(myRegistry);
-            entity["myComponent"]["attr"] =  42;
+            entity["myComponent"]["attr"] = 42;
         }
 
         [Test()]
@@ -99,6 +99,22 @@ namespace FIVES
             Assert.Throws<ComponentIsNotDefinedException>(delegate() {
                 Component component = entity["myComponent"];
             });
+        }
+
+        [Test()]
+        public void ShouldAddAndRemoveComponent()
+        {
+            // Define new component type "myComponent" with one int attribute "attr".
+            ComponentRegistry myRegistry = new ComponentRegistry();
+            ComponentLayout layout = new ComponentLayout();
+            layout.AddAttribute<int> ("attr");
+            myRegistry.DefineComponent("myComponent", Guid.NewGuid(), layout);
+
+            Entity entity = new Entity(myRegistry);
+            entity["myComponent"]["attr"] =  42;
+            Assert.IsTrue(entity.HasComponent("myComponent"));
+            entity.RemoveComponent("myComponent");
+            Assert.IsFalse(entity.HasComponent("myComponent"));
         }
     }
 }
