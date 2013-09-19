@@ -48,12 +48,12 @@ namespace Persistence
         private ComponentLayout CreateLayoutToPersistForComponent(string componentName)
         {
             ComponentLayout layout = new ComponentLayout ();
-            string[] registeredAttributes = Registry.GetRegisteredAttributesOfComponent (componentName);
-            foreach(string attributeName in registeredAttributes)
-            {
-                Type attributeType = Registry.GetAttributeType (componentName, attributeName);
-                //layout.addAttribute<attributeType.GetType()> (attributeName);
-            }
+//            string[] registeredAttributes = Registry.GetRegisteredAttributesOfComponent (componentName);
+//            foreach(string attributeName in registeredAttributes)
+//            {
+//                Type attributeType = Registry.GetAttributeType (componentName, attributeName);
+//                //layout.addAttribute<attributeType.GetType()> (attributeName);
+//            }
 
             return layout;
         }
