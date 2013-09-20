@@ -1265,19 +1265,23 @@ define(function () {
 
     CallResponse.prototype._handleResult = function() {
         if (this._resultType) {
-            var emitArgs = null;
-            // special case for 'result' and 'exception'
             if (this._resultType == 'result' && this.hasListeners('result'))
-                emitArgs = ['result', null, this._result];
-            else if (this._resultType == 'exception' && this.hasListeners('result'))
-                emitArgs = ['result', this._result];
-            // general case (e.g. 'error')
-            else if (this.hasListeners(this._resultType))
-                emitArgs = [this._resultType, this._result];
+                this.emit.apply(this, ['result', null, this._result]);
+
+            if (this._resultType == 'exception' && this.hasListeners('result'))
+                this.emit.apply(this, ['result', this._result]);
+
+            if (this._resultType == 'result' && this.hasListeners('success'))
+                this.emit.apply(this, ['success', this._result]);
+
+            if (this._resultType == 'exception' && this.hasListeners('exception'))
+                this.emit.apply(this, ['exception', this._result]);
+
+            if (this._resultType == 'error' && this.hasListeners('error'))
+                this.emit.apply(this, ['error', this._result]);
+
             this._result = null;
             this._resultType = null;
-            if (emitArgs != null)
-                this.emit.apply(this, emitArgs);
         }
     }
 
