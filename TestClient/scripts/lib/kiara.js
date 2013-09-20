@@ -1271,6 +1271,12 @@ define(function () {
             if (this._resultType == 'exception' && this.hasListeners('result'))
                 this.emit.apply(this, ['result', this._result]);
 
+            if (this._resultType == 'exception' && this.hasListeners('failure'))
+                this.emit.apply(this, ['failure', this._result]);
+
+            if (this._resultType == 'error' && this.hasListeners('failure'))
+                this.emit.apply(this, ['failure', null, this._result]);
+
             if (this._resultType == 'result' && this.hasListeners('success'))
                 this.emit.apply(this, ['success', this._result]);
 
