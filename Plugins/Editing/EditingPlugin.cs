@@ -36,7 +36,7 @@ namespace Editing
         /// <param name="x">The x coordinate.</param>
         /// <param name="y">The y coordinate.</param>
         /// <param name="z">The z coordinate.</param>
-        public void CreateEntityAt(float x, float y, float z)
+        public string CreateEntityAt(float x, float y, float z)
         {
             Entity entity = new Entity();
             entity["position"]["x"] = x;
@@ -55,7 +55,6 @@ namespace Editing
                 connection["registerClientService"]("editing", true, new Dictionary<string, Delegate> {
                     {"createEntityAt", (Action<float, float, float>)CreateEntityAt}
                 });
-            };
         }
     }
 }
