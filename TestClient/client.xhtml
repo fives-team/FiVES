@@ -15,109 +15,144 @@
 
     </head>
     <body>
-        <link type="template-file" url="html_templates/create_entity_modal.html"/>
+        <div id="viewer">
+            <nav class = "navbar navbar-default">
+                <div class = "navbar-header">
+                    <div class = "navbar-brand">FiVES</div>
+                </div>
 
-        <nav class = "navbar navbar-default">
-            <div class = "navbar-header">
-                <div class = "navbar-brand">FiVES</div>
+                <div class="collapse navbar-collapse navbar-ex1-collapse">
+                <ul class="nav navbar-nav">
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">Create ... <b class="caret"></b></a>
+                        <ul class="dropdown-menu">
+                            <li><a data-toggle="modal" href="#create-entity-modal">Entity</a></li>
+                        </ul>
+                    </li>
+                </ul>
+                </div>
+            </nav>
+
+            <div class = "row">
+                <div class = "col-md-8 col-md-offset-2" id = "xml3d_view">
+                    <xml3d xmlns = "http://www.xml3d.org/2009/xml3d" id="xml3dView" style="width: 1200px; height: 675px; background-color: lightblue" activeView = "#camera">
+                       <view id="camera" position = "0 0 10" />
+                    </xml3d>
+                </div>
             </div>
 
-            <div class="collapse navbar-collapse navbar-ex1-collapse">
-            <ul class="nav navbar-nav">
-                <li class="dropdown">
-                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">Create ... <b class="caret"></b></a>
-                    <ul class="dropdown-menu">
-                        <li><a data-toggle="modal" href="#create-entity-modal">Entity</a></li>
-                    </ul>
-                </li>
-            </ul>
-            </div>
-        </nav>
+            <div class="modal fade" id="signin-modal" data-keyboard="false">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h4 class="modal-title">Please sign in</h4>
+                        </div>
+                        <div class="modal-body">
+                            <form class="form-horizontal" role="form" action="#" onsubmit="return false;">
+                                <div class="form-group">
+                                    <label for="signin-login" class="col-lg-2 control-label">Login</label>
+                                    <div class="col-lg-10">
+                                        <input type="text" class="form-control" id="signin-login" placeholder="Enter login" autofocus="autofocus"/>
+                                    </div>
+                                </div>
 
-        <div class = "row">
-            <div class = "col-md-8 col-md-offset-2" id = "xml3d_view">
-                <xml3d xmlns = "http://www.xml3d.org/2009/xml3d" id="xml3dView" style="width: 1200px; height: 675px; background-color: lightblue" activeView = "#camera">
-                   <view id="camera" position = "0 0 10" />
-                </xml3d>
-            </div>
-        </div>
+                                <div class="form-group">
+                                    <label for="signin-password" class="col-lg-2 control-label">Password</label>
+                                    <div class="col-lg-10">
+                                        <input type="password" class="form-control" id="signin-password" placeholder="Enter password" />
+                                    </div>
+                                </div>
 
-        <div class="modal fade" id="create-entity-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class = "modal-header" >
-                        <h3>Create New Entity</h3>
+                                <div class="form-group">
+                                    <div class="col-lg-offset-2 col-lg-10">
+                                        <input type="submit" class="btn btn-primary start" id="signin-btn" value="Sign in"
+                                               data-loading-text="Signing in..."/>
+                                        <span id="signin-failed" class="label label-danger" style="margin-left: 10px; display: none"></span>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
                     </div>
-                    <div class = "modal-body">
-                        <form class="form-inline" role = "form">
-                            <div class="form-group" style="margin-top:20px">
-                                <label for="select-mesh" class="col-lg-2 control-label">Mesh:</label>
-                                <div class="col-lg-10" style="margin-left: 90px; margin-top: -30px ">
-                                    <select class="form-control" id="select-mesh">
-                                        <option value="resources/models/firetruck/xml3d/firetruck.xhtml">Fire Truck</option>
-                                        <option value="resources/models/firetruck/xml3d/firetruck.xhtml">Fire Truck</option>
-                                        <option value="resources/models/firetruck/xml3d/firetruck.xhtml">Fire Truck</option>
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="form-group" style="margin-top:20px">
-                                <label for="input-position-x" class="col-lg-2 control-label">Position:</label>
-                                <div class="col-lg-10">
-                                    <input type="text" class="form-control" id="input-position-x" placeholder="x" />
-                                    <input type="text" class="form-control" id="input-position-y" placeholder="y" />
-                                    <input type="text" class="form-control" id="input-position-z" placeholder="z" />
-                                </div>
-                            </div>
-                            <div class="form-group" style="margin-top:20px">
-                                <label for="input-orientation-x" class="col-lg-2 control-label">Orientation:</label>
-                                <div class="col-lg-10">
-                                    <input type="text" class="form-control" id="input-orientation-x" placeholder="x" />
-                                    <input type="text" class="form-control" id="input-orientation-y" placeholder="y" />
-                                    <input type="text" class="form-control" id="input-orientation-z" placeholder="z" />
-                                    <input type="text" class="form-control" id="input-orientation-w" placeholder="w" />
-                                </div>
-                            </div>
-                            <div class="form-group" style="margin-top:20px">
-                                <label for="input-scale-x" class="col-lg-2 control-label">Scale:</label>
-                                <div class="col-lg-10">
-                                    <input type="text" class="form-control" id="input-scale-x" placeholder="x" />
-                                    <input type="text" class="form-control" id="input-scale-y" placeholder="y" />
-                                    <input type="text" class="form-control" id="input-scale-z" placeholder="z" />
-                                </div>
-                            </div>
+                </div>
+            </div>
 
-                            <div class="form-group">
-                                <div class="col-lg-offset-2 col-lg-10">
-                                    <button type="button" onclick = "FIVES.Creation.EntityCreator.createEntityFromForm(); $('#create-entity-modal').modal('hide')
-" class="btn btn-primary">Create</button>
+            <div class="modal fade" id="create-entity-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class = "modal-header" >
+                            <h3>Create New Entity</h3>
+                        </div>
+                        <div class = "modal-body">
+                            <form class="form-inline" role = "form">
+                                <div class="form-group" style="margin-top:20px">
+                                    <label for="select-mesh" class="col-lg-2 control-label">Mesh:</label>
+                                    <div class="col-lg-10" style="margin-left: 90px; margin-top: -30px ">
+                                        <select class="form-control" id="select-mesh">
+                                            <option value="resources/models/firetruck/xml3d/firetruck.xhtml">Fire Truck</option>
+                                            <option value="resources/models/firetruck/xml3d/firetruck.xhtml">Fire Truck</option>
+                                            <option value="resources/models/firetruck/xml3d/firetruck.xhtml">Fire Truck</option>
+                                        </select>
+                                    </div>
                                 </div>
-                            </div>
-                        </form>
+                                <div class="form-group" style="margin-top:20px">
+                                    <label for="input-position-x" class="col-lg-2 control-label">Position:</label>
+                                    <div class="col-lg-10">
+                                        <input type="text" class="form-control" id="input-position-x" placeholder="x" />
+                                        <input type="text" class="form-control" id="input-position-y" placeholder="y" />
+                                        <input type="text" class="form-control" id="input-position-z" placeholder="z" />
+                                    </div>
+                                </div>
+                                <div class="form-group" style="margin-top:20px">
+                                    <label for="input-orientation-x" class="col-lg-2 control-label">Orientation:</label>
+                                    <div class="col-lg-10">
+                                        <input type="text" class="form-control" id="input-orientation-x" placeholder="x" />
+                                        <input type="text" class="form-control" id="input-orientation-y" placeholder="y" />
+                                        <input type="text" class="form-control" id="input-orientation-z" placeholder="z" />
+                                        <input type="text" class="form-control" id="input-orientation-w" placeholder="w" />
+                                    </div>
+                                </div>
+                                <div class="form-group" style="margin-top:20px">
+                                    <label for="input-scale-x" class="col-lg-2 control-label">Scale:</label>
+                                    <div class="col-lg-10">
+                                        <input type="text" class="form-control" id="input-scale-x" placeholder="x" />
+                                        <input type="text" class="form-control" id="input-scale-y" placeholder="y" />
+                                        <input type="text" class="form-control" id="input-scale-z" placeholder="z" />
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <div class="col-lg-offset-2 col-lg-10">
+                                        <button type="button" onclick="FIVES.Creation.EntityCreator.createEntityFromForm(); $('#create-entity-modal').modal('hide');" class="btn btn-primary">Create</button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-    <!-- Script includes in body for faster page loading -->
-    <script type="text/javascript" src="scripts/lib/jquery.js"></script>
-    <script type="text/javascript" src="scripts/lib/underscore.js"></script>
-    <script type="text/javascript" src="scripts/lib/bootstrap-3.0.0/bootstrap.min.js"></script>
+
+        <!-- Script includes in body for faster page loading -->
+        <script type="text/javascript" src="scripts/lib/jquery.js"></script>
+        <script type="text/javascript" src="scripts/lib/underscore.js"></script>
+        <script type="text/javascript" src="scripts/lib/bootstrap-3.0.0/bootstrap.min.js"></script>
 
 
-    <script type="text/javascript" src="http://xml3d.org/xml3d/script/xml3d-dev.js"></script>
-    <script type="text/javascript" src="http://www.xml3d.org/xml3d/script/tools/camera.js"></script>
-    <script type="text/javascript" src="scripts/lib/eyelightShader.js"></script>
-    <script type="text/javascript" src="scripts/util/xml3d-motion.js"></script>
-    <script type="text/javascript" src="scripts/util/remote-xml3d-loader.js"></script>
-    <script type="text/javascript" src="scripts/util/template_loader.js"></script>
+        <script type="text/javascript" src="http://xml3d.org/xml3d/script/xml3d-dev.js"></script>
+        <script type="text/javascript" src="http://www.xml3d.org/xml3d/script/tools/camera.js"></script>
+        <script type="text/javascript" src="scripts/lib/eyelightShader.js"></script>
+        <script type="text/javascript" src="scripts/util/xml3d-motion.js"></script>
+        <script type="text/javascript" src="scripts/util/remote-xml3d-loader.js"></script>
+        <script type="text/javascript" src="scripts/util/template_loader.js"></script>
 
-    <script type="text/javascript" src="scripts/resources/resource_manager.js"></script>
-    <script type="text/javascript" src="scripts/resources/scene_manager.js"></script>
+        <script type="text/javascript" src="scripts/resources/resource_manager.js"></script>
+        <script type="text/javascript" src="scripts/resources/scene_manager.js"></script>
 
-    <script type="text/javascript" src="scripts/models/entity.js"></script>
-    <script type="text/javascript" src="scripts/models/entity_registry.js"></script>
-    <script type="text/javascript" src="scripts/communication/fives_communicator.js"></script>
+        <script type="text/javascript" src="scripts/models/entity.js"></script>
+        <script type="text/javascript" src="scripts/models/entity_registry.js"></script>
+        <script type="text/javascript" src="scripts/communication/fives_communicator.js"></script>
 
-    <script type="text/javascript" src="scripts/creation/entity_creator.js"></script>
+        <script type="text/javascript" src="scripts/creation/entity_creator.js"></script>
     </body>
 </html>

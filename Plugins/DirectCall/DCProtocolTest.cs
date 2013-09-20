@@ -10,6 +10,7 @@ namespace DirectCall
     {
         public interface IHandlers {
             void Function1(int x);
+            string Function2();
         }
 
         private DCProtocol protocol;
@@ -37,11 +38,13 @@ namespace DirectCall
         }
 
         [Test()]
-        public void ShouldFailToReregisterFunction()
+        public void ShouldReregisterFunction()
         {
-            protocol.RegisterHandler("function1", (Action<int>)mockHandlers.Object.Function1);
-            Assert.Throws<Error>(
-                () => protocol.RegisterHandler("function1", (Action<int>)mockHandlers.Object.Function1));
+            protocol.RegisterHandler("function", (Action<int>)mockHandlers.Object.Function1);
+            protocol.RegisterHandler("function", (Func<string>)mockHandlers.Object.Function2);
+            protocol.CallFunc("function");
+            mockHandlers.Verify(h => h.Function1(It.IsAny<int>()), Times.Never());
+            mockHandlers.Verify(h => h.Function2(), Times.Once());
         }
 
         // TODO: Should process IDL (when implemented).

@@ -36,9 +36,6 @@ namespace DirectCall
 
         public void RegisterHandler(string name, Delegate handler)
         {
-            if (registeredHandlers.ContainsKey(name))
-                throw new Error(ErrorCode.INVALID_ARGUMENT, "Handler for the " + name + " is already registered");
-
             registeredHandlers[name] = handler;
         }
 
