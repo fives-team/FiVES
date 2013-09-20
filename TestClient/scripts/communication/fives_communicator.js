@@ -36,7 +36,7 @@ FIVES.Communication = FIVES.Communication || {};
 
         // If connection has not been established yet - check again in 500 milliseconds.
         if (!self.connection) {
-            setTimeout(c.auth.bind(this, username, password, callback), 500);
+            self.onConnected = c.auth.bind(this, username, password, callback);
             return;
         }
 
@@ -44,10 +44,8 @@ FIVES.Communication = FIVES.Communication || {};
             callback(false, message);
         };
 
-        var loginCallback = function(error, result) {
-            if (error) {
-                reportFailure("Failed to authenticate.");
-            } else if (result == "") {
+        var loginCallback = function(result) {
+            if (result == "") {
                 reportFailure("Invalid user name or password.");
             } else {
                 self.sessionKey = result;
@@ -55,22 +53,20 @@ FIVES.Communication = FIVES.Communication || {};
             }
         };
 
-        var implementsCallback = function(error, result) {
-            if (error) {
-                reportFailure("Failed to request authentication service from the server.");
-            } else if (!result[0] || !result[1]) {
+        var implementsCallback = function(result) {
+            if (!result[0] || !result[1]) {
                 reportFailure("Server does not support authentication service.");
             } else {
                 var login = self.connection.generateFuncWrapper("auth.login");
                 login(username, password)
-                    .on("result", loginCallback)
-                    .on("error", reportFailure.bind(null, "Failed to authenticate."));
+                    .on("success", loginCallback)
+                    .on("failure", reportFailure.bind(null, "Failed to authenticate."));
             }
         };
 
         this.implements(["kiara", "auth"])
-            .on("result", implementsCallback)
-            .on("error", reportFailure.bind(null, "Failed to request authentication service from the server."));
+            .on("success", implementsCallback)
+            .on("failure", reportFailure.bind(null, "Failed to request authentication service from the server."));
     }
 
     // Attempts to connect to the virtual world. Method `auth` must be used prior to this function to authenticate in
@@ -108,6 +104,9 @@ FIVES.Communication = FIVES.Communication || {};
     var _onOpenedConnection = function(error, conn) {
         this.connection = conn;
         this.implements = conn.generateFuncWrapper("kiara.implements");
+
+        if (this.onConnected)
+            this.onConnected();
     };
 
     var _listObjectsCallback =  function(error, objects) {
