@@ -206,13 +206,14 @@ namespace FIVES
             if (IsPluginLoaded(pluginName)) {
                 handler();
             } else {
-                PluginInitialized anyPluginLoadedHandler = delegate(object sender, PluginInitializedEventArgs args) {
+                PluginInitialized customPluginInitializedHandler = null;
+                customPluginInitializedHandler = delegate(object sender, PluginInitializedEventArgs args) {
                     if (args.pluginName == pluginName) {
-                        OnAnyPluginInitialized -= anyPluginLoadedHandler;
+                        OnAnyPluginInitialized -= customPluginInitializedHandler;
                         handler();
                     }
                 };
-                OnAnyPluginInitialized += anyPluginLoadedHandler;
+                OnAnyPluginInitialized += customPluginInitializedHandler;
             }
         }
 
