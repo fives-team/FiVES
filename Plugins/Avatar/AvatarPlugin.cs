@@ -35,7 +35,7 @@ namespace Avatar
                 connection["registerClientService"]("avatar", new Dictionary<string, Delegate> {
                     {"changeAppearance", (Action<string, string, Vector>)ChangeAppearance},
                     {"teleport", (Action<string, Vector, Quat>)Teleport}
-                });
+                }, true);
 
                 connection["notifyWhenAnyClientAuthenticated"]((Action<Guid>)delegate(Guid sessionKey) {
                     Activate(sessionKey);

@@ -38,7 +38,7 @@ namespace ClientManager {
 
             RegisterClientService("kiara", new Dictionary<string, Delegate>(), false);
             RegisterClientMethod("kiara.implements", (Func<List<string>, List<bool>>)Implements, false);
-            RegisterClientMethod("kiara.implements", (Func<List<string>, List<bool>>)AuthenticatedImplements);
+            RegisterClientMethod("kiara.implements", (Func<List<string>, List<bool>>)AuthenticatedImplements, true);
 
             RegisterClientService("auth", new Dictionary<string, Delegate>(), false);
             clientService.OnNewClient += delegate(Connection connection) {
@@ -66,7 +66,7 @@ namespace ClientManager {
                  (Action<string, Action<Vector, Quat>>) NotifyAboutEntityLocationUpdates},
                 {"notifyAboutEntityVisibilityUpdates",
                  (Action<string, Action<bool>>) NotifyAboutEntityVisibilityUpdates},
-            });
+            }, true);
 
             // DEBUG
 //            clientService["scripting.createServerScriptFor"] = (Action<string, string>)createServerScriptFor;
@@ -238,7 +238,7 @@ namespace ClientManager {
         /// <param name="methods">Methods (a map from the name to a delegate).</param>
         /// <param name="requireAuthentication">If set to <c>true</c> require clients to authenticate.</param>
         public void RegisterClientService(string serviceName, Dictionary<string, Delegate> methods,
-                                           bool requireAuthentication = true)
+                                           bool requireAuthentication)
         {
             foreach (var method in methods)
                 RegisterClientMethod(serviceName + "." + method.Key, method.Value, requireAuthentication);
@@ -256,7 +256,7 @@ namespace ClientManager {
         /// <param name="methodName">Method name.</param>
         /// <param name="handler">Delegate with implementation.</param>
         /// <param name="requireAuthentication">If set to <c>true</c> require clients to authenticate.</param>
-        public void RegisterClientMethod(string methodName, Delegate handler, bool requireAuthentication = true)
+        public void RegisterClientMethod(string methodName, Delegate handler, bool requireAuthentication)
         {
             if (requireAuthentication)
                 authenticatedMethods[methodName] = handler;

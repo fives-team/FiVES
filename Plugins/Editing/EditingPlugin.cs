@@ -60,7 +60,7 @@ namespace Editing
             clientManager.OnConnected += delegate(Connection connection) {
                 connection["registerClientService"]("editing", new Dictionary<string, Delegate> {
                     {"createEntityAt", (Action<float, float, float>)CreateEntityAt}
-                });
+                }, true);
             };
         }
     }
