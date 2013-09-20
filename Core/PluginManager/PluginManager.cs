@@ -21,12 +21,12 @@ namespace FIVES
         /// Delegate to be used with <see cref="OnPluginInitialized"/>
         /// </summary>
         /// <param name="pluginName">Name of the initialized plugin</param>
-        public delegate void PluginLoaded(Object sender, PluginInitializedEventArgs e);
+        public delegate void PluginInitialized(Object sender, PluginInitializedEventArgs e);
 
         /// <summary>
         /// Occurs when a plugin is initialized.
         /// </summary>
-        public event PluginLoaded OnAnyPluginInitialized;
+        public event PluginInitialized OnAnyPluginInitialized;
 
         public PluginManager()
         {
@@ -206,7 +206,7 @@ namespace FIVES
             if (IsPluginLoaded(pluginName)) {
                 handler();
             } else {
-                PluginLoaded anyPluginLoadedHandler = delegate(object sender, PluginInitializedEventArgs args) {
+                PluginInitialized anyPluginLoadedHandler = delegate(object sender, PluginInitializedEventArgs args) {
                     if (args.pluginName == pluginName) {
                         OnAnyPluginInitialized -= anyPluginLoadedHandler;
                         handler();
