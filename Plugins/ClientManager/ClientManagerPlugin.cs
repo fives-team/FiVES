@@ -61,7 +61,7 @@ namespace ClientManager {
                 {"listObjects", (Func<List<EntityInfo>>) ListObjects},
                 {"setEntityLocation", (Action<string, Vector, Quat>) SetEntityLocation},
                 {"notifyAboutNewObjects", (Action<Action<EntityInfo>>) NotifyAboutNewObjects},
-                {"notifyAboutNewObjects", (Action<Action<string>>) NotifyAboutRemovedObjects},
+                {"notifyAboutRemovedObjects", (Action<Action<string>>) NotifyAboutRemovedObjects},
                 {"notifyAboutEntityLocationUpdates",
                  (Action<string, Action<Vector, Quat>>) NotifyAboutEntityLocationUpdates},
                 {"notifyAboutEntityVisibilityUpdates",
@@ -75,7 +75,7 @@ namespace ClientManager {
 //                getAnswer((Action<int>) delegate(int answer) { Console.WriteLine("The answer is {0}", answer); });
 //            };
 
-            var pluginService = ServiceFactory.CreateByName("objectsync", ContextFactory.GetContext("inter-plugin"));
+            var pluginService = ServiceFactory.CreateByName("clientmanager", ContextFactory.GetContext("inter-plugin"));
             pluginService["registerClientMethod"] = (Action<string, Delegate,bool>)RegisterClientMethod;
             pluginService["registerClientService"] =
                 (Action<string,Dictionary<string, Delegate>,bool>)RegisterClientService;
