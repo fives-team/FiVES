@@ -11,20 +11,30 @@ namespace FIVES
 
         static int Main(string[] args)
         {
-            logger.Info("Loading plugins");
-
+            // Load configuration options.
+            string pluginDir = null;
+            string protocolDir = null;
             ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
             try {
-                string pluginDir = ConfigurationManager.AppSettings["PluginsDir"].ToString();
-                if (Directory.Exists(pluginDir))
-                    PluginManager.Instance.LoadPluginsFrom(pluginDir);
-            } catch (NullReferenceException) {
-                logger.Error("Plugins dir is not specified.");
+                pluginDir = ConfigurationManager.AppSettings["PluginDir"].ToString();
+                protocolDir = ConfigurationManager.AppSettings["ProtocolDir"].ToString();
             } catch (ConfigurationErrorsException) {
                 logger.Error("Configuration is missing or corrupt.");
             }
 
-            logger.Info("Finished loading plugins");
+            logger.Info("Loading protocols");
+            if (protocolDir != null && Directory.Exists(protocolDir))
+                KIARA.ProtocolRegistry.Instance.LoadProtocolsFrom(protocolDir);
+            else
+                logger.Error("Protocol dir is not specified or does not exist");
+
+            logger.Info("Loading plugins");
+            if (pluginDir != null && Directory.Exists(pluginDir))
+                PluginManager.Instance.LoadPluginsFrom(pluginDir);
+            else
+                logger.Error("Plugin dir is not specified or does not exist");
+
+            logger.Info("Loading complete");
 
 //            // Add 5 entities.
 //            var random = new Random();

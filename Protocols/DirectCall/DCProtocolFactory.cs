@@ -52,6 +52,13 @@ namespace DirectCall
             serverList.Add(id, onNewClient);
         }
 
+        public string GetName()
+        {
+            return "direct-call";
+        }
+
+        #endregion
+
         private string ValidateServerConfigAndRetrieveId(Server serverConfig)
         {
             string protocol = ProtocolUtils.retrieveProtocolSetting<string>(serverConfig, "name", null);
@@ -71,7 +78,6 @@ namespace DirectCall
                 context.ProtocolData["direct-call"] = new Dictionary<string, Action<IProtocol>>();
             return (Dictionary<string, Action<IProtocol>>)context.ProtocolData["direct-call"];
         }
-        #endregion
     }
 }
 
