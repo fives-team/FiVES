@@ -17,8 +17,7 @@ namespace Scripting
         [Test()]
         public void ShouldReturnCorrectDeps()
         {
-            Assert.AreEqual(plugin.GetDependencies().Count, 1);
-            Assert.Contains("DirectCall", plugin.GetDependencies());
+            Assert.AreEqual(plugin.GetDependencies().Count, 0);
         }
     }
 }

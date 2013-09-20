@@ -20,7 +20,7 @@ namespace Editing
 
         public List<string> GetDependencies()
         {
-            return new List<string>() { "Location", "DirectCall" };
+            return new List<string>() { "Location" };
         }
 
         public void Initialize()

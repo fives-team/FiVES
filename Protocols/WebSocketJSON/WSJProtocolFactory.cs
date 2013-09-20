@@ -36,6 +36,11 @@ namespace WebSocketJSON
             server.Start();
         }
 
+        public string GetName()
+        {
+            return "websocket-json";
+        }
+
         #endregion
 
         #region Testing

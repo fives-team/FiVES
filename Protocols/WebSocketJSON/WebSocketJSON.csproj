@@ -21,8 +21,8 @@
     <ConsolePause>false</ConsolePause>
     <CustomCommands>
       <CustomCommands>
-        <Command type="AfterBuild" command="xcopy /y &quot;${TargetDir}&quot; &quot;${SolutionDir}\BuiltPlugins\&quot; || echo &quot;Ignoring error&quot;" externalConsole="True" />
-        <Command type="AfterBuild" command="mkdir -p &quot;${SolutionDir}/BuiltPlugins/&quot; &amp;&amp; cp &quot;${TargetDir}/&quot;* &quot;${SolutionDir}/BuiltPlugins/&quot; || echo &quot;Ignoring error&quot;" externalConsole="True" />
+        <Command type="AfterBuild" command="xcopy /y &quot;${TargetDir}&quot; &quot;${SolutionDir}\BuiltProtocols\&quot; || echo &quot;Ignoring error&quot;" externalConsole="True" />
+        <Command type="AfterBuild" command="mkdir -p &quot;${SolutionDir}/BuiltProtocols/&quot; &amp;&amp; cp &quot;${TargetDir}/&quot;* &quot;${SolutionDir}/BuiltProtocols/&quot; || echo &quot;Ignoring error&quot;" externalConsole="True" />
       </CustomCommands>
     </CustomCommands>
   </PropertyGroup>
@@ -69,8 +69,6 @@
     <Compile Include="WSJServer.cs" />
     <Compile Include="WSJProtocol.cs" />
     <Compile Include="WSJFuncCall.cs" />
-    <Compile Include="WebSocketJSONPlugin.cs" />
-    <Compile Include="WebSocketJSONPluginTest.cs" />
     <Compile Include="WSJFuncCallTest.cs" />
     <Compile Include="WSJProtocolTest.cs" />
     <Compile Include="TestingWrappers.cs" />

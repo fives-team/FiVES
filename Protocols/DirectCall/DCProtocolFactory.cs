@@ -14,6 +14,13 @@ namespace DirectCall
     /// </remarks>
     public class DCProtocolFactory : IProtocolFactory
     {
+        public DCProtocolFactory()
+        {
+            // Create inter-plugin context and initialize it with this protocol.
+            Context interPluginContext = ContextFactory.GetContext("inter-plugin");
+            interPluginContext.Initialize("{{servers:[{{protocol:{{name:'direct-call', id:'{0}'}}}}]}}");
+        }
+
         #region IProtocolFactory implementation
 
         public void OpenConnection(Server serverConfig, Context context, Action<IProtocol> onConnected)
@@ -45,6 +52,13 @@ namespace DirectCall
             serverList.Add(id, onNewClient);
         }
 
+        public string GetName()
+        {
+            return "direct-call";
+        }
+
+        #endregion
+
         private string ValidateServerConfigAndRetrieveId(Server serverConfig)
         {
             string protocol = ProtocolUtils.retrieveProtocolSetting<string>(serverConfig, "name", null);
@@ -64,7 +78,6 @@ namespace DirectCall
                 context.ProtocolData["direct-call"] = new Dictionary<string, Action<IProtocol>>();
             return (Dictionary<string, Action<IProtocol>>)context.ProtocolData["direct-call"];
         }
-        #endregion
     }
 }
 

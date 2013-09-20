@@ -16,7 +16,7 @@ namespace Auth
 
         public List<string> GetDependencies ()
         {
-            return new List<string> { "DirectCall" };
+            return new List<string>();
         }
 
         public void Initialize ()

@@ -18,9 +18,8 @@ namespace Editing
         [Test()]
         public void ShouldReturnCorrectDeps()
         {
-            Assert.AreEqual(plugin.GetDependencies().Count, 2);
+            Assert.AreEqual(plugin.GetDependencies().Count, 1);
             Assert.Contains("Location", plugin.GetDependencies());
-            Assert.Contains("DirectCall", plugin.GetDependencies());
         }
     }
 }

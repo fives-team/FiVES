@@ -27,7 +27,7 @@ namespace ClientManager {
 
         public List<string> GetDependencies()
         {
-            return new List<string>() { "WebSocketJSON", "DirectCall", "Location", "Renderable", "Auth" };
+            return new List<string>() { "Location", "Renderable", "Auth" };
         }
 
         public void Initialize()

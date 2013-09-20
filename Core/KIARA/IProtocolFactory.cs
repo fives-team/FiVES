@@ -23,6 +23,12 @@ namespace KIARA
         /// <param name="serverConfig">Server config.</param>
         /// <param name="onNewClient">Callback to be called for each new client.</param>
         void StartServer(Server serverConfig, Context context, Action<IProtocol> onNewClient);
+
+        /// <summary>
+        /// Returns the name of the protocol.
+        /// </summary>
+        /// <returns>The name of the protocol.</returns>
+        string GetName();
     }
 }
 

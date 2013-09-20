@@ -1,5 +1,8 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
+using NLog;
+using System.Reflection;
 
 namespace KIARA
 {
@@ -59,7 +62,41 @@ namespace KIARA
             return registeredProtocols.ContainsKey(protocol);
         }
 
-        private Dictionary<string, IProtocolFactory> registeredProtocols = new Dictionary<string, IProtocolFactory>();
+        public void LoadProtocolsFrom(string protocolDir)
+        {
+            string[] files = Directory.GetFiles(protocolDir);
+            foreach (string filename in files)
+                LoadProtocol(filename);
+        }
+
+        void LoadProtocol(string filename)
+        {
+            try {
+                // Load an assembly.
+                Assembly assembly = Assembly.LoadFrom(filename);
+
+                // Find protocol factory (class implementing IProtocolFactory).
+                List<Type> types = new List<Type>(assembly.GetTypes());
+                Type protocolFactoryInterface = typeof(IProtocolFactory);
+                Type protocolFactoryType = types.Find(t => protocolFactoryInterface.IsAssignableFrom(t));
+                if (protocolFactoryType == null) {
+                    Logger.Warn("Assembly in file " + filename +
+                                " doesn't contain any class implementing IPluginInitializer.");
+                    return;
+                }
+
+                // Instantiate and register protocol factory.
+                var protocolFactory = (IProtocolFactory)Activator.CreateInstance(protocolFactoryType);
+                RegisterProtocolFactory(protocolFactory.GetName(), protocolFactory);
+            } catch (Exception e) {
+                Logger.WarnException("Failed to load file " + filename + " as a protocol.", e);
+                return;
+            }
+        }
+
+        Dictionary<string, IProtocolFactory> registeredProtocols = new Dictionary<string, IProtocolFactory>();
+
+        static Logger Logger = LogManager.GetCurrentClassLogger();
     }
 }
 
