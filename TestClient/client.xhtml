@@ -41,7 +41,7 @@
                 </div>
             </div>
 
-            <div class="modal fade" id="signin" data-keyboard="false">
+            <div class="modal fade" id="signin-modal" data-keyboard="false">
                 <div class="modal-dialog">
                     <div class="modal-content">
                         <div class="modal-header">
@@ -49,25 +49,25 @@
                         </div>
                         <div class="modal-body">
                             <form class="form-horizontal" role="form" action="#" onsubmit="return false;">
-                                <!-- TODO: error message if login/password was incorrect -->
-
                                 <div class="form-group">
-                                    <label for="login" class="col-lg-2 control-label">Login</label>
+                                    <label for="signin-login" class="col-lg-2 control-label">Login</label>
                                     <div class="col-lg-10">
-                                        <input type="text" class="form-control" id="login" placeholder="Enter login" autofocus="autofocus"/>
+                                        <input type="text" class="form-control" id="signin-login" placeholder="Enter login" autofocus="autofocus"/>
                                     </div>
                                 </div>
 
                                 <div class="form-group">
-                                    <label for="password" class="col-lg-2 control-label">Password</label>
+                                    <label for="signin-password" class="col-lg-2 control-label">Password</label>
                                     <div class="col-lg-10">
-                                        <input type="password" class="form-control" id="password" placeholder="Enter password" />
+                                        <input type="password" class="form-control" id="signin-password" placeholder="Enter password" />
                                     </div>
                                 </div>
 
                                 <div class="form-group">
                                     <div class="col-lg-offset-2 col-lg-10">
-                                        <input type="submit" class="btn btn-primary" id="btn-signin" value="Sign in"  />
+                                        <input type="submit" class="btn btn-primary start" id="signin-btn" value="Sign in"
+                                               data-loading-text="Signing in..."/>
+                                        <span id="signin-failed" class="label label-danger" style="margin-left: 10px; display: none"></span>
                                     </div>
                                 </div>
                             </form>

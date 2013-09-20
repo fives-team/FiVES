@@ -16,28 +16,63 @@ function(KIARA, $) {
         return false;
     }
 
+    function resetFormAndReportError(message) {
+        // Reset the form.
+        $("#signin-login").prop('disabled', false);
+        $("#signin-password").prop('disabled', false);
+        $("#signin-btn").button("reset");
+
+        // Show error message.
+        $("#signin-failed").text(message);
+        $("#signin-failed").show();
+
+        // Focus the login input.
+        $("#signin-login").focus();
+    }
+
     var loginComplete = false;
+    var signinBtnPressed = false;
     function login() {
+        // This is to allow hiding modal when login is complete.
         if (loginComplete)
             return true;
 
-        var login = $("#login").val();
-        var password = $("#password").val();
+        // This is to ignore attempts to close the signin modal by clicking outside of it.
+        if (!signinBtnPressed)
+            return false;
+        else
+            signinBtnPressed = false; // reset the value
 
-        FIVES.Communication.FivesCommunicator.auth(login, password, function(success, sessionKey) {
+        var login = $("#signin-login").val();
+        var password = $("#signin-password").val();
+
+        var connectCallback = function(success, message) {
             if (success) {
-                FIVES.Communication.FivesCommunicator.connect(function() {
-                    loginComplete = true;
-                    $("singin").modal("hide");
-                });
+                loginComplete = true;
+                $("#signin-modal").modal("hide");
             } else {
-                $("#login").val("");
-                $("#password").val("");
-                // TODO: show "Error: Failed to sign in.", enable inputs and button
+                resetFormAndReportError(message);
             }
-        });
+        };
 
-        // TODO: show "Signing in...", disable inputs and button
+        var authCallback = function(success, message) {
+            if (success) {
+                FIVES.Communication.FivesCommunicator.connect(connectCallback);
+            } else {
+                resetFormAndReportError(message);
+            }
+        };
+
+        // Make a small pause so that users can appreciated the "Signing in..." message.
+        setTimeout( function() {
+            FIVES.Communication.FivesCommunicator.auth(login, password, authCallback);
+        }, 1000);
+
+        // Disable input fields and button, hide error message if any.
+        $("#signin-btn").button("loading");
+        $("#signin-login").prop('disabled', true);
+        $("#signin-password").prop('disabled', true);
+        $("#signin-failed").hide();
 
         return false;
     }
@@ -49,9 +84,10 @@ function(KIARA, $) {
         FIVES.Communication.FivesCommunicator.initialize(context, service);
         FIVES.Resources.SceneManager.initialize("xml3dView");
 
-        $('#signin').modal();
-        $("#signin").on("hide.bs.modal", login);
-        $("#btn-signin").click(function() { $('#signin').modal("hide") });
+        // Show signin modal.
+        $('#signin-modal').modal("show");
+        $("#signin-modal").on("hide.bs.modal", login);
+        $("#signin-btn").click(function() { signinBtnPressed = true; $('#signin-modal').modal("hide"); });
     }
     $(document).ready(main);
 });
