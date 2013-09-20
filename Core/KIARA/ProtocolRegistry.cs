@@ -77,11 +77,10 @@ namespace KIARA
 
                 // Find protocol factory (class implementing IProtocolFactory).
                 List<Type> types = new List<Type>(assembly.GetTypes());
-                Type protocolFactoryInterface = typeof(IProtocolFactory);
-                Type protocolFactoryType = types.Find(t => protocolFactoryInterface.IsAssignableFrom(t));
+                Type protocolFactoryType = types.Find(t => typeof(IProtocolFactory).IsAssignableFrom(t));
                 if (protocolFactoryType == null) {
                     Logger.Warn("Assembly in file " + filename +
-                                " doesn't contain any class implementing IPluginInitializer.");
+                                " doesn't contain any class implementing IProtocolFactory.");
                     return;
                 }
 

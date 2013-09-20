@@ -74,8 +74,7 @@ namespace FIVES
 
                     // Find initializer class.
                     List<Type> types = new List<Type>(assembly.GetTypes());
-                    Type pluginInitializerInterface = typeof(IPluginInitializer);
-                    Type initializerType = types.Find(t => pluginInitializerInterface.IsAssignableFrom(t));
+                    Type initializerType = types.Find(t => typeof(IPluginInitializer).IsAssignableFrom(t));
                     if (initializerType == null) {
                         Logger.Warn("Assembly in file " + path +
                                     " doesn't contain any class implementing IPluginInitializer.");
