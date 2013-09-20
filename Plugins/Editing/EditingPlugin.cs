@@ -25,14 +25,7 @@ namespace Editing
 
         public void Initialize()
         {
-            if (PluginManager.Instance.IsPluginLoaded("ClientManager")) {
-                RegisterEditingAPI();
-            } else {
-                PluginManager.Instance.OnPluginInitialized += delegate(Object sender, PluginLoadedEventArgs e) {
-                    if (e.pluginName == "ClientManager")
-                        RegisterEditingAPI();
-                };
-            }
+            PluginManager.Instance.AddPluginLoadedHandler("ClientManager", RegisterEditingAPI);
         }
 
         #endregion

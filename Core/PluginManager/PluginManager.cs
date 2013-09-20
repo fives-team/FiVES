@@ -26,11 +26,11 @@ namespace FIVES
         /// <summary>
         /// Occurs when a plugin is initialized.
         /// </summary>
-        public event PluginLoaded OnPluginInitialized;
+        public event PluginLoaded OnAnyPluginInitialized;
 
         public PluginManager()
         {
-            OnPluginInitialized += UpdateDeferredPlugins;
+            OnAnyPluginInitialized += UpdateDeferredPlugins;
         }
 
         private struct LoadedPluginInfo {
@@ -111,8 +111,8 @@ namespace FIVES
                         return;
                     }
                     LoadedPlugins.Add(name, info);
-                    if (OnPluginInitialized != null)
-                        OnPluginInitialized(this, new PluginLoadedEventArgs(name));
+                    if (OnAnyPluginInitialized != null)
+                        OnAnyPluginInitialized(this, new PluginLoadedEventArgs(name));
                 } catch (Exception e) {
                     Logger.WarnException("Failed to load file " + path + " as a plugin.", e);
                     return;
@@ -143,8 +143,8 @@ namespace FIVES
                 DeferredPlugins[name].initializer.Initialize();
                 LoadedPlugins[name] = DeferredPlugins[name];
                 DeferredPlugins.Remove(name);
-                if (OnPluginInitialized != null)
-                    OnPluginInitialized(this, new PluginLoadedEventArgs(name));
+                if (OnAnyPluginInitialized != null)
+                    OnAnyPluginInitialized(this, new PluginLoadedEventArgs(name));
             }
         }
 
@@ -189,6 +189,33 @@ namespace FIVES
         {
             return LoadedPlugins.ContainsKey(name);
         }
+
+        /// <summary>
+        /// Executes <paramref name="handler"/> when plugin with specified <paramref name="pluginName"/> is loaded. This
+        /// can be used to add dynamic dependencies.
+        /// </summary>
+        /// <example>
+        ///     PluginManager.Instance.AddPluginLoadedHandler("ClientSync", delegate() {
+        ///         // do something that uses ClientSync plugin...
+        ///     });
+        /// </example>
+        /// <param name="pluginName">Plugin to be loaded.</param>
+        /// <param name="handler">Handler to be executed.</param>
+        public void AddPluginLoadedHandler(string pluginName, Action handler)
+        {
+            if (IsPluginLoaded(pluginName)) {
+                handler();
+            } else {
+                PluginLoaded anyPluginLoadedHandler = delegate(object sender, PluginLoadedEventArgs args) {
+                    if (args.pluginName == pluginName) {
+                        OnAnyPluginInitialized -= anyPluginLoadedHandler;
+                        handler();
+                    }
+                };
+                OnAnyPluginInitialized += anyPluginLoadedHandler;
+            }
+        }
+
     }
 }
 
