@@ -41,6 +41,11 @@ namespace FIVES
         /// <typeparam name="T">Type of the attribute.</typeparam>
         public void AddAttribute<T>(string name, object defaultValue)
         {
+            // Fail if default value is null and type T is not nullable or if default value has different type than T.
+            bool canBeNull = !typeof(T).IsValueType || (Nullable.GetUnderlyingType(typeof(T)) != null);
+            if ((defaultValue == null && !canBeNull) || (defaultValue != null && defaultValue.GetType() != typeof(T)))
+                throw new ArgumentException("Invalid default value type.");
+
             this.Attributes [name] = new AttributeDefinition(typeof(T), defaultValue);
         }
 
