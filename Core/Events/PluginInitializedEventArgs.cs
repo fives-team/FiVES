@@ -2,9 +2,9 @@ using System;
 
 namespace Events
 {
-    public class PluginLoadedEventArgs : EventArgs
+    public class PluginInitializedEventArgs : EventArgs
     {
-        public PluginLoadedEventArgs (string pluginName)
+        public PluginInitializedEventArgs (string pluginName)
         {
             this.pluginName = pluginName;
         }

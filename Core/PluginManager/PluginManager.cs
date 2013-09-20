@@ -21,7 +21,7 @@ namespace FIVES
         /// Delegate to be used with <see cref="OnPluginInitialized"/>
         /// </summary>
         /// <param name="pluginName">Name of the initialized plugin</param>
-        public delegate void PluginLoaded(Object sender, PluginLoadedEventArgs e);
+        public delegate void PluginLoaded(Object sender, PluginInitializedEventArgs e);
 
         /// <summary>
         /// Occurs when a plugin is initialized.
@@ -112,7 +112,7 @@ namespace FIVES
                     }
                     LoadedPlugins.Add(name, info);
                     if (OnAnyPluginInitialized != null)
-                        OnAnyPluginInitialized(this, new PluginLoadedEventArgs(name));
+                        OnAnyPluginInitialized(this, new PluginInitializedEventArgs(name));
                 } catch (Exception e) {
                     Logger.WarnException("Failed to load file " + path + " as a plugin.", e);
                     return;
@@ -125,7 +125,7 @@ namespace FIVES
         /// dependecies. Plugins that have no other remaining dependencies are initialized.
         /// </summary>
         /// <param name="loadedPlugin">Loaded plugin name.</param>
-        private void UpdateDeferredPlugins(Object sender, PluginLoadedEventArgs e)
+        private void UpdateDeferredPlugins(Object sender, PluginInitializedEventArgs e)
         {
             // Iterate over deferred plugins and remove |loadedPlugin| from the list of dependencies.
             foreach (var info in DeferredPlugins.Values)
@@ -144,7 +144,7 @@ namespace FIVES
                 LoadedPlugins[name] = DeferredPlugins[name];
                 DeferredPlugins.Remove(name);
                 if (OnAnyPluginInitialized != null)
-                    OnAnyPluginInitialized(this, new PluginLoadedEventArgs(name));
+                    OnAnyPluginInitialized(this, new PluginInitializedEventArgs(name));
             }
         }
 
@@ -206,7 +206,7 @@ namespace FIVES
             if (IsPluginLoaded(pluginName)) {
                 handler();
             } else {
-                PluginLoaded anyPluginLoadedHandler = delegate(object sender, PluginLoadedEventArgs args) {
+                PluginLoaded anyPluginLoadedHandler = delegate(object sender, PluginInitializedEventArgs args) {
                     if (args.pluginName == pluginName) {
                         OnAnyPluginInitialized -= anyPluginLoadedHandler;
                         handler();
