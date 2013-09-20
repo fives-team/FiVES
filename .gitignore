@@ -4,6 +4,7 @@ bin/
 *test-results*
 .idea/
 BuiltPlugins/
+BuiltProtocols/
 Docs/html
 Docs/libpeerconnection.log
 packages
