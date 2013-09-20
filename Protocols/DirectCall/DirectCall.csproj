@@ -48,11 +48,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="DirectCallPlugin.cs" />
     <Compile Include="DCProtocolFactory.cs" />
     <Compile Include="DCProtocol.cs" />
     <Compile Include="DCFuncCall.cs" />
-    <Compile Include="DirectCallPluginTest.cs" />
     <Compile Include="DCProtocolFactoryTest.cs" />
     <Compile Include="DCFuncCallTest.cs" />
     <Compile Include="DCProtocolTest.cs" />

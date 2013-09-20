@@ -69,8 +69,6 @@
     <Compile Include="WSJServer.cs" />
     <Compile Include="WSJProtocol.cs" />
     <Compile Include="WSJFuncCall.cs" />
-    <Compile Include="WebSocketJSONPlugin.cs" />
-    <Compile Include="WebSocketJSONPluginTest.cs" />
     <Compile Include="WSJFuncCallTest.cs" />
     <Compile Include="WSJProtocolTest.cs" />
     <Compile Include="TestingWrappers.cs" />
