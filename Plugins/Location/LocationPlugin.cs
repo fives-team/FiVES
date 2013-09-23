@@ -59,14 +59,14 @@ namespace Location
                 var clientManager = ServiceFactory.DiscoverByName("clientmanager", interPluginContext);
                 clientManager.OnConnected += delegate(Connection connection) {
                     connection["registerClientService"]("location", true, new Dictionary<string, Delegate> {
-                        {"update", (Action<string, Vector, Quat>) Update},
+                        {"update", (Action<string, Vector, Quat, int>) Update},
                         {"notifyAboutUpdates", (Action<string, Action<Vector, Quat>>) NotifyAboutUpdates},
                     });
                 };
             });
         }
 
-        private void Update(string guid, Vector position, Quat orientation)
+        private void Update(string guid, Vector position, Quat orientation, int timestamp)
         {
             var entity = EntityRegistry.Instance.GetEntity(guid);
             entity["position"]["x"] = position.x;
@@ -76,6 +76,8 @@ namespace Location
             entity["orientation"]["y"] = orientation.y;
             entity["orientation"]["z"] = orientation.z;
             entity["orientation"]["w"] = orientation.w;
+
+            // We currently ignore timestamp, but may it in the future to implement dead reckoning.
         }
 
         private void NotifyAboutUpdates(string guid, Action<Vector, Quat> callback)
