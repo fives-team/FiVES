@@ -20,11 +20,9 @@ FIVES.Models = FIVES.Models || {};
 
     var er = EntityRegistry.prototype;
 
-    er.addEntityFromServer = function (guid) {
-        var entity = new FIVES.Models.Entity();
-        entity.guid = guid;
-        entity.retrieveEntityDataFromServer();
-        _entities[guid] = entity;
+    er.addEntityFromServer = function (entity) {
+        _entities[entity.guid] = entity;
+        FIVES.Resources.SceneManager.addMeshForObject(entity);
     };
 
     er.getEntity = function (guid) {

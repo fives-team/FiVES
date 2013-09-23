@@ -20,8 +20,9 @@ FIVES.Creation = FIVES.Creation || {};
 
     ec.createEntityFromForm = function() {
         var position = _retrievePosition();
-        var call = FIVES.Communication.FivesCommunicator.createEntityAt(position.x, position.y, position.z);
-        call.on("result", function(guid) {
+        var mesh = _retrieveMesh();
+        var call = FIVES.Communication.FivesCommunicator.createMeshEntity(position, mesh);
+        call.on("result", function(newGuid) {
             console.log("Created Entity with Guid " + newGuid);
         });
     };
@@ -30,8 +31,11 @@ FIVES.Creation = FIVES.Creation || {};
         var i = 0;
         while(i < amount) {
             var position = { x: Math.random() * 10, y: Math.random() * 10, z: Math.random() * 10};
-            var newGuid = FIVES.Communication.FivesCommunicator.createEntityAt(position.x, position.y, position.z);
-            console.log("Created Entity with Guid " + newGuid);
+            var mesh = {meshUri: "resources/models/firetruck/xml3d/firetruck.xml", visible: true};
+            var call = FIVES.Communication.FivesCommunicator.createMeshEntity(position, mesh);
+            call.on("result", function(newGuid) {
+                console.log("Created Entity with Guid " + newGuid);
+            });
             i ++;
         }
     };
@@ -67,5 +71,9 @@ FIVES.Creation = FIVES.Creation || {};
         return value;
     };
 
+    var _retrieveMesh = function () {
+        var meshURI = $("#select-mesh").val();
+        return {meshURI: meshURI, visible: true};
+    }
     FIVES.Creation.EntityCreator = new EntityCreator();
 }());
