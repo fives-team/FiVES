@@ -6,6 +6,7 @@ using SuperWebSocket;
 using Newtonsoft.Json;
 using System.Reflection;
 using Dynamitey;
+using System.Runtime.InteropServices;
 
 namespace WebSocketJSON
 {
@@ -142,14 +143,14 @@ namespace WebSocketJSON
                     activeCalls[callID].HandleException(result);
                 activeCalls.Remove(callID);
             } else {
-                // TODO: Report error to another side.
-                throw new UnknownCallID("Received a response for an unrecognized call id: " + callID);
+                SendCallError(-1, "Invalid callID: " + callID);
             }
         }
 
         public delegate object GenericWrapper(params object[] arguments);
         private void HandleCall(List<JToken> data)
         {
+            // TODO: Refactor into smaller methods.
             int callID = data[1].ToObject<int>();
             string methodName = data[2].ToObject<string>();
             if (registeredFunctions.ContainsKey(methodName)) {
@@ -160,8 +161,10 @@ namespace WebSocketJSON
 
                 object[] parameters = new object[args.Count];
                 try {
-                    if (paramInfo.Length != args.Count)
-                        throw new InvalidNumberOfArgs("Incorrect number of arguments for a method.");
+                    if (paramInfo.Length != args.Count) {
+                        throw new InvalidNumberOfArgs("Incorrect number of arguments for a method. Expected: " +
+                                                      paramInfo.Length + ". Received: " + args.Count);
+                    }
 
                     for (int i = 0; i < args.Count; i++) {
                         if (callbacks.Contains(i)) {
@@ -189,14 +192,15 @@ namespace WebSocketJSON
 
                                 parameters[i] = Dynamic.CoerceToDelegate(genericWrapper, paramInfo[i].ParameterType);
                             } else {
-                                throw new Exception("Callback parameter is neither a delegate nor a FuncWrapper.");
+                                throw new Exception("Parameter " + i + " is neither a delegate nor a FuncWrapper. " +
+                                                    "Cannot pass callback method in its place");
                             }
                         } else {
                             parameters[i] = args[i].ToObject(paramInfo[i].ParameterType);
                         }
                     }
-                } catch {
-                    // TODO: Mismatching parameters. Return an error to the remote end.
+                } catch (Exception e) {
+                    SendCallError(callID, e.Message);
                     return;
                 }
 
@@ -225,8 +229,34 @@ namespace WebSocketJSON
                     Send(JsonConvert.SerializeObject(callReplyMessage));
                 }
             } else {
-                // TODO: Report error to another side.
-                throw new UnregisteredMethod("Received a call for an unregistered method: " + methodName);
+                SendCallError(callID, "Method " + methodName + " is not registered");
+                return;
+            }
+        }
+
+        void SendCallError(int callID, string reason)
+        {
+            List<object> errorReplyMessage = new List<object>();
+            errorReplyMessage.Add("call-error");
+            errorReplyMessage.Add(callID);
+            errorReplyMessage.Add(reason);
+        }
+
+        void HandleCallError(List<JToken> data)
+        {
+            int callID = data[1].ToObject<int>();
+            string reason = data[2].ToObject<string>();
+
+            // Call error with callID=-1 means something we've sent something that was not understood by other side or
+            // was malformed. This probably means that protocols aren't incompatible or incorrectly implemented on
+            // either side.
+            if (callID == -1)
+                throw new Exception(reason);
+
+            if (activeCalls.ContainsKey(callID)) {
+                activeCalls[callID].HandleError(reason);
+            } else {
+                SendCallError(-1, "Invalid callID: " + callID);
             }
         }
 
@@ -249,10 +279,12 @@ namespace WebSocketJSON
             string msgType = data[0].ToObject<string>();
             if (msgType == "call-reply")
                 HandleCallReply(data);
+            else if (msgType == "call-error")
+                HandleCallError(data);
             else if (msgType == "call")
                 HandleCall(data);
             else
-                throw new Error(ErrorCode.CONNECTION_ERROR, "Unknown message type: " + msgType);
+                SendCallError(-1, "Unknown message type: " + msgType);
         }
 
         private bool IsOneWay(string qualifiedMethodName)
