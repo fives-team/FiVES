@@ -32,10 +32,10 @@ namespace Avatar
             var clientManager =
                 ServiceFactory.DiscoverByName("clientmanager", ContextFactory.GetContext("inter-plugin"));
             clientManager.OnConnected += delegate(Connection connection) {
-                connection["registerClientService"]("avatar", new Dictionary<string, Delegate> {
+                connection["registerClientService"]("avatar", true, new Dictionary<string, Delegate> {
                     {"changeAppearance", (Action<string, string, Vector>)ChangeAppearance},
                     {"teleport", (Action<string, Vector, Quat>)Teleport}
-                }, true);
+                });
 
                 connection["notifyWhenAnyClientAuthenticated"]((Action<Guid>)delegate(Guid sessionKey) {
                     Activate(sessionKey);

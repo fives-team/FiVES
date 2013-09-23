@@ -51,9 +51,9 @@ namespace Editing
         private void RegisterEditingAPI() {
             var clientManager = ServiceFactory.DiscoverByName("clientmanager", ContextFactory.GetContext("inter-plugin"));
             clientManager.OnConnected += delegate(Connection connection) {
-                connection["registerClientService"]("editing", new Dictionary<string, Delegate> {
+                connection["registerClientService"]("editing", true, new Dictionary<string, Delegate> {
                     {"createEntityAt", (Action<float, float, float>)CreateEntityAt}
-                }, true);
+                });
             };
         }
     }

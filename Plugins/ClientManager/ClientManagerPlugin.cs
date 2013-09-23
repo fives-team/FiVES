@@ -29,11 +29,11 @@ namespace ClientManager {
             var authService = ServiceFactory.DiscoverByName("auth", ContextFactory.GetContext("inter-plugin"));
             authService.OnConnected += (connection) => authPlugin = connection;
 
-            RegisterClientService("kiara", new Dictionary<string, Delegate>(), false);
-            RegisterClientMethod("kiara.implements", (Func<List<string>, List<bool>>)Implements, false);
-            RegisterClientMethod("kiara.implements", (Func<List<string>, List<bool>>)AuthenticatedImplements, true);
+            RegisterClientService("kiara", false, new Dictionary<string, Delegate>());
+            RegisterClientMethod("kiara.implements", false, (Func<List<string>, List<bool>>)Implements);
+            RegisterClientMethod("kiara.implements", true, (Func<List<string>, List<bool>>)AuthenticatedImplements);
 
-            RegisterClientService("auth", new Dictionary<string, Delegate>(), false);
+            RegisterClientService("auth", false, new Dictionary<string, Delegate>());
             clientService.OnNewClient += delegate(Connection connection) {
                 connection.RegisterFuncImplementation("auth.login",
                     (Func<string, string, string>) delegate(string login, string password) {
@@ -50,7 +50,7 @@ namespace ClientManager {
                 );
             };
 
-            RegisterClientService("objectsync", new Dictionary<string, Delegate> {
+            RegisterClientService("objectsync", true, new Dictionary<string, Delegate> {
                 {"listObjects", (Func<List<EntityInfo>>) ListObjects},
                 {"setEntityLocation", (Action<string, Vector, Quat>) SetEntityLocation},
                 {"notifyAboutNewObjects", (Action<Action<EntityInfo>>) NotifyAboutNewObjects},
@@ -59,7 +59,7 @@ namespace ClientManager {
                  (Action<string, Action<Vector, Quat>>) NotifyAboutEntityLocationUpdates},
                 {"notifyAboutEntityVisibilityUpdates",
                  (Action<string, Action<bool>>) NotifyAboutEntityVisibilityUpdates},
-            }, true);
+            });
 
             // DEBUG
 //            clientService["scripting.createServerScriptFor"] = (Action<string, string>)createServerScriptFor;
@@ -69,9 +69,9 @@ namespace ClientManager {
 //            };
 
             var pluginService = ServiceFactory.CreateByName("clientmanager", ContextFactory.GetContext("inter-plugin"));
-            pluginService["registerClientMethod"] = (Action<string, Delegate,bool>)RegisterClientMethod;
+            pluginService["registerClientMethod"] = (Action<string, bool, Delegate>)RegisterClientMethod;
             pluginService["registerClientService"] =
-                (Action<string,Dictionary<string, Delegate>,bool>)RegisterClientService;
+                (Action<string, bool, Dictionary<string, Delegate>>)RegisterClientService;
             pluginService["notifyWhenAnyClientAuthenticated"] = (Action<Action<Guid>>)NotifyWhenAnyClientAuthenticated;
             pluginService["notifyWhenClientDisconnected"] = (Action<Guid,Action<Guid>>)NotifyWhenClientDisconnected;
         }
@@ -230,11 +230,11 @@ namespace ClientManager {
         /// <param name="serviceName">Service name.</param>
         /// <param name="methods">Methods (a map from the name to a delegate).</param>
         /// <param name="requireAuthentication">If set to <c>true</c> require clients to authenticate.</param>
-        public void RegisterClientService(string serviceName, Dictionary<string, Delegate> methods,
-                                           bool requireAuthentication)
+        public void RegisterClientService(string serviceName, bool requireAuthentication,
+                                          Dictionary<string, Delegate> methods)
         {
             foreach (var method in methods)
-                RegisterClientMethod(serviceName + "." + method.Key, method.Value, requireAuthentication);
+                RegisterClientMethod(serviceName + "." + method.Key, requireAuthentication, method.Value);
             if (!requireAuthentication)
                 basicClientServices.Add(serviceName);
             authenticatedClientServices.Add(serviceName);
@@ -249,7 +249,7 @@ namespace ClientManager {
         /// <param name="methodName">Method name.</param>
         /// <param name="handler">Delegate with implementation.</param>
         /// <param name="requireAuthentication">If set to <c>true</c> require clients to authenticate.</param>
-        public void RegisterClientMethod(string methodName, Delegate handler, bool requireAuthentication)
+        public void RegisterClientMethod(string methodName, bool requireAuthentication, Delegate handler)
         {
             if (requireAuthentication)
                 authenticatedMethods[methodName] = handler;
