@@ -30,7 +30,7 @@ FIVES.Resources = FIVES.Resources || {};
     };
 
     scm.addMeshForObject = function(fivesObject) {
-        if(!fivesObject.mesh.uri)
+        if(!fivesObject.meshResource.meshURI)
             console.error("[ERROR] (SceneManager).addMeshForObject : No Resource URI specified for object " + fivesObject.guid);
         else
             FIVES.Resources.ResourceManager.loadExternalResource(fivesObject, this._addMeshToScene.bind(this));
@@ -61,19 +61,19 @@ FIVES.Resources = FIVES.Resources || {};
     };
 
     scm._createTranslationForEntityGroup = function(entity) {
-        var position = entity.location.position;
+        var position = entity.position;
         var translationAttribute = position.x + " " + position.y + " " + position.z;
         return translationAttribute;
     };
 
     scm._createOrientationForEntityGroup = function(entity) {
-        var orientation = entity.location.orientation;
+        var orientation = entity.orientation;
         var orientationAttribute =  orientation.x + " " + orientation.y + " " + orientation.z + " " + orientation.w;
         return orientationAttribute;
     };
 
     scm._createScaleForEntityGroup = function(entity) {
-        var scale = entity.mesh.scale;
+        var scale = entity.scale;
         var scaleAttribute = scale.x + " " + scale.y + " " + scale.z;
         return scaleAttribute;
     };
