@@ -21,8 +21,8 @@
     <ConsolePause>False</ConsolePause>
     <CustomCommands>
       <CustomCommands>
-        <Command type="AfterBuild" command="xcopy /y &quot;${TargetDir}&quot; &quot;${SolutionDir}\BuiltPlugins\&quot; || echo &quot;Ignoring error&quot;" externalConsole="True" />
-        <Command type="AfterBuild" command="mkdir -p &quot;${SolutionDir}/BuiltPlugins/&quot; &amp;&amp; cp &quot;${TargetDir}/&quot;* &quot;${SolutionDir}/BuiltPlugins/&quot; || echo &quot;Ignoring error&quot;" externalConsole="True" />
+        <Command type="AfterBuild" command="xcopy /y &quot;${TargetDir}&quot; &quot;${SolutionDir}\BuiltLibs\&quot; || echo &quot;Ignoring error&quot;" externalConsole="True" />
+        <Command type="AfterBuild" command="mkdir -p &quot;${SolutionDir}/BuiltLibs/&quot; &amp;&amp; cp &quot;${TargetDir}/&quot;* &quot;${SolutionDir}/BuiltLibs/&quot; || echo &quot;Ignoring error&quot;" externalConsole="True" />
       </CustomCommands>
     </CustomCommands>
   </PropertyGroup>

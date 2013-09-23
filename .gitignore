@@ -3,8 +3,7 @@ bin/
 *.pidb
 *test-results*
 .idea/
-BuiltPlugins/
-BuiltProtocols/
+BuiltLibs/
 Docs/html
 Docs/libpeerconnection.log
 packages
