@@ -17,7 +17,7 @@ namespace Motion
 
         public List<string> GetDependencies()
         {
-            return new List<string>();
+            return new List<string> { "Location" };
         }
 
         public void Initialize()

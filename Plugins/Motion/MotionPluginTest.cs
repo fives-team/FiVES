@@ -35,7 +35,8 @@ namespace Motion
         [Test()]
         public void ShouldReturnCorrectDeps()
         {
-            Assert.IsEmpty(plugin.GetDependencies());
+            Assert.AreEqual(plugin.GetDependencies().Count, 1);
+            Assert.Contains("Location", plugin.GetDependencies());
         }
     }
 }
