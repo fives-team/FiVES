@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using KIARA;
 using Events;
 using Location;
+using Renderable;
 
 namespace Editing
 {
@@ -47,6 +48,14 @@ namespace Editing
             return entity.Guid.ToString ();
         }
 
+        public string CreateMeshEntity(Vector position, MeshResource mesh)
+        {
+            Entity entity = new Entity();
+            entity["position"]["x"] = position.x;
+            entity["position"]["y"] = position.y;
+            entity["position"]["z"] = position.z;
+            entity["meshResource"]["uri"] = mesh.meshURI;
+            entity["meshResource"]["visible"] = true;
             EntityRegistry.Instance.AddEntity(entity);
             return entity.Guid.ToString ();
         }
@@ -59,8 +68,9 @@ namespace Editing
             clientManager.OnConnected += delegate(Connection connection) {
                 connection["registerClientService"]("editing", true, new Dictionary<string, Delegate> {
                     {"createEntityAt", (Func<Vector, string>)CreateEntityAt},
+                    {"createMeshEntity",(Func<Vector, MeshResource, string>)CreateMeshEntity}
                 });
+            };
         }
     }
 }
-

@@ -20,6 +20,7 @@ FIVES.Communication = FIVES.Communication || {};
     c.listObjects = function() {};
     c.getObjectLocation = function() {};
     c.createEntityAt = function() {};
+    c.createMeshEntity = function() {};
     c.createServerScriptFor = function() {};
     c.notifyAboutNewObjects = function() {};
     c.getObjectMesh = function() {};
@@ -117,12 +118,10 @@ FIVES.Communication = FIVES.Communication || {};
 
     var _createFunctionWrappers = function(error, supported) {
             this.listObjects = this.connection.generateFuncWrapper("objectsync.listObjects");
-            this.getObjectLocation = this.connection.generateFuncWrapper("objectsync.getObjectLocation");
             this.createEntityAt = this.connection.generateFuncWrapper("editing.createEntityAt");
+            this.createMeshEntity = this.connection.generateFuncWrapper("editing.createMeshEntity");
             this.createServerScriptFor = this.connection.generateFuncWrapper("scripting.createServerScriptFor");
             this.notifyAboutNewObjects = this.connection.generateFuncWrapper("objectsync.notifyAboutNewObjects");
-            this.getObjectMesh = this.connection.generateFuncWrapper("objectsync.getObjectMesh");
-            this.setEntityOrientation = this.connection.generateFuncWrapper("objectsync.setEntityOrientation")
             this.notifyAboutNewObjects(FIVES.Models.EntityRegistry.addEntityFromServer);
             this.listObjects().on("result", _listObjectsCallback.bind(this));
     };
