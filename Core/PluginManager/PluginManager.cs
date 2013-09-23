@@ -153,7 +153,7 @@ namespace FIVES
         /// <param name="pluginDirectory">Directory in which plugins are too be looked for.</param>
         public void LoadPluginsFrom(string pluginDirectory)
         {
-            string[] files = Directory.GetFiles(pluginDirectory);
+            string[] files = Directory.GetFiles(pluginDirectory, "*.dll");
             foreach (string filename in files)
                 LoadPlugin(filename);
         }

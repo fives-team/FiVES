@@ -64,7 +64,7 @@ namespace KIARA
 
         public void LoadProtocolsFrom(string protocolDir)
         {
-            string[] files = Directory.GetFiles(protocolDir);
+            string[] files = Directory.GetFiles(protocolDir, "*.dll");
             foreach (string filename in files)
                 LoadProtocol(filename);
         }
