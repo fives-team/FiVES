@@ -52,13 +52,8 @@ namespace ClientManager {
 
             RegisterClientService("objectsync", true, new Dictionary<string, Delegate> {
                 {"listObjects", (Func<List<EntityInfo>>) ListObjects},
-                {"setEntityLocation", (Action<string, Vector, Quat>) SetEntityLocation},
                 {"notifyAboutNewObjects", (Action<Action<EntityInfo>>) NotifyAboutNewObjects},
                 {"notifyAboutRemovedObjects", (Action<Action<string>>) NotifyAboutRemovedObjects},
-                {"notifyAboutEntityLocationUpdates",
-                 (Action<string, Action<Vector, Quat>>) NotifyAboutEntityLocationUpdates},
-                {"notifyAboutEntityVisibilityUpdates",
-                 (Action<string, Action<bool>>) NotifyAboutEntityVisibilityUpdates},
             });
 
             // DEBUG
@@ -110,18 +105,6 @@ namespace ClientManager {
             return entityInfo;
         }
 
-        private void SetEntityLocation (string guid, Vector position, Quat orientation)
-        {
-            var entity = EntityRegistry.Instance.GetEntity(guid);
-            entity["position"]["x"] = position.x;
-            entity["position"]["y"] = position.y;
-            entity["position"]["z"] = position.z;
-            entity["orientation"]["x"] = orientation.x;
-            entity["orientation"]["y"] = orientation.y;
-            entity["orientation"]["z"] = orientation.z;
-            entity["orientation"]["w"] = orientation.w;
-        }
-
         private void NotifyAboutNewObjects(Action<EntityInfo> callback)
         {
             EntityRegistry.Instance.OnEntityAdded += (sender, e) => callback(ConstructEntityInfo(e.elementId));
@@ -130,39 +113,6 @@ namespace ClientManager {
         private void NotifyAboutRemovedObjects(Action<string> callback)
         {
             EntityRegistry.Instance.OnEntityRemoved += (sender, e) => callback(e.elementId.ToString());
-        }
-
-        private void NotifyAboutEntityLocationUpdates (string guid, Action<Vector, Quat> callback)
-        {
-            var entity = EntityRegistry.Instance.GetEntity(guid);
-            var attributeChangeHandler = new Component.AttributeChanged((sender, ev) => {
-                Vector position = new Vector {
-                    x = (float)entity["position"]["x"],
-                    y = (float)entity["position"]["y"],
-                    z = (float)entity["position"]["z"],
-                };
-
-                Quat orientation = new Quat {
-                    x = (float)entity["orientation"]["x"],
-                    y = (float)entity["orientation"]["y"],
-                    z = (float)entity["orientation"]["z"],
-                    w = (float)entity["orientation"]["w"],
-                };
-
-                callback(position, orientation);
-            });
-
-            entity["position"].OnAttributeChanged += attributeChangeHandler;
-            entity["orientation"].OnAttributeChanged += attributeChangeHandler;
-        }
-
-        private void NotifyAboutEntityVisibilityUpdates (string guid, Action<bool> callback)
-        {
-            var entity = EntityRegistry.Instance.GetEntity(guid);
-            entity["meshResource"].OnAttributeChanged += delegate(object sender, Events.AttributeChangedEventArgs ev) {
-                if (ev.AttributeName == "visible")
-                    callback((bool)ev.NewValue);
-            };
         }
 
         private List<string> basicClientServices = new List<string>();

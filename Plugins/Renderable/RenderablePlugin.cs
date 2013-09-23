@@ -1,6 +1,7 @@
 using System;
 using FIVES;
 using System.Collections.Generic;
+using KIARA;
 
 namespace Renderable
 {
@@ -20,10 +21,11 @@ namespace Renderable
 
         public void Initialize()
         {
-            RegisterComponent ();
+            DefineComponents();
+            RegisterClientServices();
         }
 
-        private void RegisterComponent()
+        private void DefineComponents()
         {
             ComponentLayout rendereableComponentLayout = new ComponentLayout ();
             rendereableComponentLayout.AddAttribute<string>("uri");
@@ -36,6 +38,28 @@ namespace Renderable
 
             ComponentRegistry.Instance.DefineComponent ("meshResource", this.pluginGUID, rendereableComponentLayout);
             ComponentRegistry.Instance.DefineComponent ("scale", this.pluginGUID, scaleLayout);
+        }
+
+        void RegisterClientServices()
+        {
+            PluginManager.Instance.AddPluginLoadedHandler("ClientSync", delegate {
+                var interPluginContext = ContextFactory.GetContext("inter-plugin");
+                var clientManager = ServiceFactory.DiscoverByName("clientmanager", interPluginContext);
+                clientManager.OnConnected += delegate(Connection connection) {
+                    connection["registerClientService"]("mesh", true, new Dictionary<string, Delegate> {
+                        {"notifyAboutVisibilityUpdates", (Action<string, Action<bool>>) NotifyAboutVisibilityUpdates},
+                    });
+                };
+            });
+        }
+
+        private void NotifyAboutVisibilityUpdates (string guid, Action<bool> callback)
+        {
+            var entity = EntityRegistry.Instance.GetEntity(guid);
+            entity["meshResource"].OnAttributeChanged += delegate(object sender, Events.AttributeChangedEventArgs ev) {
+                if (ev.AttributeName == "visible")
+                    callback((bool)ev.NewValue);
+            };
         }
 
         #endregion
