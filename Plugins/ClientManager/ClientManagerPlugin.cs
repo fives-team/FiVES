@@ -3,6 +3,7 @@ using KIARA;
 using System.Collections.Generic;
 using FIVES;
 using Location;
+using Renderable;
 
 namespace ClientManager {
 
@@ -77,8 +78,7 @@ namespace ClientManager {
 
         private struct EntityInfo {
             public string guid;
-            public string meshURI;
-            public bool meshVisible;
+            public MeshResource meshResource;
             public Vector position;
             public Quat orientation;
             public Vector scale;
@@ -100,8 +100,8 @@ namespace ClientManager {
             entityInfo.scale.x = (float)entity["scale"]["x"];
             entityInfo.scale.y = (float)entity["scale"]["y"];
             entityInfo.scale.z = (float)entity["scale"]["z"];
-            entityInfo.meshURI = (string)entity["meshResource"]["uri"];
-            entityInfo.meshVisible = (bool)entity["meshResource"]["visible"];
+            entityInfo.meshResource.meshURI = (string)entity["meshResource"]["uri"];
+            entityInfo.meshResource.visible = (bool)entity["meshResource"]["visible"];
             return entityInfo;
         }
 

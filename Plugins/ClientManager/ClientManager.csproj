@@ -63,6 +63,10 @@
       <Project>{C463A928-9F1B-4134-B8C7-D398097E2D73}</Project>
       <Name>Location</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Renderable\Renderable.csproj">
+      <Project>{74073FC3-BC58-45A8-9897-4A718F903916}</Project>
+      <Name>Renderable</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
