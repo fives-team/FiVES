@@ -163,10 +163,13 @@ define(['kiara'], function(KIARA) {
         if (callID == -1)
             throw new KIARA.Error(KIARA.GENERIC_ERROR, reason);
 
-        if (callID in self.__activeCalls)
+        if (callID in self.__activeCalls) {
             self.__activeCalls[callID].setResult(reason, "error");
-        else
+            // FIXME: Remove from production code. Users should use "error" handler instead.
+            console.error(reason);
+        } else {
             self.__sendCallError(-1, "Invalid callID: " + callID);
+        }
     }
 
     JSONWebSocket.prototype.__sendCallError = function(callID, reason) {
