@@ -96,7 +96,7 @@ namespace ClientManager {
             public Vector scale;
         }
 
-        private EntityInfo ConstuctEntityInfo(Guid elementId)
+        private EntityInfo ConstructEntityInfo(Guid elementId)
         {
             var entity = EntityRegistry.Instance.GetEntity(elementId);
 
@@ -131,7 +131,7 @@ namespace ClientManager {
 
         private void NotifyAboutNewObjects(Action<EntityInfo> callback)
         {
-            EntityRegistry.Instance.OnEntityAdded += (sender, e) => callback(ConstuctEntityInfo(e.elementId));
+            EntityRegistry.Instance.OnEntityAdded += (sender, e) => callback(ConstructEntityInfo(e.elementId));
         }
 
         private void NotifyAboutRemovedObjects(Action<string> callback)
@@ -189,7 +189,7 @@ namespace ClientManager {
             var guids = EntityRegistry.Instance.GetAllGUIDs();
             List<EntityInfo> infos = new List<EntityInfo>();
             foreach (var guid in guids)
-                infos.Add(ConstuctEntityInfo(guid));
+                infos.Add(ConstructEntityInfo(guid));
             return infos;
         }
 
