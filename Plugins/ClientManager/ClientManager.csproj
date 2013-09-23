@@ -53,6 +53,10 @@
       <Project>{627CCFC6-4071-4119-92C6-8BC96E4310C8}</Project>
       <Name>Core</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Location\Location.csproj">
+      <Project>{C463A928-9F1B-4134-B8C7-D398097E2D73}</Project>
+      <Name>Location</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

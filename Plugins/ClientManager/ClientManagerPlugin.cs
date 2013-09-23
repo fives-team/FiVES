@@ -2,16 +2,9 @@ using System;
 using KIARA;
 using System.Collections.Generic;
 using FIVES;
+using Location;
 
 namespace ClientManager {
-
-    public struct Vector {
-        public float x, y, z;
-    }
-
-    public struct Quat {
-        public float x, y, z, w;
-    }
 
     /// <summary>
     /// Implements a plugin that can be used to communicate with clients using KIARA.
