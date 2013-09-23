@@ -152,9 +152,10 @@ namespace WebSocketJSON
         }
 
         [Test()]
-        public void ShouldFailOnRemoteCallRequestForUnregisteredFunctionName()
+        public void ShouldSendErrorFeedbackOnRemoteCallRequestForUnregisteredFunctionName()
         {
-            Assert.Throws<UnregisteredMethod>(() => protocol.HandleMessage("['call',0,'unknownFunc',[]]"));
+            protocol.HandleMessage("['call',0,'unknownFunc',[]]");
+            Assert.AreEqual(protocol.sentMessages[0], "[\"call-error\",0,\"Method unknownFunc is not registered\"]");
         }
 
 //        [Test()]
@@ -166,10 +167,11 @@ namespace WebSocketJSON
 //        }
 
         [Test()]
-        public void ShouldFailOnCallReplyWithUnknownCallID()
+        public void ShouldSendErrorFeedbackOnCallReplyWithUnknownCallID()
         {
             protocol.RegisterHandler("testFunc", (Func<int, string, float>)mockHandlers.Object.TestFunc);
-            Assert.Throws<UnknownCallID>(() => protocol.HandleMessage("['call-reply',100,'testFunc',[],42,'foobar']"));
+            protocol.HandleMessage("['call-reply',100,'testFunc',[],42,'foobar']");
+            Assert.AreEqual(protocol.sentMessages[0], "[\"call-error\",-1,\"Invalid callID: 100\"]");
         }
 
         [Test()]

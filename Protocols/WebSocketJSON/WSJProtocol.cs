@@ -240,6 +240,7 @@ namespace WebSocketJSON
             errorReplyMessage.Add("call-error");
             errorReplyMessage.Add(callID);
             errorReplyMessage.Add(reason);
+            Send(JsonConvert.SerializeObject(errorReplyMessage));
         }
 
         void HandleCallError(List<JToken> data)
