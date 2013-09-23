@@ -96,62 +96,99 @@ define(['kiara'], function(KIARA) {
         self.__ws.onmessage = self.__handleMessage.bind(self);
     }
 
+    JSONWebSocket.prototype.__handleCall = function(data) {
+        var self = this;
+
+        var callID = data[1];
+        var methodName = data[2];
+        if (methodName in self.__funcs) {
+            var callbacks = data[3];
+            var args = data.slice(4);
+            for (var cbIndex in callbacks) {
+                var remoteFuncName = args[cbIndex];
+                args[cbIndex] = function() {
+                    // This is a hack. Protocol.callMethod should accept a connection object, which should be passed
+                    // down to the constructor of the protocol, but it isn't - so we just pass a null. Additionally,
+                    // method descriptor should be created with correct type mapping string and one-way flag, which
+                    // we can't know, because we don't know whether user cares about success status or not. We
+                    // assume they do, which is why we pass `false` for one-way flag. Finally, since we can't tell
+                    // the type of the callback argument, we just return CallResponse object and let users set up
+                    // handlers as they like.
+                    var methodDescriptor = self.createMethodDescriptor(remoteFuncName, "", false);
+                    var callResponse = new KIARA.CallResponse(null, methodDescriptor);
+                    self.callMethod(callResponse, arguments);
+                    return callResponse;
+                }
+            }
+            var response = [ 'call-reply', callID ];
+            try {
+                retVal = self.__funcs[methodName].apply(null, args);
+                response.push(true);
+                response.push(retVal);
+            } catch (exception) {
+                response.push(false);
+                response.push(exception);
+            }
+            if (!self.__oneway[methodName])
+                self.__ws.send(JSON.stringify(response));
+        } else {
+            self.__sendCallError(callID, "Method " + methodName + " is not registered");
+        }
+    }
+
+    JSONWebSocket.prototype.__handleCallReply = function(data) {
+        var self = this;
+
+        var callID = data[1];
+        if (callID in self.__activeCalls) {
+            var callResponse = self.__activeCalls[callID];
+            var success = data[2];
+            var retValOrException = data[3];
+            callResponse.setResult(retValOrException, success ? 'result' : 'exception');
+            delete self.__activeCalls[callID];
+        } else {
+            self.__sendCallError(-1, "Invalid callID: " + callID);
+        }
+    }
+
+    JSONWebSocket.prototype.__handleCallError = function(data) {
+        var self = this;
+
+        var callID = data[1];
+        var reason = data[2];
+
+        // Call error with callID=-1 means something we've sent something that was not understood by other side or
+        // was malformed. This probably means that protocols aren't incompatible or incorrectly implemented on
+        // either side.
+        if (callID == -1)
+            throw new KIARA.Error(KIARA.GENERIC_ERROR, reason);
+
+        if (callID in self.__activeCalls)
+            self.__activeCalls[callID].setResult(reason, "error");
+        else
+            self.__sendCallError(-1, "Invalid callID: " + callID);
+    }
+
+    JSONWebSocket.prototype.__sendCallError = function(callID, reason) {
+        var self = this;
+
+        var message = ["call-error", callID, reason];
+        self.__ws.send(JSON.stringify(message));
+    }
+
     JSONWebSocket.prototype.__handleMessage = function (message) {
         var self = this;
 
         var data = JSON.parse(message.data);
         var msgType = data[0];
         if (msgType == 'call-reply') {
-            var callID = data[1];
-            if (callID in self.__activeCalls) {
-                var callResponse = self.__activeCalls[callID];
-                var success = data[2];
-                var retValOrException = data[3];
-                callResponse.setResult(retValOrException, success ? 'result' : 'exception');
-                delete self.__activeCalls[callID];
-            } else {
-                throw new KIARA.Error(KIARA.CONNECTION_ERROR,
-                    "Received a response for an unrecognized call id: " + callID);
-            }
+            self.__handleCallReply(data);
+        } else if (msgType == 'call-error') {
+            self.__handleCallError(data);
         } else if (msgType == 'call') {
-            var callID = data[1];
-            var methodName = data[2];
-            if (methodName in self.__funcs) {
-                var callbacks = data[3];
-                var args = data.slice(4);
-                for (var cbIndex in callbacks) {
-                    var remoteFuncName = args[cbIndex];
-                    args[cbIndex] = function() {
-                        // This is a hack. Protocol.callMethod should accept a connection object, which should be passed
-                        // down to the constructor of the protocol, but it isn't - so we just pass a null. Additionally,
-                        // method descriptor should be created with correct type mapping string and one-way flag, which
-                        // we can't know, because we don't know whether user cares about success status or not. We
-                        // assume they do, which is why we pass `false` for one-way flag. Finally, since we can't tell
-                        // the type of the callback argument, we just return CallResponse object and let users set up
-                        // handlers as they like.
-                        var methodDescriptor = self.createMethodDescriptor(remoteFuncName, "", false);
-                        var callResponse = new KIARA.CallResponse(null, methodDescriptor);
-                        self.callMethod(callResponse, arguments);
-                        return callResponse;
-                    }
-                }
-                var response = [ 'call-reply', callID ];
-                try {
-                    retVal = self.__funcs[methodName].apply(null, args);
-                    response.push(true);
-                    response.push(retVal);
-                } catch (exception) {
-                    response.push(false);
-                    response.push(exception);
-                }
-                if (!self.__oneway[methodName])
-                    self.__ws.send(JSON.stringify(response));
-            } else {
-                throw new KIARA.Error(KIARA.CONNECTION_ERROR,
-                    "Received a call for an unregistered method: " + methodName);
-            }
+            self.__handleCall(data);
         } else {
-            throw new KIARA.Error(KIARA.CONNECTION_ERROR, "Unknown message type: " + msgType);
+            self.__sendCallError(-1, "Unknown message type: " + msgType);
         }
     }
 
