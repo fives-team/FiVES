@@ -48,12 +48,22 @@ namespace Editing
             return entity.Guid.ToString ();
         }
 
-        public string CreateMeshEntity(Vector position, MeshResource mesh)
+        public string CreateMeshEntity(Vector position, Quat orientation, Vector scale, MeshResource mesh)
         {
             Entity entity = new Entity();
             entity["position"]["x"] = position.x;
             entity["position"]["y"] = position.y;
             entity["position"]["z"] = position.z;
+
+            entity["orientation"]["x"] = orientation.x;
+            entity["orientation"]["y"] = orientation.y;
+            entity["orientation"]["z"] = orientation.z;
+            entity["orientation"]["w"] = orientation.w;
+
+            entity["scale"]["x"] = scale.x;
+            entity["scale"]["y"] = scale.y;
+            entity["scale"]["z"] = scale.z;
+
             entity["meshResource"]["uri"] = mesh.meshURI;
             entity["meshResource"]["visible"] = true;
             EntityRegistry.Instance.AddEntity(entity);
@@ -68,7 +78,7 @@ namespace Editing
             clientManager.OnConnected += delegate(Connection connection) {
                 connection["registerClientService"]("editing", true, new Dictionary<string, Delegate> {
                     {"createEntityAt", (Func<Vector, string>)CreateEntityAt},
-                    {"createMeshEntity",(Func<Vector, MeshResource, string>)CreateMeshEntity}
+                    {"createMeshEntity",(Func<Vector, Quat, Vector,MeshResource, string>)CreateMeshEntity}
                 });
             };
         }
