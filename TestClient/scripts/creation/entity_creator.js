@@ -20,8 +20,10 @@ FIVES.Creation = FIVES.Creation || {};
 
     ec.createEntityFromForm = function() {
         var position = _retrievePosition();
+        var orientation = _retrieveOrientation();
+        var scale = _retrieveScale();
         var mesh = _retrieveMesh();
-        var call = FIVES.Communication.FivesCommunicator.createMeshEntity(position, mesh);
+        var call = FIVES.Communication.FivesCommunicator.createMeshEntity(position, orientation, scale, mesh);
         call.on("result", function(newGuid) {
             console.log("Created Entity with Guid " + newGuid);
         });
@@ -45,7 +47,7 @@ FIVES.Creation = FIVES.Creation || {};
         var posY = _getValidFloatFieldValue("input-position-y");
         var posZ = _getValidFloatFieldValue("input-position-z");
 
-        return {x: posX, y: posY, z: posZ};
+        return {x: parseFloat(posX), y: parseFloat(posY), z: parseFloat(posZ)};
     }
 
     var _retrieveOrientation = function () {
@@ -61,6 +63,13 @@ FIVES.Creation = FIVES.Creation || {};
         return {x: quat[0], y: quat[1], z: quat[2], w: quat [3]};
     }
 
+    var _retrieveScale = function () {
+        var scaleX = _getValidFloatFieldValue("input-scale-x");
+        var scaleY = _getValidFloatFieldValue("input-scale-y");
+        var scaleZ = _getValidFloatFieldValue("input-scale-z");
+
+        return {x: parseFloat(scaleX), y: parseFloat(scaleY), z: parseFloat(scaleZ)};
+    }
     var _getValidFloatFieldValue = function (fieldName) {
         var field = $("#" + fieldName);
         if (!field) {
