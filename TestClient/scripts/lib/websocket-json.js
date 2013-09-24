@@ -166,7 +166,7 @@ define(['kiara'], function(KIARA) {
         if (callID in self.__activeCalls) {
             self.__activeCalls[callID].setResult(reason, "error");
             // FIXME: Remove from production code. Users should use "error" handler instead.
-            console.error(reason);
+            console.error("received call error: ", self.__activeCalls[callID], "reason:", reason);
         } else {
             self.__sendCallError(-1, "Invalid callID: " + callID);
         }

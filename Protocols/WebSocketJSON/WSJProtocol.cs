@@ -179,14 +179,21 @@ namespace WebSocketJSON
 
                                 var genericWrapper = new GenericWrapper(arguments => {
                                     if (retType == typeof(void)) {
-                                        CallFunc(funcName, arguments).Wait();
+                                        CallFunc(funcName, arguments);
+                                        // We do not wait here since SuperWebSocket doesn't process messages while the
+                                        // current thread is blocked. Waiting would bring the current client's thread
+                                        // into a deadlock.
                                         return null;
                                     } else {
-                                        object result = null;
-                                        CallFunc(funcName, arguments)
-                                          .OnSuccess(delegate(JToken res) { result = res.ToObject(retType); })
-                                          .Wait();
-                                        return result;
+                                        throw new NotImplementedException("We do not support callbacks with return " +
+                                            "value yet. This is because we cannot wait for a callback to complete. " +
+                                            "See more details here: https://redmine.viscenter.de/issues/1406.");
+
+//                                        object result = null;
+//                                        CallFunc(funcName, arguments)
+//                                          .OnSuccess(delegate(JToken res) { result = res.ToObject(retType); })
+//                                          .Wait();
+//                                        return result;
                                     }
                                 });
 
