@@ -52,8 +52,8 @@ namespace ClientManager {
 
             RegisterClientService("objectsync", true, new Dictionary<string, Delegate> {
                 {"listObjects", (Func<List<EntityInfo>>) ListObjects},
-                {"notifyAboutNewObjects", (Action<Action<EntityInfo>>) NotifyAboutNewObjects},
-                {"notifyAboutRemovedObjects", (Action<Action<string>>) NotifyAboutRemovedObjects},
+                {"notifyAboutNewObjects", (Action<string, Action<EntityInfo>>) NotifyAboutNewObjects},
+                {"notifyAboutRemovedObjects", (Action<string, Action<string>>) NotifyAboutRemovedObjects},
             });
 
             // DEBUG
@@ -105,13 +105,23 @@ namespace ClientManager {
             return entityInfo;
         }
 
-        private void NotifyAboutNewObjects(Action<EntityInfo> callback)
+        private void NotifyAboutNewObjects(string sessionKey, Action<EntityInfo> callback)
         {
-            EntityRegistry.Instance.OnEntityAdded += (sender, e) => callback(ConstructEntityInfo(e.elementId));
+            var handler = new EntityRegistry.EntityAdded((sender, e) => callback(ConstructEntityInfo(e.elementId)));
+            var guid = Guid.Parse(sessionKey);
+            if (!onNewEntityHandlers.ContainsKey(guid))
+                onNewEntityHandlers[guid] = new List<EntityRegistry.EntityAdded>();
+            onNewEntityHandlers[guid].Add(handler);
+            EntityRegistry.Instance.OnEntityAdded += handler;
         }
 
-        private void NotifyAboutRemovedObjects(Action<string> callback)
+        private void NotifyAboutRemovedObjects(string sessionKey, Action<string> callback)
         {
+            var handler = new EntityRegistry.EntityRemoved((sender, e) => callback(e.elementId.ToString()));
+            var guid = Guid.Parse(sessionKey);
+            if (!onRemovedEntityHandlers.ContainsKey(guid))
+                onRemovedEntityHandlers[guid] = new List<EntityRegistry.EntityRemoved>();
+            onRemovedEntityHandlers[guid].Add(handler);
             EntityRegistry.Instance.OnEntityRemoved += (sender, e) => callback(e.elementId.ToString());
         }
 
@@ -161,6 +171,13 @@ namespace ClientManager {
         /// Methods that required user to authenticate before they become available.
         /// </summary>
         Dictionary<string, Delegate> authenticatedMethods = new Dictionary<string, Delegate>();
+
+        /// <summary>
+        /// List of handlers that need to be removed when client disconnects.
+        /// </summary>
+        Dictionary<Guid, List<EntityRegistry.EntityAdded>> onNewEntityHandlers = new Dictionary<Guid, List<EntityRegistry.EntityAdded>>();
+        Dictionary<Guid, List<EntityRegistry.EntityRemoved>> onRemovedEntityHandlers = new Dictionary<Guid, List<EntityRegistry.EntityRemoved>>();
+        Dictionary<Guid, List<Delegate>> onClientDisconnectedHandlers = new Dictionary<Guid, List<Delegate>>();
 
         event Action<Guid> OnAuthenticated;
 
@@ -212,7 +229,20 @@ namespace ClientManager {
             if (!authenticatedClients.ContainsKey(secToken))
                 throw new Exception("Client with with given session key {0} is not authenticated.");
 
-            authenticatedClients[secToken].OnClose += (reason) => callback(secToken);
+            authenticatedClients[secToken].OnClose += delegate(string reason) {
+                if (onNewEntityHandlers.ContainsKey(secToken)) {
+                    foreach (var handler in onNewEntityHandlers[secToken])
+                        EntityRegistry.Instance.OnEntityAdded -= handler;
+                }
+
+                if (onRemovedEntityHandlers.ContainsKey(secToken)) {
+                    foreach (var handler in onRemovedEntityHandlers[secToken])
+                        EntityRegistry.Instance.OnEntityRemoved -= handler;
+                }
+
+                callback(secToken);
+                authenticatedClients.Remove(secToken);
+            };
         }
 
         void NotifyWhenAnyClientAuthenticated(Action<Guid> callback)
