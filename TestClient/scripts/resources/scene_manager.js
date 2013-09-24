@@ -68,7 +68,11 @@ FIVES.Resources = FIVES.Resources || {};
 
     scm._createOrientationForEntityGroup = function(entity) {
         var orientation = entity.orientation;
-        var orientationAttribute =  orientation.x + " " + orientation.y + " " + orientation.z + " " + orientation.w;
+        var axisAngleRotation = new XML3DRotation();
+        axisAngleRotation.setQuaternion(orientation, orientation.w);
+        var axis = axisAngleRotation._axis;
+        var angle = axisAngleRotation._angle;
+        var orientationAttribute =  axis.x + " " + axis.y + " " + axis.z + " " + angle;
         return orientationAttribute;
     };
 

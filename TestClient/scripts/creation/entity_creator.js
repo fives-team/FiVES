@@ -49,12 +49,16 @@ FIVES.Creation = FIVES.Creation || {};
     }
 
     var _retrieveOrientation = function () {
-        var rotX = _getValidFloatFieldValue("input-position-x");
-        var rotY = _getValidFloatFieldValue("input-position-y");
-        var rotZ = _getValidFloatFieldValue("input-position-z");
-        var rotW = _getValidFloatFieldValue("input-position-w");
+        var rotX = _getValidFloatFieldValue("input-orientation-x");
+        var rotY = _getValidFloatFieldValue("input-orientation-y");
+        var rotZ = _getValidFloatFieldValue("input-orientation-z");
+        var rotW = _getValidFloatFieldValue("input-orientation-w");
 
-        return {x: rotX, y: rotY, z: rotZ, w: rotW};
+        var orientation = new XML3DRotation();
+        orientation.setAxisAngle(new XML3DVec3(parseFloat(rotX), parseFloat(rotY), parseFloat(rotZ)), parseFloat(rotW));
+
+        var quat = orientation.getQuaternion();
+        return {x: quat[0], y: quat[1], z: quat[2], w: quat [3]};
     }
 
     var _getValidFloatFieldValue = function (fieldName) {
