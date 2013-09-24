@@ -22,6 +22,18 @@ namespace ClientManager
             Assert.Contains("Renderable", plugin.GetDependencies());
             Assert.Contains("Auth", plugin.GetDependencies());
         }
+
+        [Test()]
+        public void ShouldNotCallOnNewObjectAfterClientDisconnected()
+        {
+            // TODO
+        }
+
+        [Test()]
+        public void ShouldNotCallOnRemovedObjectAfterClientDisconnected()
+        {
+            // TODO
+        }
     }
 }
 

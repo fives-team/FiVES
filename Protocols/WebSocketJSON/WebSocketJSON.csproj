@@ -52,15 +52,18 @@
     <Reference Include="SuperWebSocket">
       <HintPath>..\..\ThirdParty\SuperWebSocket\Net40\Debug\SuperWebSocket.dll</HintPath>
     </Reference>
-    <Reference Include="Moq">
-      <HintPath>..\..\ThirdParty\Moq\NET40\Moq.dll</HintPath>
-    </Reference>
     <Reference Include="System.Core" />
-    <Reference Include="Dynamitey">
-      <HintPath>..\..\packages\Dynamitey.1.0.2.0\lib\net40\Dynamitey.dll</HintPath>
+    <Reference Include="NLog">
+      <HintPath>..\..\packages\NLog.2.0.1.2\lib\net40\NLog.dll</HintPath>
     </Reference>
     <Reference Include="nunit.framework">
       <HintPath>..\..\packages\NUnit.2.6.2\lib\nunit.framework.dll</HintPath>
+    </Reference>
+    <Reference Include="Moq">
+      <HintPath>..\..\packages\Moq.4.1.1309.1617\lib\net40\Moq.dll</HintPath>
+    </Reference>
+    <Reference Include="Dynamitey">
+      <HintPath>..\..\packages\Dynamitey.1.0.2.0\lib\net40\Dynamitey.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
