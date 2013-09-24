@@ -122,7 +122,7 @@ FIVES.Communication = FIVES.Communication || {};
             this.createMeshEntity = this.connection.generateFuncWrapper("editing.createMeshEntity");
             this.createServerScriptFor = this.connection.generateFuncWrapper("scripting.createServerScriptFor");
             this.notifyAboutNewObjects = this.connection.generateFuncWrapper("objectsync.notifyAboutNewObjects");
-            this.notifyAboutNewObjects(FIVES.Models.EntityRegistry.addEntityFromServer);
+            this.notifyAboutNewObjects(this.sessionKey, FIVES.Models.EntityRegistry.addEntityFromServer);
             this.listObjects().on("result", _listObjectsCallback.bind(this));
     };
 
