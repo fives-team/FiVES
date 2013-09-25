@@ -40,6 +40,7 @@ FIVES.Resources = FIVES.Resources || {};
         var entity = FIVES.Models.EntityRegistry.getEntity(idSuffix);
         var transformGroup = this._createTransformForEntityGroup(entity);
         var entityGroup = this._createParentGroupForEntity(entity);
+        entity.xml3dView.groupElement = entityGroup;
         _xml3dElement.appendChild(entityGroup);
         entityGroup.appendChild(meshGroup);
     };
@@ -58,6 +59,7 @@ FIVES.Resources = FIVES.Resources || {};
         transformTag.setAttribute("rotation", this._createOrientationForEntityGroup(entity));
         transformTag.setAttribute("scale", this._createScaleForEntityGroup(entity));
         _mainDefs.appendChild(transformTag);
+        entity.xml3dView.transformElement = transformTag;
     };
 
     scm._createTranslationForEntityGroup = function(entity) {

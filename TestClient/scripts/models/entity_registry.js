@@ -22,6 +22,7 @@ FIVES.Models = FIVES.Models || {};
 
     er.addEntityFromServer = function (entity) {
         this._entities[entity.guid] = entity;
+        entity.xml3dView = {};
         FIVES.Resources.SceneManager.addMeshForObject(entity);
     };
 
