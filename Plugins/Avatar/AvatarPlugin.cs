@@ -34,7 +34,6 @@ namespace Avatar
             clientManager.OnConnected += delegate(Connection connection) {
                 connection["registerClientService"]("avatar", true, new Dictionary<string, Delegate> {
                     {"changeAppearance", (Action<string, string, Vector>)ChangeAppearance},
-                    {"teleport", (Action<string, Vector, Quat>)Teleport}
                 });
 
                 connection["notifyWhenAnyClientAuthenticated"]((Action<Guid>)delegate(Guid sessionKey) {
@@ -102,26 +101,6 @@ namespace Avatar
             avatarEntity["scale"]["x"] = scale.x;
             avatarEntity["scale"]["y"] = scale.y;
             avatarEntity["scale"]["z"] = scale.z;
-        }
-
-        /// <summary>
-        /// Teleports the avatar to specific <paramref name="position"/> and <paramref name="orientation"/>.
-        /// </summary>
-        /// <param name="sessionKey">Client session key.</param>
-        /// <param name="position">New position.</param>
-        /// <param name="orientation">New orientation.</param>
-        void Teleport(string sessionKey, Vector position, Quat orientation)
-        {
-            var avatarEntity = GetAvatarEntityBySessionKey(Guid.Parse(sessionKey));
-
-            avatarEntity["position"]["x"] = position.x;
-            avatarEntity["position"]["y"] = position.y;
-            avatarEntity["position"]["z"] = position.z;
-
-            avatarEntity["orientation"]["x"] = orientation.x;
-            avatarEntity["orientation"]["y"] = orientation.y;
-            avatarEntity["orientation"]["z"] = orientation.z;
-            avatarEntity["orientation"]["w"] = orientation.w;
         }
 
         Dictionary<string, Entity> avatarEntities = new Dictionary<string, Entity>();
