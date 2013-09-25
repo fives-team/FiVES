@@ -16,26 +16,27 @@ FIVES.Models = FIVES.Models || {};
     var EntityRegistry = function () {
     };
 
-    var _entities = {};
-
     var er = EntityRegistry.prototype;
 
+    er._entities = {};
+
     er.addEntityFromServer = function (entity) {
-        _entities[entity.guid] = entity;
+        this._entities[entity.guid] = entity;
         FIVES.Resources.SceneManager.addMeshForObject(entity);
     };
 
     er.getEntity = function (guid) {
-        return _entities[guid];
+        return this._entities[guid];
     }
 
     er.rotateAllEntities = function () {
-        for (var i in _entities) {
-            var entity = _entities[i];
+        for (var i in this._entities) {
+            var entity = this._entities[i];
             entity.location.orientation.y = 1;
             entity.location.orientation.w = 0.75;
             FIVES.Resources.SceneManager.updateOrientation(entity);
         }
     }
+
     FIVES.Models.EntityRegistry = new EntityRegistry();
 }());
