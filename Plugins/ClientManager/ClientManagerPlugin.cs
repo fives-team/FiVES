@@ -175,9 +175,10 @@ namespace ClientManager {
         /// <summary>
         /// List of handlers that need to be removed when client disconnects.
         /// </summary>
-        Dictionary<Guid, List<EntityRegistry.EntityAdded>> onNewEntityHandlers = new Dictionary<Guid, List<EntityRegistry.EntityAdded>>();
-        Dictionary<Guid, List<EntityRegistry.EntityRemoved>> onRemovedEntityHandlers = new Dictionary<Guid, List<EntityRegistry.EntityRemoved>>();
-        Dictionary<Guid, List<Delegate>> onClientDisconnectedHandlers = new Dictionary<Guid, List<Delegate>>();
+        Dictionary<Guid, List<EntityRegistry.EntityAdded>> onNewEntityHandlers =
+            new Dictionary<Guid, List<EntityRegistry.EntityAdded>>();
+        Dictionary<Guid, List<EntityRegistry.EntityRemoved>> onRemovedEntityHandlers =
+            new Dictionary<Guid, List<EntityRegistry.EntityRemoved>>();
 
         event Action<Guid> OnAuthenticated;
 
