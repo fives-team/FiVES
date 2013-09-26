@@ -35,9 +35,15 @@ FIVES.Models = FIVES.Models || {};
     er.rotateAllEntities = function () {
         for (var i in this._entities) {
             var entity = this._entities[i];
-            entity.location.orientation.y = 1;
-            entity.location.orientation.w = 0.75;
-            FIVES.Resources.SceneManager.updateOrientation(entity);
+            var o = entity.orientation;
+            var rotation = new XML3DRotation();
+            rotation._setQuaternion([o.x, o.y, o.z, o.w]);
+            rotation.angle += 0.1;
+            if(rotation.angle > 2* Math.PI)
+                rotation.angle = 0;
+
+            var q = rotation.getQuaternion();
+            entity.setOrientation(q[0], q[1], q[2], q[3]);
         }
     }
 

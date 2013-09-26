@@ -33,8 +33,9 @@ FIVES.Creation = FIVES.Creation || {};
         var i = 0;
         while(i < amount) {
             var position = { x: Math.random() * 10, y: Math.random() * 10, z: Math.random() * 10};
-            var scale = { x: Math.random() * 3, y: Math.random() * 3, z: Math.random() * 3};
-            var orientation = { x: Math.random(), y: Math.random(), z: Math.random(), w: Math.random()};
+            var scaleFactor = Math.random() * 2 + 0.5;
+            var scale = { x: scaleFactor, y: scaleFactor, z: scaleFactor};
+            var orientation = { x: 0, y: 0, z: 0, w: 1};
             var mesh = {meshUri: "resources/models/firetruck/xml3d/firetruck.xml", visible: true};
             var call = FIVES.Communication.FivesCommunicator.createMeshEntity(position, orientation, scale, mesh);
             call.on("success", function(newGuid) {
