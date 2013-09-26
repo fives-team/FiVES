@@ -30,7 +30,7 @@ FIVES.Models = FIVES.Models || {};
 
     er.getEntity = function (guid) {
         return this._entities[guid];
-    }
+    };
 
     er.rotateAllEntities = function () {
         for (var i in this._entities) {
@@ -45,10 +45,23 @@ FIVES.Models = FIVES.Models || {};
             var q = rotation.getQuaternion();
             entity.setOrientation(q[0], q[1], q[2], q[3]);
         }
-    }
+    };
+
+    er.translateAllEntities = function() {
+        for (var i in this._entities) {
+            var entity = this._entities[i];
+            var p = entity.position;
+            entity.setPosition(p.x + 0.1, p.y, p.z);
+        }
+    };
 
     er.spinAllEntities = function(delay) {
         setInterval(this.rotateAllEntities.bind(this), delay);
-    }
+    };
+
+    er.moveAllEntities = function(delay) {
+        setInterval(this.translateAllEntities.bind(this), delay);
+    };
+
     FIVES.Models.EntityRegistry = new EntityRegistry();
 }());
