@@ -32,36 +32,5 @@ FIVES.Models = FIVES.Models || {};
         return this._entities[guid];
     };
 
-    er.rotateAllEntities = function () {
-        for (var i in this._entities) {
-            var entity = this._entities[i];
-            var o = entity.orientation;
-            var rotation = new XML3DRotation();
-            rotation._setQuaternion([o.x, o.y, o.z, o.w]);
-            rotation.angle += 0.1;
-            if(rotation.angle > 2* Math.PI)
-                rotation.angle = 0;
-
-            var q = rotation.getQuaternion();
-            entity.setOrientation(q[0], q[1], q[2], q[3]);
-        }
-    };
-
-    er.translateAllEntities = function() {
-        for (var i in this._entities) {
-            var entity = this._entities[i];
-            var p = entity.position;
-            entity.setPosition(p.x + 0.1, p.y, p.z);
-        }
-    };
-
-    er.spinAllEntities = function(delay) {
-        setInterval(this.rotateAllEntities.bind(this), delay);
-    };
-
-    er.moveAllEntities = function(delay) {
-        setInterval(this.translateAllEntities.bind(this), delay);
-    };
-
     FIVES.Models.EntityRegistry = new EntityRegistry();
 }());
