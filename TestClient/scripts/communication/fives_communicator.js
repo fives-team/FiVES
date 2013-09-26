@@ -26,6 +26,7 @@ FIVES.Communication = FIVES.Communication || {};
     c.getObjectMesh = function() {};
     c.setEntityOrientation = function() {};
 
+
     c.initialize = function(context, service) {
         this.context = context;
         context.openConnection(service, _onOpenedConnection.bind(this) );
@@ -117,13 +118,18 @@ FIVES.Communication = FIVES.Communication || {};
     };
 
     var _createFunctionWrappers = function(error, supported) {
-            this.listObjects = this.connection.generateFuncWrapper("objectsync.listObjects");
-            this.createEntityAt = this.connection.generateFuncWrapper("editing.createEntityAt");
-            this.createMeshEntity = this.connection.generateFuncWrapper("editing.createMeshEntity");
-            this.createServerScriptFor = this.connection.generateFuncWrapper("scripting.createServerScriptFor");
-            this.notifyAboutNewObjects = this.connection.generateFuncWrapper("objectsync.notifyAboutNewObjects");
-            this.notifyAboutNewObjects(this.sessionKey, FIVES.Models.EntityRegistry.addEntityFromServer);
-            this.listObjects().on("result", _listObjectsCallback.bind(this));
+        this.listObjects = this.connection.generateFuncWrapper("objectsync.listObjects");
+        this.createEntityAt = this.connection.generateFuncWrapper("editing.createEntityAt");
+        this.createMeshEntity = this.connection.generateFuncWrapper("editing.createMeshEntity");
+        this.createServerScriptFor = this.connection.generateFuncWrapper("scripting.createServerScriptFor");
+
+        this.notifyAboutNewObjects = this.connection.generateFuncWrapper("objectsync.notifyAboutNewObjects");
+        this.notifyAboutNewObjects(this.sessionKey, FIVES.Models.EntityRegistry.addEntityFromServer);
+
+        this.updateEntityLocation = this.connection.generateFuncWrapper("location.update");
+        this.notifyAboutEntityLocationChanged = this.connection.generateFuncWrapper("location.notifyAboutUpdates");
+
+        this.listObjects().on("result", _listObjectsCallback.bind(this));
     };
 
     // Expose Communicator to namespace
