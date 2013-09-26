@@ -60,7 +60,7 @@ namespace Location
                 clientManager.OnConnected += delegate(Connection connection) {
                     connection["registerClientService"]("location", true, new Dictionary<string, Delegate> {
                         {"update", (Action<string, Vector, Quat, int>) Update},
-                        {"notifyAboutUpdates", (Action<string, Action<Vector, Quat>>) NotifyAboutUpdates},
+                        {"notifyAboutUpdates", (Action<Action<string, Vector, Quat>>) NotifyAboutUpdates},
                     });
                 };
             });
@@ -77,13 +77,31 @@ namespace Location
             entity["orientation"]["z"] = orientation.z;
             entity["orientation"]["w"] = orientation.w;
 
+            locationUpdateCallback(entity.Guid.ToString(), position, orientation);
             // We currently ignore timestamp, but may it in the future to implement dead reckoning.
         }
 
-        private void NotifyAboutUpdates(string guid, Action<Vector, Quat> callback)
+        private void NotifyAboutUpdates(Action<string, Vector, Quat> callback)
         {
-            var entity = EntityRegistry.Instance.GetEntity(guid);
-            var attributeChangeHandler = new Component.AttributeChanged((sender, ev) => {
+            locationUpdateCallback = callback;
+
+            foreach (var guid in EntityRegistry.Instance.GetAllGUIDs())
+            {
+                EntityRegistry.Instance.GetEntity(guid).OnAttributeInComponentChanged += new Entity.AttributeInComponentChanged(attributeChangeHandler);
+            }
+
+            EntityRegistry.Instance.OnEntityAdded += (sender, eventArgs) => {
+                var entity = EntityRegistry.Instance.GetEntity(eventArgs.elementId);
+                entity.OnAttributeInComponentChanged += new Entity.AttributeInComponentChanged(attributeChangeHandler);
+            };
+        }
+
+        private void attributeChangeHandler(object sender, Events.AttributeInComponentEventArgs args)
+        {
+
+            if(args.componentName == "position" || args.componentName == "orientation")
+            {
+                var entity = (Entity)sender;
                 Vector position = new Vector {
                     x = (float)entity["position"]["x"],
                     y = (float)entity["position"]["y"],
@@ -97,13 +115,10 @@ namespace Location
                     w = (float)entity["orientation"]["w"],
                 };
 
-                callback(position, orientation);
-            });
-
-            entity["position"].OnAttributeChanged += attributeChangeHandler;
-            entity["orientation"].OnAttributeChanged += attributeChangeHandler;
+            }
         }
 
+        private Action<string, Vector, Quat> locationUpdateCallback;
         private readonly Guid pluginGUID = new Guid("90dd4c50-f09d-11e2-b778-0800200c9a66");
     }
 }
