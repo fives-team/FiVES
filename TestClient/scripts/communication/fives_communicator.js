@@ -117,6 +117,11 @@ FIVES.Communication = FIVES.Communication || {};
             FIVES.Models.EntityRegistry.addEntityFromServer(objects[i]);
     };
 
+    var _locationUpdateCallback = function(guid, position, orientation) {
+        var entity = FIVES.Models.EntityRegistry.getEntity(guid);
+        entity.updateLocation(position, orientation);
+    };
+
     var _createFunctionWrappers = function(error, supported) {
         this.listObjects = this.connection.generateFuncWrapper("objectsync.listObjects");
         this.createEntityAt = this.connection.generateFuncWrapper("editing.createEntityAt");
@@ -127,7 +132,8 @@ FIVES.Communication = FIVES.Communication || {};
         this.notifyAboutNewObjects(this.sessionKey, FIVES.Models.EntityRegistry.addEntityFromServer);
 
         this.updateEntityLocation = this.connection.generateFuncWrapper("location.update");
-        this.notifyAboutEntityLocationChanged = this.connection.generateFuncWrapper("location.notifyAboutUpdates");
+        this.notifyAboutLocationOfEntityChanged = this.connection.generateFuncWrapper("location.notifyAboutUpdates");
+        this.notifyAboutLocationOfEntityChanged(_locationUpdateCallback);
 
         this.listObjects().on("result", _listObjectsCallback.bind(this));
     };

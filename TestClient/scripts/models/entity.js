@@ -19,16 +19,9 @@ FIVES.Models = FIVES.Models || {};
         this.orientation = entityDocument.orientation;
         this.scale= entityDocument.scale;
         this.meshResource = entityDocument.meshResource;
-
-        this.subscribeToServerUpdates();
     };
 
     var e = Entity.prototype;
-
-
-    e.subscribeToServerUpdates = function() {
-        FIVES.Communication.FivesCommunicator.notifyAboutEntityLocationChanged(this.guid, _handleLocationUpdate.bind(this));
-    };
 
     var _handleLocationUpdate = function(position, orientation) {
         this.position = position;
