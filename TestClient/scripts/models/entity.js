@@ -23,10 +23,17 @@ FIVES.Models = FIVES.Models || {};
 
     var e = Entity.prototype;
 
-    var _handleLocationUpdate = function(position, orientation) {
+    e.updateLocation = function(position, orientation) {
         this.position = position;
         this.orientation = orientation;
-        FIVES.SceneManager.updateOrientation(this);
+        FIVES.Resources.SceneManager.updateOrientation(this);
+    };
+
+    e.setOrientation = function(x, y, z, w) {
+        var newOrientation = { x: x, y: y, z: z, w: w};
+        this.orientation = newOrientation;
+        FIVES.Resources.SceneManager.updateOrientation(this);
+        FIVES.Communication.FivesCommunicator.updateEntityLocation(this.guid, this.position, this.orientation, 0 /*timestamp, currently unused */);
     };
 
     var _handleMeshUpdate = function(error, mesh) {
