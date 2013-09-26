@@ -13,7 +13,14 @@ FIVES.Models = FIVES.Models || {};
 (function (){
      "use strict";
 
-    var Entity = function() {};
+    var Entity = function(entityDocument) {
+        this.guid = entityDocument.guid;
+        this.position = entityDocument.position;
+        this.orientation = entityDocument.orientation;
+        this.scale= entityDocument.scale;
+        this.meshResource = entityDocument.meshResource;
+
+    };
 
     var e = Entity.prototype;
 

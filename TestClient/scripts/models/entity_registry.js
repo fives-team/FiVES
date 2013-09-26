@@ -20,10 +20,12 @@ FIVES.Models = FIVES.Models || {};
 
     er._entities = {};
 
-    er.addEntityFromServer = function (entity) {
-        this._entities[entity.guid] = entity;
-        entity.xml3dView = {};
-        FIVES.Resources.SceneManager.addMeshForObject(entity);
+    er.addEntityFromServer = function (entityDocument) {
+        var newEntity = new FIVES.Models.Entity(entityDocument);
+        this._entities[entityDocument.guid] = newEntity;
+        newEntity.xml3dView = {};
+
+        FIVES.Resources.SceneManager.addMeshForObject(newEntity);
     };
 
     er.getEntity = function (guid) {
