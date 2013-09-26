@@ -20,27 +20,20 @@ FIVES.Models = FIVES.Models || {};
         this.scale= entityDocument.scale;
         this.meshResource = entityDocument.meshResource;
 
+        this.subscribeToServerUpdates();
     };
 
     var e = Entity.prototype;
 
-    e.retrieveEntityDataFromServer = function() {
-        this.retrieveLocationFromServer();
-        this.retrieveMeshDataFromServer();
-    } ;
 
-    e.retrieveLocationFromServer = function () {
-        FIVES.Communication.FivesCommunicator.getObjectLocation(this.guid).on("result", _handleLocationUpdate.bind(this));
+    e.subscribeToServerUpdates = function() {
+        FIVES.Communication.FivesCommunicator.notifyAboutEntityLocationChanged(this.guid, _handleLocationUpdate.bind(this));
     };
 
-    var _handleLocationUpdate = function(error, location) {
-        this.location = this.location || {};
-        this.location.position = location.position;
-        this.location.orientation = location.orientation;
-    };
-
-    e.retrieveMeshDataFromServer = function () {
-        FIVES.Communication.FivesCommunicator.getObjectMesh(this.guid).on("result", _handleMeshUpdate.bind(this));
+    var _handleLocationUpdate = function(position, orientation) {
+        this.position = position;
+        this.orientation = orientation;
+        FIVES.SceneManager.updateOrientation(this);
     };
 
     var _handleMeshUpdate = function(error, mesh) {
@@ -56,8 +49,9 @@ FIVES.Models = FIVES.Models || {};
 
     e.setOrientation = function(x, y, z, w) {
         var newOrientation = { x: x, y: y, z: z, w: w};
-        this.location.orientation = newOrientation;
-        FIVES.SceneManager.updateOrientation(this);
+        this.orientation = newOrientation;
+        FIVES.Resources.SceneManager.updateOrientation(this);
+        FIVES.Communication.FivesCommunicator.updateEntityLocation(this.guid, this.position, this.orientation, 0 /*timestamp, currently unused */);
     };
 
     FIVES.Models.Entity = Entity;
