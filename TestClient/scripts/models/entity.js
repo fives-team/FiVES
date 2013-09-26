@@ -36,17 +36,6 @@ FIVES.Models = FIVES.Models || {};
         FIVES.Communication.FivesCommunicator.updateEntityLocation(this.guid, this.position, this.orientation, 0 /*timestamp, currently unused */);
     };
 
-    var _handleMeshUpdate = function(error, mesh) {
-        this.mesh = this.mesh || {};
-        this.mesh.scale = mesh.scale;
-        this.mesh.scale.x = 1;
-        this.mesh.scale.y = 1;
-        this.mesh.scale.z = 1;
-
-        this.mesh.uri = mesh.uri || "resources/models/firetruck/xml3d/firetruck.xml";
-        FIVES.Resources.SceneManager.addMeshForObject(this);
-    };
-
     e.setOrientation = function(x, y, z, w) {
         this.orientation = { x: x, y: y, z: z, w: w};
         FIVES.Resources.SceneManager.updateOrientation(this);

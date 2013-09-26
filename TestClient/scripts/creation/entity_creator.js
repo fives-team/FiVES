@@ -38,9 +38,6 @@ FIVES.Creation = FIVES.Creation || {};
             var orientation = { x: 0, y: 0, z: 0, w: 1};
             var mesh = {meshUri: "resources/models/firetruck/xml3d/firetruck.xml", visible: true};
             var call = FIVES.Communication.FivesCommunicator.createMeshEntity(position, orientation, scale, mesh);
-            call.on("success", function(newGuid) {
-                console.log("Created Entity with Guid " + newGuid);
-            });
             i ++;
         }
     };
