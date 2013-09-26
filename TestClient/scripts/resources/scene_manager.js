@@ -89,5 +89,10 @@ FIVES.Resources = FIVES.Resources || {};
         transformationForEntity.setAttribute("rotation", this._createOrientationForEntityGroup(entity));
     }
 
+    scm.updatePosition = function(entity) {
+        var transformationForEntity = entity.xml3dView.transformElement;
+        transformationForEntity.setAttribute("translation", this._createTranslationForEntityGroup(entity));
+    }
+
     FIVES.Resources.SceneManager = new SceneManager();
 }());
