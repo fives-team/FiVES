@@ -42,7 +42,7 @@ namespace Renderable
 
         void RegisterClientServices()
         {
-            PluginManager.Instance.AddPluginLoadedHandler("ClientSync", delegate {
+            PluginManager.Instance.AddPluginLoadedHandler("ClientManager", delegate {
                 var interPluginContext = ContextFactory.GetContext("inter-plugin");
                 var clientManager = ServiceFactory.DiscoverByName("clientmanager", interPluginContext);
                 clientManager.OnConnected += delegate(Connection connection) {
