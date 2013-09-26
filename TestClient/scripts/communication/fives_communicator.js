@@ -129,7 +129,7 @@ FIVES.Communication = FIVES.Communication || {};
         this.createServerScriptFor = this.connection.generateFuncWrapper("scripting.createServerScriptFor");
 
         this.notifyAboutNewObjects = this.connection.generateFuncWrapper("objectsync.notifyAboutNewObjects");
-        this.notifyAboutNewObjects(this.sessionKey, FIVES.Models.EntityRegistry.addEntityFromServer);
+        this.notifyAboutNewObjects(this.sessionKey, FIVES.Models.EntityRegistry.addEntityFromServer.bind(FIVES.Models.EntityRegistry));
 
         this.updateEntityLocation = this.connection.generateFuncWrapper("location.update");
         this.notifyAboutLocationOfEntityChanged = this.connection.generateFuncWrapper("location.notifyAboutUpdates");
