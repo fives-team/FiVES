@@ -47,5 +47,8 @@ FIVES.Models = FIVES.Models || {};
         }
     }
 
+    er.spinAllEntities = function(delay) {
+        setInterval(this.rotateAllEntities.bind(this), delay);
+    }
     FIVES.Models.EntityRegistry = new EntityRegistry();
 }());
