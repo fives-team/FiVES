@@ -85,8 +85,8 @@ FIVES.Resources = FIVES.Resources || {};
     };
 
     scm.updateOrientation = function(entity) {
-        var transformationForEntity = $("#transform-" + entity.guid);
-        transformationForEntity.attr("rotation", this._createOrientationForEntityGroup(entity));
+        var transformationForEntity = entity.xml3dView.transformElement;
+        transformationForEntity.setAttribute("rotation", this._createOrientationForEntityGroup(entity));
     }
 
     FIVES.Resources.SceneManager = new SceneManager();
