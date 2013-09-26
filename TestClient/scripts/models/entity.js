@@ -27,12 +27,12 @@ FIVES.Models = FIVES.Models || {};
         this.position = position;
         this.orientation = orientation;
         FIVES.Resources.SceneManager.updateOrientation(this);
+        FIVES.Resources.SceneManager.updatePosition(this);
     };
 
-    e.setOrientation = function(x, y, z, w) {
-        var newOrientation = { x: x, y: y, z: z, w: w};
-        this.orientation = newOrientation;
-        FIVES.Resources.SceneManager.updateOrientation(this);
+    e.setPosition = function(x, y, z) {
+        this.position = {x: x, y: y, z: z};
+        FIVES.Resources.SceneManager.updatePosition(this);
         FIVES.Communication.FivesCommunicator.updateEntityLocation(this.guid, this.position, this.orientation, 0 /*timestamp, currently unused */);
     };
 
@@ -48,8 +48,7 @@ FIVES.Models = FIVES.Models || {};
     };
 
     e.setOrientation = function(x, y, z, w) {
-        var newOrientation = { x: x, y: y, z: z, w: w};
-        this.orientation = newOrientation;
+        this.orientation = { x: x, y: y, z: z, w: w};
         FIVES.Resources.SceneManager.updateOrientation(this);
         FIVES.Communication.FivesCommunicator.updateEntityLocation(this.guid, this.position, this.orientation, 0 /*timestamp, currently unused */);
     };
