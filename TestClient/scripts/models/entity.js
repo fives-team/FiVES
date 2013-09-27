@@ -42,5 +42,17 @@ FIVES.Models = FIVES.Models || {};
         FIVES.Communication.FivesCommunicator.updateEntityLocation(this.guid, this.position, this.orientation, 0 /*timestamp, currently unused */);
     };
 
+    e.getTransformElement = function() {
+        if(!this.xml3dView.transformElement)
+        {
+           //  console.warn("[WARNING] No transform element found for entity " + this.guid);
+            return false;
+        }
+        else
+        {
+            return this.xml3dView.transformElement;
+        }
+    };
+
     FIVES.Models.Entity = Entity;
 }());
