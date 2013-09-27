@@ -24,7 +24,8 @@ FIVES.Communication = FIVES.Communication || {};
     c.createServerScriptFor = function() {};
     c.notifyAboutNewObjects = function() {};
     c.getObjectMesh = function() {};
-    c.setEntityOrientation = function() {};
+    c.updateEntityLocation = function() {};
+    c.notifyAboutLocationOfEntityChanged = function() {};
 
 
     c.initialize = function(context, service) {
@@ -95,6 +96,7 @@ FIVES.Communication = FIVES.Communication || {};
                 }
 
                 _createFunctionWrappers.call(self);
+                self.connectedTime = new Date().getTime();
                 callback(true);
             }
         };
@@ -133,11 +135,16 @@ FIVES.Communication = FIVES.Communication || {};
 
         this.updateEntityLocation = this.connection.generateFuncWrapper("location.update");
         this.notifyAboutLocationOfEntityChanged = this.connection.generateFuncWrapper("location.notifyAboutUpdates");
-        this.notifyAboutLocationOfEntityChanged(_locationUpdateCallback);
+        this.notifyAboutLocationOfEntityChanged(this.sessionKey, _locationUpdateCallback);
 
         this.listObjects().on("result", _listObjectsCallback.bind(this));
     };
 
+    c.sendEntityLocationUpdate = function(guid, position, orientation) {
+        var updateTime = new Date().getTime();
+        var timeStamp = this.connectedTime - updateTime;
+        this.updateEntityLocation(this.sessionKey, guid, position, orientation, timeStamp);
+    }
     // Expose Communicator to namespace
     FIVES.Communication.FivesCommunicator = new FivesCommunicator();
 

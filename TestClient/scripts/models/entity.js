@@ -33,13 +33,13 @@ FIVES.Models = FIVES.Models || {};
     e.setPosition = function(x, y, z) {
         this.position = {x: x, y: y, z: z};
         FIVES.Resources.SceneManager.updatePosition(this);
-        FIVES.Communication.FivesCommunicator.updateEntityLocation(this.guid, this.position, this.orientation, 0 /*timestamp, currently unused */);
+        FIVES.Communication.FivesCommunicator.sendEntityLocationUpdate(this.guid, this.position, this.orientation, 0 /*timestamp, currently unused */);
     };
 
     e.setOrientation = function(x, y, z, w) {
         this.orientation = { x: x, y: y, z: z, w: w};
         FIVES.Resources.SceneManager.updateOrientation(this);
-        FIVES.Communication.FivesCommunicator.updateEntityLocation(this.guid, this.position, this.orientation, 0 /*timestamp, currently unused */);
+        FIVES.Communication.FivesCommunicator.sendEntityLocationUpdate(this.guid, this.position, this.orientation, 0 /*timestamp, currently unused */);
     };
 
     e.getTransformElement = function() {
