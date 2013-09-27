@@ -31,7 +31,7 @@ FIVES.Resources = FIVES.Resources || {};
 
     scm.addMeshForObject = function(fivesObject) {
         if(!fivesObject.meshResource.meshURI)
-            console.error("[ERROR] (SceneManager).addMeshForObject : No Resource URI specified for object " + fivesObject.guid);
+            console.warn("[WARNING] (SceneManager).addMeshForObject : No Resource URI specified for object " + fivesObject.guid);
         else
             FIVES.Resources.ResourceManager.loadExternalResource(fivesObject, this._addMeshToScene.bind(this));
     };
