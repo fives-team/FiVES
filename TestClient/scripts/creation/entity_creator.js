@@ -79,7 +79,7 @@ FIVES.Creation = FIVES.Creation || {};
         var value = field.val();
         if (!value) {
             console.warn("[WARNING] EntityCreator._getValidFloatFieldValue: No value specified for " + fieldName + ", will use defaultvalue instead");
-            value = 0;
+            value = fieldName.indexOf("scale") < 0  ? 0 : 1;
         }
         return value;
     };
