@@ -33,6 +33,12 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <ConsolePause>false</ConsolePause>
+    <CustomCommands>
+      <CustomCommands>
+        <Command type="AfterBuild" command="xcopy /y &quot;${TargetDir}&quot; &quot;${SolutionDir}\BuiltLibs\&quot; &amp;&amp; xcopy /y /s &quot;${SolutionDir}\ThirdParty\V8.NET\Net40\Release&quot; &quot;${SolutionDir}\FIVES\bin\${ProjectConfigName}\&quot;|| echo &quot;Ignoring error&quot;" externalConsole="True" />
+        <Command type="AfterBuild" command="mkdir -p &quot;${SolutionDir}/BuiltLibs/&quot; &amp;&amp; cp &quot;${TargetDir}/&quot;* &quot;${SolutionDir}/BuiltLibs/&quot;  &amp;&amp; cp -a &quot;${SolutionDir}/ThirdParty/V8.NET/Net40/Release&quot;/* &quot;${SolutionDir}/FIVES/bin/${ProjectConfigName}/&quot; || echo &quot;Ignoring error&quot;" externalConsole="True" />
+      </CustomCommands>
+    </CustomCommands>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
