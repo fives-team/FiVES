@@ -66,35 +66,12 @@ namespace WebSocketJSON
 
         public IFuncCall CallFunc(string name, params object[] args)
         {
-            int callID = nextCallID++;
-            List<object> callMessage = new List<object>();
-            callMessage.Add("call");
-            callMessage.Add(callID);
-            callMessage.Add(name);
+            int callID = getValidCallID();
 
             // Register delegates as callbacks. Pass their registered names instead.
-            List<object> convertedArgs = new List<object>();
-            List<int> callbacks = new List<int>();
-            for (int i = 0; i < args.Length; i++) {
-                if (args[i] is Delegate) {
-                    var arg = args[i] as Delegate;
-                    if (!registeredCallbacks.ContainsKey(arg)) {
-                        var callbackUUID = Guid.NewGuid().ToString();
-                        registeredCallbacks[arg] = callbackUUID;
-                        registeredFunctions[callbackUUID] = arg;
-                    }
-                    callbacks.Add(i);
-                    convertedArgs.Add(registeredCallbacks[arg]);
-                } else {
-                    convertedArgs.Add(args[i]);
-                }
-            }
-
-            // Add a list of callback indicies.
-            callMessage.Add(callbacks);
-
-            // Add converted arguments.
-            callMessage.AddRange(convertedArgs);
+            List<int> callbacks = createCallbacksFromArguments(args);
+            List<object> convertedArgs = convertCallbackArguments(args);
+            List<object> callMessage = createCallMessage(callID, name, callbacks, convertedArgs);
 
             string serializedMessage = JsonConvert.SerializeObject(callMessage);
             Send(serializedMessage);
@@ -104,8 +81,70 @@ namespace WebSocketJSON
 
             IWSJFuncCall callObj = wsjFuncCallFactory.Construct();
 
-            activeCalls.Add(callID, callObj);
+            // activeCalls.Add(callID, callObj);
             return callObj;
+        }
+
+        private int getValidCallID() {
+            int callID = ++nextCallID;
+            while(activeCalls.ContainsKey(callID))
+                callID ++;
+            return callID;
+        }
+
+        private List<object> createCallMessage(int callID, string name, List<int> callbacks, List<object> convertedArgs) {
+            List<object> callMessage = new List<object>();
+            callMessage.Add("call");
+            callMessage.Add(callID);
+            callMessage.Add(name);
+            // Add a list of callback indicies.
+            callMessage.Add(callbacks);
+            // Add converted arguments.
+            callMessage.AddRange(convertedArgs);
+
+            return callMessage;
+        }
+
+        private List<object> convertCallbackArguments(object[] args) {
+            List<object> convertedArgs = new List<object>();
+
+            for (int i = 0; i < args.Length; i++)
+            {
+                if (args[i] is Delegate)
+                {
+                    var arg = args[i] as Delegate;
+                    convertedArgs.Add(registeredCallbacks[arg]);
+                }
+                else
+                {
+                    convertedArgs.Add(args[i]);
+                }
+            }
+            return convertedArgs;
+        }
+
+
+        private List<int> createCallbacksFromArguments(object[] args) {
+            List<int> callbacks = new List<int>();
+            for (int i = 0; i < args.Length; i++)
+            {
+                if (args[i] is Delegate)
+                {
+                    var arg = args[i] as Delegate;
+                    if (!registeredCallbacks.ContainsKey(arg))
+                    {
+                        registerCallbackFunction(arg);
+                    }
+                    callbacks.Add(i);
+                }
+            }
+            return callbacks;
+        }
+
+        private void registerCallbackFunction(Delegate arg) {
+            var callbackUUID = Guid.NewGuid().ToString();
+            registeredCallbacks[arg] = callbackUUID;
+            registeredFunctions[callbackUUID] = arg;
         }
 
         public void RegisterHandler(string name, Delegate handler)
