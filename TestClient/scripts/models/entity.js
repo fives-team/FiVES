@@ -23,23 +23,26 @@ FIVES.Models = FIVES.Models || {};
 
     var e = Entity.prototype;
 
-    e.updateLocation = function(position, orientation) {
+    e.updatePosition = function(position) {
         this.position = position;
+        FIVES.Resources.SceneManager.updatePosition(this);
+    };
+
+    e.updateOrientation = function(orientation) {
         this.orientation = orientation;
         FIVES.Resources.SceneManager.updateOrientation(this);
-        FIVES.Resources.SceneManager.updatePosition(this);
     };
 
     e.setPosition = function(x, y, z) {
         this.position = {x: x, y: y, z: z};
         FIVES.Resources.SceneManager.updatePosition(this);
-        FIVES.Communication.FivesCommunicator.sendEntityLocationUpdate(this.guid, this.position, this.orientation, 0 /*timestamp, currently unused */);
+        FIVES.Communication.FivesCommunicator.sendEntityPositionUpdate(this.guid, this.position);
     };
 
     e.setOrientation = function(x, y, z, w) {
         this.orientation = { x: x, y: y, z: z, w: w};
         FIVES.Resources.SceneManager.updateOrientation(this);
-        FIVES.Communication.FivesCommunicator.sendEntityLocationUpdate(this.guid, this.position, this.orientation, 0 /*timestamp, currently unused */);
+        FIVES.Communication.FivesCommunicator.sendEntityOrientationUpdate(this.guid, this.orientation );
     };
 
     e.getTransformElement = function() {

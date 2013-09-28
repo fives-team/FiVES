@@ -119,9 +119,20 @@ FIVES.Communication = FIVES.Communication || {};
             FIVES.Models.EntityRegistry.addEntityFromServer(objects[i]);
     };
 
-    var _locationUpdateCallback = function(guid, position, orientation) {
+    var _locationPositionUpdate = function(guid, position) {
         var entity = FIVES.Models.EntityRegistry.getEntity(guid);
-        entity.updateLocation(position, orientation);
+        entity.updatePosition(position);
+    };
+
+    var _locationOrientationUpdate = function(guid, orientation) {
+        var entity = FIVES.Models.EntityRegistry.getEntity(guid);
+        entity.updateOrientation(orientation);
+    };
+
+    c._generateTimestamp = function() {
+        var updateTime = new Date().getTime();
+        var timeStamp = this.connectedTime - updateTime;
+        return timeStamp;
     };
 
     var _createFunctionWrappers = function(error, supported) {
@@ -133,18 +144,26 @@ FIVES.Communication = FIVES.Communication || {};
         this.notifyAboutNewObjects = this.connection.generateFuncWrapper("objectsync.notifyAboutNewObjects");
         this.notifyAboutNewObjects(this.sessionKey, FIVES.Models.EntityRegistry.addEntityFromServer.bind(FIVES.Models.EntityRegistry));
 
-        this.updateEntityLocation = this.connection.generateFuncWrapper("location.update");
-        this.notifyAboutLocationOfEntityChanged = this.connection.generateFuncWrapper("location.notifyAboutUpdates");
-        this.notifyAboutLocationOfEntityChanged(this.sessionKey, _locationUpdateCallback);
+        this.updateEntityPosition = this.connection.generateFuncWrapper("location.updatePosition");
+        this.updateEntityOrientation = this.connection.generateFuncWrapper("location.updateOrientation");
+
+        this.notifyAboutPositionOfEntityChanged = this.connection.generateFuncWrapper("location.notifyAboutPositionUpdates");
+        this.notifyAboutPositionOfEntityChanged(this.sessionKey, _locationPositionUpdate);
+
+        this.notifyAboutOrientationOfEntityChanged = this.connection.generateFuncWrapper("location.notifyAboutOrientationUpdates");
+        this.notifyAboutOrientationOfEntityChanged(this.sessionKey, _locationOrientationUpdate);
 
         this.listObjects().on("result", _listObjectsCallback.bind(this));
     };
 
-    c.sendEntityLocationUpdate = function(guid, position, orientation) {
-        var updateTime = new Date().getTime();
-        var timeStamp = this.connectedTime - updateTime;
-        this.updateEntityLocation(this.sessionKey, guid, position, orientation, timeStamp);
-    }
+    c.sendEntityPositionUpdate = function(guid, position) {
+        this.updateEntityPosition(this.sessionKey, guid, position, this._generateTimestamp());
+    };
+
+    c.sendEntityOrientationUpdate = function(guid, orientation) {
+        this.updateEntityOrientation(this.sessionKey, guid, orientation, this._generateTimestamp());
+    };
+
     // Expose Communicator to namespace
     FIVES.Communication.FivesCommunicator = new FivesCommunicator();
 

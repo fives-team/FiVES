@@ -59,41 +59,60 @@ namespace Location
                 var clientManager = ServiceFactory.DiscoverByName("clientmanager", interPluginContext);
                 clientManager.OnConnected += delegate(Connection connection) {
                     connection["registerClientService"]("location", true, new Dictionary<string, Delegate> {
-                        {"update", (Action<string, Vector, Quat, int>) Update},
-                        {"notifyAboutUpdates", (Action<Action<string, Vector, Quat>>) NotifyAboutUpdates},
+                        {"updatePosition", (Action<string, string, Vector, int>) UpdatePosition},
+                        {"updateOrientation", (Action<string, string, Quat, int>) UpdateOrientation},
+                        {"notifyAboutPositionUpdates", (Action<string, Action<string, Vector>>) NotifyAboutPositionUpdates},
+                        {"notifyAboutOrientationUpdates", (Action<string, Action<string, Quat>>) NotifyAboutOrientationUpdates},
                     });
                 };
             });
         }
 
-        private void Update(string guid, Vector position, Quat orientation, int timestamp)
+        private void UpdatePosition(string sessionKey, string guid, Vector position,int timestamp)
         {
             var entity = EntityRegistry.Instance.GetEntity(guid);
             entity["position"]["x"] = position.x;
             entity["position"]["y"] = position.y;
             entity["position"]["z"] = position.z;
+
+            foreach (string client in positionUpdateCallbacks.Keys)
+            {
+                if (client != sessionKey)
+                {
+                    var callback = positionUpdateCallbacks[client];
+                    callback(entity.Guid.ToString(), position);
+                }
+            }
+            // We currently ignore timestamp, but may it in the future to implement dead reckoning.
+        }
+
+        private void UpdateOrientation(string sessionKey, string guid, Quat orientation, int timestamp)
+        {
+            var entity = EntityRegistry.Instance.GetEntity(guid);
             entity["orientation"]["x"] = orientation.x;
             entity["orientation"]["y"] = orientation.y;
             entity["orientation"]["z"] = orientation.z;
             entity["orientation"]["w"] = orientation.w;
 
-            locationUpdateCallback(entity.Guid.ToString(), position, orientation);
+            foreach (string client in orientationUpdateCallbacks.Keys)
+            {
+                if (client != sessionKey)
+                {
+                    var callback = orientationUpdateCallbacks[client];
+                    callback(entity.Guid.ToString(), orientation);
+                }
+            }
             // We currently ignore timestamp, but may it in the future to implement dead reckoning.
         }
 
-        private void NotifyAboutUpdates(Action<string, Vector, Quat> callback)
+        private void NotifyAboutPositionUpdates(string sessionKey, Action<string, Vector> callback)
         {
-            locationUpdateCallback = callback;
+            positionUpdateCallbacks.Add(sessionKey, callback);
+        }
 
-            foreach (var guid in EntityRegistry.Instance.GetAllGUIDs())
-            {
-                EntityRegistry.Instance.GetEntity(guid).OnAttributeInComponentChanged += new Entity.AttributeInComponentChanged(attributeChangeHandler);
-            }
-
-            EntityRegistry.Instance.OnEntityAdded += (sender, eventArgs) => {
-                var entity = EntityRegistry.Instance.GetEntity(eventArgs.elementId);
-                entity.OnAttributeInComponentChanged += new Entity.AttributeInComponentChanged(attributeChangeHandler);
-            };
+        private void NotifyAboutOrientationUpdates(string sessionKey, Action<string, Quat> callback)
+        {
+            orientationUpdateCallbacks.Add(sessionKey, callback);
         }
 
         private void attributeChangeHandler(object sender, Events.AttributeInComponentEventArgs args)
@@ -118,7 +137,8 @@ namespace Location
             }
         }
 
-        private Action<string, Vector, Quat> locationUpdateCallback;
+        private Dictionary<string, Action<string, Vector>> positionUpdateCallbacks = new Dictionary<string, Action<string, Vector>>();
+        private Dictionary<string, Action<string, Quat>> orientationUpdateCallbacks = new Dictionary<string, Action<string, Quat>>();
         private readonly Guid pluginGUID = new Guid("90dd4c50-f09d-11e2-b778-0800200c9a66");
     }
 }
