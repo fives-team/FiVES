@@ -84,7 +84,7 @@ namespace WebSocketJSON
 
                 IWSJFuncCall callObj = wsjFuncCallFactory.Construct();
 
-                // activeCalls.Add(callID, callObj);
+                activeCalls.Add(callID, callObj);
                 return callObj;
             }
         }
