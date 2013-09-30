@@ -90,10 +90,7 @@ namespace WebSocketJSON
         }
 
         private int getValidCallID() {
-            int callID = ++nextCallID;
-            while(activeCalls.ContainsKey(callID))
-                callID ++;
-            return callID;
+            return nextCallID++;
         }
 
         private List<object> createCallMessage(int callID, string name, List<int> callbacks, List<object> convertedArgs) {
