@@ -61,28 +61,32 @@ namespace WebSocketJSON
 
         public void ProcessIDL(string parsedIDL)
         {
-            // TODO
+            lock (objLock) {
+                // TODO
+            }
         }
 
         public IFuncCall CallFunc(string name, params object[] args)
         {
-            int callID = getValidCallID();
+            lock (objLock) {
+                int callID = getValidCallID();
 
-            // Register delegates as callbacks. Pass their registered names instead.
-            List<int> callbacks = createCallbacksFromArguments(args);
-            List<object> convertedArgs = convertCallbackArguments(args);
-            List<object> callMessage = createCallMessage(callID, name, callbacks, convertedArgs);
+                // Register delegates as callbacks. Pass their registered names instead.
+                List<int> callbacks = createCallbacksFromArguments(args);
+                List<object> convertedArgs = convertCallbackArguments(args);
+                List<object> callMessage = createCallMessage(callID, name, callbacks, convertedArgs);
 
-            string serializedMessage = JsonConvert.SerializeObject(callMessage);
-            Send(serializedMessage);
+                string serializedMessage = JsonConvert.SerializeObject(callMessage);
+                Send(serializedMessage);
 
-            if (IsOneWay(name))
-                return null;
+                if (IsOneWay(name))
+                    return null;
 
-            IWSJFuncCall callObj = wsjFuncCallFactory.Construct();
+                IWSJFuncCall callObj = wsjFuncCallFactory.Construct();
 
-            // activeCalls.Add(callID, callObj);
-            return callObj;
+                // activeCalls.Add(callID, callObj);
+                return callObj;
+            }
         }
 
         private int getValidCallID() {
@@ -149,12 +153,16 @@ namespace WebSocketJSON
 
         public void RegisterHandler(string name, Delegate handler)
         {
-            registeredFunctions[name] = handler;
+            lock (objLock) {
+                registeredFunctions[name] = handler;
+            }
         }
 
         public void Disconnect()
         {
-            Close();
+            lock (objLock) {
+                Close();
+            }
         }
 
         #endregion
@@ -165,9 +173,11 @@ namespace WebSocketJSON
         /// <param name="reason">The reason for the close event.</param>
         public void HandleClose(SuperSocket.SocketBase.CloseReason reason)
         {
-            foreach (var call in activeCalls)
-                call.Value.HandleError("Connection closed. Reason: " + reason.ToString());
-            activeCalls.Clear();
+            lock (objLock) {
+                foreach (var call in activeCalls)
+                    call.Value.HandleError("Connection closed. Reason: " + reason.ToString());
+                activeCalls.Clear();
+            }
         }
 
         private void HandleCallReply(List<JToken> data)
@@ -313,25 +323,27 @@ namespace WebSocketJSON
         /// <param name="message">The incoming message.</param>
         public void HandleMessage(string message)
         {
-            List<JToken> data = null;
+            lock (objLock) {
+                List<JToken> data = null;
 
-            // FIXME: Occasionally we receive JSON with some random bytes appended. The reason is
-            // unclear, but to be safe we ignore messages that have parsing errors.
-            try {
-                data = JsonConvert.DeserializeObject<List<JToken>>(message);
-            } catch (JsonException) {
-                return;
+                // FIXME: Occasionally we receive JSON with some random bytes appended. The reason is
+                // unclear, but to be safe we ignore messages that have parsing errors.
+                try {
+                    data = JsonConvert.DeserializeObject<List<JToken>>(message);
+                } catch (JsonException) {
+                    return;
+                }
+
+                string msgType = data[0].ToObject<string>();
+                if (msgType == "call-reply")
+                    HandleCallReply(data);
+                else if (msgType == "call-error")
+                    HandleCallError(data);
+                else if (msgType == "call")
+                    HandleCall(data);
+                else
+                    SendCallError(-1, "Unknown message type: " + msgType);
             }
-
-            string msgType = data[0].ToObject<string>();
-            if (msgType == "call-reply")
-                HandleCallReply(data);
-            else if (msgType == "call-error")
-                HandleCallError(data);
-            else if (msgType == "call")
-                HandleCall(data);
-            else
-                SendCallError(-1, "Unknown message type: " + msgType);
         }
 
         private bool IsOneWay(string qualifiedMethodName)
@@ -345,13 +357,16 @@ namespace WebSocketJSON
 
         protected override void OnSessionClosed(SuperSocket.SocketBase.CloseReason reason)
         {
-            base.OnSessionClosed(reason);
+            lock (objLock) {
+                base.OnSessionClosed(reason);
 
-            if (OnClose != null)
-                OnClose(reason.ToString());
+                if (OnClose != null)
+                    OnClose(reason.ToString());
+            }
         }
 
         private int nextCallID = 0;
+        private object objLock = new object();  // needed because multiple threads may decide to send something
         private Dictionary<int, IWSJFuncCall> activeCalls = new Dictionary<int, IWSJFuncCall>();
         private Dictionary<string, Delegate> registeredFunctions = new Dictionary<string, Delegate>();
         private Dictionary<Delegate, string> registeredCallbacks = new Dictionary<Delegate, string>();
