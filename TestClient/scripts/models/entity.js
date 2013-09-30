@@ -13,38 +13,48 @@ FIVES.Models = FIVES.Models || {};
 (function (){
      "use strict";
 
-    var Entity = function() {};
+    var Entity = function(entityDocument) {
+        this.guid = entityDocument.guid;
+        this.position = entityDocument.position;
+        this.orientation = entityDocument.orientation;
+        this.scale= entityDocument.scale;
+        this.meshResource = entityDocument.meshResource;
+    };
 
     var e = Entity.prototype;
 
-    e.retrieveEntityDataFromServer = function() {
-        this.retrieveLocationFromServer();
-        this.retrieveMeshDataFromServer();
-    } ;
-
-    e.retrieveLocationFromServer = function () {
-        FIVES.Communication.FivesCommunicator.getObjectLocation(this.guid).on("result", _handleLocationUpdate.bind(this));
+    e.updatePosition = function(position) {
+        this.position = position;
+        FIVES.Resources.SceneManager.updatePosition(this);
     };
 
-    var _handleLocationUpdate = function(error, location) {
-        this.location = this.location || {};
-        this.location.position = location.position;
-        this.location.orientation = location.orientation;
+    e.updateOrientation = function(orientation) {
+        this.orientation = orientation;
+        FIVES.Resources.SceneManager.updateOrientation(this);
     };
 
-    e.retrieveMeshDataFromServer = function () {
-        FIVES.Communication.FivesCommunicator.getObjectMesh(this.guid).on("result", _handleMeshUpdate.bind(this));
+    e.setPosition = function(x, y, z) {
+        this.position = {x: x, y: y, z: z};
+        FIVES.Resources.SceneManager.updatePosition(this);
+        FIVES.Communication.FivesCommunicator.sendEntityPositionUpdate(this.guid, this.position);
     };
 
-    var _handleMeshUpdate = function(error, mesh) {
-        this.mesh = this.mesh || {};
-        this.mesh.scale = mesh.scale;
-        this.mesh.scale.x = 1;
-        this.mesh.scale.y = 1;
-        this.mesh.scale.z = 1;
+    e.setOrientation = function(x, y, z, w) {
+        this.orientation = { x: x, y: y, z: z, w: w};
+        FIVES.Resources.SceneManager.updateOrientation(this);
+        FIVES.Communication.FivesCommunicator.sendEntityOrientationUpdate(this.guid, this.orientation );
+    };
 
-        this.mesh.uri = mesh.uri || "resources/models/firetruck/xml3d/firetruck.xml";
-        FIVES.Resources.SceneManager.addMeshForObject(this);
+    e.getTransformElement = function() {
+        if(!this.xml3dView.transformElement)
+        {
+           //  console.warn("[WARNING] No transform element found for entity " + this.guid);
+            return false;
+        }
+        else
+        {
+            return this.xml3dView.transformElement;
+        }
     };
 
     FIVES.Models.Entity = Entity;

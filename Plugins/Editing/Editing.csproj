@@ -33,6 +33,12 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <ConsolePause>false</ConsolePause>
+    <CustomCommands>
+      <CustomCommands>
+        <Command type="AfterBuild" command="xcopy /y &quot;${TargetDir}&quot; &quot;${SolutionDir}\BuiltLibs\&quot; || echo &quot;Ignoring error&quot;" externalConsole="True" />
+        <Command type="AfterBuild" command="mkdir -p &quot;${SolutionDir}/BuiltLibs/&quot; &amp;&amp; cp &quot;${TargetDir}/&quot;* &quot;${SolutionDir}/BuiltLibs/&quot; || echo &quot;Ignoring error&quot;" externalConsole="True" />
+      </CustomCommands>
+    </CustomCommands>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -57,6 +63,14 @@
     <ProjectReference Include="..\..\Core\Core.csproj">
       <Project>{627CCFC6-4071-4119-92C6-8BC96E4310C8}</Project>
       <Name>Core</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Location\Location.csproj">
+      <Project>{C463A928-9F1B-4134-B8C7-D398097E2D73}</Project>
+      <Name>Location</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Renderable\Renderable.csproj">
+      <Project>{74073FC3-BC58-45A8-9897-4A718F903916}</Project>
+      <Name>Renderable</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

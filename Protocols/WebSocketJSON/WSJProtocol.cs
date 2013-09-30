@@ -61,61 +61,108 @@ namespace WebSocketJSON
 
         public void ProcessIDL(string parsedIDL)
         {
-            // TODO
+            lock (objLock) {
+                // TODO
+            }
         }
 
         public IFuncCall CallFunc(string name, params object[] args)
         {
-            int callID = nextCallID++;
+            lock (objLock) {
+                int callID = getValidCallID();
+
+                // Register delegates as callbacks. Pass their registered names instead.
+                List<int> callbacks = createCallbacksFromArguments(args);
+                List<object> convertedArgs = convertCallbackArguments(args);
+                List<object> callMessage = createCallMessage(callID, name, callbacks, convertedArgs);
+
+                string serializedMessage = JsonConvert.SerializeObject(callMessage);
+                Send(serializedMessage);
+
+                if (IsOneWay(name))
+                    return null;
+
+                IWSJFuncCall callObj = wsjFuncCallFactory.Construct();
+
+                // activeCalls.Add(callID, callObj);
+                return callObj;
+            }
+        }
+
+        private int getValidCallID() {
+            int callID = ++nextCallID;
+            while(activeCalls.ContainsKey(callID))
+                callID ++;
+            return callID;
+        }
+
+        private List<object> createCallMessage(int callID, string name, List<int> callbacks, List<object> convertedArgs) {
             List<object> callMessage = new List<object>();
             callMessage.Add("call");
             callMessage.Add(callID);
             callMessage.Add(name);
-
-            // Register delegates as callbacks. Pass their registered names instead.
-            List<object> convertedArgs = new List<object>();
-            List<int> callbacks = new List<int>();
-            for (int i = 0; i < args.Length; i++) {
-                if (args[i] is Delegate) {
-                    var arg = args[i] as Delegate;
-                    if (!registeredCallbacks.ContainsKey(arg)) {
-                        var callbackUUID = Guid.NewGuid().ToString();
-                        registeredCallbacks[arg] = callbackUUID;
-                        registeredFunctions[callbackUUID] = arg;
-                    }
-                    callbacks.Add(i);
-                    convertedArgs.Add(registeredCallbacks[arg]);
-                } else {
-                    convertedArgs.Add(args[i]);
-                }
-            }
-
             // Add a list of callback indicies.
             callMessage.Add(callbacks);
-
             // Add converted arguments.
             callMessage.AddRange(convertedArgs);
 
-            string serializedMessage = JsonConvert.SerializeObject(callMessage);
-            Send(serializedMessage);
+            return callMessage;
+        }
 
-            if (IsOneWay(name))
-                return null;
+        private List<object> convertCallbackArguments(object[] args) {
+            List<object> convertedArgs = new List<object>();
 
-            IWSJFuncCall callObj = wsjFuncCallFactory.Construct();
+            for (int i = 0; i < args.Length; i++)
+            {
+                if (args[i] is Delegate)
+                {
+                    var arg = args[i] as Delegate;
+                    convertedArgs.Add(registeredCallbacks[arg]);
+                }
+                else
+                {
+                    convertedArgs.Add(args[i]);
+                }
+            }
+            return convertedArgs;
+        }
 
-            activeCalls.Add(callID, callObj);
-            return callObj;
+
+        private List<int> createCallbacksFromArguments(object[] args) {
+            List<int> callbacks = new List<int>();
+            for (int i = 0; i < args.Length; i++)
+            {
+                if (args[i] is Delegate)
+                {
+                    var arg = args[i] as Delegate;
+                    if (!registeredCallbacks.ContainsKey(arg))
+                    {
+                        registerCallbackFunction(arg);
+                    }
+                    callbacks.Add(i);
+                }
+            }
+            return callbacks;
+        }
+
+        private void registerCallbackFunction(Delegate arg) {
+            var callbackUUID = Guid.NewGuid().ToString();
+            registeredCallbacks[arg] = callbackUUID;
+            registeredFunctions[callbackUUID] = arg;
         }
 
         public void RegisterHandler(string name, Delegate handler)
         {
-            registeredFunctions[name] = handler;
+            lock (objLock) {
+                registeredFunctions[name] = handler;
+            }
         }
 
         public void Disconnect()
         {
-            Close();
+            lock (objLock) {
+                Close();
+            }
         }
 
         #endregion
@@ -126,9 +173,11 @@ namespace WebSocketJSON
         /// <param name="reason">The reason for the close event.</param>
         public void HandleClose(SuperSocket.SocketBase.CloseReason reason)
         {
-            foreach (var call in activeCalls)
-                call.Value.HandleError("Connection closed. Reason: " + reason.ToString());
-            activeCalls.Clear();
+            lock (objLock) {
+                foreach (var call in activeCalls)
+                    call.Value.HandleError("Connection closed. Reason: " + reason.ToString());
+                activeCalls.Clear();
+            }
         }
 
         private void HandleCallReply(List<JToken> data)
@@ -179,14 +228,21 @@ namespace WebSocketJSON
 
                                 var genericWrapper = new GenericWrapper(arguments => {
                                     if (retType == typeof(void)) {
-                                        CallFunc(funcName, arguments).Wait();
+                                        CallFunc(funcName, arguments);
+                                        // We do not wait here since SuperWebSocket doesn't process messages while the
+                                        // current thread is blocked. Waiting would bring the current client's thread
+                                        // into a deadlock.
                                         return null;
                                     } else {
-                                        object result = null;
-                                        CallFunc(funcName, arguments)
-                                          .OnSuccess(delegate(JToken res) { result = res.ToObject(retType); })
-                                          .Wait();
-                                        return result;
+                                        throw new NotImplementedException("We do not support callbacks with return " +
+                                            "value yet. This is because we cannot wait for a callback to complete. " +
+                                            "See more details here: https://redmine.viscenter.de/issues/1406.");
+
+//                                        object result = null;
+//                                        CallFunc(funcName, arguments)
+//                                          .OnSuccess(delegate(JToken res) { result = res.ToObject(retType); })
+//                                          .Wait();
+//                                        return result;
                                     }
                                 });
 
@@ -267,25 +323,27 @@ namespace WebSocketJSON
         /// <param name="message">The incoming message.</param>
         public void HandleMessage(string message)
         {
-            List<JToken> data = null;
+            lock (objLock) {
+                List<JToken> data = null;
 
-            // FIXME: Occasionally we receive JSON with some random bytes appended. The reason is
-            // unclear, but to be safe we ignore messages that have parsing errors.
-            try {
-                data = JsonConvert.DeserializeObject<List<JToken>>(message);
-            } catch (JsonException) {
-                return;
+                // FIXME: Occasionally we receive JSON with some random bytes appended. The reason is
+                // unclear, but to be safe we ignore messages that have parsing errors.
+                try {
+                    data = JsonConvert.DeserializeObject<List<JToken>>(message);
+                } catch (JsonException) {
+                    return;
+                }
+
+                string msgType = data[0].ToObject<string>();
+                if (msgType == "call-reply")
+                    HandleCallReply(data);
+                else if (msgType == "call-error")
+                    HandleCallError(data);
+                else if (msgType == "call")
+                    HandleCall(data);
+                else
+                    SendCallError(-1, "Unknown message type: " + msgType);
             }
-
-            string msgType = data[0].ToObject<string>();
-            if (msgType == "call-reply")
-                HandleCallReply(data);
-            else if (msgType == "call-error")
-                HandleCallError(data);
-            else if (msgType == "call")
-                HandleCall(data);
-            else
-                SendCallError(-1, "Unknown message type: " + msgType);
         }
 
         private bool IsOneWay(string qualifiedMethodName)
@@ -299,13 +357,16 @@ namespace WebSocketJSON
 
         protected override void OnSessionClosed(SuperSocket.SocketBase.CloseReason reason)
         {
-            base.OnSessionClosed(reason);
+            lock (objLock) {
+                base.OnSessionClosed(reason);
 
-            if (OnClose != null)
-                OnClose(reason.ToString());
+                if (OnClose != null)
+                    OnClose(reason.ToString());
+            }
         }
 
         private int nextCallID = 0;
+        private object objLock = new object();  // needed because multiple threads may decide to send something
         private Dictionary<int, IWSJFuncCall> activeCalls = new Dictionary<int, IWSJFuncCall>();
         private Dictionary<string, Delegate> registeredFunctions = new Dictionary<string, Delegate>();
         private Dictionary<Delegate, string> registeredCallbacks = new Dictionary<Delegate, string>();

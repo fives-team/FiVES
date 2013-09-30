@@ -20,7 +20,26 @@ FIVES.Creation = FIVES.Creation || {};
 
     ec.createEntityFromForm = function() {
         var position = _retrievePosition();
-        FIVES.Communication.FivesCommunicator.createEntityAt(position.x, position.y, position.z);
+        var orientation = _retrieveOrientation();
+        var scale = _retrieveScale();
+        var mesh = _retrieveMesh();
+        var call = FIVES.Communication.FivesCommunicator.createMeshEntity(position, orientation, scale, mesh);
+        call.on("result", function(newGuid) {
+            console.log("Created Entity with Guid " + newGuid);
+        });
+    };
+
+    ec.createRandomEntities = function(amount) {
+        var i = 0;
+        while(i < amount) {
+            var position = { x: Math.random() * 10, y: Math.random() * 10, z: Math.random() * 10};
+            var scaleFactor = Math.random() * 2 + 0.5;
+            var scale = { x: scaleFactor, y: scaleFactor, z: scaleFactor};
+            var orientation = { x: 0, y: 0, z: 0, w: 1};
+            var mesh = {meshUri: "resources/models/firetruck/xml3d/firetruck.xml", visible: true};
+            var call = FIVES.Communication.FivesCommunicator.createMeshEntity(position, orientation, scale, mesh);
+            i ++;
+        }
     };
 
     var _retrievePosition = function () {
@@ -28,9 +47,29 @@ FIVES.Creation = FIVES.Creation || {};
         var posY = _getValidFloatFieldValue("input-position-y");
         var posZ = _getValidFloatFieldValue("input-position-z");
 
-        return {x: posX, y: posY, z: posZ};
+        return {x: parseFloat(posX), y: parseFloat(posY), z: parseFloat(posZ)};
     }
 
+    var _retrieveOrientation = function () {
+        var rotX = _getValidFloatFieldValue("input-orientation-x");
+        var rotY = _getValidFloatFieldValue("input-orientation-y");
+        var rotZ = _getValidFloatFieldValue("input-orientation-z");
+        var rotW = _getValidFloatFieldValue("input-orientation-w");
+
+        var orientation = new XML3DRotation();
+        orientation.setAxisAngle(new XML3DVec3(parseFloat(rotX), parseFloat(rotY), parseFloat(rotZ)), parseFloat(rotW));
+
+        var quat = orientation.getQuaternion();
+        return {x: quat[0], y: quat[1], z: quat[2], w: quat [3]};
+    }
+
+    var _retrieveScale = function () {
+        var scaleX = _getValidFloatFieldValue("input-scale-x");
+        var scaleY = _getValidFloatFieldValue("input-scale-y");
+        var scaleZ = _getValidFloatFieldValue("input-scale-z");
+
+        return {x: parseFloat(scaleX), y: parseFloat(scaleY), z: parseFloat(scaleZ)};
+    }
     var _getValidFloatFieldValue = function (fieldName) {
         var field = $("#" + fieldName);
         if (!field) {
@@ -40,10 +79,14 @@ FIVES.Creation = FIVES.Creation || {};
         var value = field.val();
         if (!value) {
             console.warn("[WARNING] EntityCreator._getValidFloatFieldValue: No value specified for " + fieldName + ", will use defaultvalue instead");
-            value = 0;
+            value = fieldName.indexOf("scale") < 0  ? 0 : 1;
         }
         return value;
     };
 
+    var _retrieveMesh = function () {
+        var meshURI = $("#select-mesh").val();
+        return {meshURI: meshURI, visible: true};
+    }
     FIVES.Creation.EntityCreator = new EntityCreator();
 }());

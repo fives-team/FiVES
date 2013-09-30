@@ -10,25 +10,27 @@
 var FIVES = FIVES || {};
 FIVES.Models = FIVES.Models || {};
 
-(function(){
+(function () {
     "use strict";
 
-    var EntityRegistry = function() {};
-
-    var _entities = {};
+    var EntityRegistry = function () {
+    };
 
     var er = EntityRegistry.prototype;
 
-    er.addEntityFromServer = function(guid) {
-        var entity = new FIVES.Models.Entity();
-        entity.guid = guid;
-        entity.retrieveEntityDataFromServer();
-        _entities[guid] = entity;
+    er._entities = {};
+
+    er.addEntityFromServer = function (entityDocument) {
+        var newEntity = new FIVES.Models.Entity(entityDocument);
+        this._entities[entityDocument.guid] = newEntity;
+        newEntity.xml3dView = {};
+
+        FIVES.Resources.SceneManager.addMeshForObject(newEntity);
     };
 
-    er.getEntity = function(guid) {
-        return _entities[guid];
-    }
+    er.getEntity = function (guid) {
+        return this._entities[guid];
+    };
 
     FIVES.Models.EntityRegistry = new EntityRegistry();
 }());
