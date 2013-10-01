@@ -84,7 +84,8 @@ namespace WebSocketJSON
 
                 IWSJFuncCall callObj = wsjFuncCallFactory.Construct();
 
-                activeCalls.Add(callID, callObj);
+                lock (objLock)
+                    activeCalls.Add(callID, callObj);
                 return callObj;
             }
         }
@@ -183,7 +184,9 @@ namespace WebSocketJSON
                     activeCalls[callID].HandleSuccess(result);
                 else
                     activeCalls[callID].HandleException(result);
-                activeCalls.Remove(callID);
+
+                lock(objLock)
+                    activeCalls.Remove(callID);
             } else {
                 SendCallError(-1, "Invalid callID: " + callID);
             }
