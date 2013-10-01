@@ -150,16 +150,12 @@ namespace WebSocketJSON
 
         public void RegisterHandler(string name, Delegate handler)
         {
-            lock (objLock) {
-                registeredFunctions[name] = handler;
-            }
+            registeredFunctions[name] = handler;
         }
 
         public void Disconnect()
         {
-            lock (objLock) {
-                Close();
-            }
+            Close();
         }
 
         #endregion
@@ -320,27 +316,24 @@ namespace WebSocketJSON
         /// <param name="message">The incoming message.</param>
         public void HandleMessage(string message)
         {
-            lock (objLock) {
-                List<JToken> data = null;
-
-                // FIXME: Occasionally we receive JSON with some random bytes appended. The reason is
-                // unclear, but to be safe we ignore messages that have parsing errors.
-                try {
-                    data = JsonConvert.DeserializeObject<List<JToken>>(message);
-                } catch (JsonException) {
-                    return;
-                }
-
-                string msgType = data[0].ToObject<string>();
-                if (msgType == "call-reply")
-                    HandleCallReply(data);
-                else if (msgType == "call-error")
-                    HandleCallError(data);
-                else if (msgType == "call")
-                    HandleCall(data);
-                else
-                    SendCallError(-1, "Unknown message type: " + msgType);
+            List<JToken> data = null;
+            // FIXME: Occasionally we receive JSON with some random bytes appended. The reason is
+            // unclear, but to be safe we ignore messages that have parsing errors.
+            try {
+                data = JsonConvert.DeserializeObject<List<JToken>>(message);
+            } catch (JsonException) {
+                return;
             }
+
+            string msgType = data[0].ToObject<string>();
+            if (msgType == "call-reply")
+                HandleCallReply(data);
+            else if (msgType == "call-error")
+                HandleCallError(data);
+            else if (msgType == "call")
+                HandleCall(data);
+            else
+                SendCallError(-1, "Unknown message type: " + msgType);
         }
 
         private bool IsOneWay(string qualifiedMethodName)
@@ -354,12 +347,10 @@ namespace WebSocketJSON
 
         protected override void OnSessionClosed(SuperSocket.SocketBase.CloseReason reason)
         {
-            lock (objLock) {
-                base.OnSessionClosed(reason);
+            base.OnSessionClosed(reason);
 
-                if (OnClose != null)
-                    OnClose(reason.ToString());
-            }
+            if (OnClose != null)
+                OnClose(reason.ToString());
         }
 
         private int nextCallID = 0;
