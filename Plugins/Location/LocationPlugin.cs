@@ -115,28 +115,6 @@ namespace Location
             orientationUpdateCallbacks.Add(sessionKey, callback);
         }
 
-        private void attributeChangeHandler(object sender, Events.AttributeInComponentEventArgs args)
-        {
-
-            if(args.componentName == "position" || args.componentName == "orientation")
-            {
-                var entity = (Entity)sender;
-                Vector position = new Vector {
-                    x = (float)entity["position"]["x"],
-                    y = (float)entity["position"]["y"],
-                    z = (float)entity["position"]["z"],
-                };
-
-                Quat orientation = new Quat {
-                    x = (float)entity["orientation"]["x"],
-                    y = (float)entity["orientation"]["y"],
-                    z = (float)entity["orientation"]["z"],
-                    w = (float)entity["orientation"]["w"],
-                };
-
-            }
-        }
-
         private Dictionary<string, Action<string, Vector>> positionUpdateCallbacks = new Dictionary<string, Action<string, Vector>>();
         private Dictionary<string, Action<string, Quat>> orientationUpdateCallbacks = new Dictionary<string, Action<string, Quat>>();
         private readonly Guid pluginGUID = new Guid("90dd4c50-f09d-11e2-b778-0800200c9a66");
