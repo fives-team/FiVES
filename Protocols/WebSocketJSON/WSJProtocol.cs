@@ -68,7 +68,8 @@ namespace WebSocketJSON
 
         public IFuncCall CallFunc(string name, params object[] args)
         {
-            lock (objLock) {
+            lock (functionLock)
+            {
                 int callID = getValidCallID();
 
                 // Register delegates as callbacks. Pass their registered names instead.
@@ -358,6 +359,7 @@ namespace WebSocketJSON
 
         private int nextCallID = 0;
         private object objLock = new object();  // needed because multiple threads may decide to send something
+        private object functionLock = new object();
         private Dictionary<int, IWSJFuncCall> activeCalls = new Dictionary<int, IWSJFuncCall>();
         private Dictionary<string, Delegate> registeredFunctions = new Dictionary<string, Delegate>();
         private Dictionary<Delegate, string> registeredCallbacks = new Dictionary<Delegate, string>();
