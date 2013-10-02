@@ -35,11 +35,11 @@ namespace NativeClient
             machine.AddStateAction("connect", new DelegateAction(delegate { socket.Open(); }));
             machine.AddErrorTransition("connect", "Disconnected before connected",
                                        new EventCondition(h => socket.Closed += h));
-            machine.AddStateTransition("connect", "implements1", new EventCondition(h => socket.Opened += h));
+            machine.AddStateTransition("connect", "implements", new EventCondition(h => socket.Opened += h));
 
             // Call kiara.implements.
-            var implementsCall = new CallFuncAction(socket, "kiara.implements", new List<string> { "auth.login" });
-            implementsCall.SetExpectedValue(new bool[] { true });
+            var implementsCall = new CallFuncAction(socket, "kiara.implements", new List<string> { "kiara", "auth" });
+            implementsCall.SetExpectedValue(new bool[] { true, true });
             machine.AddStateAction("implements", implementsCall);
             machine.AddErrorTransition("implements", "Failed to get auth interface", implementsCall.FailureCondition);
             machine.AddStateTransition("implements", "wait", implementsCall.SuccessCondition);

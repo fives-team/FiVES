@@ -58,7 +58,7 @@ namespace NativeClient
         {
             string errorState = GenerateRandomStateName("error");
             AddStateAction(errorState, new DelegateAction(delegate {
-                Logger.Error("Error in state " + PreviousState + ":" + message);
+                Logger.Error("Error in state " + PreviousState + ": " + message);
             }));
             AddStateTransition(startingState, errorState, condition);
             AddStateTransition(errorState, FinalState, new TrueCondition());
@@ -75,7 +75,7 @@ namespace NativeClient
         {
             var errorState = GenerateRandomStateName("universal-error");
             AddStateAction(errorState, new DelegateAction(delegate {
-                Logger.Error("Error in state " + PreviousState + ":" + message);
+                Logger.Error("Error in state " + PreviousState + ": " + message);
             }));
 
             ExternalCondition condition = new ExternalCondition();
