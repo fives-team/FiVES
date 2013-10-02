@@ -1,12 +1,15 @@
 using System;
 using WebSocket4Net;
 using NLog;
+using System.Configuration;
+using SuperSocket.ClientEngine;
 
 namespace NativeClient
 {
     class MainClass
     {
         private static Logger Logger = LogManager.GetCurrentClassLogger();
+        private static WebSocket websocket;
 
         public static void Main(string[] args)
         {
@@ -18,36 +21,38 @@ namespace NativeClient
             try {
                 serverURI = ConfigurationManager.AppSettings["ServerURI"].ToString();
             } catch (ConfigurationErrorsException) {
-                logger.Error("Configuration is missing or corrupt.");
+                Logger.Error("Configuration is missing or corrupt.");
                 return;
             }
 
-            Logger.Info("Reading configuration");
+            Logger.Info("Connecting to the server");
 
-            WebSocket connection = new WebSocket(serverURI);
+            websocket = new WebSocket(serverURI);
             websocket.Opened += new EventHandler(websocket_Opened);
             websocket.Error += new EventHandler<ErrorEventArgs>(websocket_Error);
             websocket.Closed += new EventHandler(websocket_Closed);
-            websocket.MessageReceived += new EventHandler(websocket_MessageReceived);
+            websocket.MessageReceived += new EventHandler<MessageReceivedEventArgs>(websocket_MessageReceived);
             websocket.Open();
+
+            Logger.Info("Main thread complete");
         }
 
-        private void websocket_Opened(object sender, EventArgs e)
+        private static void websocket_Opened(object sender, EventArgs e)
         {
             throw new NotImplementedException();
         }
 
-        private void websocket_Error(object sender, EventArgs e)
+        private static void websocket_Error(object sender, ErrorEventArgs e)
         {
             throw new NotImplementedException();
         }
 
-        private void websocket_Closed(object sender, EventArgs e)
+        private static void websocket_Closed(object sender, EventArgs e)
         {
             throw new NotImplementedException();
         }
 
-        private void websocket_MessageReceived(object sender, EventArgs e)
+        private static void websocket_MessageReceived(object sender, MessageReceivedEventArgs e)
         {
             throw new NotImplementedException();
         }
