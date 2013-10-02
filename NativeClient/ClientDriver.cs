@@ -38,24 +38,41 @@ namespace NativeClient
             machine.AddStateTransition("connect", "implements", new EventCondition(h => socket.Opened += h));
 
             // Call kiara.implements.
-            var implementsCall = new CallFuncAction(socket, "kiara.implements", new List<string> { "kiara", "auth" });
-            implementsCall.SetExpectedValue(new bool[] { true, true });
+            var implementsCall = new CallFuncAction(socket, "kiara.implements", new List<string> { "auth" });
+            implementsCall.SetExpectedValue(new bool[] { true });
             machine.AddStateAction("implements", implementsCall);
-            machine.AddErrorTransition("implements", "Failed to get auth interface", implementsCall.FailureCondition);
-            machine.AddStateTransition("implements", "wait", implementsCall.SuccessCondition);
-
-            // Wait 5 seconds
-            machine.AddStateAction("wait", new LogAction(Logger, "Waiting for 5 seconds..."));
-            machine.AddStateTransition("wait", "auth", new DelayCondition(5000));
+            machine.AddErrorTransition("implements", "Failed to acquite authentication service",
+                                       implementsCall.FailureCondition);
+            machine.AddStateTransition("implements", "auth", implementsCall.SuccessCondition);
 
             // Call auth.login.
             var loginCall = new CallFuncAction(socket, "auth.login", GenerateRandomLogin(), "");
             machine.AddStateAction("auth", loginCall);
             machine.AddErrorTransition("auth", "Failed to login", loginCall.FailureCondition);
-            machine.AddStateTransition("auth", "complete", loginCall.SuccessCondition);
+            machine.AddStateTransition("auth", "store-session-key", loginCall.SuccessCondition);
+
+            // Retrieve session key.
+            string sessionKey;
+            machine.AddStateAction("store-session-key", new DelegateAction(delegate {
+                sessionKey = loginCall.GetRetValueAs<string>();
+            }));
+            machine.AddStateTransition("store-session-key", "implements2", new TrueCondition());
+
+            // Call kiara.implements.
+            var implementsCall2 = new CallFuncAction(socket, "kiara.implements",
+                                                     new List<string> { "kiara", "objectsync", "editing", "avatar" });
+            implementsCall2.SetExpectedValue(new bool[] { true, true, true, true });
+            machine.AddStateAction("implements2", implementsCall2);
+            machine.AddErrorTransition("implements2", "Failed to acquire required client services",
+                                       implementsCall2.FailureCondition);
+            machine.AddStateTransition("implements2", "wait", implementsCall2.SuccessCondition);
+
+            // Wait 5 seconds
+            machine.AddStateAction("wait", new LogAction(Logger, "Logged into the world. Waiting for 5 seconds..."));
+            machine.AddStateTransition("wait", "complete", new DelayCondition(5000));
 
             // Print success message and disconnect.
-            machine.AddStateAction("complete", new LogAction(Logger, "Logged into the world. Disconnecting..."));
+            machine.AddStateAction("complete", new LogAction(Logger, "Disconnecting..."));
             machine.AddStateAction("complete", new DelegateAction(delegate { socket.Close(); }));
             machine.AddStateTransition("complete", machine.FinalState, new EventCondition(h => socket.Closed += h));
 

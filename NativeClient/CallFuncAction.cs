@@ -36,6 +36,19 @@ namespace NativeClient
         public ExternalCondition SuccessCondition { get; private set; }
 
         /// <summary>
+        /// Returns cached value. This method should only be called after the call is completed successfully.
+        /// </summary>
+        /// <returns>The ret value converted to type T.</returns>
+        /// <typeparam name="T">Type to which return value should be converted.</typeparam>
+        public T GetRetValueAs<T>()
+        {
+            if (RetValue == null)
+                throw new InvalidOperationException("GetRetValueAs may only be invoked after the call is complete");
+
+            return RetValue.ToObject<T>();
+        }
+
+        /// <summary>
         /// Sets an expected value. All other values will be considered a failure. If not used, any return value will be
         /// considered as success.
         /// </summary>
@@ -81,6 +94,8 @@ namespace NativeClient
                         SuccessCondition.Satisfy();
                     else
                         FailureCondition.Satisfy();
+
+                    RetValue = retValue;
                 }
             }
         }
@@ -124,6 +139,9 @@ namespace NativeClient
 
         // Support for callbacks. Not implemented yet.
         List<int> Callbacks = new List<int>();
+
+        // Cached return value.
+        JToken RetValue = null;
 
         // Call ID generation.
         static object NextCallIDLock = new object();
