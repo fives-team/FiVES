@@ -33,6 +33,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DirectCall", "Protocols\Dir
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebSocketJSON", "Protocols\WebSocketJSON\WebSocketJSON.csproj", "{7729110A-D86E-4802-A158-9BE992C98F68}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NativeClient", "NativeClient\NativeClient.csproj", "{DAB6E47C-8A5E-4CC9-AF7B-21388014A5AD}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -87,6 +89,10 @@ Global
 		{CCDA8021-971D-4703-A4BD-325248EF9499}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{CCDA8021-971D-4703-A4BD-325248EF9499}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{CCDA8021-971D-4703-A4BD-325248EF9499}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DAB6E47C-8A5E-4CC9-AF7B-21388014A5AD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DAB6E47C-8A5E-4CC9-AF7B-21388014A5AD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DAB6E47C-8A5E-4CC9-AF7B-21388014A5AD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DAB6E47C-8A5E-4CC9-AF7B-21388014A5AD}.Release|Any CPU.Build.0 = Release|Any CPU
 		{E1955FF2-6109-4C71-9F13-486A48DE6C17}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{E1955FF2-6109-4C71-9F13-486A48DE6C17}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E1955FF2-6109-4C71-9F13-486A48DE6C17}.Release|Any CPU.ActiveCfg = Release|Any CPU
