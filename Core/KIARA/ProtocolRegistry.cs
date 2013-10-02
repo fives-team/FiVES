@@ -88,8 +88,9 @@ namespace KIARA
                 // Instantiate and register protocol factory.
                 var protocolFactory = (IProtocolFactory)Activator.CreateInstance(protocolFactoryType);
                 RegisterProtocolFactory(protocolFactory.GetName(), protocolFactory);
+                Logger.Debug("Registered protocol {0}", protocolFactory.GetName());
             } catch (Exception e) {
-                Logger.WarnException("Failed to load file " + filename + " as a protocol.", e);
+                Logger.WarnException("Failed to load file " + filename + " as a protocol", e);
                 return;
             }
         }

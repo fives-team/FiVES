@@ -31,6 +31,7 @@ namespace FIVES
         public PluginManager()
         {
             OnAnyPluginInitialized += UpdateDeferredPlugins;
+            OnAnyPluginInitialized += (sender, e) => Logger.Debug("Loaded plugin {0}", e.pluginName);
         }
 
         private struct LoadedPluginInfo {
@@ -113,7 +114,7 @@ namespace FIVES
                     if (OnAnyPluginInitialized != null)
                         OnAnyPluginInitialized(this, new PluginInitializedEventArgs(name));
                 } catch (Exception e) {
-                    Logger.WarnException("Failed to load file " + path + " as a plugin.", e);
+                    Logger.WarnException("Failed to load file " + path + " as a plugin", e);
                     return;
                 }
             }
