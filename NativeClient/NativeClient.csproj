@@ -37,14 +37,30 @@
       <HintPath>..\packages\NLog.2.0.1.2\lib\net40\NLog.dll</HintPath>
     </Reference>
     <Reference Include="System.Configuration" />
+    <Reference Include="Newtonsoft.Json">
+      <HintPath>..\packages\Newtonsoft.Json.5.0.6\lib\net40\Newtonsoft.Json.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Client.cs" />
+    <Compile Include="StateTransition.cs" />
+    <Compile Include="ICondition.cs" />
+    <Compile Include="Program.cs" />
+    <Compile Include="ClientDriver.cs" />
+    <Compile Include="StateMachine.cs" />
+    <Compile Include="EventCondition.cs" />
+    <Compile Include="DelayCondition.cs" />
+    <Compile Include="IStateAction.cs" />
+    <Compile Include="DelegateAction.cs" />
+    <Compile Include="CallFuncAction.cs" />
+    <Compile Include="TrueCondition.cs" />
+    <Compile Include="ExternalCondition.cs" />
+    <Compile Include="ExternalValueCondition.cs" />
+    <Compile Include="LogAction.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
     <None Include="packages.config" />
-    <None Include="client.config" />
+    <None Include="app.config" />
   </ItemGroup>
 </Project>
