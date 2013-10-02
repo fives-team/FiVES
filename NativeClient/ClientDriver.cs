@@ -15,10 +15,10 @@ namespace NativeClient
         {
             Logger.Info("Connecting to the server");
             socket = new WebSocket(serverURI);
-            socket.Opened += new EventHandler(HandleSocketOpened);
-            socket.Error += new EventHandler<ErrorEventArgs>(HandleSocketError);
-            socket.Closed += new EventHandler(HandleSocketClosed);
-            socket.MessageReceived += new EventHandler<MessageReceivedEventArgs>(HandleSocketMessage);
+            socket.Opened += new EventHandler(LogSocketOpened);
+            socket.Error += new EventHandler<ErrorEventArgs>(LogSocketError);
+            socket.Closed += new EventHandler(LogSocketClosed);
+            socket.MessageReceived += new EventHandler<MessageReceivedEventArgs>(LogSocketMessage);
         }
 
         public void SimulateClient()
@@ -72,22 +72,22 @@ namespace NativeClient
             return "user" + randomizer.Next();
         }
 
-        void HandleSocketOpened(object sender, EventArgs e)
+        void LogSocketOpened(object sender, EventArgs e)
         {
             Logger.Info("Connected to the server");
         }
 
-        void HandleSocketError(object sender, ErrorEventArgs e)
+        void LogSocketError(object sender, ErrorEventArgs e)
         {
-            Logger.ErrorException("Error in WebSocket connection", e.Exception);
+            Logger.ErrorException("Connection error", e.Exception);
         }
 
-        void HandleSocketClosed(object sender, EventArgs e)
+        void LogSocketClosed(object sender, EventArgs e)
         {
             Logger.Info("Connection closed");
         }
 
-        void HandleSocketMessage(object sender, MessageReceivedEventArgs e)
+        void LogSocketMessage(object sender, MessageReceivedEventArgs e)
         {
             Logger.Debug("Received: {0}", e.Message);
         }
