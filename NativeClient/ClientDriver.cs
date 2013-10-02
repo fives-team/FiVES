@@ -31,7 +31,7 @@ namespace NativeClient
         {
             StateMachine machine = new StateMachine("connect");
 
-            // Connect to the world.
+            // Connect to the server.
             machine.AddStateAction("connect", new DelegateAction(delegate { socket.Open(); }));
             machine.AddErrorTransition("connect", "Disconnected before connected",
                                        new EventCondition(h => socket.Closed += h));
@@ -39,10 +39,10 @@ namespace NativeClient
 
             // Call kiara.implements.
             var implementsCall = new CallFuncAction(socket, "kiara.implements", new List<string> { "auth.login" });
-            implementsCall.ExpectedValue = new bool[] { true };
-            machine.AddStateAction("implements1", implementsCall);
-            machine.AddErrorTransition("implements1", "Failed to get auth interface", implementsCall.FailureCondition);
-            machine.AddStateTransition("implements1", "wait", implementsCall.SuccessCondition);
+            implementsCall.SetExpectedValue(new bool[] { true });
+            machine.AddStateAction("implements", implementsCall);
+            machine.AddErrorTransition("implements", "Failed to get auth interface", implementsCall.FailureCondition);
+            machine.AddStateTransition("implements", "wait", implementsCall.SuccessCondition);
 
             // Wait 5 seconds
             machine.AddStateAction("wait", new LogAction(Logger, "Waiting for 5 seconds..."));

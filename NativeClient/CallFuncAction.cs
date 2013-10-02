@@ -21,7 +21,6 @@ namespace NativeClient
 
             FailureCondition = new ExternalCondition();
             SuccessCondition = new ExternalCondition();
-            ExpectedValue = null;
         }
 
         /// <summary>
@@ -37,10 +36,13 @@ namespace NativeClient
         public ExternalCondition SuccessCondition { get; private set; }
 
         /// <summary>
-        /// This may be used to set an expected value. If not modified, any return value will be considered as success.
+        /// Sets an expected value. All other values will be considered a failure. If not used, any return value will be
+        /// considered as success.
         /// </summary>
-        /// <value>The expected value.</value>
-        public object ExpectedValue { get; set; }
+        /// <param name="expectedValue">The expected value</param>
+        public void SetExpectedValue(object expectedValue) {
+            ExpectedValue = expectedValue;
+        }
 
         #region IStateAction implementation
 
@@ -109,13 +111,21 @@ namespace NativeClient
             }
         }
 
+        // Call parameters.
         string FuncName;
         object[] Arguments;
         int CallID;
+
+        // Connection to the server.
         WebSocket Socket;
 
+        // Expected value that is treated as success.
+        object ExpectedValue = null;
+
+        // Support for callbacks. Not implemented yet.
         List<int> Callbacks = new List<int>();
 
+        // Call ID generation.
         static object NextCallIDLock = new object();
         static int NextCallID = 0;
 
