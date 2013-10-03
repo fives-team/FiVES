@@ -3,84 +3,274 @@ using WebSocket4Net;
 using NLog;
 using SuperSocket.ClientEngine;
 using System.Collections.Generic;
+using System.Threading;
+using Newtonsoft.Json.Linq;
+using Newtonsoft.Json;
+using System.Collections.Concurrent;
 
 namespace NativeClient
 {
     public class ClientDriver
     {
-        private static Logger Logger = LogManager.GetCurrentClassLogger();
-        private static WebSocket socket;
-
-        public ClientDriver(string serverURI)
+        public ClientDriver(string serverURI, bool move, bool rotate)
         {
             Logger.Info("Connecting to the server");
+
             socket = new WebSocket(serverURI);
-            socket.Opened += new EventHandler(LogSocketOpened);
-            socket.Error += new EventHandler<ErrorEventArgs>(LogSocketError);
-            socket.Closed += new EventHandler(LogSocketClosed);
-            socket.MessageReceived += new EventHandler<MessageReceivedEventArgs>(LogSocketMessage);
+            socket.Opened += (sender, e) => Logger.Info("Connected to the server");
+            socket.Error += (sender, e) => Logger.ErrorException("Connection error", e.Exception);
+            socket.Closed += (sender, e) => Logger.Info("Connection closed");
+            socket.MessageReceived += (sender, e) => Logger.Debug("Received: {0}", e.Message);
+            socket.MessageReceived += HandleMessage;
+            socket.Opened += Auth;
+            socket.Open();
+
+            Move = move;
+            Rotate = rotate;
         }
 
-        public void SimulateClient()
+        #region Behavior
+
+        void Auth(object sender, EventArgs e)
         {
-            var machine = CreateStateMachine();
-            machine.Run();
+            int callID = Call("kiara.implements", new List<string> { "auth" });
+            ExpectReply(callID, Auth2);
         }
 
-        StateMachine CreateStateMachine()
+        void Auth2(CallReply reply)
         {
-            StateMachine machine = new StateMachine("connect");
+            if (!reply.Success)
+                Fail("Failed to request auth service: {0}", reply.Message);
 
-            // Connect to the server.
-            machine.AddStateAction("connect", new DelegateAction(delegate { socket.Open(); }));
-            machine.AddErrorTransition("connect", "Disconnected before connected",
-                                       new EventCondition(h => socket.Closed += h));
-            machine.AddStateTransition("connect", "implements", new EventCondition(h => socket.Opened += h));
+            List<bool> retValue = reply.RetValue.ToObject<List<bool>>();
+            if (!retValue[0])
+                Fail("No auth service.");
 
-            // Call kiara.implements.
-            var implementsCall = new CallFuncAction(socket, "kiara.implements", new List<string> { "auth" });
-            implementsCall.SetExpectedValue(new bool[] { true });
-            machine.AddStateAction("implements", implementsCall);
-            machine.AddErrorTransition("implements", "Failed to acquite authentication service",
-                                       implementsCall.FailureCondition);
-            machine.AddStateTransition("implements", "auth", implementsCall.SuccessCondition);
+            int callID = Call("auth.login", GenerateRandomLogin(), "");
+            ExpectReply(callID, LoadWorld);
+        }
 
-            // Call auth.login.
-            var loginCall = new CallFuncAction(socket, "auth.login", GenerateRandomLogin(), "");
-            machine.AddStateAction("auth", loginCall);
-            machine.AddErrorTransition("auth", "Failed to login", loginCall.FailureCondition);
-            machine.AddStateTransition("auth", "store-session-key", loginCall.SuccessCondition);
+        void LoadWorld(CallReply reply)
+        {
+            if (!reply.Success)
+                Fail("Failed on authentication: {0}", reply.Message);
 
-            // Retrieve session key.
-            string sessionKey;
-            machine.AddStateAction("store-session-key", new DelegateAction(delegate {
-                sessionKey = loginCall.GetRetValueAs<string>();
-            }));
-            machine.AddStateTransition("store-session-key", "implements2", new TrueCondition());
+            SessionKey = reply.RetValue.ToObject<string>();
+            if (new Guid(SessionKey) == Guid.Empty)
+                Fail("Incorrect login/password", reply.Message);
 
-            // Call kiara.implements.
-            var implementsCall2 = new CallFuncAction(socket, "kiara.implements",
-                                                     new List<string> { "kiara", "objectsync", "editing", "avatar" });
-            implementsCall2.SetExpectedValue(new bool[] { true, true, true, true });
-            machine.AddStateAction("implements2", implementsCall2);
-            machine.AddErrorTransition("implements2", "Failed to acquire required client services",
-                                       implementsCall2.FailureCondition);
-            machine.AddStateTransition("implements2", "wait", implementsCall2.SuccessCondition);
+            int callID = Call("kiara.implements", new List<string> { "objectsync", "avatar", "editing", "location" });
+            ExpectReply(callID, LoadWorld2);
+        }
 
-            // Wait 5 seconds
-            machine.AddStateAction("wait", new LogAction(Logger, "Logged into the world. Waiting for 5 seconds..."));
-            machine.AddStateTransition("wait", "complete", new DelayCondition(5000));
+        void LoadWorld2(CallReply reply)
+        {
+            if (!reply.Success)
+                Fail("Failed to request client services: {0}", reply.Message);
 
-            // Print success message and disconnect.
-            machine.AddStateAction("complete", new LogAction(Logger, "Disconnecting..."));
-            machine.AddStateAction("complete", new DelegateAction(delegate { socket.Close(); }));
-            machine.AddStateTransition("complete", machine.FinalState, new EventCondition(h => socket.Closed += h));
+            List<bool> retValue = reply.RetValue.ToObject<List<bool>>();
+            if (!retValue.TrueForAll(s => s))
+                Fail("Client services are not supported", reply.Message);
 
-            // Connection error may happen anytime.
-            var connectionErrorHandler = machine.GetUniversalErrorHandler("Connection error");
-            socket.Error += (sender, e) => connectionErrorHandler(sender, e);
+            string handleNewObject = RegisterFunc((request) => HandleNewObject(request.Args[0]));
+            Call("objectsync.notifyAboutNewObjects", new List<int>{1}, SessionKey, handleNewObject);
 
-            return machine;
+            string handleMoved = RegisterFunc(HandleMoved);
+            Call("location.notifyAboutPositionUpdates", new List<int>{1}, SessionKey, handleMoved);
+
+            string handleRotatated = RegisterFunc(HandleRotatated);
+            Call("location.notifyAboutOrientationUpdates", new List<int>{1}, SessionKey, handleRotatated);
+
+            int callID = Call("objectsync.listObjects");
+            ExpectReply(callID, AddNewObjects);
+        }
+
+        void HandleNewObject(JToken entityInfo)
+        {
+            EntityInfo info = new EntityInfo {
+                Guid = entityInfo["guid"].ToString(),
+                Position = entityInfo["position"].ToObject<Vector>(),
+                Orientation = entityInfo["orientation"].ToObject<Quat>()
+            };
+
+            Logger.Info("New entity: {0}", info.Guid);
+
+            lock (Entities)
+                Entities.Add(info);
+        }
+
+        void HandleMoved(CallRequest request)
+        {
+            string guid = request.Args[0].ToString();
+            Vector newPos = request.Args[1].ToObject<Vector>();
+            Logger.Info("{0} moved to ({1},{2},{3})", guid, newPos.x, newPos.y, newPos.z);
+        }
+
+        void HandleRotatated(CallRequest request)
+        {
+            string guid = request.Args[0].ToString();
+            Quat newRot = request.Args[1].ToObject<Quat>();
+            Logger.Info("{0} rotated to ({1},{2},{3},{4})", guid, newRot.x, newRot.y, newRot.z, newRot.w);
+        }
+
+        void AddNewObjects(CallReply reply)
+        {
+            if (!reply.Success)
+                Fail("Failed to list objects: {0}", reply.Message);
+
+            List<JToken> retValue = reply.RetValue.ToObject<List<JToken>>();
+            retValue.ForEach(o => HandleNewObject(o));
+
+            if (Move)
+                new Thread(MoveAllEntities).Start();
+
+            if (Rotate)
+                new Thread(RotateAllEntities).Start();
+        }
+
+        void MoveAllEntities()
+        {
+            while (true) {
+                lock (Entities) {
+                    foreach (var info in Entities) {
+                        if (info.MovingBackward) {
+                            info.Position.x -= 0.1;
+                            if (info.Position.x < -10)
+                                info.MovingBackward = false;
+                        } else {
+                            info.Position.x += 0.1;
+                            if (info.Position.x > 10)
+                                info.MovingBackward = true;
+                        }
+
+                        Call("location.updatePosition", SessionKey, info.Guid, info.Position, GetUnixTimestamp());
+                    }
+                }
+
+                Thread.Sleep(100);
+            }
+        }
+
+        void RotateAllEntities()
+        {
+            while (true) {
+                lock (Entities) {
+                    foreach (var info in Entities) {
+                        AxisAngle aa = new AxisAngle();
+                        aa.FromQuaternion(info.Orientation);
+                        aa.Angle += 0.1;
+                        if (aa.Angle > 2 * Math.PI)
+                            aa.Angle = 0;
+                        info.Orientation = aa.ToQuaternion();
+
+                        Call("location.updateOrientation", SessionKey, info.Guid, info.Orientation, GetUnixTimestamp());
+                    }
+                }
+
+                Thread.Sleep(100);
+            }
+        }
+
+        #endregion
+
+        long GetUnixTimestamp()
+        {
+            TimeSpan span = (DateTime.Now - new DateTime(1970, 1, 1, 0, 0, 0, 0).ToLocalTime());
+            return (long)span.TotalSeconds;
+        }
+
+        CallRequest CreateCallRequest(string messageStr, List<JToken> message)
+        {
+            return new CallRequest {
+                Message = messageStr,
+                CallID = message[1].ToObject<int>(),
+                FuncName = message[2].ToObject<string>(),
+                Callbacks = message[3].ToObject<List<int>>(),
+                Args = message.GetRange(4, message.Count - 4)
+            };
+        }
+
+        CallReply CreateCallReply(string messageStr, List<JToken> message)
+        {
+            return new CallReply {
+                Message = messageStr,
+                CallID = message[1].ToObject<int>(),
+                Success = message[2].ToObject<bool>(),
+                RetValue = message[3]
+            };
+        }
+
+        void HandleMessage(object sender, MessageReceivedEventArgs e)
+        {
+            List<JToken> message = JsonConvert.DeserializeObject<List<JToken>>(e.Message);
+            string messageType = message[0].ToObject<string>();
+            if (messageType == "call-error") {
+                Logger.Error("Received error message: {0}", e.Message);
+            } else if (messageType == "call") {
+                string funcName = message[2].ToObject<string>();
+
+                Action<CallRequest> callback;
+                lock (RegisteredFuncs) {
+                    if (!RegisteredFuncs.ContainsKey(funcName))
+                        Fail("Unexpected func call: {0}", e.Message);
+                    callback = RegisteredFuncs[funcName];
+                }
+
+                callback(CreateCallRequest(e.Message, message));
+            } else if (messageType == "call-reply") {
+                int callID = message[1].ToObject<int>();
+
+                Action<CallReply> callback;
+                lock (ExpectedReplies) {
+                    if (!ExpectedReplies.ContainsKey(callID))
+                        return;
+                    callback = ExpectedReplies[callID];
+                }
+
+                callback(CreateCallReply(e.Message, message));
+            }
+        }
+
+        void ExpectReply(int callID, Action<CallReply> callback) {
+            lock (ExpectedReplies)
+                ExpectedReplies.Add(callID, callback);
+        }
+
+        string RegisterFunc(Action<CallRequest> callback) {
+            string name = Guid.NewGuid().ToString();
+            RegisterFunc(name, callback);
+            return name;
+        }
+
+        void RegisterFunc(string funcName, Action<CallRequest> callback) {
+            lock (RegisteredFuncs)
+                RegisteredFuncs.Add(funcName, callback);
+        }
+
+        int Call(string funcName, params object[] args) {
+            return Call(funcName, new List<int>(), args);
+        }
+
+        int Call(string funcName, List<int> callbacks, params object[] args) {
+            int callID = NextCallID++;
+            List<object> message = new List<object>();
+            message.Add("call");
+            message.Add(callID);
+            message.Add(funcName);
+            message.Add(callbacks);
+            message.AddRange(args);
+
+            var serializedMessage = JsonConvert.SerializeObject(message);
+            Logger.Debug("Sending: {0}", serializedMessage);
+            socket.Send(serializedMessage);
+            return callID;
+
+        }
+
+        void Fail(string format, params object[] args)
+        {
+            Logger.Fatal(format, args);
+            Environment.Exit(-1);
         }
 
         string GenerateRandomLogin()
@@ -89,25 +279,21 @@ namespace NativeClient
             return "user" + randomizer.Next();
         }
 
-        void LogSocketOpened(object sender, EventArgs e)
-        {
-            Logger.Info("Connected to the server");
-        }
+        static int NextCallID = 0;
 
-        void LogSocketError(object sender, ErrorEventArgs e)
-        {
-            Logger.ErrorException("Connection error", e.Exception);
-        }
+        Dictionary<string, Action<CallRequest>> RegisteredFuncs = new Dictionary<string, Action<CallRequest>>();
+        Dictionary<int, Action<CallReply>> ExpectedReplies = new Dictionary<int, Action<CallReply>>();
 
-        void LogSocketClosed(object sender, EventArgs e)
-        {
-            Logger.Info("Connection closed");
-        }
+        // List of all entities.
+        List<EntityInfo> Entities = new List<EntityInfo>();
 
-        void LogSocketMessage(object sender, MessageReceivedEventArgs e)
-        {
-            Logger.Debug("Received: {0}", e.Message);
-        }
+        string SessionKey;
+
+        bool Move;
+        bool Rotate;
+
+        static Logger Logger = LogManager.GetCurrentClassLogger();
+        static WebSocket socket;
     }
 }
 

@@ -19,14 +19,15 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <Externalconsole>true</Externalconsole>
+    <PlatformTarget>x86</PlatformTarget>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>full</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release</OutputPath>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <Externalconsole>true</Externalconsole>
+    <PlatformTarget>x86</PlatformTarget>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -38,25 +39,19 @@
     </Reference>
     <Reference Include="System.Configuration" />
     <Reference Include="Newtonsoft.Json">
-      <HintPath>..\packages\Newtonsoft.Json.5.0.6\lib\net40\Newtonsoft.Json.dll</HintPath>
+      <HintPath>..\ThirdParty\Json50r6\Bin\Net40\Newtonsoft.Json.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="StateTransition.cs" />
-    <Compile Include="ICondition.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="ClientDriver.cs" />
-    <Compile Include="StateMachine.cs" />
-    <Compile Include="EventCondition.cs" />
-    <Compile Include="DelayCondition.cs" />
-    <Compile Include="IStateAction.cs" />
-    <Compile Include="DelegateAction.cs" />
-    <Compile Include="CallFuncAction.cs" />
-    <Compile Include="TrueCondition.cs" />
-    <Compile Include="ExternalCondition.cs" />
-    <Compile Include="ExternalValueCondition.cs" />
-    <Compile Include="LogAction.cs" />
+    <Compile Include="CallRequest.cs" />
+    <Compile Include="CallReply.cs" />
+    <Compile Include="AxisAngle.cs" />
+    <Compile Include="EntityInfo.cs" />
+    <Compile Include="Vector.cs" />
+    <Compile Include="Quat.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

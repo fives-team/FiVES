@@ -68,7 +68,7 @@ namespace Location
             });
         }
 
-        private void UpdatePosition(string sessionKey, string guid, Vector position,int timestamp)
+        private void UpdatePosition(string sessionKey, string guid, Vector position, int timestamp)
         {
             var entity = EntityRegistry.Instance.GetEntity(guid);
             entity["position"]["x"] = position.x;
@@ -81,7 +81,6 @@ namespace Location
                 {
                     if (client != sessionKey)
                     {
-
                         var callback = positionUpdateCallbacks[client];
                         callback(entity.Guid.ToString(), position);
                     }
