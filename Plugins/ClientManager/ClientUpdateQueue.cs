@@ -35,6 +35,7 @@ namespace ClientManager
                     }
                     entityUpdates.Clear();
                 }
+                Thread.Sleep(30);
             }
         }
 
