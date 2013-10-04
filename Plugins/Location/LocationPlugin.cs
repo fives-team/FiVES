@@ -60,9 +60,7 @@ namespace Location
                 clientManager.OnConnected += delegate(Connection connection) {
                     connection["registerClientService"]("location", true, new Dictionary<string, Delegate> {
                         {"updatePosition", (Action<string, string, Vector, int>) UpdatePosition},
-                        {"updateOrientation", (Action<string, string, Quat, int>) UpdateOrientation},
-                        {"notifyAboutPositionUpdates", (Action<string, Action<string, Vector>>) NotifyAboutPositionUpdates},
-                        {"notifyAboutOrientationUpdates", (Action<string, Action<string, Quat>>) NotifyAboutOrientationUpdates},
+                        {"updateOrientation", (Action<string, string, Quat, int>) UpdateOrientation}
                     });
                 };
             });
@@ -75,17 +73,6 @@ namespace Location
             entity["position"]["y"] = position.y;
             entity["position"]["z"] = position.z;
 
-            lock (positionUpdateLock)
-            {
-                foreach (string client in positionUpdateCallbacks.Keys)
-                {
-                    if (client != sessionKey)
-                    {
-                        var callback = positionUpdateCallbacks[client];
-                        callback(entity.Guid.ToString(), position);
-                    }
-                }
-            }
             // We currently ignore timestamp, but may it in the future to implement dead reckoning.
         }
 
@@ -97,39 +84,9 @@ namespace Location
             entity["orientation"]["z"] = orientation.z;
             entity["orientation"]["w"] = orientation.w;
 
-            lock (orientationUpdateLock)
-            {
-                foreach (string client in orientationUpdateCallbacks.Keys)
-                {
-                    if (client != sessionKey)
-                    {
-
-                        var callback = orientationUpdateCallbacks[client];
-                        callback(entity.Guid.ToString(), orientation);
-                    }
-                }
-            }
             // We currently ignore timestamp, but may it in the future to implement dead reckoning.
         }
 
-        private void NotifyAboutPositionUpdates(string sessionKey, Action<string, Vector> callback)
-        {
-            // Only one callback per client is permitted.
-            lock(positionUpdateLock)
-                positionUpdateCallbacks[sessionKey] = callback;
-        }
-
-        private void NotifyAboutOrientationUpdates(string sessionKey, Action<string, Quat> callback)
-        {
-            // Only one callback per client is permitted.
-            lock(orientationUpdateLock)
-                orientationUpdateCallbacks[sessionKey] = callback;
-        }
-
-        private object positionUpdateLock = new object();
-        private object orientationUpdateLock = new object();
-        private Dictionary<string, Action<string, Vector>> positionUpdateCallbacks = new Dictionary<string, Action<string, Vector>>();
-        private Dictionary<string, Action<string, Quat>> orientationUpdateCallbacks = new Dictionary<string, Action<string, Quat>>();
         private readonly Guid pluginGUID = new Guid("90dd4c50-f09d-11e2-b778-0800200c9a66");
     }
 }
