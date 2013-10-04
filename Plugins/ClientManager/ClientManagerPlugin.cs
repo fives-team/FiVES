@@ -249,6 +249,10 @@ namespace ClientManager {
                         EntityRegistry.Instance.OnEntityRemoved -= handler;
                 }
 
+                if(clientUpdateHandlers.ContainsKey(secToken)) {
+                    clientUpdateHandlers[secToken].StopClientUpdates();
+                    clientUpdateHandlers.Remove(secToken);
+                }
                 callback(secToken);
                 authenticatedClients.Remove(secToken);
             };
