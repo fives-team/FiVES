@@ -125,6 +125,12 @@ namespace ClientManager {
             EntityRegistry.Instance.OnEntityRemoved += (sender, e) => callback(e.elementId.ToString());
         }
 
+        private void NotifyAboutObjectUpdates(string sessionKey, Action< List<ClientManager.ClientUpdateQueue.UpdateInfo>> callback)
+        {
+            ClientUpdateQueue queueForClient = new ClientUpdateQueue(sessionKey, callback);
+            clientUpdateHandlers.Add(sessionKey, queueForClient);
+        }
+
         private List<string> basicClientServices = new List<string>();
         private List<bool> Implements(List<string> services)
         {
@@ -179,6 +185,8 @@ namespace ClientManager {
             new Dictionary<Guid, List<EntityRegistry.EntityAdded>>();
         Dictionary<Guid, List<EntityRegistry.EntityRemoved>> onRemovedEntityHandlers =
             new Dictionary<Guid, List<EntityRegistry.EntityRemoved>>();
+        Dictionary<Guid, ClientUpdateQueue> clientUpdateHandlers =
+            new Dictionary<Guid, ClientUpdateQueue>();
 
         event Action<Guid> OnAuthenticated;
 
