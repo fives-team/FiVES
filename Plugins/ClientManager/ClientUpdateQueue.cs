@@ -29,13 +29,10 @@ namespace ClientManager
             {
                 lock (queueLock)
                 {
-                    foreach (KeyValuePair<Guid, List<UpdateInfo>> queuedUpdate in entityUpdates)
-                    {
-                        clientCallback(queuedUpdate.Value);
-                    }
+                    clientCallback(entityUpdates);
                     entityUpdates.Clear();
                 }
-                Thread.Sleep(30);
+                Thread.Sleep(5);
             }
         }
 
@@ -80,17 +77,8 @@ namespace ClientManager
             lock (queueLock)
             {
                 Guid entityGuid = ((Entity)sender).Guid;
-
-                if (!entityUpdates.ContainsKey(entityGuid))
-                    initialiseUpdateListForEntity(entityGuid);
-
-                entityUpdates[entityGuid].Add(createUpdateInfoFromEventArgs(entityGuid, e));
+                entityUpdates.Add(createUpdateInfoFromEventArgs(entityGuid, e));
             }
-        }
-
-        private void initialiseUpdateListForEntity(Guid entityGuid) {
-            List<UpdateInfo> updateList = new List<UpdateInfo>();
-            entityUpdates.Add(entityGuid, updateList);
         }
 
         private UpdateInfo createUpdateInfoFromEventArgs(Guid entityGuid, AttributeInComponentEventArgs e) {
@@ -105,9 +93,12 @@ namespace ClientManager
         private void RemoveEntityFromQueue(Guid entityGuid) {
             lock (queueLock)
             {
-                if (entityUpdates.ContainsKey(entityGuid))
+                foreach (UpdateInfo entityUpdate in entityUpdates)
                 {
-                    entityUpdates.Remove(entityGuid);
+                    if (entityUpdate.entityGuid.Equals(entityGuid))
+                    {
+                        entityUpdates.Remove(entityUpdate);
+                    }
                 }
             }
         }
@@ -120,7 +111,7 @@ namespace ClientManager
         private volatile bool clientDisconnected = false;
         private Action<List<UpdateInfo>> clientCallback;
         private object queueLock = new object();
-        private IDictionary<Guid, List<UpdateInfo>> entityUpdates = new Dictionary<Guid, List<UpdateInfo>>();
+        private List<UpdateInfo> entityUpdates = new List<UpdateInfo>();
     }
 }
 
