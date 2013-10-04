@@ -40,13 +40,11 @@ namespace ClientManager
         }
 
         internal void StopClientUpdates() {
-            clientDisconnected = true;
-            updateLoopThread.Join();
+
         }
 
         private void StartUpdateThread () {
-            updateLoopThread = new Thread(flushUpdateQueue);
-            updateLoopThread.Start();
+            ThreadPool.QueueUserWorkItem(_ => flushUpdateQueue());
         }
 
         private void RegisterToEntityUpdates() {
