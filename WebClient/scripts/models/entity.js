@@ -19,16 +19,36 @@ FIVES.Models = FIVES.Models || {};
         this.orientation = entityDocument.orientation;
         this.scale= entityDocument.scale;
         this.meshResource = entityDocument.meshResource;
+        this._cachedComponentUpdates = {};
+        this._attributeUpdateHandle = setInterval(this._flushUpdates.bind(this), 30);
     };
 
     var e = Entity.prototype;
 
-    e.updateAttribute = function(componentName, attributeName, value) {
-        this[componentName][attributeName] = value;
+    e._flushUpdates = function() {
+        for(var updatedComponent in this._cachedComponentUpdates) {
+            this._applyAttributeUpdates(updatedComponent);
+        };
+
+        this._cachedComponentUpdates = {};
+    };
+
+    e._applyAttributeUpdates = function(componentName) {
+        var updatedComponent = this._cachedComponentUpdates[componentName];
+        for(var updatedAttribute in updatedComponent)
+        {
+            this[componentName][updatedAttribute] = updatedComponent[updatedAttribute];
+        }
+
         if(componentName == "position")
             FIVES.Resources.SceneManager.updatePosition(this);
         else if(componentName == "orientation")
             FIVES.Resources.SceneManager.updateOrientation(this);
+    };
+
+    e.updateAttribute = function(componentName, attributeName, value) {
+        this._cachedComponentUpdates[componentName] = this._cachedComponentUpdates[componentName] || {};
+        this._cachedComponentUpdates[componentName][attributeName] = value;
     };
 
     e.updatePosition = function(position) {
