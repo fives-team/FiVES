@@ -40,7 +40,7 @@ namespace ClientManager
         }
 
         internal void StopClientUpdates() {
-
+            clientDisconnected = true;
         }
 
         private void StartUpdateThread () {
