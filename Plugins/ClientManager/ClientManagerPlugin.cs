@@ -55,6 +55,7 @@ namespace ClientManager {
                 {"listObjects", (Func<List<EntityInfo>>) ListObjects},
                 {"notifyAboutNewObjects", (Action<string, Action<EntityInfo>>) NotifyAboutNewObjects},
                 {"notifyAboutRemovedObjects", (Action<string, Action<string>>) NotifyAboutRemovedObjects},
+                {"notifyAboutObjectUpdates", (Action<string, Action<List<ClientManager.ClientUpdateQueue.UpdateInfo>>>) NotifyAboutObjectUpdates},
             });
 
             // DEBUG
