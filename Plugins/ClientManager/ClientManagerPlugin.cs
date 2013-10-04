@@ -129,7 +129,7 @@ namespace ClientManager {
         private void NotifyAboutObjectUpdates(string sessionKey, Action< List<ClientManager.ClientUpdateQueue.UpdateInfo>> callback)
         {
             ClientUpdateQueue queueForClient = new ClientUpdateQueue(sessionKey, callback);
-            clientUpdateHandlers.Add(sessionKey, queueForClient);
+            clientUpdateHandlers.Add(new Guid(sessionKey), queueForClient);
         }
 
         private List<string> basicClientServices = new List<string>();
