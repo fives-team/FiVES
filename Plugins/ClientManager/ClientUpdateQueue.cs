@@ -32,8 +32,8 @@ namespace ClientManager
                     foreach (KeyValuePair<Guid, List<UpdateInfo>> queuedUpdate in entityUpdates)
                     {
                         clientCallback(queuedUpdate.Value);
-                        entityUpdates.Remove(queuedUpdate.Key);
                     }
+                    entityUpdates.Clear();
                 }
             }
         }
