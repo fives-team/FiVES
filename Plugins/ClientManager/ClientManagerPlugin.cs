@@ -76,7 +76,7 @@ namespace ClientManager {
 
         #region Client interface
 
-        private struct EntityInfo {
+        internal struct EntityInfo {
             public string guid;
             public MeshResource meshResource;
             public Vector position;
