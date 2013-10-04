@@ -117,7 +117,6 @@ namespace ClientManager
             return entityInfo;
         }
 
-        private Thread updateLoopThread;
         private volatile bool clientDisconnected = false;
         private Action<List<UpdateInfo>> clientCallback;
         private object queueLock = new object();
