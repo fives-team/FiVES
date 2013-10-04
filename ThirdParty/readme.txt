@@ -1,1 +1,0 @@
-This directory should contain third-party software libraries used both in plugins and core. Before using a third-party library, please check its license to ensure that we can distribute our software framework as an open-source project.

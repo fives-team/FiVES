@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>10.0.0</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{6A801102-282E-415D-A711-82413918344D}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <RootNamespace>DirectCall</RootNamespace>
+    <AssemblyName>DirectCall</AssemblyName>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug</OutputPath>
+    <DefineConstants>DEBUG;</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <ConsolePause>false</ConsolePause>
+    <CustomCommands>
+      <CustomCommands>
+        <Command type="AfterBuild" command="xcopy /y &quot;${TargetDir}&quot; &quot;${SolutionDir}\BuiltLibs\&quot; || echo &quot;Ignoring error&quot;" externalConsole="True" />
+        <Command type="AfterBuild" command="mkdir -p &quot;${SolutionDir}/BuiltLibs/&quot; &amp;&amp; cp &quot;${TargetDir}/&quot;* &quot;${SolutionDir}/BuiltLibs/&quot; || echo &quot;Ignoring error&quot;" externalConsole="True" />
+      </CustomCommands>
+    </CustomCommands>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>full</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release</OutputPath>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <ConsolePause>false</ConsolePause>
+    <CustomCommands>
+      <CustomCommands>
+        <Command type="AfterBuild" command="xcopy /y &quot;${TargetDir}&quot; &quot;${SolutionDir}\BuiltLibs\&quot; || echo &quot;Ignoring error&quot;" externalConsole="True" />
+        <Command type="AfterBuild" command="mkdir -p &quot;${SolutionDir}/BuiltLibs/&quot; &amp;&amp; cp &quot;${TargetDir}/&quot;* &quot;${SolutionDir}/BuiltLibs/&quot; || echo &quot;Ignoring error&quot;" externalConsole="True" />
+      </CustomCommands>
+    </CustomCommands>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="Newtonsoft.Json">
+      <HintPath>..\..\ThirdParty\Json50r6\Bin\Net40\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="NLog">
+      <HintPath>..\..\packages\NLog.2.0.1.2\lib\net40\NLog.dll</HintPath>
+    </Reference>
+    <Reference Include="nunit.framework">
+      <HintPath>..\..\packages\NUnit.2.6.2\lib\nunit.framework.dll</HintPath>
+    </Reference>
+    <Reference Include="Moq">
+      <HintPath>..\..\packages\Moq.4.1.1309.1617\lib\net40\Moq.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="DCProtocolFactory.cs" />
+    <Compile Include="DCProtocol.cs" />
+    <Compile Include="DCFuncCall.cs" />
+    <Compile Include="DCProtocolFactoryTest.cs" />
+    <Compile Include="DCFuncCallTest.cs" />
+    <Compile Include="DCProtocolTest.cs" />
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <ItemGroup>
+    <ProjectReference Include="..\..\Core\Core.csproj">
+      <Project>{627CCFC6-4071-4119-92C6-8BC96E4310C8}</Project>
+      <Name>Core</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
+  </ItemGroup>
+</Project>

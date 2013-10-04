@@ -1,4 +1,10 @@
-*/bin/Debug
-*/bin/Release
+bin/
 *.userprefs
 *.pidb
+*test-results*
+.idea/
+BuiltLibs/
+Docs/html
+Docs/libpeerconnection.log
+packages
+Binaries/

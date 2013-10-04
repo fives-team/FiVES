@@ -1,0 +1,12 @@
+service kiara {
+  bool[] implements(string[] services);
+}
+
+struct Position {
+  float x, y, z;
+}
+
+service objectsync {
+  string[] listObjects();
+  Position getObjectPosition(string objID);
+}
