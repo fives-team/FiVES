@@ -1,1 +1,0 @@
-This folder will contain plugin projects. All files for each project should be placed into a separate subfolder with plugin name.

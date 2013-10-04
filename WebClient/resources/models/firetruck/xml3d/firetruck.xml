@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xml3d xmlns="http://www.xml3d.org/2009/xml3d" style="width: 800px;height:600px;background-color:lightblue;" activeView="#defaultView">
+  <group id="RootNode" transform="firetruck_defs.xml#root_transform">
+    <group id="firetruck-node">
+      <group id="FACESET_FACESET___1043-FACES_1-node" transform="firetruck_defs.xml#t_FACESET_FACESET___1043-FACES_1-node">
+        <group shader="firetruck_defs.xml#MAT_MAT_Surface_21_1-fx">
+          <mesh src="FACESET_FACESET___1043-FACES_1-mesh.json" type="triangles"/>
+        </group>
+      </group>
+      <group id="FACESET_FACESET___1078-FACES_1-node" transform="firetruck_defs.xml#t_FACESET_FACESET___1078-FACES_1-node">
+        <group shader="firetruck_defs.xml#MAT_MAT_Surface_3_1-fx">
+          <mesh src="FACESET_FACESET___1078-FACES_1-mesh.json" type="triangles"/>
+        </group>
+      </group>
+      <group id="FACESET_FACESET___964-FACES_1-node" transform="firetruck_defs.xml#t_FACESET_FACESET___964-FACES_1-node">
+        <group shader="firetruck_defs.xml#MAT_MAT_Surface_13_1-fx">
+          <mesh src="FACESET_FACESET___964-FACES_1-mesh.json" type="triangles"/>
+        </group>
+      </group>
+      <group id="FACESET_FACESET___985-FACES_1-node" transform="firetruck_defs.xml#t_FACESET_FACESET___985-FACES_1-node">
+        <group shader="firetruck_defs.xml#MAT_MAT_Surface_15_1-fx">
+          <mesh src="FACESET_FACESET___985-FACES_1-mesh.json" type="triangles"/>
+        </group>
+      </group>
+      <group id="FACESET_FACESET___986-FACES_1-node" transform="firetruck_defs.xml#t_FACESET_FACESET___986-FACES_1-node">
+        <group shader="firetruck_defs.xml#MAT_MAT_Surface_11_1-fx">
+          <mesh src="FACESET_FACESET___986-FACES_1-mesh.json" type="triangles"/>
+        </group>
+      </group>
+      <group id="FACESET_FACESET___991-FACES_1-node" transform="firetruck_defs.xml#t_FACESET_FACESET___991-FACES_1-node">
+        <group shader="firetruck_defs.xml#MAT_MAT_Surface_7_1-fx">
+          <mesh src="FACESET_FACESET___991-FACES_1-mesh.json" type="triangles"/>
+        </group>
+      </group>
+      <group id="FACESET_FACESET___993-FACES_1-node" transform="firetruck_defs.xml#t_FACESET_FACESET___993-FACES_1-node">
+        <group shader="firetruck_defs.xml#MAT_MAT_Surface_9_1-fx">
+          <mesh src="FACESET_FACESET___993-FACES_1-mesh.json" type="triangles"/>
+        </group>
+      </group>
+      <group id="FACESET_FACESET___997-FACES_1-node" transform="firetruck_defs.xml#t_FACESET_FACESET___997-FACES_1-node">
+        <group shader="firetruck_defs.xml#MAT_MAT_Surface_17_1-fx">
+          <mesh src="FACESET_FACESET___997-FACES_1-mesh.json" type="triangles"/>
+        </group>
+      </group>
+      <group id="FACESET_FACESET___998-FACES_1-node" transform="firetruck_defs.xml#t_FACESET_FACESET___998-FACES_1-node">
+        <group shader="firetruck_defs.xml#MAT_MAT_Surface_19_1-fx">
+          <mesh src="FACESET_FACESET___998-FACES_1-mesh.json" type="triangles"/>
+        </group>
+      </group>
+      <group id="FACESET_FACESET___999-FACES_1-node" transform="firetruck_defs.xml#t_FACESET_FACESET___999-FACES_1-node">
+        <group shader="firetruck_defs.xml#MAT_MAT_Surface_1_1-fx">
+          <mesh src="FACESET_FACESET___999-FACES_1-mesh.json" type="triangles"/>
+        </group>
+      </group>
+      <group id="FACESET_FACESET___999-FACES_11-node" transform="firetruck_defs.xml#t_FACESET_FACESET___999-FACES_11-node">
+        <group shader="firetruck_defs.xml#MAT_MAT_Surface_5_1-fx">
+          <mesh src="FACESET_FACESET___999-FACES_11-mesh.json" type="triangles"/>
+        </group>
+      </group>
+      <group id="FACESET_FACESET___999-FACES_12-node" transform="firetruck_defs.xml#t_FACESET_FACESET___999-FACES_12-node">
+        <group shader="firetruck_defs.xml#MAT_MAT_Surface_5_1-fx">
+          <mesh src="FACESET_FACESET___999-FACES_12-mesh.json" type="triangles"/>
+        </group>
+      </group>
+      <group id="FACESET_FACESET_scheiben-FACES-node" transform="firetruck_defs.xml#t_FACESET_FACESET_scheiben-FACES-node">
+        <group shader="firetruck_defs.xml#MAT_MAT_Surface_5_1-fx">
+          <mesh src="FACESET_FACESET_scheiben-FACES-mesh.json" type="triangles"/>
+        </group>
+      </group>
+    </group>
+  </group>
+  <view id="defaultView"/>
+</xml3d>

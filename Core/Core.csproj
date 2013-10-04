@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>10.0.0</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{627CCFC6-4071-4119-92C6-8BC96E4310C8}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <RootNamespace>FIVES</RootNamespace>
+    <AssemblyName>Core</AssemblyName>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug</OutputPath>
+    <DefineConstants>DEBUG;</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <ConsolePause>false</ConsolePause>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>full</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release</OutputPath>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <ConsolePause>false</ConsolePause>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="Newtonsoft.Json">
+      <HintPath>..\ThirdParty\Json50r6\Bin\Portable40\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Configuration" />
+    <Reference Include="System.Core" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="NLog">
+      <HintPath>..\packages\NLog.2.0.1.2\lib\net40\NLog.dll</HintPath>
+    </Reference>
+    <Reference Include="nunit.framework">
+      <HintPath>..\packages\NUnit.2.6.2\lib\nunit.framework.dll</HintPath>
+    </Reference>
+    <Reference Include="Moq">
+      <HintPath>..\packages\Moq.4.1.1309.1617\lib\net40\Moq.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Domainmodel\Attribute.cs" />
+    <Compile Include="Domainmodel\Component.cs" />
+    <Compile Include="Domainmodel\ComponentLayout.cs" />
+    <Compile Include="Domainmodel\ComponentRegistry.cs" />
+    <Compile Include="Domainmodel\ComponentRegistryTest.cs" />
+    <Compile Include="Domainmodel\ComponentTest.cs" />
+    <Compile Include="Domainmodel\Entity.cs" />
+    <Compile Include="Domainmodel\EntityRegistry.cs" />
+    <Compile Include="Domainmodel\EntityRegistryTest.cs" />
+    <Compile Include="Domainmodel\EntityTest.cs" />
+    <Compile Include="KIARA\Connection.cs" />
+    <Compile Include="KIARA\Context.cs" />
+    <Compile Include="KIARA\IProtocol.cs" />
+    <Compile Include="KIARA\IProtocolFactory.cs" />
+    <Compile Include="KIARA\Error.cs" />
+    <Compile Include="KIARA\ProtocolRegistry.cs" />
+    <Compile Include="PluginManager\IPluginInitializer.cs" />
+    <Compile Include="PluginManager\PluginManager.cs" />
+    <Compile Include="PluginManager\PluginManagerTest.cs" />
+    <Compile Include="Domainmodel\ComponentLayoutTest.cs" />
+    <Compile Include="KIARA\ProtocolUtils.cs" />
+    <Compile Include="KIARA\FuncCallBase.cs" />
+    <Compile Include="KIARA\IFuncCall.cs" />
+    <Compile Include="KIARA\ConnectionTest.cs" />
+    <Compile Include="KIARA\ContextTest.cs" />
+    <Compile Include="KIARA\FuncCallBaseTest.cs" />
+    <Compile Include="KIARA\ProtocolUtilsTest.cs" />
+    <Compile Include="KIARA\ProtocolRegistryTest.cs" />
+    <Compile Include="KIARA\TestingWrappers.cs" />
+    <Compile Include="KIARA\Service.cs" />
+    <Compile Include="KIARA\ServiceImpl.cs" />
+    <Compile Include="KIARA\ServiceWrapper.cs" />
+    <Compile Include="KIARA\ContextFactory.cs" />
+    <Compile Include="KIARA\ServiceFactory.cs" />
+    <Compile Include="KIARA\ServiceImplTest.cs" />
+    <Compile Include="KIARA\ServiceWrapperTest.cs" />
+    <Compile Include="KIARA\ServiceTest.cs" />
+    <Compile Include="KIARA\ContextFactoryTest.cs" />
+    <Compile Include="Events\EntityAddedOrRemovedEventArgs.cs" />
+    <Compile Include="Events\AttributeChangedEventArgs.cs" />
+    <Compile Include="Events\EventTests.cs" />
+    <Compile Include="Events\AttributeInComponentEventArgs.cs" />
+    <Compile Include="Events\ComponentCreatedEventArgs.cs" />
+    <Compile Include="Events\EntityComponentUpgradedEventArgs.cs" />
+    <Compile Include="Events\ComponentLayoutUpgradeStartedOrFinishedEventArgs.cs" />
+    <Compile Include="Events\PluginInitializedEventArgs.cs" />
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <ItemGroup>
+    <Folder Include="Domainmodel\" />
+    <Folder Include="KIARA\" />
+    <Folder Include="PluginManager\" />
+    <Folder Include="Events\" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="PluginManager\TestPlugins\invalid_assembly.dll" />
+    <None Include="PluginManager\TestPlugins\invalid_plugin.dll" />
+    <None Include="PluginManager\TestPlugins\valid_plugin.dll" />
+    <None Include="PluginManager\TestPlugins\valid_plugin2.dll" />
+    <None Include="packages.config" />
+  </ItemGroup>
+</Project>

@@ -1,0 +1,41 @@
+Intro
+=====
+This directory contains third-party software libraries used both in plugins and
+core. Please use only libraries whose licenses are compatible with GPLv3.
+Document the used libraries and their licenses below. Note that libraries that
+are added via nuGet should also be documented here.
+
+Moq
+===
+License type: Modified BSD license
+License URL: https://code.google.com/p/moq/source/browse/trunk/License.txt
+
+NLog
+====
+License type: Modified BSD license
+License URL: https://github.com/NLog/NLog/blob/master/LICENSE.txt
+
+NUnit
+=====
+License type: BSD-style (based on zlib/libpng)
+License URL: http://nunit.org/index.php?p=license&r=2.6.2
+
+JSON.NET
+========
+License type: MIT license
+License URL: http://json.codeplex.com/license
+
+SuperWebSocket
+==============
+License type: Apache License 2.0
+License URL: http://superwebsocket.codeplex.com/license
+
+V8.NET
+======
+License type: LGPL 2.1
+License URL: https://v8dotnet.codeplex.com/license
+
+Dynamitey
+=========
+License type: Apache License 2.0
+License URL: https://github.com/ekonbenefits/dynamitey/blob/master/License.txt
