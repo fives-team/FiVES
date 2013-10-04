@@ -120,18 +120,12 @@ FIVES.Communication = FIVES.Communication || {};
     };
 
     var _objectUpdate = function(receivedObjectUpdates) {
-        console.log(receivedObjectUpdates);
+        for(var entry in receivedObjectUpdates) {
+            var handledUpdated = receivedObjectUpdates[entry];
+            var updatedEntity = FIVES.Models.EntityRegistry.getEntity(handledUpdated.entityGuid);
+            updatedEntity.updateAttribute(handledUpdated.componentName, handledUpdated.attributeName, handledUpdated.value);
+        }
     }
-
-    var _locationPositionUpdate = function(guid, position) {
-        var entity = FIVES.Models.EntityRegistry.getEntity(guid);
-        entity.updatePosition(position);
-    };
-
-    var _locationOrientationUpdate = function(guid, orientation) {
-        var entity = FIVES.Models.EntityRegistry.getEntity(guid);
-        entity.updateOrientation(orientation);
-    };
 
     c._generateTimestamp = function() {
         var updateTime = new Date().getTime();

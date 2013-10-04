@@ -23,6 +23,14 @@ FIVES.Models = FIVES.Models || {};
 
     var e = Entity.prototype;
 
+    e.updateAttribute = function(componentName, attributeName, value) {
+        this[componentName][attributeName] = value;
+        if(componentName == "position")
+            FIVES.Resources.SceneManager.updatePosition(this);
+        else if(componentName == "orientation")
+            FIVES.Resources.SceneManager.updateOrientation(this);
+    };
+
     e.updatePosition = function(position) {
         this.position = position;
         FIVES.Resources.SceneManager.updatePosition(this);
