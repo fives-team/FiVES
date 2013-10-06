@@ -10,8 +10,8 @@ using System.Collections.Concurrent;
 
 namespace NativeClient
 {
-	class AxisAngle
-	{
+    class AxisAngle
+    {
         public Vector Axis = new Vector();
         public double Angle = 0.0;
 
@@ -46,6 +46,6 @@ namespace NativeClient
             }
             return quat;
         }
-	}
+    }
 }
 

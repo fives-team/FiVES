@@ -41,6 +41,7 @@
     <Reference Include="Newtonsoft.Json">
       <HintPath>..\ThirdParty\Json50r6\Bin\Net40\Newtonsoft.Json.dll</HintPath>
     </Reference>
+    <Reference Include="nunit.framework" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -52,6 +53,7 @@
     <Compile Include="EntityInfo.cs" />
     <Compile Include="Vector.cs" />
     <Compile Include="Quat.cs" />
+    <Compile Include="AxisAngleTest.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
