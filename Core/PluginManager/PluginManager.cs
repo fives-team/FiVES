@@ -34,7 +34,7 @@ namespace FIVES
             OnAnyPluginInitialized += (sender, e) => Logger.Debug("Loaded plugin {0}", e.pluginName);
         }
 
-        private struct LoadedPluginInfo {
+        public struct LoadedPluginInfo {
             public string path;
             public IPluginInitializer initializer;
             public List<string> remainingDeps;
@@ -42,7 +42,7 @@ namespace FIVES
 
         private List<string> AttemptedFilenames = new List<string>();
         private Dictionary<string, LoadedPluginInfo> LoadedPlugins = new Dictionary<string, LoadedPluginInfo>();
-        private Dictionary<string, LoadedPluginInfo> DeferredPlugins = new Dictionary<string, LoadedPluginInfo>();
+        public Dictionary<string, LoadedPluginInfo> DeferredPlugins = new Dictionary<string, LoadedPluginInfo>();
 
         private static Logger Logger = LogManager.GetCurrentClassLogger();
 
@@ -65,6 +65,7 @@ namespace FIVES
         public void LoadPlugin(string path)
         {
             string canonicalPath = GetCanonicalPath(path);
+            string name;
             if (!AttemptedFilenames.Contains(canonicalPath)) {
                 try {
                     // Add this plugin to the list of loaded paths.
@@ -77,7 +78,7 @@ namespace FIVES
                     List<Type> types = new List<Type>(assembly.GetTypes());
                     Type initializerType = types.Find(t => typeof(IPluginInitializer).IsAssignableFrom(t));
                     if (initializerType == null) {
-                        Logger.Warn("Assembly in file " + path +
+                        Logger.Info("Assembly in file " + path +
                                     " doesn't contain any class implementing IPluginInitializer.");
                         return;
                     }
@@ -88,7 +89,7 @@ namespace FIVES
                     info.initializer = (IPluginInitializer)Activator.CreateInstance(initializerType);
 
                     // Check if plugin with the same name was already loaded.
-                    string name = info.initializer.GetName();
+                    name = info.initializer.GetName();
                     if (LoadedPlugins.ContainsKey(name)) {
                         Logger.Warn("Cannot load plugin from " + path + ". Plugin with the same name '" + name +
                                     "' was already loaded from " + LoadedPlugins[name].path + ".");
@@ -107,16 +108,20 @@ namespace FIVES
                         // Initialize plugin.
                         info.initializer.Initialize();
                     } catch (Exception e) {
-                        Logger.ErrorException("Exception occured during initialization of " + name + " plugin.", e);
+                        Logger.WarnException("Exception occured during initialization of " + name + " plugin.", e);
                         return;
                     }
                     LoadedPlugins.Add(name, info);
-                    if (OnAnyPluginInitialized != null)
-                        OnAnyPluginInitialized(this, new PluginInitializedEventArgs(name));
+                } catch (BadImageFormatException e) {
+                    Logger.InfoException(path + " is not a valid assembly and thus cannot be loaded as a plugin.", e);
+                    return;
                 } catch (Exception e) {
                     Logger.WarnException("Failed to load file " + path + " as a plugin", e);
                     return;
                 }
+
+                if (OnAnyPluginInitialized != null)
+                    OnAnyPluginInitialized(this, new PluginInitializedEventArgs(name));
             }
         }
 
@@ -140,7 +145,13 @@ namespace FIVES
 
             // Initialize these plugins and move them to loadedPlugins dictionary.
             foreach (var name in pluginsWithNoDeps) {
-                DeferredPlugins[name].initializer.Initialize();
+                try {
+                    DeferredPlugins[name].initializer.Initialize();
+                } catch (Exception ex) {
+                    Logger.WarnException("Exception occured during initialization of " + name + " plugin.", ex);
+                    DeferredPlugins.Remove(name);
+                    return;
+                }
                 LoadedPlugins[name] = DeferredPlugins[name];
                 DeferredPlugins.Remove(name);
                 if (OnAnyPluginInitialized != null)
@@ -154,7 +165,7 @@ namespace FIVES
         /// <param name="pluginDirectory">Directory in which plugins are too be looked for.</param>
         public void LoadPluginsFrom(string pluginDirectory)
         {
-            string[] files = Directory.GetFiles(pluginDirectory, "*.dll");
+            string[] files = Directory.GetFiles(pluginDirectory);
             foreach (string filename in files)
                 LoadPlugin(filename);
         }

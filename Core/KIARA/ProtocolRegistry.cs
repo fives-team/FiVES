@@ -80,15 +80,24 @@ namespace KIARA
                 List<Type> types = new List<Type>(assembly.GetTypes());
                 Type protocolFactoryType = types.Find(t => typeof(IProtocolFactory).IsAssignableFrom(t));
                 if (protocolFactoryType == null) {
-                    Logger.Warn("Assembly in file " + filename +
+                    Logger.Info("Assembly in file " + filename +
                                 " doesn't contain any class implementing IProtocolFactory.");
                     return;
                 }
 
                 // Instantiate and register protocol factory.
-                var protocolFactory = (IProtocolFactory)Activator.CreateInstance(protocolFactoryType);
+                IProtocolFactory protocolFactory;
+                try {
+                    protocolFactory = (IProtocolFactory)Activator.CreateInstance(protocolFactoryType);
+                } catch (Exception ex) {
+                    Logger.WarnException("Exception occured during construction of protocol factory for " + filename + ".", ex);
+                    return;
+                }
                 RegisterProtocolFactory(protocolFactory.GetName(), protocolFactory);
                 Logger.Debug("Registered protocol {0}", protocolFactory.GetName());
+            } catch (BadImageFormatException e) {
+                Logger.InfoException(filename + " is not a valid assembly and thus cannot be loaded as a protocol.", e);
+                return;
             } catch (Exception e) {
                 Logger.WarnException("Failed to load file " + filename + " as a protocol", e);
                 return;
