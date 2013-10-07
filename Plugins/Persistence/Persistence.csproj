@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -9,6 +9,8 @@
     <OutputType>Library</OutputType>
     <RootNamespace>Persistence</RootNamespace>
     <AssemblyName>Persistence</AssemblyName>
+    <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\..\</SolutionDir>
+    <RestorePackages>true</RestorePackages>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -76,10 +78,7 @@
       <Name>Core</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Mappings\" />
-    <Folder Include="Domainmodel\" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <None Include="MySql.Data.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -98,4 +97,8 @@
     <EmbeddedResource Include="Mappings\ComponentRegistryPersistence.hbm.xml" />
     <EmbeddedResource Include="Mappings\ComponentLayout.hbm.xml" />
   </ItemGroup>
+  <Import Project="$(SolutionDir)\.nuget\nuget.targets" />
+  <PropertyGroup>
+    <PostBuildEvent>xcopy /y "$(TargetDir)." "$(SolutionDir)BuiltLibs\" &amp;&amp; xcopy /y "$(ProjectDir)hibernate.cfg.xml" "$(SolutionDir)\FIVES\bin\$(ConfigurationName)\" || echo "Ignoring error"</PostBuildEvent>
+  </PropertyGroup>
 </Project>

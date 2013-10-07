@@ -1,3 +1,4 @@
+obj/
 bin/
 *.userprefs
 *.pidb
@@ -8,3 +9,6 @@ Docs/html
 Docs/libpeerconnection.log
 packages
 Binaries/
+*.v11.suo
+*.mdf
+TestResults
