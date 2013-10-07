@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using Events;
 using System.Diagnostics;
 using Iesi.Collections.Generic;
+using System.Threading;
 
 
 namespace Persistence
@@ -44,6 +45,7 @@ namespace Persistence
             EntityRegistry.Instance.OnEntityAdded += OnEntityAdded;
             EntityRegistry.Instance.OnEntityRemoved += OnEntityRemoved;
             ComponentRegistry.Instance.OnEntityComponentUpgraded += OnComponentOfEntityUpgraded;
+            ThreadPool.QueueUserWorkItem(_ => PersistChangedEntities());
         }
 
         /// <summary>
@@ -81,6 +83,7 @@ namespace Persistence
             addedEntity.OnAttributeInComponentChanged += OnComponentChanged;
             // Only persist entities if they are not added during intialization on Startup
             if (!EntitiesToInitialize.Contains (e.elementId)) {
+                AddEntityToPersisted (addedEntity);
             } else {
                 EntitiesToInitialize.Remove (e.elementId);
             }
@@ -109,27 +112,40 @@ namespace Persistence
             Component changedComponent = changedEntity [e.componentName];
             // TODO: change cascading persistence of entity, but only persist component and take care to persist mapping to entity as well
             AddEntityToPersisted (changedEntity);
-            PersistEntityToDatabase (changedEntity);
         }
 
         internal void OnComponentOfEntityUpgraded(Object sender, EntityComponentUpgradedEventArgs e) {
 
             // TODO: change cascading persistence of entity, but only persist component and take care to persist mapping to entity as well
+            AddEntityToPersisted (e.entity);
         }
         #endregion
 
         #region database synchronisation
 
-        /// <summary>
-        /// Persists an entity to database.
-        /// </summary>
-        /// <param name="addedEntity">Added entity</param>
-        private void PersistEntityToDatabase(Entity addedEntity) {
+        private void PersistChangedEntities() {
+            lock (persistenceLock)
+            {
+                if (EntitiesToPersist.Count > 0)
+                {
+                    Console.WriteLine("Persisting {0} entities .... ", EntitiesToPersist.Count);
+                    using (ISession session = SessionFactory.OpenSession())
+                    {
+                        var transaction = session.BeginTransaction();
+                        foreach (Guid guid in EntitiesToPersist)
+                        {
+                            Entity entity = EntityRegistry.Instance.GetEntity(guid);
+                            session.SaveOrUpdate(entity);
+                        }
+                        transaction.Commit();
+                        EntitiesToPersist.Clear();
+                    }
+                }
+            }
+            Thread.Sleep(500);
+        }
 
-            using(ISession session = SessionFactory.OpenSession()) {
-                var transaction = session.BeginTransaction ();
-                session.SaveOrUpdate (addedEntity);
-                transaction.Commit ();
+
         private void AddEntityToPersisted(Entity changedEntity) {
             lock (persistenceLock)
             {
@@ -196,6 +212,7 @@ namespace Persistence
 
         private object persistenceLock = new object();
         private HashedSet<Guid> EntitiesToPersist = new HashedSet<Guid>();
+
         internal readonly Guid pluginGuid = new Guid("d51e4394-68cc-4801-82f2-6b2a865b28df");
     }
 }
