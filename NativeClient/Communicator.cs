@@ -61,6 +61,7 @@ namespace NativeClient
             socket.MessageReceived += (sender, e) => Logger.Debug("Received: {0}", e.Message);
             socket.MessageReceived += HandleMessage;
             socket.Opened += HandleOpened;
+            socket.Closed += HandleClosed;
             socket.Open();
         }
 
@@ -68,6 +69,11 @@ namespace NativeClient
         /// Occurs when connection is established.
         /// </summary>
         public event EventHandler Connected;
+
+        /// <summary>
+        /// Occurs when connection is closed.
+        /// </summary>
+        public event EventHandler Disconnected;
 
         public bool IsConnected
         {
@@ -144,6 +150,12 @@ namespace NativeClient
         {
             if (Connected != null)
                 Connected(this, new EventArgs());
+        }
+
+        void HandleClosed(object sender, EventArgs e)
+        {
+            if (Disconnected != null)
+                Disconnected(this, new EventArgs());
         }
 
         void HandleCallMessage(string message, List<JToken> parsedMessage)

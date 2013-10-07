@@ -18,9 +18,15 @@ namespace NativeClient
 
             communicator = new Communicator(serverURI);
             communicator.Connected += HandleConnected;
+            communicator.Disconnected += HandleDisconnected;
 
             EnableMovement = enableMovement;
             EnableRotation = enableRotation;
+        }
+
+        void HandleDisconnected (object sender, EventArgs e)
+        {
+            Environment.Exit(-1);
         }
 
         void HandleConnected(object sender, EventArgs e)
