@@ -81,7 +81,6 @@ namespace Persistence
             addedEntity.OnAttributeInComponentChanged += OnComponentChanged;
             // Only persist entities if they are not added during intialization on Startup
             if (!EntitiesToInitialize.Contains (e.elementId)) {
-                PersistEntityToDatabase (addedEntity);
             } else {
                 EntitiesToInitialize.Remove (e.elementId);
             }
@@ -109,13 +108,13 @@ namespace Persistence
             Entity changedEntity = (Entity)sender;
             Component changedComponent = changedEntity [e.componentName];
             // TODO: change cascading persistence of entity, but only persist component and take care to persist mapping to entity as well
+            AddEntityToPersisted (changedEntity);
             PersistEntityToDatabase (changedEntity);
         }
 
         internal void OnComponentOfEntityUpgraded(Object sender, EntityComponentUpgradedEventArgs e) {
 
             // TODO: change cascading persistence of entity, but only persist component and take care to persist mapping to entity as well
-            PersistEntityToDatabase (e.entity);
         }
         #endregion
 
@@ -131,6 +130,11 @@ namespace Persistence
                 var transaction = session.BeginTransaction ();
                 session.SaveOrUpdate (addedEntity);
                 transaction.Commit ();
+        private void AddEntityToPersisted(Entity changedEntity) {
+            lock (persistenceLock)
+            {
+                if (!EntitiesToPersist.Contains(changedEntity.Guid))
+                    EntitiesToPersist.Add(changedEntity.Guid);
             }
         }
 
@@ -190,6 +194,8 @@ namespace Persistence
         private ISession GlobalSession;
         private HashedSet<Guid> EntitiesToInitialize = new HashedSet<Guid>();
 
+        private object persistenceLock = new object();
+        private HashedSet<Guid> EntitiesToPersist = new HashedSet<Guid>();
         internal readonly Guid pluginGuid = new Guid("d51e4394-68cc-4801-82f2-6b2a865b28df");
     }
 }
