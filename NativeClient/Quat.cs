@@ -2,7 +2,7 @@ using System;
 
 namespace NativeClient
 {
-    public struct Quat {
+    struct Quat {
         public double x, y, z, w;
     }
 }

@@ -2,7 +2,7 @@ using System;
 
 namespace NativeClient
 {
-    public class EntityInfo 
+    class EntityInfo
     {
         public string Guid;
         public Vector Position;

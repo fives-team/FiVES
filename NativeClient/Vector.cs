@@ -2,7 +2,7 @@ using System;
 
 namespace NativeClient
 {
-    public struct Vector {
+    struct Vector {
         public double x, y, z;
     }
 }
