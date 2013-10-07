@@ -38,7 +38,7 @@ namespace NativeClient
 
         public void StartMovingAllEntities()
         {
-            new Thread(RotateAllEntities).Start();
+            new Thread(MoveAllEntities).Start();
         }
 
         public void StartRotatingAllEntities()
