@@ -114,14 +114,16 @@ namespace Location
 
         private void NotifyAboutPositionUpdates(string sessionKey, Action<string, Vector> callback)
         {
+            // Only one callback per client is permitted.
             lock(positionUpdateLock)
-                positionUpdateCallbacks.Add(sessionKey, callback);
+                positionUpdateCallbacks[sessionKey] = callback;
         }
 
         private void NotifyAboutOrientationUpdates(string sessionKey, Action<string, Quat> callback)
         {
+            // Only one callback per client is permitted.
             lock(orientationUpdateLock)
-                orientationUpdateCallbacks.Add(sessionKey, callback);
+                orientationUpdateCallbacks[sessionKey] = callback;
         }
 
         private object positionUpdateLock = new object();
