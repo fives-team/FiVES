@@ -19,31 +19,30 @@ namespace ClientManager
 
         internal ClientUpdateQueue(string clientGuid, Action<List <UpdateInfo>> callback)
         {
-            clientCallback = callback;
+            ClientCallback = callback;
             StartUpdateThread();
             RegisterToEntityUpdates();
         }
 
         private void flushUpdateQueue() {
-            while (!clientDisconnected)
+            while (!ClientDisconnected)
             {
-                lock (queueLock)
+                lock (QueueLock)
                 {
-                    while (entityUpdates.Count == 0)
+                    while (UpdateQueue.Count == 0)
                     {
-                        Monitor.Wait(queueLock);
+                        Monitor.Wait(QueueLock);
                     }
 
-                    clientCallback(entityUpdates);
-                    entityUpdates.Clear();
-                    Monitor.PulseAll(queueLock);
+                    ClientCallback(UpdateQueue);
+                    UpdateQueue.Clear();
+                    Monitor.PulseAll(QueueLock);
                 }
-                Thread.Sleep(10);
             }
         }
 
         internal void StopClientUpdates() {
-            clientDisconnected = true;
+            ClientDisconnected = true;
         }
 
         private void StartUpdateThread () {
@@ -61,14 +60,14 @@ namespace ClientManager
             foreach (Guid guid in entityGuids)
             {
                 Entity entity = EntityRegistry.Instance.GetEntity(guid);
-                entity.OnAttributeInComponentChanged += new Entity.AttributeInComponentChanged(addEntityToQueue);
+                entity.OnAttributeInComponentChanged += new Entity.AttributeInComponentChanged(AddEntityUpdateToQueue);
             }
         }
 
         private void RegisterToAddedEntitiesUpdates () {
             EntityRegistry.Instance.OnEntityAdded += (object sender, EntityAddedOrRemovedEventArgs e) => {
                 Entity newEntity = EntityRegistry.Instance.GetEntity(e.elementId);
-                newEntity.OnAttributeInComponentChanged += new Entity.AttributeInComponentChanged(addEntityToQueue);
+                newEntity.OnAttributeInComponentChanged += new Entity.AttributeInComponentChanged(AddEntityUpdateToQueue);
             };
         }
 
@@ -78,17 +77,17 @@ namespace ClientManager
             };
         }
 
-        private void addEntityToQueue(Object sender, AttributeInComponentEventArgs e) {
+        private void AddEntityUpdateToQueue(Object sender, AttributeInComponentEventArgs e) {
 
-            lock (queueLock)
+            lock (QueueLock)
             {
-                while (entityUpdates.Count > entityUpdates.Capacity)
+                while (UpdateQueue.Count > UpdateQueue.Capacity)
                 {
-                    Monitor.Wait(queueLock);
+                    Monitor.Wait(QueueLock);
                 }
                 Guid entityGuid = ((Entity)sender).Guid;
-                entityUpdates.Add(createUpdateInfoFromEventArgs(entityGuid, e));
-                Monitor.PulseAll(queueLock);
+                UpdateQueue.Add(createUpdateInfoFromEventArgs(entityGuid, e));
+                Monitor.PulseAll(QueueLock);
             }
         }
 
@@ -102,13 +101,13 @@ namespace ClientManager
         }
 
         private void RemoveEntityFromQueue(Guid entityGuid) {
-            lock (queueLock)
+            lock (QueueLock)
             {
-                foreach (UpdateInfo entityUpdate in entityUpdates)
+                foreach (UpdateInfo entityUpdate in UpdateQueue)
                 {
                     if (entityUpdate.entityGuid.Equals(entityGuid))
                     {
-                        entityUpdates.Remove(entityUpdate);
+                        UpdateQueue.Remove(entityUpdate);
                     }
                 }
             }
@@ -119,10 +118,10 @@ namespace ClientManager
             return entityInfo;
         }
 
-        private volatile bool clientDisconnected = false;
-        private Action<List<UpdateInfo>> clientCallback;
-        private object queueLock = new object();
-        private List<UpdateInfo> entityUpdates = new List<UpdateInfo>();
+        private volatile bool ClientDisconnected = false;
+        private Action<List<UpdateInfo>> ClientCallback;
+        private object QueueLock = new object();
+        private List<UpdateInfo> UpdateQueue = new List<UpdateInfo>();
     }
 }
 
