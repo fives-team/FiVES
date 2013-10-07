@@ -124,25 +124,27 @@ namespace Persistence
         #region database synchronisation
 
         private void PersistChangedEntities() {
-            lock (persistenceLock)
+            while (true)
             {
-                if (EntitiesToPersist.Count > 0)
+                lock (persistenceLock)
                 {
-                    Console.WriteLine("Persisting {0} entities .... ", EntitiesToPersist.Count);
-                    using (ISession session = SessionFactory.OpenSession())
+                    if (EntitiesToPersist.Count > 0)
                     {
-                        var transaction = session.BeginTransaction();
-                        foreach (Guid guid in EntitiesToPersist)
+                        using (ISession session = SessionFactory.OpenSession())
                         {
-                            Entity entity = EntityRegistry.Instance.GetEntity(guid);
-                            session.SaveOrUpdate(entity);
+                            var transaction = session.BeginTransaction();
+                            foreach (Guid guid in EntitiesToPersist)
+                            {
+                                Entity entity = EntityRegistry.Instance.GetEntity(guid);
+                                session.SaveOrUpdate(entity);
+                            }
+                            transaction.Commit();
+                            EntitiesToPersist.Clear();
                         }
-                        transaction.Commit();
-                        EntitiesToPersist.Clear();
                     }
                 }
+                Thread.Sleep(5);
             }
-            Thread.Sleep(500);
         }
 
 
