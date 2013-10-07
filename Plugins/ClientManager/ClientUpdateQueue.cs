@@ -29,10 +29,16 @@ namespace ClientManager
             {
                 lock (queueLock)
                 {
+                    while (entityUpdates.Count == 0)
+                    {
+                        Monitor.Wait(queueLock);
+                    }
+
                     clientCallback(entityUpdates);
                     entityUpdates.Clear();
+                    Monitor.PulseAll(queueLock);
                 }
-                Thread.Sleep(5);
+                Thread.Sleep(10);
             }
         }
 
@@ -76,8 +82,13 @@ namespace ClientManager
 
             lock (queueLock)
             {
+                while (entityUpdates.Count > entityUpdates.Capacity)
+                {
+                    Monitor.Wait(queueLock);
+                }
                 Guid entityGuid = ((Entity)sender).Guid;
                 entityUpdates.Add(createUpdateInfoFromEventArgs(entityGuid, e));
+                Monitor.PulseAll(queueLock);
             }
         }
 
