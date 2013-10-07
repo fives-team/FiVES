@@ -49,13 +49,15 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="ClientDriver.cs" />
-    <Compile Include="CallRequest.cs" />
-    <Compile Include="CallReply.cs" />
     <Compile Include="AxisAngle.cs" />
     <Compile Include="EntityInfo.cs" />
     <Compile Include="Vector.cs" />
     <Compile Include="Quat.cs" />
     <Compile Include="AxisAngleTest.cs" />
+    <Compile Include="Authenticator.cs" />
+    <Compile Include="Communicator.cs" />
+    <Compile Include="UnixTimestamp.cs" />
+    <Compile Include="WorldManager.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
