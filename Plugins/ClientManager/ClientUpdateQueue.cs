@@ -112,11 +112,6 @@ namespace ClientManager
                 }
             }
         }
-        private ClientManager.ClientManagerPlugin.EntityInfo createNewEntityInfo(Guid entityGuid) {
-            ClientManager.ClientManagerPlugin.EntityInfo entityInfo = new ClientManager.ClientManagerPlugin.EntityInfo();
-            entityInfo.guid = entityGuid.ToString();
-            return entityInfo;
-        }
 
         private volatile bool ClientDisconnected = false;
         private Action<List<UpdateInfo>> ClientCallback;
