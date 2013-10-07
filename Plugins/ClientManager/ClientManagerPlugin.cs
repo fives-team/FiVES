@@ -55,6 +55,7 @@ namespace ClientManager {
                 {"listObjects", (Func<List<EntityInfo>>) ListObjects},
                 {"notifyAboutNewObjects", (Action<string, Action<EntityInfo>>) NotifyAboutNewObjects},
                 {"notifyAboutRemovedObjects", (Action<string, Action<string>>) NotifyAboutRemovedObjects},
+                {"notifyAboutObjectUpdates", (Action<string, Action<List<ClientManager.ClientUpdateQueue.UpdateInfo>>>) NotifyAboutObjectUpdates},
             });
 
             // DEBUG
@@ -76,7 +77,7 @@ namespace ClientManager {
 
         #region Client interface
 
-        private struct EntityInfo {
+        internal struct EntityInfo {
             public string guid;
             public MeshResource meshResource;
             public Vector position;
@@ -123,6 +124,12 @@ namespace ClientManager {
                 onRemovedEntityHandlers[guid] = new List<EntityRegistry.EntityRemoved>();
             onRemovedEntityHandlers[guid].Add(handler);
             EntityRegistry.Instance.OnEntityRemoved += (sender, e) => callback(e.elementId.ToString());
+        }
+
+        private void NotifyAboutObjectUpdates(string sessionKey, Action< List<ClientManager.ClientUpdateQueue.UpdateInfo>> callback)
+        {
+            ClientUpdateQueue queueForClient = new ClientUpdateQueue(sessionKey, callback);
+            clientUpdateHandlers.Add(new Guid(sessionKey), queueForClient);
         }
 
         private List<string> basicClientServices = new List<string>();
@@ -179,6 +186,8 @@ namespace ClientManager {
             new Dictionary<Guid, List<EntityRegistry.EntityAdded>>();
         Dictionary<Guid, List<EntityRegistry.EntityRemoved>> onRemovedEntityHandlers =
             new Dictionary<Guid, List<EntityRegistry.EntityRemoved>>();
+        Dictionary<Guid, ClientUpdateQueue> clientUpdateHandlers =
+            new Dictionary<Guid, ClientUpdateQueue>();
 
         event Action<Guid> OnAuthenticated;
 
@@ -241,6 +250,10 @@ namespace ClientManager {
                         EntityRegistry.Instance.OnEntityRemoved -= handler;
                 }
 
+                if(clientUpdateHandlers.ContainsKey(secToken)) {
+                    clientUpdateHandlers[secToken].StopClientUpdates();
+                    clientUpdateHandlers.Remove(secToken);
+                }
                 callback(secToken);
                 authenticatedClients.Remove(secToken);
             };

@@ -44,7 +44,7 @@ namespace FIVES
             }
             set
             {
-                if (CheckAttributeExistsAndTypeMatches(attributeName, value.GetType()))
+                if (CheckAttributeExistsAndTypeMatches(attributeName, value.GetType()) && CheckIfAttributeChanged(attributeName, value))
                 {
                     this.Attributes[attributeName].Value = value;
                     if (this.OnAttributeChanged != null)
@@ -109,6 +109,13 @@ namespace FIVES
             return true;
         }
 
+        private bool CheckIfAttributeChanged(string attributeName, object newValue) {
+            Attribute attribute = this.Attributes[attributeName];
+            if (attribute.Value == null) // Setting a null attribute will always change value
+                return true;
+
+            return !attribute.Value.Equals(newValue);
+        }
         /// <summary>
         /// Attributes of the component. Stored by their names
         /// </summary>

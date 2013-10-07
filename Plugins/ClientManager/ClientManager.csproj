@@ -60,6 +60,7 @@
     <Compile Include="AssemblyInfo.cs" />
     <Compile Include="ClientManagerPlugin.cs" />
     <Compile Include="ClientManagerPluginTest.cs" />
+    <Compile Include="ClientUpdateQueue.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

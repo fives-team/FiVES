@@ -119,15 +119,13 @@ FIVES.Communication = FIVES.Communication || {};
             FIVES.Models.EntityRegistry.addEntityFromServer(objects[i]);
     };
 
-    var _locationPositionUpdate = function(guid, position) {
-        var entity = FIVES.Models.EntityRegistry.getEntity(guid);
-        entity.updatePosition(position);
-    };
-
-    var _locationOrientationUpdate = function(guid, orientation) {
-        var entity = FIVES.Models.EntityRegistry.getEntity(guid);
-        entity.updateOrientation(orientation);
-    };
+    var _objectUpdate = function(receivedObjectUpdates) {
+        for(var entry in receivedObjectUpdates) {
+            var handledUpdated = receivedObjectUpdates[entry];
+            var updatedEntity = FIVES.Models.EntityRegistry.getEntity(handledUpdated.entityGuid);
+            updatedEntity.updateAttribute(handledUpdated.componentName, handledUpdated.attributeName, handledUpdated.value);
+        }
+    }
 
     c._generateTimestamp = function() {
         var updateTime = new Date().getTime();
@@ -144,14 +142,11 @@ FIVES.Communication = FIVES.Communication || {};
         this.notifyAboutNewObjects = this.connection.generateFuncWrapper("objectsync.notifyAboutNewObjects");
         this.notifyAboutNewObjects(this.sessionKey, FIVES.Models.EntityRegistry.addEntityFromServer.bind(FIVES.Models.EntityRegistry));
 
+        this.notifyAboutObjectUpdates = this.connection.generateFuncWrapper("objectsync.notifyAboutObjectUpdates");
+        this.notifyAboutObjectUpdates(this.sessionKey, _objectUpdate);
+
         this.updateEntityPosition = this.connection.generateFuncWrapper("location.updatePosition");
         this.updateEntityOrientation = this.connection.generateFuncWrapper("location.updateOrientation");
-
-        this.notifyAboutPositionOfEntityChanged = this.connection.generateFuncWrapper("location.notifyAboutPositionUpdates");
-        this.notifyAboutPositionOfEntityChanged(this.sessionKey, _locationPositionUpdate);
-
-        this.notifyAboutOrientationOfEntityChanged = this.connection.generateFuncWrapper("location.notifyAboutOrientationUpdates");
-        this.notifyAboutOrientationOfEntityChanged(this.sessionKey, _locationOrientationUpdate);
 
         this.listObjects().on("result", _listObjectsCallback.bind(this));
     };
