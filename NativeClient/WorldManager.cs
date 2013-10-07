@@ -29,10 +29,6 @@ namespace NativeClient
             SessionKey = sessionKey;
 
             QueryClientServices();
-
-
-            RegisterHandlers();
-            RequestAllObjects();
         }
 
         /// <summary>

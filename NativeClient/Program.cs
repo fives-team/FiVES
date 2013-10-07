@@ -31,6 +31,7 @@ namespace NativeClient
 
             Console.WriteLine("Client is running. Please any key to quit...");
             Console.ReadKey();
+            Environment.Exit(0);
         }
     }
 }

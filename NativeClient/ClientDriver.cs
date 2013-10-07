@@ -35,7 +35,7 @@ namespace NativeClient
         {
             Logger.Info("Loading world");
 
-            WorldManager worldManager = new WorldManager(communicator, e.SessionKey);
+            worldManager = new WorldManager(communicator, e.SessionKey);
             worldManager.Loaded += HandleWorldLoaded;
         }
 
