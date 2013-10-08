@@ -157,15 +157,20 @@ namespace FIVES
         /// <param name="componentName">Component name.</param>
         private void InstantiateNewComponent(string componentName) {
             Component newComponent = ComponentRegistry.GetComponentInstance (componentName);
-            newComponent.OnAttributeChanged += delegate(object sender, AttributeChangedEventArgs e) {
-                if (this.OnAttributeInComponentChanged != null)
-                    this.OnAttributeInComponentChanged (this, new AttributeInComponentEventArgs (componentName, e.AttributeName, e.NewValue));
-            };
+            RegisterToComponentEvents(newComponent, componentName);
             Components [componentName] = newComponent;
             if (this.OnComponentCreated != null)
                 this.OnComponentCreated (this, new ComponentCreatedEventArgs (componentName, newComponent.Guid));
         }
 
+        private void RegisterToComponentEvents(Component component, string componentName)
+        {
+            component.OnAttributeChanged += delegate(object sender, AttributeChangedEventArgs e)
+            {
+                if (this.OnAttributeInComponentChanged != null)
+                    this.OnAttributeInComponentChanged(this, new AttributeInComponentEventArgs(componentName, e.AttributeName, e.AttributeGuid, e.NewValue));
+            };
+        }
         // Used for testing to separate component registry database for different tests.
         internal Entity(ComponentRegistry customComponentRegistry)
         {
