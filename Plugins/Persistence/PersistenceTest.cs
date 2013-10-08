@@ -5,6 +5,7 @@ using NHibernate.Tool.hbm2ddl;
 using NUnit.Framework;
 using System.Diagnostics;
 using System.Collections.Generic;
+using System.Threading;
 
 namespace Persistence
 {
@@ -29,7 +30,7 @@ namespace Persistence
         }
 
         [Test()]
-        public void ShouldSetupDatabase()
+        public void FirstShouldSetupDatabase()
         {
             cfg = new Configuration ();
             cfg.Configure ();
@@ -70,7 +71,7 @@ namespace Persistence
 
             plugin.RetrieveEntitiesFromDatabase ();
             Entity storedEntity = entityRegistry.GetEntity(entity.Guid);            Assert.IsTrue ((int) entity["myComponent"]["IntAttribute"] == 42);            Assert.IsTrue ((string) entity["myComponent"]["StringAttribute"] == "Hello World!");
-            Assert.AreEqual(1, storedEntity["myComponent"].Version);
+            Assert.AreEqual(1, entity["myComponent"].Version);
         }
 
         [Test()]
@@ -86,16 +87,11 @@ namespace Persistence
                 plugin.Initialize ();
             }
 
+
             Console.WriteLine (" ==== [SHOULD STORE AND RETRIEVE ENTITIES]: Adding Entity " + entity.Guid);
             entityRegistry.AddEntity (entity);
             Console.WriteLine (" ==== [SHOULD STORE AND RETRIEVE ENTITIES]: Adding Entity " + childEntity.Guid);
             entityRegistry.AddEntity (childEntity);
-
-            // De-Activate on-remove event handler, as for tests, we only want to remove the entity from the local registry, not from the
-            // persistence storage
-            entityRegistry.OnEntityRemoved -= plugin.OnEntityRemoved;
-            entityRegistry.RemoveEntity (childEntity.Guid);
-            entityRegistry.RemoveEntity (entity.Guid);
 
             plugin.RetrieveEntitiesFromDatabase ();
 
@@ -153,6 +149,8 @@ namespace Persistence
             entityRegistry.RemoveEntity (childEntity.Guid);
             entityRegistry.RemoveEntity (entity.Guid);
 
+            if (!plugin.GlobalSession.IsOpen)
+                plugin.GlobalSession = plugin.SessionFactory.OpenSession();
             plugin.RetrieveEntitiesFromDatabase ();
 
             ISet<Guid> guidsInRegistry = entityRegistry.GetAllGUIDs ();
@@ -209,8 +207,6 @@ namespace Persistence
             entity[name]["b"] = false;
 
             componentRegistry.UpgradeComponent(name, plugin.pluginGuid, layout, 2, TestUpgrader);
-            entityRegistry.OnEntityRemoved -= plugin.OnEntityRemoved;
-            entityRegistry.RemoveEntity (entityGuid);
 
             plugin.RetrieveEntitiesFromDatabase ();
 

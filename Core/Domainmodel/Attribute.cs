@@ -11,7 +11,7 @@ namespace FIVES
         /// Gets or sets the identifier.
         /// </summary>
         /// <value>The identifier.</value>
-        private Guid Guid { get; set; }
+        internal Guid Guid { get; set; }
 
         /// <summary>
         /// Gets or sets the type of the Attribute.
