@@ -8,6 +8,9 @@ using Events;
 using System.Diagnostics;
 using Iesi.Collections.Generic;
 using System.Threading;
+using System.Data;
+using System.Runtime.Serialization.Formatters.Binary;
+using System.IO;
 
 
 namespace Persistence
@@ -151,6 +154,87 @@ namespace Persistence
             }
         }
 
+        /// <summary>
+        /// Flushes the queue of stored entity updates and commits the changes to the database
+        /// </summary>
+        private void CommitCurrentEntityUpdates()
+        {
+            if (GlobalSession.IsOpen)
+                GlobalSession.Close();
+
+            using (ISession session = SessionFactory.OpenSession())
+            {
+                var transaction = session.BeginTransaction();
+                foreach (Guid guid in EntitiesToPersist)
+                {
+                    Entity entity = EntityRegistry.Instance.GetEntity(guid);
+                    session.SaveOrUpdate(entity);
+                }
+                try
+                {
+                    transaction.Commit();
+                }
+                catch (Exception)
+                {
+                    transaction.Rollback();
+                }
+                finally
+                {
+                    session.Close();
+                }
+            }
+        }
+
+        /// <summary>
+        /// Converts an object to a byte array that can the be persisted as field value for an attribute
+        /// </summary>
+        /// <param name="obj">The value to be converted</param>
+        /// <returns>The byte array representation of the object</returns>
+        private byte[] ObjectToByteArray(Object obj)
+        {
+            if (obj == null)
+                return null;
+            BinaryFormatter bf = new BinaryFormatter();
+            MemoryStream ms = new MemoryStream();
+            bf.Serialize(ms, obj);
+            return ms.ToArray();
+        }
+
+        /// <summary>
+        /// Flushes the queue of stored attribute updates and commits the changes to the database
+        /// </summary>
+        private void CommitCurrentAttributeUpdates()
+        {
+            if (GlobalSession.IsOpen)
+                GlobalSession.Close();
+
+            using (IStatelessSession session = SessionFactory.OpenStatelessSession())
+            {
+                var transaction = session.BeginTransaction();
+                foreach (KeyValuePair<Guid, object> attributeUpdate in AttributesToPersist)
+                {
+                    String updateQuery = "update Attribute set value = :newValue where Guid = :entityGuid";
+
+                    IQuery sqlQuery = session.CreateQuery(updateQuery)
+                        .SetBinary("newValue", ObjectToByteArray(attributeUpdate.Value))
+                        .SetParameter("entityGuid", attributeUpdate.Key);
+                    sqlQuery.ExecuteUpdate();
+                }
+                try
+                {
+                    transaction.Commit();
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine("An exception occured during Attribute update: " + e.Message);
+                    transaction.Rollback();
+                }
+                finally
+                {
+                    session.Close();
+                }
+            }
+        }
 
         /// <summary>
         /// Adds an enitity update to the list of entities that are queued to be persisted
