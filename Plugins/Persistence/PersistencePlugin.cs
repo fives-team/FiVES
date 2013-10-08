@@ -130,24 +130,26 @@ namespace Persistence
 
         #region database synchronisation
 
+        /// <summary>
+        /// Thread worker function that performs the persisting steps for queued entities and attributes
+        /// </summary>
         private void PersistChangedEntities() {
             while (true)
             {
-                lock (persistenceLock)
+                lock (entityQueueLock)
                 {
-                    if (EntitiesToPersist.Count > 0)
+                    if (EntitiesToPersist.Count > 0 )
                     {
-                        using (ISession session = SessionFactory.OpenSession())
-                        {
-                            var transaction = session.BeginTransaction();
-                            foreach (Guid guid in EntitiesToPersist)
-                            {
-                                Entity entity = EntityRegistry.Instance.GetEntity(guid);
-                                session.SaveOrUpdate(entity);
-                            }
-                            transaction.Commit();
-                            EntitiesToPersist.Clear();
-                        }
+                        CommitCurrentEntityUpdates();
+                        EntitiesToPersist.Clear();
+                    }
+                }
+                lock (attributeQueueLock)
+                {
+                    if (AttributesToPersist.Count > 0)
+                    {
+                        CommitCurrentAttributeUpdates();
+                        AttributesToPersist.Clear();
                     }
                 }
                 Thread.Sleep(5);
