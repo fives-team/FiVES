@@ -41,10 +41,10 @@ namespace Persistence
         public void Initialize()
         {
             InitializeNHibernate ();
-            InitializePersistedCollections ();
             EntityRegistry.Instance.OnEntityAdded += OnEntityAdded;
             EntityRegistry.Instance.OnEntityRemoved += OnEntityRemoved;
             ComponentRegistry.Instance.OnEntityComponentUpgraded += OnComponentOfEntityUpgraded;
+            InitializePersistedCollections ();
             ThreadPool.QueueUserWorkItem(_ => PersistChangedEntities());
         }
 
@@ -80,13 +80,13 @@ namespace Persistence
         /// <param name="e">Event arguments</param>
         internal void OnEntityAdded(Object sender, EntityAddedOrRemovedEventArgs e) {
             Entity addedEntity = EntityRegistry.Instance.GetEntity (e.elementId);
-            addedEntity.OnAttributeInComponentChanged += OnComponentChanged;
             // Only persist entities if they are not added during intialization on Startup
             if (!EntitiesToInitialize.Contains (e.elementId)) {
                 AddEntityToPersisted (addedEntity);
             } else {
                 EntitiesToInitialize.Remove (e.elementId);
             }
+            addedEntity.OnAttributeInComponentChanged += new Entity.AttributeInComponentChanged(OnAttributeChanged);
         }
 
         /// <summary>
