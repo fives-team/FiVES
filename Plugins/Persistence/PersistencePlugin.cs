@@ -324,13 +324,14 @@ namespace Persistence
         #endregion
 
         private Configuration NHibernateConfiguration = new Configuration();
-        private ISessionFactory SessionFactory;
+        internal ISessionFactory SessionFactory;
         private HashedSet<Guid> EntitiesToInitialize = new HashedSet<Guid>();
+        private object sessionLock = new object();
         private object entityQueueLock = new object();
         private object attributeQueueLock = new object();
         private HashedSet<Guid> EntitiesToPersist = new HashedSet<Guid>();
         private Dictionary<Guid, object> AttributesToPersist = new Dictionary<Guid, object>();
-        private ISession GlobalSession;
+        internal ISession GlobalSession;
         internal readonly Guid pluginGuid = new Guid("d51e4394-68cc-4801-82f2-6b2a865b28df");
     }
 }
