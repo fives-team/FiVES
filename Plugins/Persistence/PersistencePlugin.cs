@@ -101,19 +101,23 @@ namespace Persistence
         }
 
         /// <summary>
-        /// Event Handler for AttributeInComponentChanged on Entity. When fired by the entity, the entity is persisted to the
-        /// data base, with casacading save of components. The whole entity is persisted (instead of only the component), to
-        /// correctly store the link of the component to the entity on newly instantiated components as well.
+        /// Event Handler for AttributeInComponentChanged on Entity. When fired, the value update is queued to be persisted on the next persistence
+        /// save to the database
         /// </summary>
         /// <param name="sender">Sender of the event (the Entity)</param>
         /// <param name="e">Event arguments</param>
-        internal void OnComponentChanged(Object sender, AttributeInComponentEventArgs e) {
+        internal void OnAttributeChanged(Object sender, AttributeInComponentEventArgs e) {
             Entity changedEntity = (Entity)sender;
-            Component changedComponent = changedEntity [e.componentName];
+            Guid changedAttributeGuid = e.AttributeGuid;
             // TODO: change cascading persistence of entity, but only persist component and take care to persist mapping to entity as well
-            AddEntityToPersisted (changedEntity);
+            AddAttributeToPersisted (changedAttributeGuid, e.newValue);
         }
 
+        /// <summary>
+        /// When a Component was upgraded to a new version, the entity that is informing about the upgrade is entirely (cascaded) persisted to the database
+        /// </summary>
+        /// <param name="sender">Sender of the event (the Entity)</param>
+        /// <param name="e">Event arguments</param>
         internal void OnComponentOfEntityUpgraded(Object sender, EntityComponentUpgradedEventArgs e) {
 
             // TODO: change cascading persistence of entity, but only persist component and take care to persist mapping to entity as well
@@ -157,6 +161,22 @@ namespace Persistence
             {
                 if (!EntitiesToPersist.Contains(changedEntity.Guid))
                     EntitiesToPersist.Add(changedEntity.Guid);
+            }
+        }
+
+        /// <summary>
+        /// Adds an attribute update to the list of attribute that are queued to be persisted
+        /// </summary>
+        /// <param name="changedAttributeGuid">Guid of the Attribute that has changed</param>
+        /// <param name="newValue">New value of the changed attribute</param>
+        private void AddAttributeToPersisted(Guid changedAttributeGuid, object newValue)
+        {
+            lock (attributeQueueLock)
+            {
+                if (!AttributesToPersist.ContainsKey(changedAttributeGuid))
+                    AttributesToPersist.Add(changedAttributeGuid, newValue);
+                else
+                    AttributesToPersist[changedAttributeGuid] = newValue;
             }
         }
 
