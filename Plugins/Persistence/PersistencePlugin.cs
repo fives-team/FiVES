@@ -170,7 +170,8 @@ namespace Persistence
                 foreach (Guid guid in EntitiesToPersist)
                 {
                     Entity entity = EntityRegistry.Instance.GetEntity(guid);
-                    session.SaveOrUpdate(entity);
+                    if(entity != null)
+                        session.SaveOrUpdate(entity);
                 }
                 try
                 {
