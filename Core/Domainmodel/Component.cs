@@ -47,8 +47,9 @@ namespace FIVES
                 if (CheckAttributeExistsAndTypeMatches(attributeName, value.GetType()) && CheckIfAttributeChanged(attributeName, value))
                 {
                     this.Attributes[attributeName].Value = value;
+                    Guid attributeGuid = Attributes[attributeName].Guid;
                     if (this.OnAttributeChanged != null)
-                        this.OnAttributeChanged(this, new AttributeChangedEventArgs(attributeName, value));
+                        this.OnAttributeChanged(this, new AttributeChangedEventArgs(attributeName, attributeGuid, value));
                 }
             }
         }
