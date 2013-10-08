@@ -14,6 +14,20 @@ namespace FIVES
     {
         public Guid Guid { get; private set; }
         private IDictionary<string, Component> Components { get; set; }
+
+        private IDictionary<string, Component> ComponentHandler
+        {
+            get
+            {
+                return Components;
+            }
+            set
+            {
+                Components = value;
+                InitializeExistingComponents();
+            }
+        }
+
         public Entity Parent { get; set; }
         private List<Entity> Children { get; set; }
         private ComponentRegistry ComponentRegistry;
@@ -161,6 +175,14 @@ namespace FIVES
             Components [componentName] = newComponent;
             if (this.OnComponentCreated != null)
                 this.OnComponentCreated (this, new ComponentCreatedEventArgs (componentName, newComponent.Guid));
+        }
+
+        private void InitializeExistingComponents()
+        {
+            foreach (KeyValuePair<string, Component> entry in Components)
+            {
+                RegisterToComponentEvents(entry.Value, entry.Key);
+            }
         }
 
         private void RegisterToComponentEvents(Component component, string componentName)
