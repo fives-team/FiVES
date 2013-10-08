@@ -310,10 +310,14 @@ namespace Persistence
         internal void RetrieveEntitiesFromDatabase()
         {
             IList<Entity> entitiesInDatabase = new List<Entity> ();
-            entitiesInDatabase = GlobalSession.CreateQuery ("from " + typeof(Entity)).List<Entity> ();
-            foreach (Entity e in entitiesInDatabase) {
-                EntitiesToInitialize.Add (e.Guid);
-                EntityRegistry.Instance.AddEntity (e);
+            using (ISession session = SessionFactory.OpenSession())
+            {
+                entitiesInDatabase = session.CreateQuery("from " + typeof(Entity)).List<Entity>();
+                foreach (Entity e in entitiesInDatabase)
+                {
+                    EntitiesToInitialize.Add(e.Guid);
+                    EntityRegistry.Instance.AddEntity(e);
+                }
             }
         }
 
