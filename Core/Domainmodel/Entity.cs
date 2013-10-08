@@ -131,15 +131,6 @@ namespace FIVES
         }
 
         /// <summary>
-        /// Returns the names of all components attached to the entity
-        /// </summary>
-        /// <returns>names of all components attached to the entity</returns>
-        public ICollection<string> AttachedComponentNames
-        {
-            get { return Components.Keys; }
-        }
-
-        /// <summary>
         /// Removes the component.
         /// </summary>
         /// <returns><c>true</c>, if the component was removed, <c>false</c> otherwise.</returns>
