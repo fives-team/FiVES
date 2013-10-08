@@ -29,7 +29,7 @@ namespace Persistence
         }
 
         [Test()]
-        public void ShouldSetupDatabase()
+        public void FirstShouldSetupDatabase()
         {
             cfg = new Configuration ();
             cfg.Configure ();
