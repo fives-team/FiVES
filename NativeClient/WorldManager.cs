@@ -129,11 +129,8 @@ namespace NativeClient
             string handleNewObject = Communicator.RegisterFunc(HandleNewObject);
             Communicator.Call("objectsync.notifyAboutNewObjects", new List<int>{1}, SessionKey, handleNewObject);
 
-            string handleMoved = Communicator.RegisterFunc(HandleMoved);
-            Communicator.Call("location.notifyAboutPositionUpdates", new List<int>{1}, SessionKey, handleMoved);
-
-            string handleRotatated = Communicator.RegisterFunc(HandleRotatated);
-            Communicator.Call("location.notifyAboutOrientationUpdates", new List<int>{1}, SessionKey, handleRotatated);
+            string handleUpdate = Communicator.RegisterFunc(HandleUpdate);
+            Communicator.Call("objectsync.notifyAboutObjectUpdates", new List<int> { 1 }, SessionKey, handleUpdate);
         }
 
         void HandleNewObject(JToken entityInfo)
@@ -156,18 +153,15 @@ namespace NativeClient
             HandleNewObject(entityInfo);
         }
 
-        void HandleMoved(CallRequest request)
+        void HandleUpdate(CallRequest request)
         {
-            string guid = request.Args[0].ToString();
-            Vector newPos = request.Args[1].ToObject<Vector>();
-            Logger.Info("{0} moved to ({1},{2},{3})", guid, newPos.x, newPos.y, newPos.z);
-        }
-
-        void HandleRotatated(CallRequest request)
-        {
-            string guid = request.Args[0].ToString();
-            Quat newRot = request.Args[1].ToObject<Quat>();
-            Logger.Info("{0} rotated to ({1},{2},{3},{4})", guid, newRot.x, newRot.y, newRot.z, newRot.w);
+            List<UpdateInfo> receivedUpdates = request.Args[0].ToObject<List<UpdateInfo>>();
+            foreach(UpdateInfo update in receivedUpdates) {
+                string entityGuid = update.entityGuid;
+                string attribute = update.attributeName;
+                string component = update.componentName;
+                Logger.Info("{0} updated attribute {1} of component {2}", entityGuid, attribute, component);
+            }
         }
 
         void RequestAllObjects()

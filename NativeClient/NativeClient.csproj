@@ -58,6 +58,7 @@
     <Compile Include="Communicator.cs" />
     <Compile Include="UnixTimestamp.cs" />
     <Compile Include="WorldManager.cs" />
+    <Compile Include="UpdateInfo.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
