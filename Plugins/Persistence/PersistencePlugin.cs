@@ -326,7 +326,6 @@ namespace Persistence
         private Configuration NHibernateConfiguration = new Configuration();
         internal ISessionFactory SessionFactory;
         private HashedSet<Guid> EntitiesToInitialize = new HashedSet<Guid>();
-        private object sessionLock = new object();
         private object entityQueueLock = new object();
         private object attributeQueueLock = new object();
         private HashedSet<Guid> EntitiesToPersist = new HashedSet<Guid>();
