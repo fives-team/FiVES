@@ -2,7 +2,9 @@ using System;
 using System.Collections.Generic;
 using FIVES;
 using ClientManagerPlugin;
-using Math;
+using KIARA;
+using FiVESMath;
+using System.Threading;
 
 namespace MotionPlugin
 {
@@ -50,9 +52,13 @@ namespace MotionPlugin
         void RegisterClientServices()
         {
             PluginManager.Instance.AddPluginLoadedHandler("ClientManager", delegate {
+
                 ClientManager.Instance.RegisterClientService("motion", true, new Dictionary<string, Delegate> {
-                    {"update", (Action<string, Vector, RotVelocity, int>) Update},
-                });
+                        {"update", (Action<string, Vector, RotVelocity, int>) Update},
+                        {"startMotion", (Action<string>)StartMotion},
+                        {"stopMotion", (Action<string>)StopMotion}
+                    });
+                };
             });
         }
 
@@ -70,6 +76,33 @@ namespace MotionPlugin
             // We currently ignore timestamp, but may it in the future to implement dead reckoning.
         }
 
+        private void UpdateMotion(string guid) {
+            Entity updatedEntity = EntityRegistry.Instance.GetEntity(guid);
+
+            while (ongoingMotion.Contains(guid))
+            {
+                updatedEntity["position"]["x"] = (float)updatedEntity["position"]["x"] + (float)updatedEntity["velocity"]["x"];
+                updatedEntity["position"]["y"] = (float)updatedEntity["position"]["y"] + (float)updatedEntity["velocity"]["y"];
+                updatedEntity["position"]["z"] = (float)updatedEntity["position"]["z"] + (float)updatedEntity["velocity"]["z"];
+            }
+        }
+
+        private void StartMotion(string guid)
+        {
+            if (!ongoingMotion.Contains(guid))
+            {
+                ongoingMotion.Add(guid);
+                ThreadPool.QueueUserWorkItem(_ => UpdateMotion(guid));
+            }
+        }
+
+        private void StopMotion(string guid)
+        {
+            if (ongoingMotion.Contains(guid))
+                ongoingMotion.Remove(guid);
+        }
+
+        private ISet<string> ongoingMotion = new HashSet<string>();
         private readonly Guid pluginGUID = new Guid("bd5b8634-890c-4f59-a823-f9d2b1fd0c86");
     }
 }
