@@ -35,6 +35,7 @@ FIVES.Models = FIVES.Models || {};
 
     e._applyAttributeUpdates = function(componentName) {
         var updatedComponent = this._cachedComponentUpdates[componentName];
+        this[componentName] = this[componentName] || {};
         for(var updatedAttribute in updatedComponent)
         {
             this[componentName][updatedAttribute] = updatedComponent[updatedAttribute];
