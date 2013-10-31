@@ -48,7 +48,6 @@ FIVES.Input = FIVES.Input || {};
             case 68:  FIVES.Communication.FivesCommunicator.setAvatarLeftRightMotion(FIVES.Communication.FivesCommunicator.sessionKey,  0); break;
         }
         _pressedKeys[e.keyCode] = false;
-        console.log("up");
     };
 
     k._initializeEventListeners = function() {
