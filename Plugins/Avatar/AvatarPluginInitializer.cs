@@ -29,7 +29,9 @@ namespace AvatarPlugin
 
             ClientManager.Instance.RegisterClientService("avatar", true, new Dictionary<string, Delegate> {
                 {"changeAppearance", (Action<string, string, Vector>)ChangeAppearance},
-				{"startAvatarMotionInDirection", (Action<string, Vector>)StartAvatarMotionInDirection}
+                    {"startAvatarMotionInDirection", (Action<string, Vector>)StartAvatarMotionInDirection},
+                    {"setAvatarForwardBackwardMotion", (Action<string, float>)SetForwardBackwardMotion},
+                    {"setAvatarLeftRightMotion", (Action<string, float>)SetLeftRightMotion}
             });
 
             ClientManager.Instance.NotifyWhenAnyClientAuthenticated((Action<Guid>)delegate(Guid sessionKey) {
@@ -98,7 +100,7 @@ namespace AvatarPlugin
             avatarEntity["scale"]["z"] = scale.z;
         }
 
-		        void StartAvatarMotionInDirection(string sessionKey, Vector velocity)
+        void StartAvatarMotionInDirection(string sessionKey, Vector velocity)
         {
             var avatarEntity = GetAvatarEntityBySessionKey(Guid.Parse(sessionKey));
 
@@ -107,6 +109,18 @@ namespace AvatarPlugin
             avatarEntity["velocity"]["z"] = (float)velocity.z;
         }
 
+        void SetForwardBackwardMotion(string sessionKey, float amount)
+        {
+            var avatarEntity = GetAvatarEntityBySessionKey(Guid.Parse(sessionKey));
+            avatarEntity["velocity"]["x"] = amount;
+        }
+
+        void SetLeftRightMotion(string sessionKey, float amount)
+        {
+            var avatarEntity = GetAvatarEntityBySessionKey(Guid.Parse(sessionKey));
+            avatarEntity["velocity"]["z"] = amount;
+        }
+		
         Dictionary<string, Entity> avatarEntities = new Dictionary<string, Entity>();
         // string defaultAvatarMesh = "resources/models/defaultAvatar/avatar.xml3d";
         string defaultAvatarMesh = "resources/models/firetruck/xml3d/firetruck.xml";

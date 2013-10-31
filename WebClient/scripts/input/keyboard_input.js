@@ -26,10 +26,10 @@ FIVES.Input = FIVES.Input || {};
         {
             switch (e.keyCode)
             {
-              /* W */  case 87:  FIVES.Communication.FivesCommunicator.startAvatarMotionInDirection(FIVES.Communication.FivesCommunicator.sessionKey, {'x': 0.1, 'y': 0, 'z': 0}); break;
-              /* S */  case 83:  FIVES.Communication.FivesCommunicator.startAvatarMotionInDirection(FIVES.Communication.FivesCommunicator.sessionKey, {'x': -0.1, 'y': 0, 'z': 0}); break;
-              /* A */  case 65:  FIVES.Communication.FivesCommunicator.startAvatarMotionInDirection(FIVES.Communication.FivesCommunicator.sessionKey, {'x': 0, 'y': 0, 'z': -0.1}); break;
-              /* D */  case 68:  FIVES.Communication.FivesCommunicator.startAvatarMotionInDirection(FIVES.Communication.FivesCommunicator.sessionKey, {'x': 0, 'y': 0, 'z': 0.1}); break;
+              /* W */  case 87:  FIVES.Communication.FivesCommunicator.setAvatarForwardBackwardMotion(FIVES.Communication.FivesCommunicator.sessionKey,  0.1); break;
+              /* S */  case 83:  FIVES.Communication.FivesCommunicator.setAvatarForwardBackwardMotion(FIVES.Communication.FivesCommunicator.sessionKey,  -0.1); break;
+              /* A */  case 65:  FIVES.Communication.FivesCommunicator.setAvatarLeftRightMotion(FIVES.Communication.FivesCommunicator.sessionKey,  -0.1); break;
+              /* D */  case 68:  FIVES.Communication.FivesCommunicator.setAvatarLeftRightMotion(FIVES.Communication.FivesCommunicator.sessionKey,  0.1); break;
                 default: break;
             }
             _pressedKeys[e.keyCode] = true;
@@ -37,8 +37,16 @@ FIVES.Input = FIVES.Input || {};
     };
 
     k._onKeyUp = function(e) {
-        // TODO: Hack, implement correct function to stop movement
-        FIVES.Communication.FivesCommunicator.startAvatarMotionInDirection(FIVES.Communication.FivesCommunicator.sessionKey, {'x': 0, 'y': 0, 'z': 0});
+
+        switch (e.keyCode)
+        {
+            /* W, S */
+            case 87:
+            case 83:  FIVES.Communication.FivesCommunicator.setAvatarForwardBackwardMotion(FIVES.Communication.FivesCommunicator.sessionKey,  0); break;
+            /* A, D */
+            case 65:
+            case 68:  FIVES.Communication.FivesCommunicator.setAvatarLeftRightMotion(FIVES.Communication.FivesCommunicator.sessionKey,  0); break;
+        }
         _pressedKeys[e.keyCode] = false;
         console.log("up");
     };

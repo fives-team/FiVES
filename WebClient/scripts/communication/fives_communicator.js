@@ -151,6 +151,9 @@ FIVES.Communication = FIVES.Communication || {};
         this.updateMotion = this.connection.generateFuncWrapper("motion.update");
 
         this.startAvatarMotionInDirection = this.connection.generateFuncWrapper("avatar.startAvatarMotionInDirection");
+        this.setAvatarForwardBackwardMotion = this.connection.generateFuncWrapper("avatar.setAvatarForwardBackwardMotion");
+        this.setAvatarLeftRightMotion = this.connection.generateFuncWrapper("avatar.setAvatarLeftRightMotion");
+
         this.listObjects().on("result", _listObjectsCallback.bind(this));
     };
 
