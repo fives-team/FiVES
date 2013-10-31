@@ -150,11 +150,16 @@ FIVES.Communication = FIVES.Communication || {};
 
         this.updateMotion = this.connection.generateFuncWrapper("motion.update");
 
+        this.getAvatarEntityGuid = this.connection.generateFuncWrapper("avatar.getAvatarEntityGuid");
         this.startAvatarMotionInDirection = this.connection.generateFuncWrapper("avatar.startAvatarMotionInDirection");
         this.setAvatarForwardBackwardMotion = this.connection.generateFuncWrapper("avatar.setAvatarForwardBackwardMotion");
         this.setAvatarLeftRightMotion = this.connection.generateFuncWrapper("avatar.setAvatarLeftRightMotion");
 
         this.listObjects().on("result", _listObjectsCallback.bind(this));
+        var getEntityGuidCall = this.getAvatarEntityGuid(this.sessionKey);
+        getEntityGuidCall.on("success", function(avatarEntityGuid) {
+           FIVES.AvatarEntityGuid = avatarEntityGuid;
+        });
     };
 
     c.sendEntityPositionUpdate = function(guid, position) {
@@ -165,9 +170,6 @@ FIVES.Communication = FIVES.Communication || {};
         this.updateEntityOrientation(this.sessionKey, guid, orientation, this._generateTimestamp());
     };
 
-    c.invokeAvatarMotion = function() {
-
-    };
     // Expose Communicator to namespace
     FIVES.Communication.FivesCommunicator = new FivesCommunicator();
 
