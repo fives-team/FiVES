@@ -149,9 +149,8 @@ FIVES.Communication = FIVES.Communication || {};
         this.updateEntityOrientation = this.connection.generateFuncWrapper("location.updateOrientation");
 
         this.updateMotion = this.connection.generateFuncWrapper("motion.update");
-        this.startMotion = this.connection.generateFuncWrapper("motion.startMotion");
-        this.stopMotion = this.connection.generateFuncWrapper("motion.stopMotion");
 
+        this.startAvatarMotionInDirection = this.connection.generateFuncWrapper("avatar.startAvatarMotionInDirection");
         this.listObjects().on("result", _listObjectsCallback.bind(this));
     };
 

@@ -18,16 +18,29 @@ FIVES.Input = FIVES.Input || {};
     };
     var k = keylistener.prototype;
 
+    var _pressedKeys = {};
+    var _upKeys = {};
+
     k._onKeyDown = function(e) {
-
-        if(e.keyCode == 87) { // W
-
+        if(!_pressedKeys[e.keyCode])
+        {
+            switch (e.keyCode)
+            {
+              /* W */  case 87:  FIVES.Communication.FivesCommunicator.startAvatarMotionInDirection(FIVES.Communication.FivesCommunicator.sessionKey, {'x': 0.1, 'y': 0, 'z': 0}); break;
+              /* S */  case 83:  FIVES.Communication.FivesCommunicator.startAvatarMotionInDirection(FIVES.Communication.FivesCommunicator.sessionKey, {'x': -0.1, 'y': 0, 'z': 0}); break;
+              /* A */  case 65:  FIVES.Communication.FivesCommunicator.startAvatarMotionInDirection(FIVES.Communication.FivesCommunicator.sessionKey, {'x': 0, 'y': 0, 'z': -0.1}); break;
+              /* D */  case 68:  FIVES.Communication.FivesCommunicator.startAvatarMotionInDirection(FIVES.Communication.FivesCommunicator.sessionKey, {'x': 0, 'y': 0, 'z': 0.1}); break;
+                default: break;
+            }
+            _pressedKeys[e.keyCode] = true;
         }
-
     };
 
     k._onKeyUp = function(e) {
-        console.log(e);
+        // TODO: Hack, implement correct function to stop movement
+        FIVES.Communication.FivesCommunicator.startAvatarMotionInDirection(FIVES.Communication.FivesCommunicator.sessionKey, {'x': 0, 'y': 0, 'z': 0});
+        _pressedKeys[e.keyCode] = false;
+        console.log("up");
     };
 
     k._initializeEventListeners = function() {
