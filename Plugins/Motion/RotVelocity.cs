@@ -1,5 +1,5 @@
 using System;
-using Location;
+using FiVESMath;
 
 namespace Motion
 {

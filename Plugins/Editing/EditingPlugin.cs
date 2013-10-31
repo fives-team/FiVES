@@ -3,8 +3,8 @@ using FIVES;
 using System.Collections.Generic;
 using KIARA;
 using Events;
-using Location;
 using Renderable;
+using FiVESMath;
 
 namespace Editing
 {

@@ -2,6 +2,7 @@ using System;
 using FIVES;
 using System.Collections.Generic;
 using KIARA;
+using FiVESMath;
 
 namespace Location
 {
