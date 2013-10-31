@@ -54,11 +54,8 @@ namespace MotionPlugin
         void RegisterClientServices()
         {
             PluginManager.Instance.AddPluginLoadedHandler("ClientManager", delegate {
-
                 ClientManager.Instance.RegisterClientService("motion", true, new Dictionary<string, Delegate> {
-                        {"update", (Action<string, Vector, RotVelocity, int>) Update},
-                        {"startMotion", (Action<string>)StartMotion},
-                        {"stopMotion", (Action<string>)StopMotion}
+                        {"update", (Action<string, Vector, RotVelocity, int>) Update}
                     });
                 };
             });
@@ -96,6 +93,7 @@ namespace MotionPlugin
             Entity entity = EntityRegistry.Instance.GetEntity(e.elementId);
             entity.OnAttributeInComponentChanged += new Entity.AttributeInComponentChanged(handleOnAttributeChanged);
         }
+
         private void Update(string guid, Vector velocity, RotVelocity rotVelocity, int timestamp)
         {
             var entity = EntityRegistry.Instance.GetEntity(guid);
@@ -110,33 +108,48 @@ namespace MotionPlugin
             // We currently ignore timestamp, but may it in the future to implement dead reckoning.
         }
 
-        private void UpdateMotion(string guid) {
-            Entity updatedEntity = EntityRegistry.Instance.GetEntity(guid);
+        /// <summary>
+        /// Handles the AttributeInComponentChanged-Event of an Entity. Invokes or stops a motion depending on the new values for velocity
+        /// </summary>
+        /// <param name="sender">The entity that fired the event</param>
+        /// <param name="e">The EventArgs</param>
+        private void handleOnAttributeChanged(Object sender, AttributeInComponentEventArgs e)
+        {
+            Entity entity = (Entity)sender;
+            if (IsMoving(entity) && !ongoingMotion.Contains(entity.Guid))
+            {
+                ongoingMotion.Add(entity.Guid);
+                ThreadPool.QueueUserWorkItem(_ => UpdateMotion(entity));
+            }
+        }
 
-            while (ongoingMotion.Contains(guid))
+        /// <summary>
+        /// Worker Thread function that periodically performs the motion. Ends, when velocity of entity is 0
+        /// </summary>
+        /// <param name="updatedEntity">Entity for which motion is updated</param>
+        private void UpdateMotion(Entity updatedEntity) {
+            while (IsMoving(updatedEntity))
             {
                 updatedEntity["position"]["x"] = (float)updatedEntity["position"]["x"] + (float)updatedEntity["velocity"]["x"];
                 updatedEntity["position"]["y"] = (float)updatedEntity["position"]["y"] + (float)updatedEntity["velocity"]["y"];
                 updatedEntity["position"]["z"] = (float)updatedEntity["position"]["z"] + (float)updatedEntity["velocity"]["z"];
+                Thread.Sleep(30);
             }
+            ongoingMotion.Remove(updatedEntity.Guid);
         }
 
-        private void StartMotion(string guid)
-        {
-            if (!ongoingMotion.Contains(guid))
-            {
-                ongoingMotion.Add(guid);
-                ThreadPool.QueueUserWorkItem(_ => UpdateMotion(guid));
-            }
+        /// <summary>
+        /// Checks if the entity has a non 0 velocity
+        /// </summary>
+        /// <param name="entity">Entity to check</param>
+        /// <returns>true, if at least one attribute of its velocity component is != 0</returns>
+        private bool IsMoving(Entity entity) {
+            return !((float)entity["velocity"]["x"] == 0
+                && (float)entity["velocity"]["y"] == 0
+                && (float)entity["velocity"]["z"] == 0);
         }
 
-        private void StopMotion(string guid)
-        {
-            if (ongoingMotion.Contains(guid))
-                ongoingMotion.Remove(guid);
-        }
-
-        private ISet<string> ongoingMotion = new HashSet<string>();
+        private ISet<Guid> ongoingMotion = new HashSet<Guid>();
         private readonly Guid pluginGUID = new Guid("bd5b8634-890c-4f59-a823-f9d2b1fd0c86");
     }
 }
