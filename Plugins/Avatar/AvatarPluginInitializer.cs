@@ -18,7 +18,7 @@ namespace AvatarPlugin
 
         public List<string> GetDependencies ()
         {
-            return new List<string> { "ClientManager", "Auth", "Renderable", "Location" };
+            return new List<string> { "ClientManager", "Auth", "Renderable", "Motion" };
         }
 
         public void Initialize ()
