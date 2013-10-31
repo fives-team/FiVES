@@ -88,13 +88,14 @@ FIVES.Resources = FIVES.Resources || {};
         var transformationForEntity = entity.getTransformElement();
         if(transformationForEntity)
             transformationForEntity.setAttribute("rotation", this._createOrientationForEntityGroup(entity));
-    }
+    };
 
     scm.updatePosition = function(entity) {
         var transformationForEntity = entity.getTransformElement();
         if(transformationForEntity)
             transformationForEntity.setAttribute("translation", this._createTranslationForEntityGroup(entity));
-    }
+    };
+
     scm.updateCameraView = function(entity) {
         var view = $(_xml3dElement.activeView)[0];
         var entityTransform = entity.xml3dView.transformElement;
