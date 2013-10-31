@@ -5,6 +5,7 @@ using ClientManagerPlugin;
 using KIARA;
 using FiVESMath;
 using System.Threading;
+using Events;
 
 namespace MotionPlugin
 {
@@ -26,6 +27,7 @@ namespace MotionPlugin
         {
             DefineComponents();
             RegisterClientServices();
+            RegisterEntityEvents();
         }
 
         #endregion
@@ -62,6 +64,38 @@ namespace MotionPlugin
             });
         }
 
+        /// <summary>
+        /// Registers to Events fired by entities
+        /// </summary>
+        private void RegisterEntityEvents()
+        {
+            registerToExistingEntities();
+            EntityRegistry.Instance.OnEntityAdded += new EntityRegistry.EntityAdded(handleOnNewEntity);
+        }
+
+        /// <summary>
+        /// Traverses the entity registry and registers the handler for changed attributes on each of them
+        /// </summary>
+        private void registerToExistingEntities()
+        {
+            HashSet<Guid> existingEntities = EntityRegistry.Instance.GetAllGUIDs();
+            foreach (Guid g in existingEntities)
+            {
+                Entity entity = EntityRegistry.Instance.GetEntity(g);
+                entity.OnAttributeInComponentChanged += new Entity.AttributeInComponentChanged(handleOnAttributeChanged);
+            }
+        }
+
+        /// <summary>
+        /// Handles a New Entity Event of the EntityRegistry and registers the handler for attribute changes on this entity
+        /// </summary>
+        /// <param name="sender">The Entity Registry</param>
+        /// <param name="e">The Event Parameters</param>
+        private void handleOnNewEntity(Object sender, EntityAddedOrRemovedEventArgs e)
+        {
+            Entity entity = EntityRegistry.Instance.GetEntity(e.elementId);
+            entity.OnAttributeInComponentChanged += new Entity.AttributeInComponentChanged(handleOnAttributeChanged);
+        }
         private void Update(string guid, Vector velocity, RotVelocity rotVelocity, int timestamp)
         {
             var entity = EntityRegistry.Instance.GetEntity(guid);
