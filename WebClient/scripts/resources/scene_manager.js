@@ -99,9 +99,12 @@ FIVES.Resources = FIVES.Resources || {};
     scm.updateCameraView = function(entity) {
         var view = $(_xml3dElement.activeView)[0];
         var entityTransform = entity.xml3dView.transformElement;
-        var cameraTranslation = new XML3DVec3(entityTransform.translation.x - 1,entityTransform.translation.y + 0.6, entityTransform.translation.z);
-        view.position.set(cameraTranslation);
         view.setDirection(entityTransform.rotation.rotateVec3(new XML3DVec3(1,0,0)));
+        var viewDirection = view.getDirection();
+        var cameraTranslation = entityTransform.translation.subtract(viewDirection);
+        cameraTranslation.y = 0.6;
+        view.position.set(cameraTranslation);
+
     };
 
     FIVES.Resources.SceneManager = new SceneManager();
