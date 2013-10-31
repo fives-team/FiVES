@@ -28,10 +28,11 @@ namespace AvatarPlugin
             ComponentRegistry.Instance.DefineComponent("avatar", pluginGuid, avatarLayout);
 
             ClientManager.Instance.RegisterClientService("avatar", true, new Dictionary<string, Delegate> {
+				{"getAvatarEntityGuid", (Func<string, string>)GetAvatarEntityGuid},
                 {"changeAppearance", (Action<string, string, Vector>)ChangeAppearance},
-                    {"startAvatarMotionInDirection", (Action<string, Vector>)StartAvatarMotionInDirection},
-                    {"setAvatarForwardBackwardMotion", (Action<string, float>)SetForwardBackwardMotion},
-                    {"setAvatarLeftRightMotion", (Action<string, float>)SetLeftRightMotion}
+				{"startAvatarMotionInDirection", (Action<string, Vector>)StartAvatarMotionInDirection},
+				{"setAvatarForwardBackwardMotion", (Action<string, float>)SetForwardBackwardMotion},
+				{"setAvatarLeftRightMotion", (Action<string, float>)SetLeftRightMotion}
             });
 
             ClientManager.Instance.NotifyWhenAnyClientAuthenticated((Action<Guid>)delegate(Guid sessionKey) {
@@ -63,6 +64,17 @@ namespace AvatarPlugin
             return avatarEntities[userLogin];
         }
 
+		/// <summary>
+        /// Kiara service interface function to let a connected client query the guid of the entity that was created for the avatar
+        /// </summary>
+        /// <param name="sessionKey">Session Key of the connected client</param>
+        /// <returns>The Guid of the Entity used as avatar</returns>
+        private string GetAvatarEntityGuid(string sessionKey)
+        {
+            Entity avatarEntity = GetAvatarEntityBySessionKey(Guid.Parse(sessionKey));
+            return avatarEntity.Guid.ToString();
+        }
+		
         /// <summary>
         /// Activates the avatar entity. Can also be used to update the mesh when its changed.
         /// </summary>
