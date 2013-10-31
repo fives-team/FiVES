@@ -6,7 +6,7 @@ using Location;
 
 namespace Motion
 {
-    public class MotionPlugin
+    public class MotionPlugin : IPluginInitializer
     {
         #region IPluginInitializer implementation
 
