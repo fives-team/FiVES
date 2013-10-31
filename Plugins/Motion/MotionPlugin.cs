@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using FIVES;
 using KIARA;
-using Location;
+using FiVESMath;
 
 namespace Motion
 {

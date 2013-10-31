@@ -2,8 +2,9 @@ using System;
 using KIARA;
 using System.Collections.Generic;
 using FIVES;
-using Location;
 using Renderable;
+using FiVESMath;
+
 
 namespace ClientManager {
 
