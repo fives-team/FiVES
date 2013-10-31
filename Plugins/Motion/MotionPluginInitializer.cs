@@ -130,12 +130,32 @@ namespace MotionPlugin
         private void UpdateMotion(Entity updatedEntity) {
             while (IsMoving(updatedEntity))
             {
-                updatedEntity["position"]["x"] = (float)updatedEntity["position"]["x"] + (float)updatedEntity["velocity"]["x"];
-                updatedEntity["position"]["y"] = (float)updatedEntity["position"]["y"] + (float)updatedEntity["velocity"]["y"];
-                updatedEntity["position"]["z"] = (float)updatedEntity["position"]["z"] + (float)updatedEntity["velocity"]["z"];
+                Vector localVelocity = GetLocalVelocity(updatedEntity);
+                updatedEntity["position"]["x"] = (float)updatedEntity["position"]["x"] + localVelocity.x;
+                updatedEntity["position"]["y"] = (float)updatedEntity["position"]["y"] + localVelocity.y;
+                updatedEntity["position"]["z"] = (float)updatedEntity["position"]["z"] + localVelocity.z;
                 Thread.Sleep(30);
             }
             ongoingMotion.Remove(updatedEntity.Guid);
+        }
+
+        private Vector GetLocalVelocity(Entity updatedEntity)
+        {
+            Vector velocity = new Vector();
+            velocity.x = (float)updatedEntity["velocity"]["x"];
+            velocity.y = (float)updatedEntity["velocity"]["y"];
+            velocity.z = (float)updatedEntity["velocity"]["z"];
+
+            Quat entityRotation = new Quat();
+            entityRotation.x = (float)updatedEntity["orientation"]["x"];
+            entityRotation.y = (float)updatedEntity["orientation"]["y"];
+            entityRotation.z = (float)updatedEntity["orientation"]["z"];
+            entityRotation.w = (float)updatedEntity["orientation"]["w"];
+
+            Vector axis = FiVESMath.Math.AxisFromQuaternion(entityRotation);
+            float angle = FiVESMath.Math.AngleFromQuaternion(entityRotation);
+
+            return FiVESMath.Math.RotateVectorByAxisAngle(velocity, axis, angle);
         }
 
         /// <summary>
