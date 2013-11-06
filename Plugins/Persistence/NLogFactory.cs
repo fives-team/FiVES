@@ -4,7 +4,7 @@ using System.Configuration;
 using NLog;
 using NHibernate;
 
-namespace Persistence
+namespace PersistencePlugin
 {
     public class NLogFactory : ILoggerFactory
     {

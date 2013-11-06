@@ -2,12 +2,12 @@ using NUnit.Framework;
 using System;
 using FIVES;
 
-namespace Renderable
+namespace RenderablePlugin
 {
     [TestFixture()]
     public class RenderablePluginTest
     {
-        RenderablePlugin plugin = new RenderablePlugin();
+        RenderablePluginInitializer plugin = new RenderablePluginInitializer();
 
         public RenderablePluginTest()
         {

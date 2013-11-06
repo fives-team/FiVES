@@ -2,7 +2,7 @@ using System;
 using SuperWebSocket;
 using System.Collections.Generic;
 using System.Diagnostics;
-using KIARA;
+using KIARAPlugin;
 using SuperSocket.SocketBase;
 using SuperSocket.SocketBase.Protocol;
 using SuperSocket.SocketBase.Command;

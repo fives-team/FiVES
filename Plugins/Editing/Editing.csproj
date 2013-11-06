@@ -7,7 +7,7 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{8FC5269E-F3BD-4603-9E41-6CB68EA4F5BA}</ProjectGuid>
     <OutputType>Library</OutputType>
-    <RootNamespace>Editing</RootNamespace>
+    <RootNamespace>EditingPlugin</RootNamespace>
     <AssemblyName>Editing</AssemblyName>
     <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\..\</SolutionDir>
     <RestorePackages>true</RestorePackages>
@@ -58,8 +58,12 @@
       <Project>{A2D1D8E5-7C5C-4EA3-95C7-D8D97AB0B74E}</Project>
       <Name>Math</Name>
     </ProjectReference>
+    <ProjectReference Include="..\ClientManager\ClientManager.csproj">
+      <Project>{e1955ff2-6109-4c71-9f13-486a48de6c17}</Project>
+      <Name>ClientManager</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Renderable\Renderable.csproj">
-      <Project>{74073FC3-BC58-45A8-9897-4A718F903916}</Project>
+      <Project>{74073fc3-bc58-45a8-9897-4a718f903916}</Project>
       <Name>Renderable</Name>
     </ProjectReference>
   </ItemGroup>

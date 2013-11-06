@@ -2,12 +2,12 @@ using System;
 using NUnit.Framework;
 using FIVES;
 
-namespace Motion
+namespace MotionPlugin
 {
     [TestFixture()]
     public class MotionPluginTest
     {
-        MotionPlugin plugin = new MotionPlugin();
+        MotionPluginInitializer plugin = new MotionPluginInitializer();
 
         public MotionPluginTest()
         {

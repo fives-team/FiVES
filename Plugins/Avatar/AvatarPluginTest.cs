@@ -1,12 +1,12 @@
 using NUnit.Framework;
 using System;
 
-namespace Avatar
+namespace AvatarPlugin
 {
     [TestFixture()]
     public class AvatarPluginTest
     {
-        AvatarPlugin plugin = new AvatarPlugin();
+        AvatarPluginInitializer plugin = new AvatarPluginInitializer();
 
         [Test()]
         public void ShouldReturnCorrectName()

@@ -1,6 +1,6 @@
 using System;
 
-namespace Renderable
+namespace RenderablePlugin
 {
     public struct MeshResource
     {

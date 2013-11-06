@@ -1,12 +1,12 @@
 using NUnit.Framework;
 using System;
 
-namespace ClientManager
+namespace ClientManagerPlugin
 {
     [TestFixture()]
     public class ClientManagerPluginTest
     {
-        ClientManagerPlugin plugin = new ClientManagerPlugin();
+        ClientManagerPluginInitializer plugin = new ClientManagerPluginInitializer();
 
         [Test()]
         public void ShouldReturnCorrectName()
@@ -17,9 +17,7 @@ namespace ClientManager
         [Test()]
         public void ShouldReturnCorrectDeps()
         {
-            Assert.AreEqual(plugin.GetDependencies().Count, 3);
-            Assert.Contains("Location", plugin.GetDependencies());
-            Assert.Contains("Renderable", plugin.GetDependencies());
+            Assert.AreEqual(plugin.GetDependencies().Count, 1);
             Assert.Contains("Auth", plugin.GetDependencies());
         }
 

@@ -1,12 +1,12 @@
 using System;
 using System.Collections.Generic;
 using FIVES;
-using KIARA;
+using ClientManagerPlugin;
 using Math;
 
-namespace Motion
+namespace MotionPlugin
 {
-    public class MotionPlugin : IPluginInitializer
+    public class MotionPluginInitializer : IPluginInitializer
     {
         #region IPluginInitializer implementation
 
@@ -50,13 +50,9 @@ namespace Motion
         void RegisterClientServices()
         {
             PluginManager.Instance.AddPluginLoadedHandler("ClientManager", delegate {
-                var interPluginContext = ContextFactory.GetContext("inter-plugin");
-                var clientManager = ServiceFactory.DiscoverByName("clientmanager", interPluginContext);
-                clientManager.OnConnected += delegate(Connection connection) {
-                    connection["registerClientService"]("motion", true, new Dictionary<string, Delegate> {
-                        {"update", (Action<string, Vector, RotVelocity, int>) Update},
-                    });
-                };
+                ClientManager.Instance.RegisterClientService("motion", true, new Dictionary<string, Delegate> {
+                    {"update", (Action<string, Vector, RotVelocity, int>) Update},
+                });
             });
         }
 

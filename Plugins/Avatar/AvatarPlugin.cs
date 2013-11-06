@@ -1,12 +1,13 @@
 using System;
 using FIVES;
 using System.Collections.Generic;
-using KIARA;
+using AuthPlugin;
 using Math;
+using ClientManagerPlugin;
 
-namespace Avatar
+namespace AvatarPlugin
 {
-    public class AvatarPlugin : IPluginInitializer
+    public class AvatarPluginInitializer : IPluginInitializer
     {
         #region IPluginInitializer implementation
 
@@ -26,21 +27,14 @@ namespace Avatar
             avatarLayout.AddAttribute<string>("userLogin", null);
             ComponentRegistry.Instance.DefineComponent("avatar", pluginGuid, avatarLayout);
 
-            var authService = ServiceFactory.DiscoverByName("auth", ContextFactory.GetContext("inter-plugin"));
-            authService.OnConnected += (conn) => authPlugin = conn;
+            ClientManager.Instance.RegisterClientService("avatar", true, new Dictionary<string, Delegate> {
+                {"changeAppearance", (Action<string, string, Vector>)ChangeAppearance},
+            });
 
-            var clientManager =
-                ServiceFactory.DiscoverByName("clientmanager", ContextFactory.GetContext("inter-plugin"));
-            clientManager.OnConnected += delegate(Connection connection) {
-                connection["registerClientService"]("avatar", true, new Dictionary<string, Delegate> {
-                    {"changeAppearance", (Action<string, string, Vector>)ChangeAppearance},
-                });
-
-                connection["notifyWhenAnyClientAuthenticated"]((Action<Guid>)delegate(Guid sessionKey) {
-                    Activate(sessionKey);
-                    connection["notifyWhenClientDisconnected"](sessionKey, (Action<Guid>)Deactivate);
-                });
-            };
+            ClientManager.Instance.NotifyWhenAnyClientAuthenticated((Action<Guid>)delegate(Guid sessionKey) {
+                Activate(sessionKey);
+                ClientManager.Instance.NotifyWhenClientDisconnected(sessionKey, (Action<Guid>)Deactivate);
+            });
 
             foreach (var guid in EntityRegistry.Instance.GetAllGUIDs()) {
                 var entity = EntityRegistry.Instance.GetEntity(guid);
@@ -53,7 +47,7 @@ namespace Avatar
 
         Entity GetAvatarEntityBySessionKey(Guid sessionKey)
         {
-            var userLogin = authPlugin["getLoginName"](sessionKey).Wait<string>();
+            var userLogin = Authentication.Instance.GetLoginName(sessionKey);
             if (!avatarEntities.ContainsKey(userLogin)) {
                 Entity newAvatar = new Entity();
                 newAvatar["avatar"]["userLogin"] = userLogin;
@@ -107,7 +101,6 @@ namespace Avatar
         // string defaultAvatarMesh = "resources/models/defaultAvatar/avatar.xml3d";
         string defaultAvatarMesh = "resources/models/firetruck/xml3d/firetruck.xml";
         Guid pluginGuid = new Guid("54b1215e-22cc-44ed-bef4-c92e4fb4edb5");
-        Connection authPlugin;
     }
 }
 

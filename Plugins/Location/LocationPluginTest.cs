@@ -2,12 +2,12 @@ using System;
 using NUnit.Framework;
 using FIVES;
 
-namespace Location
+namespace LocationPlugin
 {
     [TestFixture()]
     public class LocationPluginTest
     {
-        LocationPlugin plugin = new LocationPlugin();
+        LocationPluginInitializer plugin = new LocationPluginInitializer();
 
         public LocationPluginTest()
         {

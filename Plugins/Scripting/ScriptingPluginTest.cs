@@ -1,12 +1,12 @@
 using System;
 using NUnit.Framework;
 
-namespace Scripting
+namespace ScriptingPlugin
 {
     [TestFixture()]
     public class ScriptingPluginTest
     {
-        ScriptingPlugin plugin = new ScriptingPlugin();
+        ScriptingPluginInitializer plugin = new ScriptingPluginInitializer();
 
         [Test()]
         public void ShouldReturnCorrectName()

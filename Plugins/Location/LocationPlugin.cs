@@ -1,15 +1,15 @@
 using System;
 using FIVES;
 using System.Collections.Generic;
-using KIARA;
+using ClientManagerPlugin;
 using Math;
 
-namespace Location
+namespace LocationPlugin
 {
     /// <summary>
     /// Plugin that registers two components - position and orientation. Does not provide any associated functionality.
     /// </summary>
-    public class LocationPlugin : IPluginInitializer
+    public class LocationPluginInitializer : IPluginInitializer
     {
         #region IPluginInitializer implementation
 
@@ -56,14 +56,10 @@ namespace Location
         void RegisterClientServices()
         {
             PluginManager.Instance.AddPluginLoadedHandler("ClientManager", delegate {
-                var interPluginContext = ContextFactory.GetContext("inter-plugin");
-                var clientManager = ServiceFactory.DiscoverByName("clientmanager", interPluginContext);
-                clientManager.OnConnected += delegate(Connection connection) {
-                    connection["registerClientService"]("location", true, new Dictionary<string, Delegate> {
-                        {"updatePosition", (Action<string, string, Vector, int>) UpdatePosition},
-                        {"updateOrientation", (Action<string, string, Quat, int>) UpdateOrientation}
-                    });
-                };
+                ClientManager.Instance.RegisterClientService("location", true, new Dictionary<string, Delegate> {
+                    {"updatePosition", (Action<string, string, Vector, int>) UpdatePosition},
+                    {"updateOrientation", (Action<string, string, Quat, int>) UpdateOrientation}
+                });
             });
         }
 

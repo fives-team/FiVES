@@ -1,11 +1,11 @@
 using System;
 using FIVES;
 using System.Collections.Generic;
-using KIARA;
+using ClientManagerPlugin;
 
-namespace Renderable
+namespace RenderablePlugin
 {
-    public class RenderablePlugin : IPluginInitializer
+    public class RenderablePluginInitializer : IPluginInitializer
     {
         #region IPluginInitializer implementation
 
@@ -22,7 +22,8 @@ namespace Renderable
         public void Initialize()
         {
             DefineComponents();
-            RegisterClientServices();
+
+            PluginManager.Instance.AddPluginLoadedHandler("ClientManager", (Action)RegisterClientServices);
         }
 
         private void DefineComponents()
@@ -42,14 +43,8 @@ namespace Renderable
 
         void RegisterClientServices()
         {
-            PluginManager.Instance.AddPluginLoadedHandler("ClientManager", delegate {
-                var interPluginContext = ContextFactory.GetContext("inter-plugin");
-                var clientManager = ServiceFactory.DiscoverByName("clientmanager", interPluginContext);
-                clientManager.OnConnected += delegate(Connection connection) {
-                    connection["registerClientService"]("mesh", true, new Dictionary<string, Delegate> {
-                        {"notifyAboutVisibilityUpdates", (Action<string, Action<bool>>) NotifyAboutVisibilityUpdates},
-                    });
-                };
+            ClientManager.Instance.RegisterClientService("mesh", true, new Dictionary<string, Delegate> {
+                {"notifyAboutVisibilityUpdates", (Action<string, Action<bool>>) NotifyAboutVisibilityUpdates},
             });
         }
 

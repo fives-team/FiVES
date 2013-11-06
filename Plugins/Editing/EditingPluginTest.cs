@@ -2,12 +2,12 @@
 using NUnit.Framework;
 using System;
 
-namespace Editing
+namespace EditingNamespace
 {
     [TestFixture()]
     public class EditingPluginTest
     {
-        EditingPlugin plugin = new EditingPlugin();
+        EditingPluginInitializer plugin = new EditingPluginInitializer();
 
         [Test()]
         public void ShouldReturnCorrectName()
@@ -19,7 +19,7 @@ namespace Editing
         public void ShouldReturnCorrectDeps()
         {
             Assert.AreEqual(plugin.GetDependencies().Count, 1);
-            Assert.Contains("Location", plugin.GetDependencies());
+            Assert.Contains("Renderable", plugin.GetDependencies());
         }
     }
 }

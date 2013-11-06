@@ -7,7 +7,7 @@ using System.Diagnostics;
 using System.Collections.Generic;
 using System.Threading;
 
-namespace Persistence
+namespace PersistencePlugin
 {
     [TestFixture()]
     public class PersistenceTest

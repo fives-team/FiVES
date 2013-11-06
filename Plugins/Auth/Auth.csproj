@@ -7,7 +7,7 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{CCDA8021-971D-4703-A4BD-325248EF9499}</ProjectGuid>
     <OutputType>Library</OutputType>
-    <RootNamespace>Auth</RootNamespace>
+    <RootNamespace>AuthPlugin</RootNamespace>
     <AssemblyName>Auth</AssemblyName>
     <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\..\</SolutionDir>
     <RestorePackages>true</RestorePackages>
@@ -43,6 +43,8 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Authentication.cs" />
+    <Compile Include="AuthenticationTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="AuthPlugin.cs" />
     <Compile Include="AuthPluginTest.cs" />

@@ -7,7 +7,7 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{6AD151A5-A1DA-4351-BB1A-C854AFF436D6}</ProjectGuid>
     <OutputType>Library</OutputType>
-    <RootNamespace>Persistence</RootNamespace>
+    <RootNamespace>PersistencePlugin</RootNamespace>
     <AssemblyName>Persistence</AssemblyName>
     <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\..\</SolutionDir>
     <RestorePackages>true</RestorePackages>

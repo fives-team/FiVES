@@ -1,17 +1,17 @@
 using System;
 using FIVES;
 using System.Collections.Generic;
-using KIARA;
 using Events;
-using Renderable;
+using RenderablePlugin;
 using Math;
+using ClientManagerPlugin;
 
-namespace Editing
+namespace EditingNamespace
 {
     /// <summary>
     /// Plugin that allows changing the world by the users.
     /// </summary>
-    public class EditingPlugin : IPluginInitializer
+    public class EditingPluginInitializer : IPluginInitializer
     {
         #region IPluginInitializer implementation
 
@@ -22,7 +22,7 @@ namespace Editing
 
         public List<string> GetDependencies()
         {
-            return new List<string>() { "Location" };
+            return new List<string>() { "Renderable" };
         }
 
         public void Initialize()
@@ -74,13 +74,10 @@ namespace Editing
         /// Registers editing APIs with the ClientManager plugin.
         /// </summary>
         private void RegisterEditingAPI() {
-            var clientManager = ServiceFactory.DiscoverByName("clientmanager", ContextFactory.GetContext("inter-plugin"));
-            clientManager.OnConnected += delegate(Connection connection) {
-                connection["registerClientService"]("editing", true, new Dictionary<string, Delegate> {
-                    {"createEntityAt", (Func<Vector, string>)CreateEntityAt},
-                    {"createMeshEntity",(Func<Vector, Quat, Vector,MeshResource, string>)CreateMeshEntity}
-                });
-            };
+            ClientManager.Instance.RegisterClientService("editing", true, new Dictionary<string, Delegate> {
+                {"createEntityAt", (Func<Vector, string>)CreateEntityAt},
+                {"createMeshEntity",(Func<Vector, Quat, Vector, MeshResource, string>)CreateMeshEntity}
+            });
         }
     }
 }

@@ -7,7 +7,7 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{B9853261-AFD6-48BE-928E-1D2E04C287EC}</ProjectGuid>
     <OutputType>Library</OutputType>
-    <RootNamespace>Scripting</RootNamespace>
+    <RootNamespace>ScriptingPlugin</RootNamespace>
     <AssemblyName>Scripting</AssemblyName>
     <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\..\</SolutionDir>
     <RestorePackages>true</RestorePackages>
@@ -50,6 +50,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Scripting.cs" />
     <Compile Include="ScriptingPlugin.cs" />
     <Compile Include="IJSContext.cs" />
     <Compile Include="V8NetContext.cs" />

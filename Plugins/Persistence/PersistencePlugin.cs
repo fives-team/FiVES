@@ -13,7 +13,7 @@ using System.Runtime.Serialization.Formatters.Binary;
 using System.IO;
 
 
-namespace Persistence
+namespace PersistencePlugin
 {
     public class PersistencePlugin: IPluginInitializer
     {
