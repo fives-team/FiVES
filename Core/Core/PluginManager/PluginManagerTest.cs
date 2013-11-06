@@ -80,6 +80,12 @@ namespace FIVES
             Assert.IsTrue(pm.IsPluginLoaded("ValidPlugin1"));
             Assert.IsTrue(pm.IsPluginLoaded("ValidPlugin2"));
         }
+
+        [Test()]
+        public void ShouldCorrectlyLoadTwoPluginsWhoseDepsWereResolvedAtTheSameTime()
+        {
+            // TODO
+        }
     }
 }
 

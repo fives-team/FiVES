@@ -138,23 +138,30 @@ namespace FIVES
                 info.remainingDeps.Remove(e.pluginName);
 
             // Find plugins that have no other dependencies.
-            List<string> pluginsWithNoDeps = new List<string>();
+            Dictionary<string, LoadedPluginInfo> pluginsWithNoDeps = new Dictionary<string, LoadedPluginInfo>();
             foreach (var plugin in DeferredPlugins) {
                 if (plugin.Value.remainingDeps.Count == 0)
-                    pluginsWithNoDeps.Add(plugin.Key);
+                    pluginsWithNoDeps.Add(plugin.Key, plugin.Value);
             }
 
+            // Remove selected plugins from the deferred list.
+            foreach (var entry in pluginsWithNoDeps)
+                DeferredPlugins.Remove(entry.Key);
+
             // Initialize these plugins and move them to loadedPlugins dictionary.
-            foreach (var name in pluginsWithNoDeps) {
+            foreach (var entry in pluginsWithNoDeps) {
+                string name = entry.Key;
+                LoadedPluginInfo pluginInfo = entry.Value;
+
                 try {
-                    DeferredPlugins[name].initializer.Initialize();
+                    pluginInfo.initializer.Initialize();
                 } catch (Exception ex) {
                     Logger.WarnException("Exception occured during initialization of " + name + " plugin.", ex);
                     DeferredPlugins.Remove(name);
                     return;
                 }
-                LoadedPlugins[name] = DeferredPlugins[name];
-                DeferredPlugins.Remove(name);
+
+                LoadedPlugins[name] = pluginInfo;
                 if (OnAnyPluginInitialized != null)
                     OnAnyPluginInitialized(this, new PluginInitializedEventArgs(name));
             }
