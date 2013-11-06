@@ -78,8 +78,9 @@ namespace KIARA
 
                 // Find protocol factory (class implementing IProtocolFactory).
                 List<Type> types = new List<Type>(assembly.GetTypes());
-                Type protocolFactoryType = types.Find(t => typeof(IProtocolFactory).IsAssignableFrom(t));
-                if (protocolFactoryType == null) {
+                Type interfaceType = typeof(IProtocolFactory);
+                Type protocolFactoryType = types.Find(t => interfaceType.IsAssignableFrom(t));
+                if (protocolFactoryType == null || protocolFactoryType.Equals(interfaceType)) {
                     Logger.Info("Assembly in file " + filename +
                                 " doesn't contain any class implementing IProtocolFactory.");
                     return;
