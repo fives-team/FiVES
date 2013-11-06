@@ -5,11 +5,11 @@ using FIVES;
 namespace RenderablePlugin
 {
     [TestFixture()]
-    public class RenderablePluginTest
+    public class RenderablePluginInitializerTest
     {
         RenderablePluginInitializer plugin = new RenderablePluginInitializer();
 
-        public RenderablePluginTest()
+        public RenderablePluginInitializerTest()
         {
             plugin.Initialize();
         }

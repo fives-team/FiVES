@@ -5,11 +5,11 @@ using FIVES;
 namespace MotionPlugin
 {
     [TestFixture()]
-    public class MotionPluginTest
+    public class MotionPluginInitializerTest
     {
         MotionPluginInitializer plugin = new MotionPluginInitializer();
 
-        public MotionPluginTest()
+        public MotionPluginInitializerTest()
         {
             plugin.Initialize();
         }

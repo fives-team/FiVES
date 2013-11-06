@@ -4,7 +4,7 @@ using System;
 namespace ClientManagerPlugin
 {
     [TestFixture()]
-    public class ClientManagerPluginTest
+    public class ClientManagerPluginInitializerTest
     {
         ClientManagerPluginInitializer plugin = new ClientManagerPluginInitializer();
 

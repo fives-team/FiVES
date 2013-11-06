@@ -45,8 +45,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="EditingPlugin.cs" />
-    <Compile Include="EditingPluginTest.cs" />
+    <Compile Include="EditingPluginInitializer.cs" />
+    <Compile Include="EditingPluginInitializerTest.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

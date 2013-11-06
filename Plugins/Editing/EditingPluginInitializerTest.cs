@@ -5,7 +5,7 @@ using System;
 namespace EditingNamespace
 {
     [TestFixture()]
-    public class EditingPluginTest
+    public class EditingPluginInitializerTest
     {
         EditingPluginInitializer plugin = new EditingPluginInitializer();
 

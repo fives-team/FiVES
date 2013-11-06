@@ -5,11 +5,11 @@ using FIVES;
 namespace LocationPlugin
 {
     [TestFixture()]
-    public class LocationPluginTest
+    public class LocationPluginInitializerTest
     {
         LocationPluginInitializer plugin = new LocationPluginInitializer();
 
-        public LocationPluginTest()
+        public LocationPluginInitializerTest()
         {
             plugin.Initialize();
         }

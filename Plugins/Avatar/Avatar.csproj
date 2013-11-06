@@ -44,8 +44,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="AvatarPlugin.cs" />
-    <Compile Include="AvatarPluginTest.cs" />
+    <Compile Include="AvatarPluginInitializer.cs" />
+    <Compile Include="AvatarPluginInitializerTest.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

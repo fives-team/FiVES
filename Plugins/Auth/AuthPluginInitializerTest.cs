@@ -1,17 +1,17 @@
-using System;
 using NUnit.Framework;
+using System;
 
-namespace ScriptingPlugin
+namespace AuthPlugin
 {
     [TestFixture()]
-    public class ScriptingPluginTest
+    public class AuthPluginInitializerTest
     {
-        ScriptingPluginInitializer plugin = new ScriptingPluginInitializer();
+        AuthPluginInitializer plugin = new AuthPluginInitializer();
 
         [Test()]
         public void ShouldReturnCorrectName()
         {
-            Assert.AreEqual("Scripting", plugin.GetName());
+            Assert.AreEqual("Auth", plugin.GetName());
         }
 
         [Test()]
