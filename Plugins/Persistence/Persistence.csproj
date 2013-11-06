@@ -85,6 +85,6 @@
     <EmbeddedResource Include="Mappings\ComponentLayout.hbm.xml" />
   </ItemGroup>
   <PropertyGroup>
-    <PostBuildEvent>xcopy /y "$(TargetDir)." "$(SolutionDir)BuiltLibs\" &amp;&amp; xcopy /y "$(ProjectDir)hibernate.cfg.xml" "$(SolutionDir)\FIVES\bin\$(ConfigurationName)\" || echo "Ignoring error"</PostBuildEvent>
+    <PostBuildEvent>xcopy /y "$(TargetDir)." "$(ProjectDir)..\..\BuiltLibs\" &amp;&amp; xcopy /y "$(ProjectDir)hibernate.cfg.xml" "$(ProjectDir)..\..\FIVES\bin\$(ConfigurationName)\" || echo "Ignoring error"</PostBuildEvent>
   </PropertyGroup>
 </Project>

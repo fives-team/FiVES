@@ -69,6 +69,6 @@
     <None Include="packages.config" />
   </ItemGroup>
   <PropertyGroup>
-    <PostBuildEvent>xcopy /y "$(TargetDir)." "$(SolutionDir)BuiltLibs\" || echo "Ignoring error"</PostBuildEvent>
+    <PostBuildEvent>xcopy /y "$(TargetDir)." "$(ProjectDir)..\..\BuiltLibs\" || echo "Ignoring error"</PostBuildEvent>
   </PropertyGroup>
 </Project>
