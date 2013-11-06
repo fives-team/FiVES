@@ -155,7 +155,7 @@ namespace MotionPlugin
             Vector axis = FiVESMath.Math.AxisFromQuaternion(entityRotation);
             float angle = FiVESMath.Math.AngleFromQuaternion(entityRotation);
 
-            return FiVESMath.Math.RotateVectorByAxisAngle(velocity, axis, angle);
+            return FiVESMath.Math.RotateVectorByAxisAngle(velocity, axis, -angle) /* negative angle because we apply the inverse transform */;
         }
 
         /// <summary>
