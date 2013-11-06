@@ -3,7 +3,7 @@ using System;
 using Moq;
 using System.Collections.Generic;
 using Newtonsoft.Json.Linq;
-using KIARA;
+using KIARAPlugin;
 
 namespace WebSocketJSON
 {

@@ -1,5 +1,5 @@
 using System;
-using KIARA;
+using KIARAPlugin;
 using Newtonsoft.Json.Linq;
 
 namespace WebSocketJSON

@@ -7,7 +7,7 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{74073FC3-BC58-45A8-9897-4A718F903916}</ProjectGuid>
     <OutputType>Library</OutputType>
-    <RootNamespace>Renderable</RootNamespace>
+    <RootNamespace>RenderablePlugin</RootNamespace>
     <AssemblyName>Renderable</AssemblyName>
     <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\..\</SolutionDir>
     <RestorePackages>true</RestorePackages>
@@ -44,8 +44,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="RenderablePlugin.cs" />
-    <Compile Include="RenderablePluginTest.cs" />
+    <Compile Include="RenderablePluginInitializer.cs" />
+    <Compile Include="RenderablePluginInitializerTest.cs" />
     <Compile Include="MeshResource.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
@@ -56,6 +56,10 @@
     <ProjectReference Include="..\..\Core\Core\Core.csproj">
       <Project>{627CCFC6-4071-4119-92C6-8BC96E4310C8}</Project>
       <Name>Core</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\ClientManager\ClientManager.csproj">
+      <Project>{e1955ff2-6109-4c71-9f13-486a48de6c17}</Project>
+      <Name>ClientManager</Name>
     </ProjectReference>
   </ItemGroup>
   <PropertyGroup>

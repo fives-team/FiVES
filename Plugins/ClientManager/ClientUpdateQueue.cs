@@ -4,7 +4,7 @@ using FIVES;
 using Events;
 using System.Threading;
 
-namespace ClientManager
+namespace ClientManagerPlugin
 {
     /// <summary>
     /// Implements an Update queue that queues attribute changes of entities and sends those to clients to synchronize with the server state

@@ -78,9 +78,9 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\Core\Core\Core.csproj">
-      <Project>{627CCFC6-4071-4119-92C6-8BC96E4310C8}</Project>
-      <Name>Core</Name>
+    <ProjectReference Include="..\..\Plugins\KIARA\KIARA.csproj">
+      <Project>{eefddd48-1795-4d62-a255-29167b0a3bc3}</Project>
+      <Name>KIARA</Name>
     </ProjectReference>
   </ItemGroup>
   <PropertyGroup>

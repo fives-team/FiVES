@@ -1,7 +1,7 @@
 using NUnit.Framework;
 using System;
 using Moq;
-using KIARA;
+using KIARAPlugin;
 using Newtonsoft.Json;
 
 namespace WebSocketJSON

@@ -7,7 +7,7 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{46BD08A8-E01D-4181-805C-847D361297A8}</ProjectGuid>
     <OutputType>Library</OutputType>
-    <RootNamespace>Motion</RootNamespace>
+    <RootNamespace>MotionPlugin</RootNamespace>
     <AssemblyName>Motion</AssemblyName>
     <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\..\</SolutionDir>
     <RestorePackages>true</RestorePackages>
@@ -44,8 +44,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="MotionPlugin.cs" />
-    <Compile Include="MotionPluginTest.cs" />
+    <Compile Include="MotionPluginInitializer.cs" />
+    <Compile Include="MotionPluginInitializerTest.cs" />
     <Compile Include="RotVelocity.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
@@ -60,6 +60,10 @@
     <ProjectReference Include="..\..\Core\Math\Math.csproj">
       <Project>{A2D1D8E5-7C5C-4EA3-95C7-D8D97AB0B74E}</Project>
       <Name>Math</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\ClientManager\ClientManager.csproj">
+      <Project>{e1955ff2-6109-4c71-9f13-486a48de6c17}</Project>
+      <Name>ClientManager</Name>
     </ProjectReference>
   </ItemGroup>
   <PropertyGroup>

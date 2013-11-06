@@ -1,7 +1,7 @@
 using System;
 using Math;
 
-namespace Motion
+namespace MotionPlugin
 {
     public struct RotVelocity {
         public Vector axis;

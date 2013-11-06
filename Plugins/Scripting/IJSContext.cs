@@ -1,6 +1,6 @@
 using System;
 
-namespace Scripting
+namespace ScriptingPlugin
 {
     /// <summary>
     /// Interface to be implemented by JavaScript context when passed to other plugins.

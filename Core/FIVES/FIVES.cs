@@ -14,20 +14,12 @@ namespace FIVES
         {
             // Load configuration options.
             string pluginDir = null;
-            string protocolDir = null;
             ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
             try {
                 pluginDir = ConfigurationManager.AppSettings["PluginDir"].ToString();
-                protocolDir = ConfigurationManager.AppSettings["ProtocolDir"].ToString();
             } catch (ConfigurationErrorsException) {
                 logger.Error("Configuration is missing or corrupt.");
             }
-
-            logger.Info("Loading protocols");
-            if (protocolDir != null && Directory.Exists(protocolDir))
-                KIARA.ProtocolRegistry.Instance.LoadProtocolsFrom(protocolDir);
-            else
-                logger.Error("Protocol dir is not specified or does not exist");
 
             logger.Info("Loading plugins");
             if (pluginDir != null && Directory.Exists(pluginDir)) {

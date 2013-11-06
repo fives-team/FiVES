@@ -2,7 +2,7 @@ using System;
 using FIVES;
 using System.Collections.Generic;
 
-namespace Persistence
+namespace PersistencePlugin
 {
     internal class ComponentOwnerLayout
     {

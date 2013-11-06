@@ -1,7 +1,7 @@
 using System;
 using V8.Net;
 
-namespace Scripting
+namespace ScriptingPlugin
 {
     /// <summary>
     /// Implementation of the <see cref="IJSContext"/> for <see cref="V8.Net.V8Engine"/>
@@ -9,7 +9,7 @@ namespace Scripting
     public class V8NetContext : IJSContext
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="Scripting.V8NetContext"/> class.
+        /// Initializes a new instance of the <see cref="ScriptingPluginInitializer.V8NetContext"/> class.
         /// </summary>
         /// <param name="aEngine">Associated V8Engine.</param>
         public V8NetContext(V8Engine aEngine)
