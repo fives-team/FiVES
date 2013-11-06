@@ -67,6 +67,6 @@
     </ProjectReference>
   </ItemGroup>
   <PropertyGroup>
-    <PostBuildEvent>xcopy /y "$(TargetDir)." "$(ProjectDir)..\..\BuiltLibs\" &amp;&amp; xcopy /y /s "$(ProjectDir)..\..\ThirdParty\V8.NET\Net40\Release" "$(ProjectDir)..\..\FIVES\bin\$(ConfigurationName)\" || echo "Ignoring error"</PostBuildEvent>
+    <PostBuildEvent>xcopy /y "$(TargetDir)." "$(ProjectDir)..\..\BuiltLibs\" &amp;&amp; xcopy /y /s "$(ProjectDir)..\..\ThirdParty\V8.NET\Net40\Release" "$(ProjectDir)..\..\Core\FIVES\bin\$(ConfigurationName)\" || echo "Ignoring error"</PostBuildEvent>
   </PropertyGroup>
 </Project>
