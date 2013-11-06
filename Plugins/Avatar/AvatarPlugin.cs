@@ -2,7 +2,7 @@ using System;
 using FIVES;
 using System.Collections.Generic;
 using KIARA;
-using FiVESMath;
+using Math;
 
 namespace Avatar
 {

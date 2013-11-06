@@ -1,5 +1,5 @@
 using System;
-using FiVESMath;
+using Math;
 
 namespace Motion
 {

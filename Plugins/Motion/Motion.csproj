@@ -62,17 +62,17 @@
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
-    <ProjectReference Include="..\..\Core\Core.csproj">
-      <Project>{627CCFC6-4071-4119-92C6-8BC96E4310C8}</Project>
-      <Name>Core</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\FiVESMath\FiVESMath.csproj">
-      <Project>{A2D1D8E5-7C5C-4EA3-95C7-D8D97AB0B74E}</Project>
-      <Name>FiVESMath</Name>
-    </ProjectReference>
+    <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="packages.config" />
+    <ProjectReference Include="..\..\Core\Core\Core.csproj">
+      <Project>{627ccfc6-4071-4119-92c6-8bc96e4310c8}</Project>
+      <Name>Core %28Core\Core%29</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Core\Math\Math.csproj">
+      <Project>{a2d1d8e5-7c5c-4ea3-95c7-d8d97ab0b74e}</Project>
+      <Name>Math</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(SolutionDir)\.nuget\nuget.targets" />
   <PropertyGroup>

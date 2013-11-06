@@ -3,7 +3,7 @@ using KIARA;
 using System.Collections.Generic;
 using FIVES;
 using Renderable;
-using FiVESMath;
+using Math;
 
 
 namespace ClientManager {

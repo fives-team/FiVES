@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using KIARA;
 using Events;
 using Renderable;
-using FiVESMath;
+using Math;
 
 namespace Editing
 {
