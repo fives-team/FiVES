@@ -57,13 +57,6 @@ namespace ClientManagerPlugin
 
         #region Client interface
 
-        internal class EntityInfo
-        {
-            public string guid;
-            public Dictionary<string, Dictionary<string, object>> components =
-                new Dictionary<string,Dictionary<string,object>>();
-        }
-
         Dictionary<string, object> ConstructEntityInfo(Guid elementId)
         {
             var entity = EntityRegistry.Instance.GetEntity(elementId);
