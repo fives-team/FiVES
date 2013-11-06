@@ -85,6 +85,7 @@
     <EmbeddedResource Include="Mappings\ComponentLayout.hbm.xml" />
   </ItemGroup>
   <PropertyGroup>
-    <PostBuildEvent>xcopy /y "$(TargetDir)." "$(ProjectDir)..\..\BuiltLibs\" &amp;&amp; xcopy /y "$(ProjectDir)hibernate.cfg.xml" "$(ProjectDir)..\..\Core\FIVES\bin\$(ConfigurationName)\" || echo "Ignoring error"</PostBuildEvent>
+    <PostBuildEvent Condition=" '$(OS)' == 'Windows_NT' ">xcopy /y "$(TargetDir)." "$(ProjectDir)..\..\BuiltLibs\" &amp;&amp; xcopy /y "$(ProjectDir)hibernate.cfg.xml" "$(ProjectDir)..\..\Core\FIVES\bin\$(ConfigurationName)\"</PostBuildEvent>
+    <PostBuildEvent Condition=" '$(OS)' != 'Windows_NT' ">mkdir -p "$(ProjectDir)../../BuiltLibs/" &amp;&amp; cp "$(TargetDir)"/* "$(ProjectDir)../../BuiltLibs/" &amp;&amp; cp "$(ProjectDir)hibernate.cfg.xml" "$(ProjectDir)../../Core/FIVES/bin/$(ConfigurationName)/"</PostBuildEvent>
   </PropertyGroup>
 </Project>

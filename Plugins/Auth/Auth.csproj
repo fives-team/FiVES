@@ -58,6 +58,7 @@
     </ProjectReference>
   </ItemGroup>
   <PropertyGroup>
-    <PostBuildEvent>xcopy /y "$(TargetDir)." "$(ProjectDir)..\..\BuiltLibs\" || echo "Ignoring error"</PostBuildEvent>
+    <PostBuildEvent Condition=" '$(OS)' == 'Windows_NT' ">xcopy /y "$(TargetDir)." "$(ProjectDir)..\..\BuiltLibs\"</PostBuildEvent>
+    <PostBuildEvent Condition=" '$(OS)' != 'Windows_NT' ">mkdir -p "$(ProjectDir)../../BuiltLibs/" &amp;&amp; cp "$(TargetDir)"/* "$(ProjectDir)../../BuiltLibs/"</PostBuildEvent>
   </PropertyGroup>
 </Project>
