@@ -41,8 +41,8 @@ namespace ClientManagerPlugin
             };
 
             RegisterClientService("objectsync", true, new Dictionary<string, Delegate> {
-                {"listObjects", (Func<List<EntityInfo>>) ListObjects},
-                {"notifyAboutNewObjects", (Action<string, Action<EntityInfo>>) NotifyAboutNewObjects},
+                {"listObjects", (Func<List<Dictionary<string, object>>>) ListObjects},
+                {"notifyAboutNewObjects", (Action<string, Action<Dictionary<string, object>>>) NotifyAboutNewObjects},
                 {"notifyAboutRemovedObjects", (Action<string, Action<string>>) NotifyAboutRemovedObjects},
                 {"notifyAboutObjectUpdates", (Action<string, Action<List<ClientUpdateQueue.UpdateInfo>>>) NotifyAboutObjectUpdates},
             });
@@ -64,31 +64,39 @@ namespace ClientManagerPlugin
                 new Dictionary<string,Dictionary<string,object>>();
         }
 
-        EntityInfo ConstructEntityInfo(Guid elementId)
+        Dictionary<string, object> ConstructEntityInfo(Guid elementId)
         {
             var entity = EntityRegistry.Instance.GetEntity(elementId);
 
-            var entityInfo = new EntityInfo();
-            entityInfo.guid = entity.Guid.ToString();
-
             // TODO: Generalize
-            entityInfo.components["position"]["x"] = (float)entity["position"]["x"];
-            entityInfo.components["position"]["y"] =(float)entity["position"]["y"];
-            entityInfo.components["position"]["z"] =(float)entity["position"]["z"];
-            entityInfo.components["orientation"]["x"] =(float)entity["orientation"]["x"];
-            entityInfo.components["orientation"]["y"] =(float)entity["orientation"]["y"];
-            entityInfo.components["orientation"]["z"] =(float)entity["orientation"]["z"];
-            entityInfo.components["orientation"]["w"] =(float)entity["orientation"]["w"];
-            entityInfo.components["scale"]["x"] =(float)entity["scale"]["x"];
-            entityInfo.components["scale"]["y"] =(float)entity["scale"]["y"];
-            entityInfo.components["scale"]["z"] =(float)entity["scale"]["z"];
-            entityInfo.components["meshResource"]["meshURI"] =(string)entity["meshResource"]["uri"];
-            entityInfo.components["meshResource"]["visible"] =(bool)entity["meshResource"]["visible"];
+            var entityInfo = new Dictionary<string, object> {
+                { "guid", entity.Guid.ToString() },
+                { "position", new Dictionary<string, object> {
+                    { "x", entity["position"]["x"] },
+                    { "y", entity["position"]["y"] },
+                    { "z", entity["position"]["z"] },
+                }},
+                { "orientation", new Dictionary<string, object> {
+                    { "x", entity["orientation"]["x"] },
+                    { "y", entity["orientation"]["y"] },
+                    { "z", entity["orientation"]["z"] },
+                    { "w", entity["orientation"]["w"] }
+                }},
+                { "scale", new Dictionary<string, object> {
+                    { "x", entity["scale"]["x"] },
+                    { "y", entity["scale"]["y"] },
+                    { "z", entity["scale"]["z"] },
+                }},
+                { "meshResource", new Dictionary<string, object> {
+                    { "meshURI", entity["meshResource"]["uri"] },
+                    { "visible", entity["meshResource"]["visible"] },
+                }},
+            };
 
             return entityInfo;
         }
 
-        void NotifyAboutNewObjects(string sessionKey, Action<EntityInfo> callback)
+        void NotifyAboutNewObjects(string sessionKey, Action<Dictionary<string, object>> callback)
         {
             var handler = new EntityRegistry.EntityAdded((sender, e) => callback(ConstructEntityInfo(e.elementId)));
             var guid = Guid.Parse(sessionKey);
@@ -126,10 +134,10 @@ namespace ClientManagerPlugin
             return services.ConvertAll(authenticatedClientServices.Contains);
         }
 
-        List<EntityInfo> ListObjects()
+        List<Dictionary<string, object>> ListObjects()
         {
             var guids = EntityRegistry.Instance.GetAllGUIDs();
-            List<EntityInfo> infos = new List<EntityInfo>();
+            List<Dictionary<string, object>> infos = new List<Dictionary<string, object>>();
             foreach (var guid in guids)
                 infos.Add(ConstructEntityInfo(guid));
             return infos;
