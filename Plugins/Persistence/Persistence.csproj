@@ -84,7 +84,6 @@
     <EmbeddedResource Include="Mappings\ComponentRegistryPersistence.hbm.xml" />
     <EmbeddedResource Include="Mappings\ComponentLayout.hbm.xml" />
   </ItemGroup>
-  <Import Project="$(SolutionDir)\.nuget\nuget.targets" />
   <PropertyGroup>
     <PostBuildEvent>xcopy /y "$(TargetDir)." "$(SolutionDir)BuiltLibs\" &amp;&amp; xcopy /y "$(ProjectDir)hibernate.cfg.xml" "$(SolutionDir)\FIVES\bin\$(ConfigurationName)\" || echo "Ignoring error"</PostBuildEvent>
   </PropertyGroup>

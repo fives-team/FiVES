@@ -67,5 +67,4 @@
     <None Include="packages.config" />
     <None Include="app.config" />
   </ItemGroup>
-  <Import Project="$(SolutionDir)\.nuget\nuget.targets" />
 </Project>

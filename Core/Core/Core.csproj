@@ -106,5 +106,4 @@
     <None Include="PluginManager\TestPlugins\valid_plugin2.dll" />
     <None Include="packages.config" />
   </ItemGroup>
-  <Import Project="$(SolutionDir)\.nuget\nuget.targets" />
 </Project>

@@ -61,5 +61,4 @@
       <Name>Core %28Core\Core%29</Name>
     </ProjectReference>
   </ItemGroup>
-  <Import Project="$(SolutionDir)\.nuget\nuget.targets" />
 </Project>

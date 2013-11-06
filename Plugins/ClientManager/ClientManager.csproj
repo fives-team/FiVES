@@ -68,7 +68,6 @@
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
-  <Import Project="$(SolutionDir)\.nuget\nuget.targets" />
   <PropertyGroup>
     <PostBuildEvent>xcopy /y "$(TargetDir)." "$(SolutionDir)BuiltLibs\" || echo "Ignoring error"</PostBuildEvent>
   </PropertyGroup>
