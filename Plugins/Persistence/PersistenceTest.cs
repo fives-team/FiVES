@@ -70,7 +70,7 @@ namespace Persistence
             entityRegistry.RemoveEntity (entity.Guid);
 
             plugin.RetrieveEntitiesFromDatabase ();
-            Entity storedEntity = entityRegistry.GetEntity(entity.Guid);            Assert.IsTrue ((int) entity["myComponent"]["IntAttribute"] == 42);            Assert.IsTrue ((string) entity["myComponent"]["StringAttribute"] == "Hello World!");
+            //Entity storedEntity = entityRegistry.GetEntity(entity.Guid);            Assert.IsTrue ((int) entity["myComponent"]["IntAttribute"] == 42);            Assert.IsTrue ((string) entity["myComponent"]["StringAttribute"] == "Hello World!");
             Assert.AreEqual(1, entity["myComponent"].Version);
         }
 

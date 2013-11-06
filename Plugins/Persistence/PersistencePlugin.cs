@@ -110,7 +110,7 @@ namespace Persistence
         /// <param name="sender">Sender of the event (the Entity)</param>
         /// <param name="e">Event arguments</param>
         internal void OnAttributeChanged(Object sender, AttributeInComponentEventArgs e) {
-            Entity changedEntity = (Entity)sender;
+            //Entity changedEntity = (Entity)sender;
             Guid changedAttributeGuid = e.AttributeGuid;
             // TODO: change cascading persistence of entity, but only persist component and take care to persist mapping to entity as well
             AddAttributeToPersisted (changedAttributeGuid, e.newValue);
