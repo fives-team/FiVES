@@ -37,7 +37,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FIVES", "Core\FIVES\FIVES.c
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Math", "Core\Math\Math.csproj", "{A2D1D8E5-7C5C-4EA3-95C7-D8D97AB0B74E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Utils", "Core\Utils\Utils.csproj", "{716C071A-11E0-4B10-8251-8705CDB4546F}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Collections", "Core\Collections\Collections.csproj", "{716C071A-11E0-4B10-8251-8705CDB4546F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
