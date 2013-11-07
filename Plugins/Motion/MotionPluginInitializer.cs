@@ -2,10 +2,9 @@ using System;
 using System.Collections.Generic;
 using FIVES;
 using ClientManagerPlugin;
-using KIARA;
-using FiVESMath;
 using System.Threading;
 using Events;
+using Math;
 
 namespace MotionPlugin
 {
@@ -57,7 +56,6 @@ namespace MotionPlugin
                 ClientManager.Instance.RegisterClientService("motion", true, new Dictionary<string, Delegate> {
                         {"update", (Action<string, Vector, RotVelocity, int>) Update}
                     });
-                };
             });
         }
 
@@ -159,9 +157,9 @@ namespace MotionPlugin
                 spinAxis.z = (float)updatedEntity["rotVelocity"]["z"];
                 float spinAngle = (float)updatedEntity["rotVelocity"]["r"];
 
-                Quat spinAsQuaternion = FiVESMath.Math.QuaternionFromAxisAngle(spinAxis, spinAngle);
+                Quat spinAsQuaternion = Math.Math.QuaternionFromAxisAngle(spinAxis, spinAngle);
 
-                Quat newRotationAsQuaternion = FiVESMath.Math.MultiplyQuaternions(spinAsQuaternion, entityRotation);
+                Quat newRotationAsQuaternion = Math.Math.MultiplyQuaternions(spinAsQuaternion, entityRotation);
                 updatedEntity["orientation"]["x"] = newRotationAsQuaternion.x;
                 updatedEntity["orientation"]["y"] = newRotationAsQuaternion.y;
                 updatedEntity["orientation"]["z"] = newRotationAsQuaternion.z;
@@ -190,10 +188,10 @@ namespace MotionPlugin
             entityRotation.z = (float)updatedEntity["orientation"]["z"];
             entityRotation.w = (float)updatedEntity["orientation"]["w"];
 
-            Vector axis = FiVESMath.Math.AxisFromQuaternion(entityRotation);
-            float angle = FiVESMath.Math.AngleFromQuaternion(entityRotation);
+            Vector axis = Math.Math.AxisFromQuaternion(entityRotation);
+            float angle = Math.Math.AngleFromQuaternion(entityRotation);
 
-            return FiVESMath.Math.RotateVectorByAxisAngle(velocity, axis, -angle) /* negative angle because we apply the inverse transform */;
+            return Math.Math.RotateVectorByAxisAngle(velocity, axis, -angle) /* negative angle because we apply the inverse transform */;
         }
 
         /// <summary>
