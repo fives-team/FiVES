@@ -91,5 +91,16 @@ namespace Math
         {
             return 2.0f * (float)System.Math.Acos(q.w);
         }
+
+        public static Quat QuaternionFromAxisAngle(Vector axis, float r)
+        {
+            Quat q = new Quat();
+            q.x = axis.x * (float)System.Math.Sin(0.5 * r);
+            q.y = axis.y * (float)System.Math.Sin(0.5 * r);
+            q.z = axis.z * (float)System.Math.Sin(0.5 * r);
+            q.w = (float)System.Math.Cos(0.5 * r);
+            return q;
+        }
+
     }
 }
