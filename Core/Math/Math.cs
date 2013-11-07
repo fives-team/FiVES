@@ -102,5 +102,15 @@ namespace Math
             return q;
         }
 
+        public static Quat MultiplyQuaternions(Quat p, Quat q)
+        {
+            Quat m = new Quat();
+            m.w = (p.w * q.w - p.x * q.x - p.y * q.y - p.z * q.z);
+            m.x = (p.w * q.x + p.x * q.w + p.y * q.z - p.z * q.y);
+            m.y = (p.w * q.y - p.x * q.z + p.y * q.w + p.z * q.x);
+            m.z = (p.w * q.z + p.x * q.y - p.y * q.x + p.z * q.w);
+
+            return m;
+        }
     }
 }
