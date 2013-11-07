@@ -13,6 +13,11 @@ FIVES.Input = FIVES.Input || {};
 (function() {
      "use strict";
 
+    var MOVE_SPEED = 0.1;
+    var SPIN_SPEED = 0.05;
+
+    var UP_AXIS = {x: 0, y:1, z: 0};
+
     var keylistener = function(){
         this._initializeEventListeners();
     };
@@ -26,10 +31,10 @@ FIVES.Input = FIVES.Input || {};
         {
             switch (e.keyCode)
             {
-              /* W */  case 87:  FIVES.Communication.FivesCommunicator.setAvatarForwardBackwardMotion(FIVES.Communication.FivesCommunicator.sessionKey,  0.1); break;
-              /* S */  case 83:  FIVES.Communication.FivesCommunicator.setAvatarForwardBackwardMotion(FIVES.Communication.FivesCommunicator.sessionKey,  -0.1); break;
-              /* A */  case 65:  FIVES.Communication.FivesCommunicator.setAvatarLeftRightMotion(FIVES.Communication.FivesCommunicator.sessionKey,  -0.1); break;
-              /* D */  case 68:  FIVES.Communication.FivesCommunicator.setAvatarLeftRightMotion(FIVES.Communication.FivesCommunicator.sessionKey,  0.1); break;
+              /* W */  case 87:  FIVES.Communication.FivesCommunicator.setAvatarForwardBackwardMotion(FIVES.Communication.FivesCommunicator.sessionKey,  MOVE_SPEED); break;
+              /* S */  case 83:  FIVES.Communication.FivesCommunicator.setAvatarForwardBackwardMotion(FIVES.Communication.FivesCommunicator.sessionKey,  -MOVE_SPEED); break;
+              /* A */  case 65:  FIVES.Communication.FivesCommunicator.setAvatarSpinAroundAxis(FIVES.Communication.FivesCommunicator.sessionKey, UP_AXIS,  SPIN_SPEED); break;
+              /* D */  case 68:  FIVES.Communication.FivesCommunicator.setAvatarSpinAroundAxis(FIVES.Communication.FivesCommunicator.sessionKey, UP_AXIS,  -SPIN_SPEED); break;
                 default: break;
             }
             _pressedKeys[e.keyCode] = true;
@@ -45,7 +50,7 @@ FIVES.Input = FIVES.Input || {};
             case 83:  FIVES.Communication.FivesCommunicator.setAvatarForwardBackwardMotion(FIVES.Communication.FivesCommunicator.sessionKey,  0); break;
             /* A, D */
             case 65:
-            case 68:  FIVES.Communication.FivesCommunicator.setAvatarLeftRightMotion(FIVES.Communication.FivesCommunicator.sessionKey,  0); break;
+            case 68:  FIVES.Communication.FivesCommunicator.setAvatarSpinAroundAxis(FIVES.Communication.FivesCommunicator.sessionKey,  UP_AXIS , 0); break;
         }
         _pressedKeys[e.keyCode] = false;
     };
