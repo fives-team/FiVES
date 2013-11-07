@@ -121,6 +121,11 @@ namespace MotionPlugin
                 ongoingMotion.Add(entity.Guid);
                 ThreadPool.QueueUserWorkItem(_ => UpdateMotion(entity));
             }
+            if (IsSpinning(entity) && !ongoingSpin.Contains(entity.Guid))
+            {
+                ongoingSpin.Add(entity.Guid);
+                ThreadPool.QueueUserWorkItem(_ => UpdateSpin(entity));
+            }
         }
 
         /// <summary>
@@ -130,7 +135,7 @@ namespace MotionPlugin
         private void UpdateMotion(Entity updatedEntity) {
             while (IsMoving(updatedEntity))
             {
-                Vector localVelocity = GetLocalVelocity(updatedEntity);
+                Vector localVelocity = GetVelocityInWorldSpace(updatedEntity);
                 updatedEntity["position"]["x"] = (float)updatedEntity["position"]["x"] + localVelocity.x;
                 updatedEntity["position"]["y"] = (float)updatedEntity["position"]["y"] + localVelocity.y;
                 updatedEntity["position"]["z"] = (float)updatedEntity["position"]["z"] + localVelocity.z;
@@ -139,7 +144,40 @@ namespace MotionPlugin
             ongoingMotion.Remove(updatedEntity.Guid);
         }
 
-        private Vector GetLocalVelocity(Entity updatedEntity)
+        /// <summary>
+        /// Worker thread that periodically performs the spin. Ends, when either angular velocity or spin axis are 0.
+        /// </summary>
+        /// <param name="updatedEntity">Entity for which spin is updated</param>
+        private void UpdateSpin(Entity updatedEntity) {
+            while (IsSpinning(updatedEntity))
+            {
+                Quat entityRotation = EntityRotationAsQuaternion(updatedEntity);                ;
+
+                Vector spinAxis = new Vector();
+                spinAxis.x = (float)updatedEntity["rotVelocity"]["x"];
+                spinAxis.y = (float)updatedEntity["rotVelocity"]["y"];
+                spinAxis.z = (float)updatedEntity["rotVelocity"]["z"];
+                float spinAngle = (float)updatedEntity["rotVelocity"]["r"];
+
+                Quat spinAsQuaternion = FiVESMath.Math.QuaternionFromAxisAngle(spinAxis, spinAngle);
+
+                Quat newRotationAsQuaternion = FiVESMath.Math.MultiplyQuaternions(spinAsQuaternion, entityRotation);
+                updatedEntity["orientation"]["x"] = newRotationAsQuaternion.x;
+                updatedEntity["orientation"]["y"] = newRotationAsQuaternion.y;
+                updatedEntity["orientation"]["z"] = newRotationAsQuaternion.z;
+                updatedEntity["orientation"]["w"] = newRotationAsQuaternion.w;
+
+                Thread.Sleep(30);
+            }
+            ongoingSpin.Remove(updatedEntity.Guid);
+        }
+
+        /// <summary>
+        /// Converts velocity from entity's to world coordinate system
+        /// </summary>
+        /// <param name="updatedEntity">Entity to convert velocity from</param>
+        /// <returns>Entity's velocity in world coordinates</returns>
+        private Vector GetVelocityInWorldSpace(Entity updatedEntity)
         {
             Vector velocity = new Vector();
             velocity.x = (float)updatedEntity["velocity"]["x"];
@@ -159,6 +197,21 @@ namespace MotionPlugin
         }
 
         /// <summary>
+        /// Helper function to convert an entity's orientation component directly to a Quat
+        /// </summary>
+        /// <param name="entity">Entity to get orientation from</param>
+        /// <returns></returns>
+        private Quat EntityRotationAsQuaternion(Entity entity) {
+                    Quat entityRotation = new Quat();
+                    entityRotation.x = (float)entity["orientation"]["x"];
+                    entityRotation.y = (float)entity["orientation"]["y"];
+                    entityRotation.z = (float)entity["orientation"]["z"];
+                    entityRotation.w = (float)entity["orientation"]["w"];
+
+            return entityRotation;
+        }
+
+        /// <summary>
         /// Checks if the entity has a non 0 velocity
         /// </summary>
         /// <param name="entity">Entity to check</param>
@@ -169,7 +222,20 @@ namespace MotionPlugin
                 && (float)entity["velocity"]["z"] == 0);
         }
 
+        /// <summary>
+        /// Checks if an entity is currently spinning. An entity is not spinning if either the axis or the angular velocity are 0.
+        /// </summary>
+        /// <param name="entity">Entity to check</param>
+        /// <returns>True, if spin axis is not the null vector, and velocity is not 0</returns>
+        private bool IsSpinning(Entity entity) {
+            return (float)entity["rotVelocity"]["r"] != 0
+                && !((float)entity["rotVelocity"]["x"] == 0
+                    && (float)entity["rotVelocity"]["y"] == 0
+                    && (float)entity["rotVelocity"]["z"] ==0);
+        }
+
         private ISet<Guid> ongoingMotion = new HashSet<Guid>();
+        private ISet<Guid> ongoingSpin = new HashSet<Guid>();
         private readonly Guid pluginGUID = new Guid("bd5b8634-890c-4f59-a823-f9d2b1fd0c86");
     }
 }
