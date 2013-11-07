@@ -32,7 +32,8 @@ namespace AvatarPlugin
                 {"changeAppearance", (Action<string, string, Vector>)ChangeAppearance},
 				{"startAvatarMotionInDirection", (Action<string, Vector>)StartAvatarMotionInDirection},
 				{"setAvatarForwardBackwardMotion", (Action<string, float>)SetForwardBackwardMotion},
-				{"setAvatarLeftRightMotion", (Action<string, float>)SetLeftRightMotion}
+				{"setAvatarLeftRightMotion", (Action<string, float>)SetLeftRightMotion},
+				{"setAvatarSpinAroundAxis",(Action<string, Vector, float>)SetAvatarSpinAroundAxis}
             });
 
             ClientManager.Instance.NotifyWhenAnyClientAuthenticated((Action<Guid>)delegate(Guid sessionKey) {
@@ -131,6 +132,15 @@ namespace AvatarPlugin
         {
             var avatarEntity = GetAvatarEntityBySessionKey(Guid.Parse(sessionKey));
             avatarEntity["velocity"]["z"] = amount;
+        }
+
+        void SetAvatarSpinAroundAxis(string sessionKey, Vector axis, float angle)
+        {
+            var avatarEntity = GetAvatarEntityBySessionKey(Guid.Parse(sessionKey));
+            avatarEntity["rotVelocity"]["x"] = axis.x;
+            avatarEntity["rotVelocity"]["y"] = axis.y;
+            avatarEntity["rotVelocity"]["z"] = axis.z;
+            avatarEntity["rotVelocity"]["r"] = angle;
         }
 		
         Dictionary<string, Entity> avatarEntities = new Dictionary<string, Entity>();

@@ -154,6 +154,7 @@ FIVES.Communication = FIVES.Communication || {};
         this.startAvatarMotionInDirection = this.connection.generateFuncWrapper("avatar.startAvatarMotionInDirection");
         this.setAvatarForwardBackwardMotion = this.connection.generateFuncWrapper("avatar.setAvatarForwardBackwardMotion");
         this.setAvatarLeftRightMotion = this.connection.generateFuncWrapper("avatar.setAvatarLeftRightMotion");
+        this.setAvatarSpinAroundAxis = this.connection.generateFuncWrapper("avatar.setAvatarSpinAroundAxis");
 
         this.listObjects().on("result", _listObjectsCallback.bind(this));
         var getEntityGuidCall = this.getAvatarEntityGuid(this.sessionKey);
