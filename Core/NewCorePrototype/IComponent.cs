@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
-using Utils;
 
 namespace NewCorePrototype
 {
@@ -20,30 +19,18 @@ namespace NewCorePrototype
         /// <summary>
         /// The definition that was used to create this component.
         /// </summary>
-        IComponentDefinition Definition { get; }
+        ReadOnlyComponentDefinition Definition { get; }
 
         /// <summary>
         /// A parent entity that contains this component.
         /// </summary>
-        IEntity Parent { get; }
-
-        /// <summary>
-        /// A read-only collection of attributes. Created dynamically when accessed which may cause additional cost 
-        /// when accessing this property. Please use operator [] to get and set attribute values instead.
-        /// </summary>
-        /// <remarks>
-        /// An implementation should keep attributes as a simple name-to-value (string-to-object) dictionary and only 
-        /// dynamically create this list when accessed. However, as soon as this list is created it should be used 
-        /// instead of the dictionary. This allows to keep the common use-case scenario efficient, yet provides the 
-        /// users with rich interface when necessary.
-        /// </remarks>
-        ReadOnlyCollection<IAttribute> Attributes { get; }
+        Entity Parent { get; }
 
         /// <summary>
         /// Accessor that allows to get and set attribute values. Users must cast the value to correct type themselves.
         /// </summary>
-        /// <param name="attributeName">Name of the attribute, whose value is to be returned or set.</param>
-        /// <returns></returns>
+        /// <param name="attributeName">Name of the attribute.</param>
+        /// <returns>Value of the attribute.</returns>
         object this[string attributeName] { get; set; }
 
         /// <summary>
