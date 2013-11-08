@@ -4,7 +4,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 
-namespace NewCorePrototype
+namespace FIVES
 {
     /// <summary>
     /// Represents a modifiable component definition.
@@ -37,7 +37,7 @@ namespace NewCorePrototype
     /// </summary>
     public sealed class ComponentDefinition : ReadOnlyComponentDefinition
     {
-        public ComponentDefinition(string name, int version) : base(name, version) { }
+        public ComponentDefinition(string name, int version = 1) : base(name, version) { }
 
         /// <summary>
         /// Adds a new attribute definition to the component definition. Default value for the type is used as default 

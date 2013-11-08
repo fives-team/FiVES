@@ -1,6 +1,6 @@
 using System;
 
-namespace Math
+namespace FIVES
 {
     public struct Quat {
         public float x, y, z, w;

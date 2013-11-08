@@ -1,7 +1,6 @@
 ﻿using AuthPlugin;
 using FIVES;
 using KIARAPlugin;
-using Math;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -57,10 +56,8 @@ namespace ClientManagerPlugin
 
         #region Client interface
 
-        Dictionary<string, object> ConstructEntityInfo(Guid elementId)
+        Dictionary<string, object> ConstructEntityInfo(Entity entity)
         {
-            var entity = EntityRegistry.Instance.GetEntity(elementId);
-
             // TODO: Generalize
             var entityInfo = new Dictionary<string, object> {
                 { "guid", entity.Guid.ToString() },
@@ -91,22 +88,22 @@ namespace ClientManagerPlugin
 
         void NotifyAboutNewObjects(string sessionKey, Action<Dictionary<string, object>> callback)
         {
-            var handler = new EntityRegistry.EntityAdded((sender, e) => callback(ConstructEntityInfo(e.elementId)));
+            var handler = new EventHandler<EntityEventArgs>((sender, e) => callback(ConstructEntityInfo(e.Entity)));
             var guid = Guid.Parse(sessionKey);
             if (!onNewEntityHandlers.ContainsKey(guid))
-                onNewEntityHandlers[guid] = new List<EntityRegistry.EntityAdded>();
+                onNewEntityHandlers[guid] = new List<EventHandler<EntityEventArgs>>();
             onNewEntityHandlers[guid].Add(handler);
-            EntityRegistry.Instance.OnEntityAdded += handler;
+            World.Instance.AddedEntity += handler;
         }
 
         void NotifyAboutRemovedObjects(string sessionKey, Action<string> callback)
         {
-            var handler = new EntityRegistry.EntityRemoved((sender, e) => callback(e.elementId.ToString()));
+            var handler = new EventHandler<EntityEventArgs>((sender, e) => callback(e.Entity.Guid.ToString()));
             var guid = Guid.Parse(sessionKey);
             if (!onRemovedEntityHandlers.ContainsKey(guid))
-                onRemovedEntityHandlers[guid] = new List<EntityRegistry.EntityRemoved>();
+                onRemovedEntityHandlers[guid] = new List<EventHandler<EntityEventArgs>>();
             onRemovedEntityHandlers[guid].Add(handler);
-            EntityRegistry.Instance.OnEntityRemoved += (sender, e) => callback(e.elementId.ToString());
+            World.Instance.RemovedEntity += handler;
         }
 
         void NotifyAboutObjectUpdates(string sessionKey, Action<List<ClientUpdateQueue.UpdateInfo>> callback)
@@ -129,17 +126,10 @@ namespace ClientManagerPlugin
 
         List<Dictionary<string, object>> ListObjects()
         {
-            var guids = EntityRegistry.Instance.GetAllGUIDs();
             List<Dictionary<string, object>> infos = new List<Dictionary<string, object>>();
-            foreach (var guid in guids)
-                infos.Add(ConstructEntityInfo(guid));
+            foreach (var entity in World.Instance)
+                infos.Add(ConstructEntityInfo(entity));
             return infos;
-        }
-
-        void CreateServerScriptFor(string guid, string script)
-        {
-            var entity = EntityRegistry.Instance.GetEntity(guid);
-            entity["scripting"]["serverScript"] = script;
         }
 
         /// <summary>
@@ -160,10 +150,10 @@ namespace ClientManagerPlugin
         /// <summary>
         /// List of handlers that need to be removed when client disconnects.
         /// </summary>
-        Dictionary<Guid, List<EntityRegistry.EntityAdded>> onNewEntityHandlers =
-            new Dictionary<Guid, List<EntityRegistry.EntityAdded>>();
-        Dictionary<Guid, List<EntityRegistry.EntityRemoved>> onRemovedEntityHandlers =
-            new Dictionary<Guid, List<EntityRegistry.EntityRemoved>>();
+        Dictionary<Guid, List<EventHandler<EntityEventArgs>>> onNewEntityHandlers =
+            new Dictionary<Guid, List<EventHandler<EntityEventArgs>>>();
+        Dictionary<Guid, List<EventHandler<EntityEventArgs>>> onRemovedEntityHandlers =
+            new Dictionary<Guid, List<EventHandler<EntityEventArgs>>>();
         Dictionary<Guid, ClientUpdateQueue> clientUpdateHandlers =
             new Dictionary<Guid, ClientUpdateQueue>();
 
@@ -222,13 +212,13 @@ namespace ClientManagerPlugin
                 if (onNewEntityHandlers.ContainsKey(secToken))
                 {
                     foreach (var handler in onNewEntityHandlers[secToken])
-                        EntityRegistry.Instance.OnEntityAdded -= handler;
+                        World.Instance.AddedEntity -= handler;
                 }
 
                 if (onRemovedEntityHandlers.ContainsKey(secToken))
                 {
                     foreach (var handler in onRemovedEntityHandlers[secToken])
-                        EntityRegistry.Instance.OnEntityRemoved -= handler;
+                        World.Instance.RemovedEntity -= handler;
                 }
 
                 if (clientUpdateHandlers.ContainsKey(secToken))

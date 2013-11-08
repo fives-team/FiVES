@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace NewCorePrototype
+namespace FIVES
 {
     /// <summary>
     /// Represents a collection of entities.
@@ -13,14 +13,14 @@ namespace NewCorePrototype
     {
         public void Add(Entity entity)
         {
-            entities.Add(entity);
+            entities.Add(entity.Guid, entity);
             HandleAdded(entity);
         }
 
         public void Clear()
         {
             List<Entity> removedEntities = new List<Entity>();
-            removedEntities.AddRange(entities);
+            removedEntities.AddRange(entities.Values);
             entities.Clear();
             foreach (Entity entity in removedEntities)
                 HandleRemoved(entity);
@@ -28,12 +28,12 @@ namespace NewCorePrototype
 
         public bool Contains(Entity item)
         {
-            return entities.Contains(item);
+            return entities.ContainsKey(item.Guid);
         }
 
         public void CopyTo(Entity[] array, int arrayIndex)
         {
-            entities.CopyTo(array, arrayIndex);
+            entities.Values.CopyTo(array, arrayIndex);
         }
 
         public int Count
@@ -43,7 +43,7 @@ namespace NewCorePrototype
 
         public bool Remove(Entity item)
         {
-            if (entities.Remove(item))
+            if (entities.Remove(item.Guid))
             {
                 HandleRemoved(item);
                 return true;
@@ -54,7 +54,7 @@ namespace NewCorePrototype
 
         public IEnumerator<Entity> GetEnumerator()
         {
-            return entities.GetEnumerator();
+            return entities.Values.GetEnumerator();
         }
 
         public bool IsReadOnly
@@ -70,12 +70,27 @@ namespace NewCorePrototype
         /// <summary>
         /// Raised when a new entity has been added.
         /// </summary>
-        public event EventHandler<EntityEventArgs> EntityAdded;
+        public event EventHandler<EntityEventArgs> AddedEntity;
 
         /// <summary>
         /// Raised when an entity has been removed.
         /// </summary>
-        public event EventHandler<EntityEventArgs> EntityRemoved;
+        public event EventHandler<EntityEventArgs> RemovedEntity;
+
+        /// <summary>
+        /// Finds an entity by its unique identifier. Throws EntityNotFoundException if entity is not found.
+        /// </summary>
+        /// <param name="guid">String representation of the unique identifier.</param>
+        /// <returns>An entity.</returns>
+        public Entity FindEntity(string guid)
+        {
+            Guid parsedGuid = Guid.Parse(guid);
+
+            if (!entities.ContainsKey(parsedGuid))
+                throw new EntityNotFoundException("Entity with given guid is not found.");
+
+            return entities[parsedGuid];
+        }
 
         internal EntityCollection()
         {
@@ -83,16 +98,16 @@ namespace NewCorePrototype
 
         private void HandleAdded(Entity entity)
         {
-            if (EntityAdded != null)
-                EntityAdded(this, new EntityEventArgs(entity));
+            if (AddedEntity != null)
+                AddedEntity(this, new EntityEventArgs(entity));
         }
 
         private void HandleRemoved(Entity entity)
         {
-            if (EntityRemoved != null)
-                EntityRemoved(this, new EntityEventArgs(entity));
+            if (RemovedEntity != null)
+                RemovedEntity(this, new EntityEventArgs(entity));
         }
 
-        private List<Entity> entities = new List<Entity>();
+        protected Dictionary<Guid, Entity> entities = new Dictionary<Guid, Entity>();
     }
 }

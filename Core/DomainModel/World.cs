@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace NewCorePrototype
+namespace FIVES
 {
     /// <summary>
     /// Represents a collection of top-level entities in the world.

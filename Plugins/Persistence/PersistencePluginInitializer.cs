@@ -4,7 +4,6 @@ using NHibernate.Cfg;
 using NHibernate;
 using NHibernate.Tool.hbm2ddl;
 using System.Collections.Generic;
-using Events;
 using System.Diagnostics;
 using Iesi.Collections.Generic;
 using System.Threading;

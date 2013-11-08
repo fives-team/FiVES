@@ -52,13 +52,19 @@
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
-    <None Include="app.config" />
+    <None Include="app.config">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Core\Core.csproj">
-      <Project>{627CCFC6-4071-4119-92C6-8BC96E4310C8}</Project>
-      <Name>Core %28Core\Core%29</Name>
+    <ProjectReference Include="..\DomainModel\DomainModel.csproj">
+      <Project>{79ef699d-6a88-4054-af04-f22486db47fa}</Project>
+      <Name>DomainModel</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\PluginManager\PluginManager.csproj">
+      <Project>{db1099a1-b7fe-474f-a03a-41687d6c5c76}</Project>
+      <Name>PluginManager</Name>
     </ProjectReference>
   </ItemGroup>
 </Project>

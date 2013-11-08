@@ -1,6 +1,6 @@
 using System;
 
-namespace Math
+namespace FIVES
 {
     public struct Vector {
         public float x, y, z;

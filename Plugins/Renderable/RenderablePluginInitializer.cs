@@ -28,17 +28,16 @@ namespace RenderablePlugin
 
         private void DefineComponents()
         {
-            ComponentLayout rendereableComponentLayout = new ComponentLayout ();
-            rendereableComponentLayout.AddAttribute<string>("uri");
-            rendereableComponentLayout.AddAttribute<bool>("visible", true);
+            ComponentDefinition renderable = new ComponentDefinition("meshResource");
+            renderable.AddAttribute<string>("uri");
+            renderable.AddAttribute<bool>("visible", true);
+            ComponentRegistry.Instance.Register(renderable);
 
-            ComponentLayout scaleLayout = new ComponentLayout ();
-            scaleLayout.AddAttribute<float>("x", 1f);
-            scaleLayout.AddAttribute<float>("y", 1f);
-            scaleLayout.AddAttribute<float>("z", 1f);
-
-            ComponentRegistry.Instance.DefineComponent ("meshResource", this.pluginGUID, rendereableComponentLayout);
-            ComponentRegistry.Instance.DefineComponent ("scale", this.pluginGUID, scaleLayout);
+            ComponentDefinition scale = new ComponentDefinition("scale");
+            scale.AddAttribute<float>("x", 1f);
+            scale.AddAttribute<float>("y", 1f);
+            scale.AddAttribute<float>("z", 1f);
+            ComponentRegistry.Instance.Register(renderable);
         }
 
         void RegisterClientServices()
@@ -50,10 +49,10 @@ namespace RenderablePlugin
 
         private void NotifyAboutVisibilityUpdates (string guid, Action<bool> callback)
         {
-            var entity = EntityRegistry.Instance.GetEntity(guid);
-            entity["meshResource"].OnAttributeChanged += delegate(object sender, Events.AttributeChangedEventArgs ev) {
-                if (ev.AttributeName == "visible")
-                    callback((bool)ev.NewValue);
+            var entity = World.Instance.FindEntity(guid);
+            entity["meshResource"].ChangedAttribute += (sender, e) => {
+                if (e.AttributeName == "visible")
+                    callback((bool)e.NewValue);
             };
         }
 

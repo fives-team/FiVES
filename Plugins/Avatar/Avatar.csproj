@@ -52,13 +52,17 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\Core\Core\Core.csproj">
-      <Project>{627CCFC6-4071-4119-92C6-8BC96E4310C8}</Project>
-      <Name>Core</Name>
+    <ProjectReference Include="..\..\Core\DomainModel\DomainModel.csproj">
+      <Project>{79ef699d-6a88-4054-af04-f22486db47fa}</Project>
+      <Name>DomainModel</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\Core\Math\Math.csproj">
       <Project>{A2D1D8E5-7C5C-4EA3-95C7-D8D97AB0B74E}</Project>
       <Name>Math</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Core\PluginManager\PluginManager.csproj">
+      <Project>{db1099a1-b7fe-474f-a03a-41687d6c5c76}</Project>
+      <Name>PluginManager</Name>
     </ProjectReference>
     <ProjectReference Include="..\Auth\Auth.csproj">
       <Project>{ccda8021-971d-4703-a4bd-325248ef9499}</Project>

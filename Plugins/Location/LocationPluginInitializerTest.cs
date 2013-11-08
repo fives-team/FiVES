@@ -17,13 +17,13 @@ namespace LocationPlugin
         [Test()]
         public void ShouldRegisterPositionComponent()
         {
-            Assert.True(ComponentRegistry.Instance.IsRegistered("position"));
+            Assert.IsNotNull(ComponentRegistry.Instance.FindComponentDefinition("position"));
         }
 
         [Test()]
         public void ShouldRegisterOrientationComponent()
         {
-            Assert.True(ComponentRegistry.Instance.IsRegistered("orientation"));
+            Assert.IsNotNull(ComponentRegistry.Instance.FindComponentDefinition("orientation"));
         }
 
         [Test()]

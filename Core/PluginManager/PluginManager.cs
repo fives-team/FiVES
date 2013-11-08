@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
 using NLog;
-using Events;
 
 namespace FIVES
 {

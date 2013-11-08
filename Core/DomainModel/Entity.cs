@@ -4,7 +4,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 
-namespace NewCorePrototype
+namespace FIVES
 {
     /// <summary>
     /// Represents an entity.
@@ -16,8 +16,8 @@ namespace NewCorePrototype
             Guid = Guid.NewGuid();
             Parent = null;
 
-            children.EntityAdded += HandleChildEntityAdded;
-            children.EntityRemoved += HandleChildEntityRemoved;
+            children.AddedEntity += HandleChildEntityAdded;
+            children.RemovedEntity += HandleChildEntityRemoved;
         }
 
         /// <summary>
@@ -32,7 +32,7 @@ namespace NewCorePrototype
         /// </summary>
         public ReadOnlyCollection<Component> Components
         {
-            get { return components.AsReadOnly(); }
+            get { return new ReadOnlyCollection<Component>(components.Values); }
         }
 
         /// <summary>
@@ -45,11 +45,10 @@ namespace NewCorePrototype
         {
             get 
             {
-                var component = components.Find(c => c.Definition.Name == componentName);
-                if (component == null)
-                    component = CreateComponent(componentName);
+                if (!components.ContainsKey(componentName))
+                    CreateComponent(componentName);
 
-                return component;
+                return components[componentName];
             }
         }
 
@@ -81,20 +80,30 @@ namespace NewCorePrototype
         /// TODO
         public event EventHandler<ChangedAttributeEventArgs> ChangedAttribute;
 
-        private Component CreateComponent(string componentName)
+        /// <summary>
+        /// Verifies whether this entity contains a component with a given name.
+        /// </summary>
+        /// <param name="name">Component name.</param>
+        /// <returns>True if a component with given name is present, false otherwise.</returns>
+        public bool ContainsComponent(string name)
+        {
+            return components.ContainsKey(name);
+        }
+
+        private void CreateComponent(string componentName)
         {
             var definition = ComponentRegistry.Instance.FindComponentDefinition(componentName);
             if (definition == null)
                 throw new ComponentAccessException("Component with given name is not registered.");
 
             Component component = new Component(definition, this);
-            components.Add(component);
+            components[componentName] = component;
 
+            // Register for attribute updates in new component.
             component.ChangedAttribute += HandleChangedComponentAttribute;
 
             if (CreatedComponent != null)
                 CreatedComponent(this, new ComponentEventArgs(component));
-            return component;
         }
 
         private void HandleChangedComponentAttribute(object sender, ChangedAttributeEventArgs e)
@@ -118,6 +127,6 @@ namespace NewCorePrototype
         }
 
         private EntityCollection children = new EntityCollection();
-        private List<Component> components = new List<Component>();
+        private Dictionary<string, Component> components = new Dictionary<string, Component>();
     }
 }

@@ -4,7 +4,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 
-namespace NewCorePrototype
+namespace FIVES
 {
     /// <summary>
     /// Component definition that can not be modified.
@@ -33,12 +33,12 @@ namespace NewCorePrototype
         {
             get
             {
-                return attributeDefinitions.AsReadOnly();
+                return new ReadOnlyCollection<ReadOnlyAttributeDefinition>(attributeDefinitions.Values);
             }
         }
 
         /// <summary>
-        /// Returns a attribute definition by its name or null if it is not defined.
+        /// Returns a attribute definition by its name or throws KeyNotFoundException if the attribute is not defined.
         /// </summary>
         /// <param name="attributeName">Attribute name.</param>
         /// <returns>Attribute definition.</returns>
@@ -46,7 +46,7 @@ namespace NewCorePrototype
         {
             get
             {
-                return attributeDefinitions.Find(d => d.Name == attributeName);
+                return attributeDefinitions[attributeName];
             }
         }
 
@@ -59,12 +59,13 @@ namespace NewCorePrototype
 
         protected void AddAttributeDefinition(string name, Type type, object defaultValue)
         {
-            if (attributeDefinitions.Find(d => d.Name == name) != null)
+            if (attributeDefinitions.ContainsKey(name))
                 throw new AttributeDefinitionException("Attribute with such name is already defined.");
 
-            attributeDefinitions.Add(new ReadOnlyAttributeDefinition(name, type, defaultValue));
+            attributeDefinitions[name] = new ReadOnlyAttributeDefinition(name, type, defaultValue);
         }
 
-        private List<ReadOnlyAttributeDefinition> attributeDefinitions = new List<ReadOnlyAttributeDefinition>();
+        private Dictionary<string, ReadOnlyAttributeDefinition> attributeDefinitions =
+            new Dictionary<string, ReadOnlyAttributeDefinition>();
     }
 }

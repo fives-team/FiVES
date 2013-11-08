@@ -3,14 +3,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace NewCorePrototype
+namespace FIVES
 {
     /// <summary>
     /// Event arguments for ChangedAttribute event in Entity and Component classes.
     /// </summary>
     public class ChangedAttributeEventArgs : EventArgs
     {
-        internal ChangedAttributeEventArgs(Component component, string attributeName, object oldValue, object newValue)
+        public ChangedAttributeEventArgs(Component component, string attributeName, object oldValue, object newValue)
         {
             Component = component;
             AttributeName = attributeName;

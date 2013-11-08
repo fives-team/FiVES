@@ -1,5 +1,6 @@
 using System;
 using NUnit.Framework;
+using FIVES;
 
 namespace ScriptingPlugin
 {
@@ -18,6 +19,12 @@ namespace ScriptingPlugin
         public void ShouldReturnCorrectDeps()
         {
             Assert.AreEqual(plugin.GetDependencies().Count, 0);
+        }
+
+        [Test()]
+        public void ShouldRegisterScriptingComponent()
+        {
+            Assert.IsNotNull(ComponentRegistry.Instance.FindComponentDefinition("scripting"));
         }
     }
 }

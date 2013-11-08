@@ -36,11 +36,11 @@ namespace ScriptingPlugin
         public void Initialize()
         {
             // Register 'scripting' component.
-            ComponentLayout layout = new ComponentLayout();
-            layout.AddAttribute<string>("ownerScript");
-            layout.AddAttribute<string>("serverScript");
-            layout.AddAttribute<string> ("clientScript");
-            ComponentRegistry.Instance.DefineComponent("scripting", pluginGUID, layout);
+            ComponentDefinition scripting = new ComponentDefinition("scripting");
+            scripting.AddAttribute<string>("ownerScript");
+            scripting.AddAttribute<string>("serverScript");
+            scripting.AddAttribute<string> ("clientScript");
+            ComponentRegistry.Instance.Register(scripting);
         }
 
         #endregion

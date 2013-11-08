@@ -1,6 +1,6 @@
 using System;
 
-namespace Events
+namespace FIVES
 {
     public class PluginInitializedEventArgs : EventArgs
     {

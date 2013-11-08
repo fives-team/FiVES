@@ -4,7 +4,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 
-namespace NewCorePrototype
+namespace FIVES
 {
     /// <summary>
     /// Manages component definitions.
@@ -20,7 +20,7 @@ namespace NewCorePrototype
         {
             get
             {
-                return registeredComponents.AsReadOnly();
+                return new ReadOnlyCollection<ReadOnlyComponentDefinition>(registeredComponents.Values);
             }
         }
 
@@ -31,10 +31,10 @@ namespace NewCorePrototype
         /// <param name="definition">New component definition.</param>
         public void Register(ReadOnlyComponentDefinition definition)
         {
-            if (registeredComponents.Find(c => c.Name == definition.Name) != null)
+            if (registeredComponents.ContainsKey(definition.Name))
                 throw new ComponentRegistrationException("Component with the same name is already registered.");
             
-            registeredComponents.Add(definition);
+            registeredComponents.Add(definition.Name, definition);
         }
 
         /// <summary>
@@ -54,25 +54,23 @@ namespace NewCorePrototype
         /// <param name="upgrader">Upgrade function, see <see cref="ComponentUpgrader"/>.</param>
         public void Upgrade(ReadOnlyComponentDefinition newDefinition, ComponentUpgrader upgrader)
         {
-            if (registeredComponents.Find(c => c.Name == newDefinition.Name &&
-                                               c.Version >= newDefinition.Version) != null)
-                throw new ComponentUpgradeException("Later or same version of the component is found.");
+            string name = newDefinition.Name;
+            if (!registeredComponents.ContainsKey(name))
+                throw new ComponentUpgradeException("Existing definition of the component is not found.");
 
-            var previousVersionDefinition = 
-                registeredComponents.Find(c => c.Name == newDefinition.Name && c.Version == newDefinition.Version - 1);
-            if (previousVersionDefinition == null)
-                throw new ComponentUpgradeException("Definition with previous version of the component is not found.");
+            if (registeredComponents[name].Version != newDefinition.Version - 1)
+                throw new ComponentUpgradeException("Version of the exiting definition does not precede new version.");
 
-            registeredComponents.Remove(previousVersionDefinition);
-            registeredComponents.Add(newDefinition);
+            registeredComponents.Remove(name);
+            registeredComponents.Add(name, newDefinition);
 
             // Upgrade all entities.
             foreach (var entity in World.Instance)
             {
-                var component = (Component)entity[newDefinition.Name];
+                var component = (Component)entity[name];
                 component.Upgrade(newDefinition, upgrader);
-                if (ComponentUpgraded != null)
-                    ComponentUpgraded(this, new ComponentEventArgs(component));
+                if (UpgradedComponent != null)
+                    UpgradedComponent(this, new ComponentEventArgs(component));
             }
         }
 
@@ -83,7 +81,10 @@ namespace NewCorePrototype
         /// <returns>Component definition.</returns>
         public ReadOnlyComponentDefinition FindComponentDefinition(string componentName)
         {
-            return registeredComponents.Find(c => c.Name == componentName);
+            if (!registeredComponents.ContainsKey(componentName))
+                return null;
+
+            return registeredComponents[componentName];
         }
 
         /// <summary>
@@ -95,6 +96,7 @@ namespace NewCorePrototype
         {
         }
 
-        private List<ReadOnlyComponentDefinition> registeredComponents = new List<ReadOnlyComponentDefinition>();
+        private Dictionary<string, ReadOnlyComponentDefinition> registeredComponents =
+            new Dictionary<string, ReadOnlyComponentDefinition>();
     }
 }
