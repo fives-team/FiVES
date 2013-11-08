@@ -18,7 +18,7 @@ namespace AvatarPlugin
 
         public List<string> GetDependencies ()
         {
-            return new List<string> { "ClientManager", "Auth", "Renderable", "Location" };
+            return new List<string> { "ClientManager", "Auth", "Renderable", "Motion" };
         }
 
         public void Initialize ()
@@ -28,7 +28,12 @@ namespace AvatarPlugin
             ComponentRegistry.Instance.DefineComponent("avatar", pluginGuid, avatarLayout);
 
             ClientManager.Instance.RegisterClientService("avatar", true, new Dictionary<string, Delegate> {
+				{"getAvatarEntityGuid", (Func<string, string>)GetAvatarEntityGuid},
                 {"changeAppearance", (Action<string, string, Vector>)ChangeAppearance},
+				{"startAvatarMotionInDirection", (Action<string, Vector>)StartAvatarMotionInDirection},
+				{"setAvatarForwardBackwardMotion", (Action<string, float>)SetForwardBackwardMotion},
+				{"setAvatarLeftRightMotion", (Action<string, float>)SetLeftRightMotion},
+				{"setAvatarSpinAroundAxis",(Action<string, Vector, float>)SetAvatarSpinAroundAxis}
             });
 
             ClientManager.Instance.NotifyWhenAnyClientAuthenticated((Action<Guid>)delegate(Guid sessionKey) {
@@ -60,6 +65,17 @@ namespace AvatarPlugin
             return avatarEntities[userLogin];
         }
 
+		/// <summary>
+        /// Kiara service interface function to let a connected client query the guid of the entity that was created for the avatar
+        /// </summary>
+        /// <param name="sessionKey">Session Key of the connected client</param>
+        /// <returns>The Guid of the Entity used as avatar</returns>
+        private string GetAvatarEntityGuid(string sessionKey)
+        {
+            Entity avatarEntity = GetAvatarEntityBySessionKey(Guid.Parse(sessionKey));
+            return avatarEntity.Guid.ToString();
+        }
+		
         /// <summary>
         /// Activates the avatar entity. Can also be used to update the mesh when its changed.
         /// </summary>
@@ -97,10 +113,39 @@ namespace AvatarPlugin
             avatarEntity["scale"]["z"] = scale.z;
         }
 
+        void StartAvatarMotionInDirection(string sessionKey, Vector velocity)
+        {
+            var avatarEntity = GetAvatarEntityBySessionKey(Guid.Parse(sessionKey));
+
+            avatarEntity["velocity"]["x"] = (float)velocity.x;
+            avatarEntity["velocity"]["y"] = (float)velocity.y;
+            avatarEntity["velocity"]["z"] = (float)velocity.z;
+        }
+
+        void SetForwardBackwardMotion(string sessionKey, float amount)
+        {
+            var avatarEntity = GetAvatarEntityBySessionKey(Guid.Parse(sessionKey));
+            avatarEntity["velocity"]["x"] = amount;
+        }
+
+        void SetLeftRightMotion(string sessionKey, float amount)
+        {
+            var avatarEntity = GetAvatarEntityBySessionKey(Guid.Parse(sessionKey));
+            avatarEntity["velocity"]["z"] = amount;
+        }
+
+        void SetAvatarSpinAroundAxis(string sessionKey, Vector axis, float angle)
+        {
+            var avatarEntity = GetAvatarEntityBySessionKey(Guid.Parse(sessionKey));
+            avatarEntity["rotVelocity"]["x"] = axis.x;
+            avatarEntity["rotVelocity"]["y"] = axis.y;
+            avatarEntity["rotVelocity"]["z"] = axis.z;
+            avatarEntity["rotVelocity"]["r"] = angle;
+        }
+		
         Dictionary<string, Entity> avatarEntities = new Dictionary<string, Entity>();
         // string defaultAvatarMesh = "resources/models/defaultAvatar/avatar.xml3d";
         string defaultAvatarMesh = "resources/models/firetruck/xml3d/firetruck.xml";
         Guid pluginGuid = new Guid("54b1215e-22cc-44ed-bef4-c92e4fb4edb5");
     }
 }
-

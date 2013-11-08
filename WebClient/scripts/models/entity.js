@@ -30,6 +30,10 @@ FIVES.Models = FIVES.Models || {};
             this._applyAttributeUpdates(updatedComponent);
         };
 
+        if(this.guid == FIVES.AvatarEntityGuid)  {
+            FIVES.Resources.SceneManager.updateCameraView(this);
+        }
+
         this._cachedComponentUpdates = {};
     };
 
@@ -80,6 +84,12 @@ FIVES.Models = FIVES.Models || {};
         {
             return this.xml3dView.transformElement;
         }
+    };
+
+    e.getDirection = function() {
+        var entityTransformation = this.getTransformElement();
+        var xAxis = new XML3DVec3(-1,0,0); /* we apply inversve transform */
+        return entityTransformation.rotation.rotateVec3(xAxis);
     };
 
     FIVES.Models.Entity = Entity;
