@@ -35,7 +35,7 @@ namespace FIVES
             Guid = Guid.NewGuid();
             Name = name;
             Type = type;
-            DefaultValue = DefaultValue;
+            DefaultValue = defaultValue;
         }
     }
 }

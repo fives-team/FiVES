@@ -50,6 +50,16 @@ namespace FIVES
             }
         }
 
+        /// <summary>
+        /// Verifies whether this component definition contains a definition for an attribute with a given name.
+        /// </summary>
+        /// <param name="attributeName">Attribute name.</param>
+        /// <returns>True if definition for such attribute is present, false otherwise.</returns>
+        public bool ContainsAttributeDefinition(string attributeName)
+        {
+            return attributeDefinitions.ContainsKey(attributeName);
+        }
+
         internal ReadOnlyComponentDefinition(string name, int version)
         {
             Guid = Guid.NewGuid();

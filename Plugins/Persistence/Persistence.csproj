@@ -79,6 +79,10 @@
     <EmbeddedResource Include="Mappings\ComponentLayout.hbm.xml" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\Core\DomainModel\DomainModel.csproj">
+      <Project>{79ef699d-6a88-4054-af04-f22486db47fa}</Project>
+      <Name>DomainModel</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\Core\PluginManager\PluginManager.csproj">
       <Project>{db1099a1-b7fe-474f-a03a-41687d6c5c76}</Project>
       <Name>PluginManager</Name>

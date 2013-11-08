@@ -35,19 +35,17 @@ namespace FIVES
         {
             get
             {
-                var attributeDefinition = Definition[attributeName];
-                if (attributeName == null)
-                    throw new AttributeAssignmentException("Attribute is not present in component definition.");
+                if (!Definition.ContainsAttributeDefinition(attributeName))
+                    throw new KeyNotFoundException("Attribute is not present in the component definition.");
 
                 return attributes[attributeName];
             }
             set
             {
-                var attributeDefinition = Definition[attributeName];
-                if (attributeName == null)
-                    throw new AttributeAssignmentException("Attribute is not present in component definition.");
+                if (!Definition.ContainsAttributeDefinition(attributeName))
+                    throw new KeyNotFoundException("Attribute is not present in the component definition.");
 
-                if (!attributeDefinition.Type.IsAssignableFrom(value.GetType()))
+                if (!Definition[attributeName].Type.IsAssignableFrom(value.GetType()))
                     throw new AttributeAssignmentException("Attribute can not be assigned from provided value.");
 
                 var oldValue = attributes[attributeName];
@@ -68,7 +66,7 @@ namespace FIVES
             Guid = Guid.NewGuid();
             Parent = parent;
             Definition = definition;
-            CreateAttributes(Definition);
+            InitializeAttributes();
         }
 
         internal void Upgrade(ReadOnlyComponentDefinition newDefinition, ComponentRegistry.ComponentUpgrader upgrader)
@@ -79,7 +77,7 @@ namespace FIVES
             Definition = newDefinition;
         }
 
-        private void CreateAttributes(ReadOnlyComponentDefinition Definition)
+        private void InitializeAttributes()
         {
             foreach (ReadOnlyAttributeDefinition attributeDefinition in Definition.AttributeDefinitions)
                 attributes.Add(attributeDefinition.Name, attributeDefinition.DefaultValue);
