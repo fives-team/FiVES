@@ -16,7 +16,7 @@ namespace RenderablePlugin
 
         public List<string> GetDependencies()
         {
-            return new List<string>() {"Location"};
+            return new List<string>() { "Location" };
         }
 
         public void Initialize()
@@ -37,7 +37,7 @@ namespace RenderablePlugin
             scale.AddAttribute<float>("x", 1f);
             scale.AddAttribute<float>("y", 1f);
             scale.AddAttribute<float>("z", 1f);
-            ComponentRegistry.Instance.Register(renderable);
+            ComponentRegistry.Instance.Register(scale);
         }
 
         void RegisterClientServices()
@@ -47,10 +47,11 @@ namespace RenderablePlugin
             });
         }
 
-        private void NotifyAboutVisibilityUpdates (string guid, Action<bool> callback)
+        private void NotifyAboutVisibilityUpdates(string guid, Action<bool> callback)
         {
             var entity = World.Instance.FindEntity(guid);
-            entity["meshResource"].ChangedAttribute += (sender, e) => {
+            entity["meshResource"].ChangedAttribute += (sender, e) =>
+            {
                 if (e.AttributeName == "visible")
                     callback((bool)e.NewValue);
             };

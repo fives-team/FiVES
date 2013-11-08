@@ -9,6 +9,11 @@ namespace ScriptingPlugin
     {
         ScriptingPluginInitializer plugin = new ScriptingPluginInitializer();
 
+        public ScriptingPluginInitializerTest()
+        {
+            plugin.Initialize();
+        }
+
         [Test()]
         public void ShouldReturnCorrectName()
         {
