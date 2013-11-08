@@ -12,3 +12,4 @@ Binaries/
 *.v11.suo
 *.mdf
 TestResults
+Core/PluginManager/TestPlugins
