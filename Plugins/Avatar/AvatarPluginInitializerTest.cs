@@ -21,7 +21,7 @@ namespace AvatarPlugin
             Assert.Contains("ClientManager", plugin.GetDependencies());
             Assert.Contains("Auth", plugin.GetDependencies());
             Assert.Contains("Renderable", plugin.GetDependencies());
-            Assert.Contains("Location", plugin.GetDependencies());
+            Assert.Contains("Motion", plugin.GetDependencies());
         }
     }
 }
