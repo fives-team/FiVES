@@ -19,7 +19,7 @@ namespace NewCorePrototype
     /// 
     /// Attributes may also be upgraded as following:
     /// <example>
-    ///     public void upgradeMeshResource1to2(IComponent meshResource1, IComponent meshResource2) 
+    ///     public void upgradeMeshResource1to2(Component meshResource1, Component meshResource2) 
     ///     {
     ///         meshResource2["uri"] = meshResource1["uri"];
     ///         meshResource2["isVisible"] = meshResource1["visible"];
@@ -58,10 +58,7 @@ namespace NewCorePrototype
         /// /// <param name="defaultValue">Default value of the new attribute.</param>
         public void AddAttribute<T>(string name, object defaultValue)
         {
-            if (attributeDefinitions.Find(d => d.Name == name) != null)
-                throw new AttributeDefinitionException("Attribute with such name is already defined.");
-
-            attributeDefinitions.Add(new AttributeDefinition(name, typeof(T), defaultValue));
+            AddAttributeDefinition(name, typeof(T), defaultValue);
         }
     }
 }

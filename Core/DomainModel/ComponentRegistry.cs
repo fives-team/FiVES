@@ -44,7 +44,7 @@ namespace NewCorePrototype
         /// </summary>
         /// <param name="oldComponent">Old component.</param>
         /// <param name="newComponent">New component.</param>
-        public delegate void ComponentUpgrader(IComponent oldComponent, IComponent newComponent);
+        public delegate void ComponentUpgrader(Component oldComponent, Component newComponent);
         
         /// <summary>
         /// Upgrades a component to a new version. Version numbers must be sequential numbers starting from 1. This
@@ -89,7 +89,7 @@ namespace NewCorePrototype
         /// <summary>
         /// Raised when a component has been upgraded.
         /// </summary>
-        public event EventHandler<ComponentEventArgs> ComponentUpgraded;
+        public event EventHandler<ComponentEventArgs> UpgradedComponent;
 
         internal ComponentRegistry()
         {

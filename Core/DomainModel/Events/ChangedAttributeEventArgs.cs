@@ -6,11 +6,11 @@ using System.Text;
 namespace NewCorePrototype
 {
     /// <summary>
-    /// Event arguments for ChangedAttribute event found in IEntity, IComponent and IAttribute interfaces.
+    /// Event arguments for ChangedAttribute event in Entity and Component classes.
     /// </summary>
     public class ChangedAttributeEventArgs : EventArgs
     {
-        internal ChangedAttributeEventArgs(IComponent component, string attributeName, object oldValue, object newValue)
+        internal ChangedAttributeEventArgs(Component component, string attributeName, object oldValue, object newValue)
         {
             Component = component;
             AttributeName = attributeName;
@@ -18,7 +18,7 @@ namespace NewCorePrototype
             NewValue = newValue;
         }
 
-        public IComponent Component { get; private set;  }
+        public Component Component { get; private set;  }
         public string AttributeName { get; private set; }
         public object OldValue { get; private set; }
         public object NewValue { get; private set; }

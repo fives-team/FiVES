@@ -6,6 +6,9 @@ using System.Text;
 
 namespace NewCorePrototype
 {
+    /// <summary>
+    /// Component definition that can not be modified.
+    /// </summary>
     public class ReadOnlyComponentDefinition
     {
         /// <summary>
@@ -26,7 +29,7 @@ namespace NewCorePrototype
         /// <summary>
         /// A collection of attribute definitions.
         /// </summary>
-        public ReadOnlyCollection<IAttributeDefinition> AttributeDefinitions
+        public ReadOnlyCollection<ReadOnlyAttributeDefinition> AttributeDefinitions
         {
             get
             {
@@ -39,7 +42,7 @@ namespace NewCorePrototype
         /// </summary>
         /// <param name="attributeName">Attribute name.</param>
         /// <returns>Attribute definition.</returns>
-        public IAttributeDefinition this[string attributeName]
+        public ReadOnlyAttributeDefinition this[string attributeName]
         {
             get
             {
@@ -54,6 +57,14 @@ namespace NewCorePrototype
             Version = version;
         }
 
-        protected List<IAttributeDefinition> attributeDefinitions = new List<IAttributeDefinition>();
+        protected void AddAttributeDefinition(string name, Type type, object defaultValue)
+        {
+            if (attributeDefinitions.Find(d => d.Name == name) != null)
+                throw new AttributeDefinitionException("Attribute with such name is already defined.");
+
+            attributeDefinitions.Add(new ReadOnlyAttributeDefinition(name, type, defaultValue));
+        }
+
+        private List<ReadOnlyAttributeDefinition> attributeDefinitions = new List<ReadOnlyAttributeDefinition>();
     }
 }

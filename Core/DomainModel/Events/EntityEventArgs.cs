@@ -6,7 +6,7 @@ using System.Text;
 namespace NewCorePrototype
 {
     /// <summary>
-    /// Event arguments for EntityAdded and EntityRemoved event in World class.
+    /// Event arguments for EntityAdded and EntityRemoved events in World class.
     /// </summary>
     public class EntityEventArgs : EventArgs
     {

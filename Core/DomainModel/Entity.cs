@@ -30,7 +30,7 @@ namespace NewCorePrototype
         /// accessed via [] operator, however components must be registered using ComponentRegistry before they are     
         /// accessed.
         /// </summary>
-        public ReadOnlyCollection<IComponent> Components
+        public ReadOnlyCollection<Component> Components
         {
             get { return components.AsReadOnly(); }
         }
@@ -41,7 +41,7 @@ namespace NewCorePrototype
         /// </summary>
         /// <param name="componentName">Name of the component, which is to be returned.</param>
         /// <returns>Component.</returns>
-        public IComponent this[string componentName]
+        public Component this[string componentName]
         {
             get 
             {
@@ -81,13 +81,13 @@ namespace NewCorePrototype
         /// TODO
         public event EventHandler<ChangedAttributeEventArgs> ChangedAttribute;
 
-        private IComponent CreateComponent(string componentName)
+        private Component CreateComponent(string componentName)
         {
             var definition = ComponentRegistry.Instance.FindComponentDefinition(componentName);
             if (definition == null)
                 throw new ComponentAccessException("Component with given name is not registered.");
 
-            IComponent component = new Component(definition, this);
+            Component component = new Component(definition, this);
             components.Add(component);
 
             component.ChangedAttribute += HandleChangedComponentAttribute;
@@ -118,6 +118,6 @@ namespace NewCorePrototype
         }
 
         private EntityCollection children = new EntityCollection();
-        private List<IComponent> components = new List<IComponent>();
+        private List<Component> components = new List<Component>();
     }
 }

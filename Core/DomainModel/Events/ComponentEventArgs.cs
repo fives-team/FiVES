@@ -6,15 +6,15 @@ using System.Text;
 namespace NewCorePrototype
 {
     /// <summary>
-    /// Event args for ComponentCreated events in IEntity interface and Upgraded events in IComponent.
+    /// Event args for CreatedComponent event in Entity class and UpgradedComponent event in ComponentRegistry class.
     /// </summary>
     public class ComponentEventArgs : EventArgs
     {
-        internal ComponentEventArgs(IComponent component)
+        internal ComponentEventArgs(Component component)
         {
             Component = component;
         }
 
-        public IComponent Component { get; private set; }
+        public Component Component { get; private set; }
     }
 }
