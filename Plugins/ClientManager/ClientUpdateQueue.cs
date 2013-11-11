@@ -12,7 +12,7 @@ namespace ClientManagerPlugin
     {
         internal struct UpdateInfo
         {
-            public Entity entity;
+            public Guid entityGuid;
             public string componentName;
             public string attributeName;
             //public int timeStamp; /* not used yet */
@@ -128,7 +128,7 @@ namespace ClientManagerPlugin
         /// <param name="e">Event arguments</param>
         private UpdateInfo CreateUpdateInfoFromEventArgs(Entity entity, ChangedAttributeEventArgs e) {
             UpdateInfo newUpdateInfo = new UpdateInfo();
-            newUpdateInfo.entity = entity;
+            newUpdateInfo.entityGuid = entity.Guid;
             newUpdateInfo.componentName = e.Component.Definition.Name;
             newUpdateInfo.attributeName = e.AttributeName;
             newUpdateInfo.value = e.NewValue;
@@ -144,7 +144,7 @@ namespace ClientManagerPlugin
             {
                 foreach (UpdateInfo entityUpdate in UpdateQueue)
                 {
-                    if (entityUpdate.entity.Equals(entity))
+                    if (entityUpdate.entityGuid.Equals(entity.Guid))
                     {
                         UpdateQueue.Remove(entityUpdate);
                     }
