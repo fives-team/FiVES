@@ -9,13 +9,25 @@ namespace FIVES
     /// <summary>
     /// Component definition that can not be modified.
     /// </summary>
-    public class ReadOnlyComponentDefinition
+    public abstract class ReadOnlyComponentDefinition
     {
+        /// <summary>
+        /// Constructs an instance of the ReadOnlyComponentDefinition.
+        /// </summary>
+        /// <param name="name">Name of the component.</param>
+        /// <param name="version">Version of the definition.</param>
+        public ReadOnlyComponentDefinition(string name, int version)
+        {
+            Guid = Guid.NewGuid();
+            Name = name;
+            Version = version;
+        }
+
         /// <summary>
         /// GUID that uniquely identifies this component definition.
         /// </summary>
         public Guid Guid { get; private set; }
-        
+
         /// <summary>
         /// Name of the component.
         /// </summary>
@@ -29,53 +41,20 @@ namespace FIVES
         /// <summary>
         /// A collection of attribute definitions.
         /// </summary>
-        public ReadOnlyCollection<ReadOnlyAttributeDefinition> AttributeDefinitions
-        {
-            get
-            {
-                return new ReadOnlyCollection<ReadOnlyAttributeDefinition>(attributeDefinitions.Values);
-            }
-        }
+        public abstract ReadOnlyCollection<ReadOnlyAttributeDefinition> AttributeDefinitions { get; }
 
         /// <summary>
         /// Returns a attribute definition by its name or throws KeyNotFoundException if the attribute is not defined.
         /// </summary>
         /// <param name="attributeName">Attribute name.</param>
         /// <returns>Attribute definition.</returns>
-        public ReadOnlyAttributeDefinition this[string attributeName]
-        {
-            get
-            {
-                return attributeDefinitions[attributeName];
-            }
-        }
+        public abstract ReadOnlyAttributeDefinition this[string attributeName] { get; }
 
         /// <summary>
         /// Verifies whether this component definition contains a definition for an attribute with a given name.
         /// </summary>
         /// <param name="attributeName">Attribute name.</param>
         /// <returns>True if definition for such attribute is present, false otherwise.</returns>
-        public bool ContainsAttributeDefinition(string attributeName)
-        {
-            return attributeDefinitions.ContainsKey(attributeName);
-        }
-
-        internal ReadOnlyComponentDefinition(string name, int version)
-        {
-            Guid = Guid.NewGuid();
-            Name = name;
-            Version = version;
-        }
-
-        protected void AddAttributeDefinition(string name, Type type, object defaultValue)
-        {
-            if (attributeDefinitions.ContainsKey(name))
-                throw new AttributeDefinitionException("Attribute with such name is already defined.");
-
-            attributeDefinitions[name] = new ReadOnlyAttributeDefinition(name, type, defaultValue);
-        }
-
-        private Dictionary<string, ReadOnlyAttributeDefinition> attributeDefinitions =
-            new Dictionary<string, ReadOnlyAttributeDefinition>();
+        public abstract bool ContainsAttributeDefinition(string attributeName);
     }
 }

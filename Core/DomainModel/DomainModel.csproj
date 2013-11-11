@@ -50,7 +50,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ComponentDefinitionTest.cs" />
+    <Compile Include="ComponentRegistryTest.cs" />
     <Compile Include="ComponentTest.cs" />
+    <Compile Include="EntityCollectionTest.cs" />
+    <Compile Include="EntityTest.cs" />
     <Compile Include="Exceptions\EntityNotFoundException.cs" />
     <Compile Include="Exceptions\AttributeAssignmentException.cs" />
     <Compile Include="Exceptions\AttributeDefinitionException.cs" />
@@ -67,7 +71,9 @@
     <Compile Include="ReadOnlyAttributeDefinition.cs" />
     <Compile Include="Component.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ReadOnlyAttributeDefinitionTest.cs" />
     <Compile Include="ReadOnlyComponentDefinition.cs" />
+    <Compile Include="ReadOnlyComponentDefinitionTest.cs" />
     <Compile Include="World.cs" />
   </ItemGroup>
   <ItemGroup>

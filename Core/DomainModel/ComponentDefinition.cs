@@ -37,17 +37,24 @@ namespace FIVES
     /// </summary>
     public sealed class ComponentDefinition : ReadOnlyComponentDefinition
     {
-        public ComponentDefinition(string name, int version = 1) : base(name, version) { }
+        /// <summary>
+        /// Constructs an instance of the ComponentDefinition.
+        /// </summary>
+        /// <param name="name">Name of the component.</param>
+        /// <param name="version">Version of the definition.</param>
+        public ComponentDefinition(string name, int version = 1) : base(name, version)
+        {
+        }
 
         /// <summary>
-        /// Adds a new attribute definition to the component definition. Default value for the type is used as default 
+        /// Adds a new attribute definition to the component definition. Default value for the type is used as default
         /// value for the attribute.
         /// </summary>
         /// <typeparam name="T">Type of the new attribute.</typeparam>
         /// <param name="name">Name of the new attribute.</param>
         public void AddAttribute<T>(string name)
         {
-            AddAttribute<T>(name, default(T));
+            AddAttributeDefinition(name, typeof(T), default(T));
         }
 
         /// <summary>
@@ -60,5 +67,37 @@ namespace FIVES
         {
             AddAttributeDefinition(name, typeof(T), defaultValue);
         }
+
+        public override ReadOnlyCollection<ReadOnlyAttributeDefinition> AttributeDefinitions
+        {
+            get
+            {
+                return new ReadOnlyCollection<ReadOnlyAttributeDefinition>(attributeDefinitions.Values);
+            }
+        }
+
+        public override ReadOnlyAttributeDefinition this[string attributeName]
+        {
+            get
+            {
+                return attributeDefinitions[attributeName];
+            }
+        }
+
+        public override bool ContainsAttributeDefinition(string attributeName)
+        {
+            return attributeDefinitions.ContainsKey(attributeName);
+        }
+
+        private void AddAttributeDefinition(string name, Type type, object defaultValue)
+        {
+            if (attributeDefinitions.ContainsKey(name))
+                throw new AttributeDefinitionException("Attribute with such name is already defined.");
+
+            attributeDefinitions[name] = new ReadOnlyAttributeDefinition(name, type, defaultValue);
+        }
+
+        private Dictionary<string, ReadOnlyAttributeDefinition> attributeDefinitions =
+            new Dictionary<string, ReadOnlyAttributeDefinition>();
     }
 }

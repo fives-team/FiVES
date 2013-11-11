@@ -11,7 +11,6 @@ namespace FIVES
         ComponentDefinition definition; // TODO: mock
         Entity parent;  // TODO: mock
         Component component;
-        
 
         [SetUp()]
         public void Init()
