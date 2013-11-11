@@ -63,6 +63,8 @@ namespace NativeClient
             socket.Opened += HandleOpened;
             socket.Closed += HandleClosed;
             socket.Open();
+
+            settings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
         }
 
         /// <summary>
@@ -108,7 +110,7 @@ namespace NativeClient
             message.Add(callbacks);
             message.AddRange(args);
 
-            var serializedMessage = JsonConvert.SerializeObject(message);
+            var serializedMessage = JsonConvert.SerializeObject(message, settings);
             Logger.Debug("Sending: {0}", serializedMessage);
             socket.Send(serializedMessage);
             return callID;
@@ -220,6 +222,11 @@ namespace NativeClient
         /// Next call ID. Used to generate unique call IDs.
         /// </summary>
         static int NextCallID = 0;
+
+        /// <summary>
+        /// Settings for the JSON.NET.
+        /// </summary>
+        JsonSerializerSettings settings = new JsonSerializerSettings();
 
         static Logger Logger = LogManager.GetCurrentClassLogger();
     }
