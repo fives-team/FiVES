@@ -20,7 +20,8 @@ namespace FIVES
         {
             get
             {
-                return new ReadOnlyCollection<ReadOnlyComponentDefinition>(registeredComponents.Values);
+                var collection = new List<ReadOnlyComponentDefinition>(registeredComponents.Values);
+                return new ReadOnlyCollection<ReadOnlyComponentDefinition>(collection);
             }
         }
 
@@ -29,11 +30,11 @@ namespace FIVES
         /// already registered.
         /// </summary>
         /// <param name="definition">New component definition.</param>
-        public void Register(ReadOnlyComponentDefinition definition)
+        public void Register(ComponentDefinition definition)
         {
             if (registeredComponents.ContainsKey(definition.Name))
                 throw new ComponentRegistrationException("Component with the same name is already registered.");
-            
+
             registeredComponents.Add(definition.Name, definition);
         }
 
@@ -52,7 +53,7 @@ namespace FIVES
         /// </summary>
         /// <param name="newDefinition">New definition of the component.</param>
         /// <param name="upgrader">Upgrade function, see <see cref="ComponentUpgrader"/>.</param>
-        public void Upgrade(ReadOnlyComponentDefinition newDefinition, ComponentUpgrader upgrader)
+        public void Upgrade(ComponentDefinition newDefinition, ComponentUpgrader upgrader)
         {
             string name = newDefinition.Name;
             if (!registeredComponents.ContainsKey(name))
@@ -96,7 +97,7 @@ namespace FIVES
         {
         }
 
-        private Dictionary<string, ReadOnlyComponentDefinition> registeredComponents =
-            new Dictionary<string, ReadOnlyComponentDefinition>();
+        private Dictionary<string, ComponentDefinition> registeredComponents =
+            new Dictionary<string, ComponentDefinition>();
     }
 }

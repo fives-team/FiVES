@@ -6,7 +6,7 @@ using System.Text;
 namespace FIVES
 {
     /// <summary>
-    /// Represents an attribute definition.
+    /// Represents a read-only attribute definition.
     /// </summary>
     public class ReadOnlyAttributeDefinition
     {
@@ -28,7 +28,7 @@ namespace FIVES
         /// <summary>
         /// Type of the attribute.
         /// </summary>
-        public Type Type { get; protected set; }
+        public Type Type { get; private set; }
 
         internal ReadOnlyAttributeDefinition(string name, Type type, object defaultValue)
         {
