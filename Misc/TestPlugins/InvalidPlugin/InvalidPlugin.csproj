@@ -11,6 +11,8 @@
     <AssemblyName>InvalidPlugin</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
+    <ProductVersion>12.0.0</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -45,7 +47,7 @@
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent Condition=" '$(OS)' == 'Windows_NT' ">xcopy /y "$(TargetPath)" "$(ProjectDir)..\..\..\Core\PluginManager\TestPlugins\"</PostBuildEvent>
-	<PostBuildEvent Condition=" '$(OS)' != 'Windows_NT' ">mkdir -p "$(ProjectDir)../../../Core/PluginManager/TestPlugins/" &amp;&amp; cp "$(TargetPath)" "$(ProjectDir)../../../Core/PluginManager/TestPlugins/"</PostBuildEvent>
+    <PostBuildEvent Condition=" '$(OS)' != 'Windows_NT' ">mkdir -p "$(ProjectDir)../../../Core/PluginManager/TestPlugins/" &amp;&amp; cp "$(TargetPath)" "$(ProjectDir)../../../Core/PluginManager/TestPlugins/"</PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

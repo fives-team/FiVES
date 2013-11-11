@@ -45,7 +45,7 @@
     <Reference Include="Moq">
       <HintPath>..\..\packages\Moq.4.1.1309.1617\lib\net40\Moq.dll</HintPath>
     </Reference>
-    <Reference Include="System.configuration" />
+    <Reference Include="System.Configuration" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Connection.cs" />
@@ -83,7 +83,7 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Core\PluginManager\PluginManager.csproj">
-      <Project>{db1099a1-b7fe-474f-a03a-41687d6c5c76}</Project>
+      <Project>{DB1099A1-B7FE-474F-A03A-41687D6C5C76}</Project>
       <Name>PluginManager</Name>
     </ProjectReference>
   </ItemGroup>

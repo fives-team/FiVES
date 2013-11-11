@@ -63,11 +63,11 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Core\DomainModel\DomainModel.csproj">
-      <Project>{79ef699d-6a88-4054-af04-f22486db47fa}</Project>
+      <Project>{79EF699D-6A88-4054-AF04-F22486DB47FA}</Project>
       <Name>DomainModel</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\Core\PluginManager\PluginManager.csproj">
-      <Project>{db1099a1-b7fe-474f-a03a-41687d6c5c76}</Project>
+      <Project>{DB1099A1-B7FE-474F-A03A-41687D6C5C76}</Project>
       <Name>PluginManager</Name>
     </ProjectReference>
   </ItemGroup>

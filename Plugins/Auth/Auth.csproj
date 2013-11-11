@@ -55,7 +55,7 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Core\PluginManager\PluginManager.csproj">
-      <Project>{db1099a1-b7fe-474f-a03a-41687d6c5c76}</Project>
+      <Project>{DB1099A1-B7FE-474F-A03A-41687D6C5C76}</Project>
       <Name>PluginManager</Name>
     </ProjectReference>
   </ItemGroup>
