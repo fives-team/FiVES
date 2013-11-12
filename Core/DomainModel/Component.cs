@@ -9,7 +9,7 @@ namespace FIVES
     /// <summary>
     /// Represents a component in an entity.
     /// </summary>
-    public class Component
+    public sealed class Component
     {
         /// <summary>
         /// GUID that uniquely identifies this componentn.
@@ -69,7 +69,7 @@ namespace FIVES
             InitializeAttributes();
         }
 
-        internal void Upgrade(ReadOnlyComponentDefinition newDefinition, ComponentRegistry.ComponentUpgrader upgrader)
+        internal void Upgrade(ReadOnlyComponentDefinition newDefinition, ComponentUpgrader upgrader)
         {
             Component newComponent = new Component(newDefinition, Parent);
             upgrader(this, newComponent);

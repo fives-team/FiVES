@@ -8,7 +8,7 @@ namespace FIVES
     /// <summary>
     /// Represents a read-only attribute definition.
     /// </summary>
-    public class ReadOnlyAttributeDefinition
+    public sealed class ReadOnlyAttributeDefinition
     {
         /// <summary>
         /// GUID that identifies this attribute definition.

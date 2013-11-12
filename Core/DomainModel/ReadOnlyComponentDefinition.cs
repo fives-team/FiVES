@@ -12,18 +12,6 @@ namespace FIVES
     public abstract class ReadOnlyComponentDefinition
     {
         /// <summary>
-        /// Constructs an instance of the ReadOnlyComponentDefinition.
-        /// </summary>
-        /// <param name="name">Name of the component.</param>
-        /// <param name="version">Version of the definition.</param>
-        public ReadOnlyComponentDefinition(string name, int version)
-        {
-            Guid = Guid.NewGuid();
-            Name = name;
-            Version = version;
-        }
-
-        /// <summary>
         /// GUID that uniquely identifies this component definition.
         /// </summary>
         public Guid Guid { get; private set; }
@@ -56,5 +44,12 @@ namespace FIVES
         /// <param name="attributeName">Attribute name.</param>
         /// <returns>True if definition for such attribute is present, false otherwise.</returns>
         public abstract bool ContainsAttributeDefinition(string attributeName);
+
+        internal ReadOnlyComponentDefinition(string name, int version)
+        {
+            Guid = Guid.NewGuid();
+            Name = name;
+            Version = version;
+        }
     }
 }

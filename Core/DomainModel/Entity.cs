@@ -92,7 +92,7 @@ namespace FIVES
 
         private void CreateComponent(string componentName)
         {
-            var definition = ComponentRegistry.Instance.FindComponentDefinition(componentName);
+            var definition = componentRegistry.FindComponentDefinition(componentName);
             if (definition == null)
                 throw new ComponentAccessException("Component with given name is not registered.");
 
@@ -128,5 +128,7 @@ namespace FIVES
 
         private EntityCollection children = new EntityCollection();
         private Dictionary<string, Component> components = new Dictionary<string, Component>();
+
+        internal IComponentRegistry componentRegistry = ComponentRegistry.Instance;
     }
 }

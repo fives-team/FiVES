@@ -7,9 +7,18 @@ using System.Text;
 namespace FIVES
 {
     /// <summary>
+    /// Delegate type which describes a function used to upgrade components. It should set attribute values in
+    /// <paramref name="newComponent"/> based on values in <paramref name="oldComponent"/>. Unless modified
+    /// attributes in the <paramref name="newComponent"/> will have their default values.
+    /// </summary>
+    /// <param name="oldComponent">Old component.</param>
+    /// <param name="newComponent">New component.</param>
+    public delegate void ComponentUpgrader(Component oldComponent, Component newComponent);
+
+    /// <summary>
     /// Manages component definitions.
     /// </summary>
-    public class ComponentRegistry
+    public sealed class ComponentRegistry : IComponentRegistry
     {
         public static ComponentRegistry Instance = new ComponentRegistry();
 
@@ -39,15 +48,6 @@ namespace FIVES
         }
 
         /// <summary>
-        /// Delegate type which describes a function used to upgrade components. It should set attribute values in
-        /// <paramref name="newComponent"/> based on values in <paramref name="oldComponent"/>. Unless modified 
-        /// attributes in the <paramref name="newComponent"/> will have their default values.
-        /// </summary>
-        /// <param name="oldComponent">Old component.</param>
-        /// <param name="newComponent">New component.</param>
-        public delegate void ComponentUpgrader(Component oldComponent, Component newComponent);
-        
-        /// <summary>
         /// Upgrades a component to a new version. Version numbers must be sequential numbers starting from 1. This
         /// method will raise an exception if the previous version is not found or if same or newer version is found.
         /// </summary>
@@ -66,7 +66,7 @@ namespace FIVES
             registeredComponents.Add(name, newDefinition);
 
             // Upgrade all entities.
-            foreach (var entity in World.Instance)
+            foreach (var entity in world)
             {
                 var component = (Component)entity[name];
                 component.Upgrade(newDefinition, upgrader);
@@ -93,11 +93,9 @@ namespace FIVES
         /// </summary>
         public event EventHandler<ComponentEventArgs> UpgradedComponent;
 
-        internal ComponentRegistry()
-        {
-        }
-
         private Dictionary<string, ComponentDefinition> registeredComponents =
             new Dictionary<string, ComponentDefinition>();
+
+        internal IEnumerable<Entity> world = World.Instance;
     }
 }

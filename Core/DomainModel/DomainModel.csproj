@@ -75,6 +75,7 @@
     <Compile Include="ReadOnlyAttributeDefinitionTest.cs" />
     <Compile Include="ReadOnlyComponentDefinition.cs" />
     <Compile Include="ReadOnlyComponentDefinitionTest.cs" />
+    <Compile Include="Testing Interfaces\IComponentRegistry.cs" />
     <Compile Include="World.cs" />
   </ItemGroup>
   <ItemGroup>

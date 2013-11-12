@@ -18,19 +18,21 @@ namespace FIVES
 
         Entity entity;
         Mock<IMockHandlers> mockHandlers;
-
-        public EntityTest()
-        {
-            // TODO: mock ComponentRegistry and ComponentDefinition
-            ComponentDefinition test = new ComponentDefinition("test");
-            test.AddAttribute<int>("a", 42);
-            ComponentRegistry.Instance.Register(test);
-        }
+        Mock<IComponentRegistry> mockComponentRegistry;
 
         [SetUp()]
         public void Init()
         {
+            // TODO: mock ComponentDefinition
+            ComponentDefinition test = new ComponentDefinition("test");
+            test.AddAttribute<int>("a", 42);
+
+            mockComponentRegistry = new Mock<IComponentRegistry>();
+            mockComponentRegistry.Setup(r => r.FindComponentDefinition("test")).Returns(test);
+
             entity = new Entity();
+            entity.componentRegistry = mockComponentRegistry.Object;
+
             mockHandlers = new Mock<IMockHandlers>();
         }
 

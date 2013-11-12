@@ -88,12 +88,12 @@ namespace FIVES
         [Test()]
         public void ShouldFireUpgradedComponentEvents()
         {
-            // TODO: mock Entity and World
+            // TODO: mock Entity
             var entity = new Entity();
-            World.Instance.Add(entity);
+            entity.componentRegistry = registry;
             registry.Register(definition);
-            ComponentRegistry.Instance.Register(definition);  // need to register in global registry too
             entity["test2"]["a"] = 24;
+            registry.world = new Entity[] { entity };
 
             registry.UpgradedComponent += mockHandlers.Object.UpgradedComponent;
             registry.Upgrade(definition2, (oldComponent, newComponent) => { });
