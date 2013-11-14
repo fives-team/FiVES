@@ -14,7 +14,7 @@ namespace ClientManagerPlugin
 
         public ClientManager()
         {
-            clientService = ServiceFactory.CreateByURI("http://localhost/projects/test-client/kiara/fives.json");
+            clientService = ServiceFactory.Create("http://localhost/projects/test-client/kiara/fives.json");
 
             RegisterClientService("kiara", false, new Dictionary<string, Delegate>());
             RegisterClientMethod("kiara.implements", false, (Func<List<string>, List<bool>>)Implements);
@@ -24,26 +24,15 @@ namespace ClientManagerPlugin
             clientService.OnNewClient += delegate(Connection connection)
             {
                 connection.RegisterFuncImplementation("auth.login",
-                    (Func<string, string, string>)delegate(string login, string password)
-                {
-                    Guid sessionKey = Authentication.Instance.Authenticate(login, password);
-                    if (sessionKey == Guid.Empty)
-                        return "";
-                    authenticatedClients[sessionKey] = connection;
-                    if (OnAuthenticated != null)
-                        OnAuthenticated(sessionKey);
-                    foreach (var entry in authenticatedMethods)
-                        connection.RegisterFuncImplementation(entry.Key, entry.Value);
-                    return sessionKey.ToString();
-                }
-                );
+                    (Func<Connection, string, string, string>)Authenticate);
             };
 
             RegisterClientService("objectsync", true, new Dictionary<string, Delegate> {
                 {"listObjects", (Func<List<Dictionary<string, object>>>) ListObjects},
                 {"notifyAboutNewObjects", (Action<string, Action<Dictionary<string, object>>>) NotifyAboutNewObjects},
                 {"notifyAboutRemovedObjects", (Action<string, Action<string>>) NotifyAboutRemovedObjects},
-                {"notifyAboutObjectUpdates", (Action<string, Action<List<ClientUpdateQueue.UpdateInfo>>>) NotifyAboutObjectUpdates},
+                {"notifyAboutObjectUpdates",
+                    (Action<string, Action<List<ClientUpdateQueue.UpdateInfo>>>) NotifyAboutObjectUpdates},
             });
 
             // DEBUG
@@ -84,6 +73,19 @@ namespace ClientManagerPlugin
             };
 
             return entityInfo;
+        }
+
+        string Authenticate(Connection connection, string login, string password)
+        {
+            Guid sessionKey = Authentication.Instance.Authenticate(login, password);
+            if (sessionKey == Guid.Empty)
+                return "";
+            authenticatedClients[sessionKey] = connection;
+            if (OnAuthenticated != null)
+                OnAuthenticated(sessionKey);
+            foreach (var entry in authenticatedMethods)
+                connection.RegisterFuncImplementation(entry.Key, entry.Value);
+            return sessionKey.ToString();
         }
 
         void NotifyAboutNewObjects(string sessionKey, Action<Dictionary<string, object>> callback)
@@ -207,7 +209,7 @@ namespace ClientManagerPlugin
             if (!authenticatedClients.ContainsKey(secToken))
                 throw new Exception("Client with with given session key {0} is not authenticated.");
 
-            authenticatedClients[secToken].OnClose += delegate(string reason)
+            authenticatedClients[secToken].Closed += new EventHandler((sender, e) =>
             {
                 if (onNewEntityHandlers.ContainsKey(secToken))
                 {
@@ -228,7 +230,7 @@ namespace ClientManagerPlugin
                 }
                 callback(secToken);
                 authenticatedClients.Remove(secToken);
-            };
+            });
         }
 
         public void NotifyWhenAnyClientAuthenticated(Action<Guid> callback)

@@ -9,53 +9,87 @@ namespace KIARAPlugin
     {
         private string idlURL = "http://www.example.com/my.idl";
 
-        [Test()]
-        public void ShouldCallFuncInProtocol()
+        public class ConnectionImpl : Connection
         {
-            var mockProtocol = new Mock<IProtocol>();
+            public override event EventHandler Closed;
 
-            Connection c = new Connection(mockProtocol.Object);
-            var testFunc = c.GenerateFuncWrapper("testFunc");
-            testFunc("testArg", 42);
+            public override void Disconnect()
+            {
+            }
 
-            mockProtocol.Verify(protocol => protocol.CallFunc("testFunc", "testArg", 42), Times.Once());
+            protected override void ProcessIDL(string parsedIDL)
+            {
+                ProcessIDLTest(parsedIDL);
+            }
+
+            protected override IFuncCall CallFunc(string funcName, params object[] args)
+            {
+                return CallFuncTest(funcName, args);
+            }
+
+            protected override void RegisterHandler(string funcName, Delegate handler)
+            {
+                RegisterHandlerTest(funcName, handler);
+            }
+
+            public virtual void ProcessIDLTest(string parsedIDL)
+            {
+            }
+
+            public virtual IFuncCall CallFuncTest(string funcName, params object[] args)
+            {
+                return null;
+            }
+
+            public virtual void RegisterHandlerTest(string funcName, Delegate handler)
+            {
+            }
+        }
+
+        Mock<IWebClient> mockWebClient;
+        Connection connection;
+        Mock<ConnectionImpl> mockConnectionImpl;
+
+        [SetUp()]
+        public void Init()
+        {
+            mockConnectionImpl = new Mock<ConnectionImpl> { CallBase = true };
+            mockWebClient = new Mock<IWebClient>();
+            connection = mockConnectionImpl.Object;
+            connection.webClient = mockWebClient.Object;
         }
 
         [Test()]
-        public void ShouldDownloadIDLAndCallProcessIDLInProtocol()
+        public void ShouldCallFunc()
         {
-            var mockProtocol = new Mock<IProtocol>();
-            var mockWebClient = new Mock<IWebClient>();
-
-            mockWebClient.Setup(client => client.DownloadString(idlURL)).Returns("{}");
-
-            Connection c = new Connection(mockProtocol.Object, mockWebClient.Object);
-            c.LoadIDL(idlURL);
-
-            mockWebClient.Verify(client => client.DownloadString(idlURL), Times.Once());
-            mockProtocol.Verify(protocol => protocol.ProcessIDL("{}"), Times.Once());
+            var testFunc = connection.GenerateFuncWrapper("testFunc");
+            var funcCall = testFunc("testArg", 42);
+            mockConnectionImpl.Verify(c => c.CallFuncTest("testFunc", "testArg", 42), Times.Once());
         }
 
         [Test()]
-        public void ShouldCallRegisterHandlerInProtocol()
+        public void ShouldDownloadIDLAndCallProcessIDL()
         {
-            var mockProtocol = new Mock<IProtocol>();
+            mockWebClient.Setup(client => client.DownloadString(idlURL)).Returns("{}").Verifiable();
+            connection.LoadIDL(idlURL);
+            mockWebClient.Verify();
+            mockConnectionImpl.Verify(c => c.ProcessIDLTest("{}"), Times.Once());
+        }
 
-            Connection c = new Connection(mockProtocol.Object);
-            Delegate d = (Func<int, string>)delegate(int x) { return ""; };
-            c.RegisterFuncImplementation("testFunc", d);
-
-            mockProtocol.Verify(protocol => protocol.RegisterHandler("testFunc", d), Times.Once());
+        [Test()]
+        public void ShouldCallRegisterHandler()
+        {
+            Delegate testDelegate = (Func<int, string>)delegate(int x) { return ""; };
+            connection.RegisterFuncImplementation("testFunc", testDelegate);
+            mockConnectionImpl.Verify(c => c.RegisterHandlerTest("testFunc", testDelegate), Times.Once());
         }
 
 
         [Test()]
         public void ShouldMapBracketOperatorToGenerateFuncWrapper()
         {
-            var mockProtocol = new Mock<IProtocol>();
-            Connection c = new Connection(mockProtocol.Object);
-            c["foo"](123);
-            mockProtocol.Verify(p => p.CallFunc("foo", 123), Times.Once());
+            connection["foo"](123);
+            mockConnectionImpl.Verify(c => c.CallFuncTest("foo", 123), Times.Once());
         }
 
         // TODO: Tests for type mapping

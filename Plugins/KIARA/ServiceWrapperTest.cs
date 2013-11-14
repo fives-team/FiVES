@@ -9,16 +9,14 @@ namespace KIARAPlugin
     {
         ServiceWrapper service;
         Context context;
-        Connection connection;
-        Mock<IProtocol> protocolMock;
+        Mock<Connection> connectionMock;
 
         [SetUp()]
         public void Init()
         {
             context = new Context();
             service = new ServiceWrapper(context);
-            protocolMock = new Mock<IProtocol>();
-            connection = new Connection(protocolMock.Object);
+            connectionMock = new Mock<Connection>();
         }
 
         [Test()]
@@ -26,7 +24,7 @@ namespace KIARAPlugin
         {
             bool connected = false;
             service.OnConnected += (c) => connected = true;
-            service.HandleConnected(connection);
+            service.HandleConnected(connectionMock.Object);
             Assert.IsTrue(connected);
         }
     }

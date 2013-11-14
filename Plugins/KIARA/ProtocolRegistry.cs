@@ -9,8 +9,8 @@ namespace KIARAPlugin
     #region Testing
     public interface IProtocolRegistry
     {
-        void RegisterProtocolFactory(string protocol, IProtocolFactory factory);
-        IProtocolFactory GetProtocolFactory(string protocol);
+        void RegisterConnectionFactory(string protocol, IConnectionFactory factory);
+        IConnectionFactory GetConnectionFactory(string protocol);
         bool IsRegistered(string protocol);
     }
     #endregion
@@ -21,16 +21,16 @@ namespace KIARAPlugin
     public class ProtocolRegistry : IProtocolRegistry
     {
         /// <summary>
-        /// Default instance of the protocol registry. This should be used instead of creating a new instance.
+        /// Default instance of the protocol registry.
         /// </summary>
         public readonly static ProtocolRegistry Instance = new ProtocolRegistry();
 
         /// <summary>
-        /// Registers a protocol <paramref name="factory"/> for the <paramref name="protocol"/>.
+        /// Registers a connection <paramref name="factory"/> for the <paramref name="protocol"/>.
         /// </summary>
         /// <param name="protocol">Protocol name.</param>
-        /// <param name="factory">Protocol factory.</param>
-        public void RegisterProtocolFactory(string protocol, IProtocolFactory factory)
+        /// <param name="factory">Connection factory.</param>
+        public void RegisterConnectionFactory(string protocol, IConnectionFactory factory)
         {
             if (protocol == null)
                 throw new Error(ErrorCode.INVALID_VALUE, "Protocol name must not be null.");
@@ -42,19 +42,19 @@ namespace KIARAPlugin
         }
 
         /// <summary>
-        /// Returns protocol factory for <paramref name="protocol"/>. If protocol is not registered, an exception is
+        /// Returns connection factory for <paramref name="protocol"/>. If protocol is not registered, an exception is
         /// thrown.
         /// </summary>
         /// <returns>The protocol factory.</returns>
-        /// <param name="protocol">Protocol name.</param>
-        public IProtocolFactory GetProtocolFactory(string protocol) {
+        /// <param name="protocol">Connection name.</param>
+        public IConnectionFactory GetConnectionFactory(string protocol) {
             if (IsRegistered(protocol))
                 return registeredProtocols[protocol];
             throw new Error(ErrorCode.GENERIC_ERROR, "Protocol " + protocol + " is not registered.");
         }
 
         /// <summary>
-        /// Returns whether a factory for the <paramref name="protocol"/> is registered.
+        /// Returns whether a given <paramref name="protocol"/> is registered.
         /// </summary>
         /// <returns><c>true</c>, if <paramref name="protocol"/> is registered, <c>false</c> otherwise.</returns>
         /// <param name="protocol">Protocol name.</param>
@@ -76,26 +76,26 @@ namespace KIARAPlugin
                 // Load an assembly.
                 Assembly assembly = Assembly.LoadFrom(filename);
 
-                // Find protocol factory (class implementing IProtocolFactory).
+                // Find connection factory (class implementing IConnectionFactory).
                 List<Type> types = new List<Type>(assembly.GetTypes());
-                Type interfaceType = typeof(IProtocolFactory);
-                Type protocolFactoryType = types.Find(t => interfaceType.IsAssignableFrom(t));
-                if (protocolFactoryType == null || protocolFactoryType.Equals(interfaceType)) {
+                Type interfaceType = typeof(IConnectionFactory);
+                Type connectionFactoryType = types.Find(t => interfaceType.IsAssignableFrom(t));
+                if (connectionFactoryType == null || connectionFactoryType.Equals(interfaceType)) {
                     Logger.Info("Assembly in file " + filename +
-                                " doesn't contain any class implementing IProtocolFactory.");
+                                " doesn't contain any class implementing IConnectionFactory.");
                     return;
                 }
 
                 // Instantiate and register protocol factory.
-                IProtocolFactory protocolFactory;
+                IConnectionFactory connectionFactory;
                 try {
-                    protocolFactory = (IProtocolFactory)Activator.CreateInstance(protocolFactoryType);
+                    connectionFactory = (IConnectionFactory)Activator.CreateInstance(connectionFactoryType);
                 } catch (Exception ex) {
                     Logger.WarnException("Exception occured during construction of protocol factory for " + filename + ".", ex);
                     return;
                 }
-                RegisterProtocolFactory(protocolFactory.GetName(), protocolFactory);
-                Logger.Debug("Registered protocol {0}", protocolFactory.GetName());
+                RegisterConnectionFactory(connectionFactory.GetName(), connectionFactory);
+                Logger.Debug("Registered protocol {0}", connectionFactory.GetName());
             } catch (BadImageFormatException e) {
                 Logger.InfoException(filename + " is not a valid assembly and thus cannot be loaded as a protocol.", e);
                 return;
@@ -105,7 +105,7 @@ namespace KIARAPlugin
             }
         }
 
-        Dictionary<string, IProtocolFactory> registeredProtocols = new Dictionary<string, IProtocolFactory>();
+        Dictionary<string, IConnectionFactory> registeredProtocols = new Dictionary<string, IConnectionFactory>();
 
         static Logger Logger = LogManager.GetCurrentClassLogger();
     }

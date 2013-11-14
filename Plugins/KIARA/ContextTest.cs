@@ -24,7 +24,7 @@ namespace KIARAPlugin
             "  ] " +
             "}";
 
-        Mock<IProtocolFactory> mockProtocolFactory;
+        Mock<IConnectionFactory> mockConnectionFactory;
         Mock<IProtocolRegistry> mockProtocolRegistry;
         Mock<IWebClient> mockWebClient;
         Action<Connection> callback;
@@ -33,7 +33,7 @@ namespace KIARAPlugin
         [SetUp()]
         public void Init()
         {
-            mockProtocolFactory = new Mock<IProtocolFactory>();
+            mockConnectionFactory = new Mock<IConnectionFactory>();
             mockProtocolRegistry = new Mock<IProtocolRegistry>();
             mockWebClient = new Mock<IWebClient>();
             callback = delegate(Connection obj) {};
@@ -48,10 +48,12 @@ namespace KIARAPlugin
                 .Setup(registry => registry.IsRegistered("test-protocol-2"))
                 .Returns(true);
             mockProtocolRegistry
-                .Setup(registry => registry.GetProtocolFactory("test-protocol-2"))
-                .Returns(mockProtocolFactory.Object);
+                .Setup(registry => registry.GetConnectionFactory("test-protocol-2"))
+                .Returns(mockConnectionFactory.Object);
 
-            context = new Context(mockProtocolRegistry.Object, mockWebClient.Object);
+            context = new Context();
+            context.protocolRegistry = mockProtocolRegistry.Object;
+            context.webClient = mockWebClient.Object;
         }
 
         [Test()]
@@ -74,7 +76,7 @@ namespace KIARAPlugin
             context.OpenConnection(configURL, callback);
             mockProtocolRegistry.Verify(registry => registry.IsRegistered("test-protocol"), Times.Once());
             mockProtocolRegistry.Verify(registry => registry.IsRegistered("test-protocol-2"), Times.Once());
-            mockProtocolRegistry.Verify(registry => registry.GetProtocolFactory("test-protocol-2"), Times.Once());
+            mockProtocolRegistry.Verify(registry => registry.GetConnectionFactory("test-protocol-2"), Times.Once());
         }
 
         [Test()]
@@ -83,39 +85,23 @@ namespace KIARAPlugin
             context.OpenConnection(configURL + "#1", callback);
             mockProtocolRegistry.Verify(registry => registry.IsRegistered("test-protocol"), Times.Never());
             mockProtocolRegistry.Verify(registry => registry.IsRegistered("test-protocol-2"), Times.Once());
-            mockProtocolRegistry.Verify(registry => registry.GetProtocolFactory("test-protocol-2"), Times.Once());
+            mockProtocolRegistry.Verify(registry => registry.GetConnectionFactory("test-protocol-2"), Times.Once());
         }
 
         [Test()]
         public void ShouldOpenConnectionToTheServer()
         {
             context.OpenConnection(configURL, callback);
-            mockProtocolFactory.Verify(factory => factory.OpenConnection(It.IsAny<Server>(),
-                                                                         context,
-                                                                         It.IsAny<Action<IProtocol>>()), Times.Once());
+            mockConnectionFactory.Verify(factory => factory.OpenConnection(It.IsAny<Server>(), context,
+                It.IsAny<Action<Connection>>()), Times.Once());
         }
 
         [Test()]
         public void ShouldStartServer()
         {
             context.StartServer(configURL, callback);
-            mockProtocolFactory.Verify(factory => factory.StartServer(It.IsAny<Server>(), 
-                                                                      context,
-                                                                      It.IsAny<Action<IProtocol>>()), Times.Once());
-        }
-
-        [Test()]
-        public void ShouldStoreAndReturnProtocolData()
-        {
-            context.ProtocolData["test-protocol-2"] = 42;
-            Assert.AreEqual(42, context.ProtocolData["test-protocol-2"]);
-        }
-
-        [Test()]
-        public void ShouldUseHintAsConfigTemplate()
-        {
-            context.Initialize("test {0} template");
-            Assert.AreEqual("test {0} template", context.configTemplate);
+            mockConnectionFactory.Verify(factory => factory.StartServer(It.IsAny<Server>(), context,
+                It.IsAny<Action<Connection>>()), Times.Once());
         }
     }
 }
