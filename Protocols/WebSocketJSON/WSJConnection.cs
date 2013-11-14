@@ -22,6 +22,7 @@ namespace WebSocketJSON
             isClientConnection = false;
             session = aSession;
             session.Closed += HandleClosed;
+            session.MessageReceived += HandleMessage;
         }
 
         public WSJConnection(IWebSocket aSocket)
