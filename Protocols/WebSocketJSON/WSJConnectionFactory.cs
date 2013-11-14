@@ -14,24 +14,22 @@ namespace WebSocketJSON
 
         public void OpenConnection(Server serverConfig, Context context, Action<Connection> onConnected)
         {
-            // TODO: Tests
-            string protocol = ProtocolUtils.retrieveProtocolSetting<string>(serverConfig, "name", null);
-            if (protocol != "websocket-json")
-                throw new Error(ErrorCode.CONNECTION_ERROR, "Given сonfig is not for websocket-json protocol.");
+            ValidateProtocolName(serverConfig);
 
-            int port = ProtocolUtils.retrieveProtocolSetting(serverConfig, "port", 34837);
-            string ip = ProtocolUtils.retrieveProtocolSetting(serverConfig, "ip", "Any");
+            int port = ProtocolUtils.retrieveProtocolSetting(serverConfig, "port", -1);
+            string ip = ProtocolUtils.retrieveProtocolSetting(serverConfig, "ip", (string)null);
 
-            WebSocket socket = new WebSocket("ws://" + ip + ":" + port + "/");
+            if (port == -1 || ip == null)
+                throw new Error(ErrorCode.CONNECTION_ERROR, "No port and/or IP address is present in configuration.");
+
+            IWebSocket socket = webSocketFactory.Construct("ws://" + ip + ":" + port + "/");
             socket.Opened += (sender, e) => onConnected(new WSJConnection(socket));
             socket.Open();
         }
 
         public void StartServer(Server serverConfig, Context context, Action<Connection> onNewClient)
         {
-            string protocol = ProtocolUtils.retrieveProtocolSetting<string>(serverConfig, "name", null);
-            if (protocol != "websocket-json")
-                throw new Error(ErrorCode.CONNECTION_ERROR, "Given сonfig is not for websocket-json protocol.");
+            ValidateProtocolName(serverConfig);
 
             int port = ProtocolUtils.retrieveProtocolSetting(serverConfig, "port", 34837);
             string ip = ProtocolUtils.retrieveProtocolSetting(serverConfig, "ip", "Any");
@@ -46,9 +44,17 @@ namespace WebSocketJSON
             return "websocket-json";
         }
 
+        private void ValidateProtocolName(Server serverConfig)
+        {
+            string protocol = ProtocolUtils.retrieveProtocolSetting<string>(serverConfig, "name", null);
+            if (protocol != "websocket-json")
+                throw new Error(ErrorCode.CONNECTION_ERROR, "Given сonfig is not for websocket-json protocol.");
+        }
+
         #endregion
 
         internal IWSJServerFactory wsjServerFactory = new WSJServerFactory();
+        internal IWebSocketFactory webSocketFactory = new WebSocketFactory();
     }
 }
 

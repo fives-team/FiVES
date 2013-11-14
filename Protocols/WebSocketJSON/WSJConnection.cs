@@ -24,7 +24,7 @@ namespace WebSocketJSON
             session.Closed += HandleClosed;
         }
 
-        public WSJConnection(WebSocket aSocket)
+        public WSJConnection(IWebSocket aSocket)
             : this()
         {
             isClientConnection = true;
@@ -411,7 +411,7 @@ namespace WebSocketJSON
         private JsonSerializerSettings settings = new JsonSerializerSettings();
 
         bool isClientConnection;
-        private WebSocket socket;
+        private IWebSocket socket;
         private WSJSession session;
 
         private static Logger logger = LogManager.GetCurrentClassLogger();

@@ -1,5 +1,6 @@
 using System;
 using KIARAPlugin;
+using WebSocket4Net;
 
 namespace WebSocketJSON
 {
@@ -26,6 +27,34 @@ namespace WebSocketJSON
         public IWSJFuncCall Construct()
         {
             return new WSJFuncCall();
+        }
+    }
+
+    public interface IWebSocket
+    {
+        event EventHandler Opened;
+        event EventHandler Closed;
+        event EventHandler<MessageReceivedEventArgs> MessageReceived;
+        void Open();
+        void Close();
+        void Send(string message);
+    }
+
+    public class WebSocketWrapper : WebSocket, IWebSocket
+    {
+        public WebSocketWrapper(string uri) : base(uri) { }
+    }
+
+    public interface IWebSocketFactory
+    {
+        IWebSocket Construct(string uri);
+    }
+
+    public class WebSocketFactory : IWebSocketFactory
+    {
+        public IWebSocket Construct(string uri)
+        {
+            return new WebSocketWrapper(uri);
         }
     }
 }
