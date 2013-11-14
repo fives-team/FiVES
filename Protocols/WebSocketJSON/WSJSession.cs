@@ -194,67 +194,20 @@ namespace WebSocketJSON
         public delegate object GenericWrapper(params object[] arguments);
         private void HandleCall(List<JToken> data)
         {
-            // TODO: Refactor into smaller methods.
             int callID = data[1].ToObject<int>();
             string methodName = data[2].ToObject<string>();
             if (registeredFunctions.ContainsKey(methodName)) {
                 Delegate nativeMethod = registeredFunctions[methodName];
-                ParameterInfo[] paramInfo = nativeMethod.Method.GetParameters();
-                List<int> callbacks = data[3].ToObject<List<int>>();
-                List<JToken> args = data.GetRange(4, data.Count - 4);
-
-                object[] parameters = new object[args.Count];
+                object[] parameters;
                 try {
-                    if (paramInfo.Length != args.Count) {
-                        throw new InvalidNumberOfArgs("Incorrect number of arguments for a method. Expected: " +
-                                                      paramInfo.Length + ". Received: " + args.Count);
-                    }
-
-                    for (int i = 0; i < args.Count; i++) {
-                        if (callbacks.Contains(i)) {
-                            if (paramInfo[i].ParameterType == typeof(FuncWrapper)) {
-                                var remoteCallbackUUID = args[i].ToObject<string>();
-                                parameters[i] = (FuncWrapper)delegate(object[] arguments) {
-                                    return CallFunc(remoteCallbackUUID, arguments);
-                                };
-                            } else if (typeof(Delegate).IsAssignableFrom(paramInfo[i].ParameterType)) {
-                                string funcName = args[i].ToObject<string>();
-                                Type retType = paramInfo[i].ParameterType.GetMethod("Invoke").ReturnType;
-
-                                var genericWrapper = new GenericWrapper(arguments => {
-                                    if (retType == typeof(void)) {
-                                        CallFunc(funcName, arguments);
-                                        // We do not wait here since SuperWebSocket doesn't process messages while the
-                                        // current thread is blocked. Waiting would bring the current client's thread
-                                        // into a deadlock.
-                                        return null;
-                                    } else {
-                                        throw new NotImplementedException("We do not support callbacks with return " +
-                                            "value yet. This is because we cannot wait for a callback to complete. " +
-                                            "See more details here: https://redmine.viscenter.de/issues/1406.");
-
-//                                        object result = null;
-//                                        CallFunc(funcName, arguments)
-//                                          .OnSuccess(delegate(JToken res) { result = res.ToObject(retType); })
-//                                          .Wait();
-//                                        return result;
-                                    }
-                                });
-
-                                parameters[i] = Dynamic.CoerceToDelegate(genericWrapper, paramInfo[i].ParameterType);
-                            } else {
-                                throw new Exception("Parameter " + i + " is neither a delegate nor a FuncWrapper. " +
-                                                    "Cannot pass callback method in its place");
-                            }
-                        } else {
-                            parameters[i] = args[i].ToObject(paramInfo[i].ParameterType);
-                        }
-                    }
+                    var args = data.GetRange(4, data.Count - 4);
+                    var callbacks = data[3].ToObject<List<int>>();
+                    var paramInfo = new List<ParameterInfo>(nativeMethod.Method.GetParameters());
+                    parameters = ConvertParameters(args, callbacks, paramInfo);
                 } catch (Exception e) {
                     SendCallError(callID, e.Message);
                     return;
                 }
-
 
                 object returnValue = null;
                 object exception = null;
@@ -262,27 +215,105 @@ namespace WebSocketJSON
                 try {
                     returnValue = nativeMethod.DynamicInvoke(parameters);
                 } catch (Exception e) {
-                    Console.WriteLine(e.ToString());
+                    Logger.Debug("Exception in method handler: " + e.ToString());
                     exception = e;
                     success = false;
                 }
 
-                if (!IsOneWay(methodName)) {
-                    // Send call-reply message.
-                    List<object> callReplyMessage = new List<object>();
-                    callReplyMessage.Add("call-reply");
-                    callReplyMessage.Add(callID);
-                    callReplyMessage.Add(success);
-                    if (!success)
-                        callReplyMessage.Add(exception);
-                    else if (nativeMethod.Method.ReturnType != typeof(void))
-                        callReplyMessage.Add(returnValue);
-                    Send(JsonConvert.SerializeObject(callReplyMessage, settings));
-                }
+                if (!IsOneWay(methodName))
+                    SendCallReply(callID, nativeMethod, success, returnValue, exception);
             } else {
                 SendCallError(callID, "Method " + methodName + " is not registered");
                 return;
             }
+        }
+
+        private object[] ConvertParameters(List<JToken> args, List<int> callbacks, List<ParameterInfo> paramInfo)
+        {
+            object[] parameters = new object[paramInfo.Count];
+
+            if (paramInfo.Count != args.Count)
+            {
+                throw new InvalidNumberOfArgs("Incorrect number of arguments for a method. Expected: " +
+                                              paramInfo.Count + ". Received: " + args.Count);
+            }
+
+            for (int i = 0; i < args.Count; i++)
+            {
+                if (callbacks.Contains(i))
+                {
+                    if (paramInfo[i].ParameterType == typeof(FuncWrapper))
+                    {
+                        parameters[i] = CreateFuncWrapperDelegate(args[i].ToObject<string>());
+                    }
+                    else if (typeof(Delegate).IsAssignableFrom(paramInfo[i].ParameterType))
+                    {
+                        parameters[i] = CreateCustomDelegate(args[i].ToObject<string>(), paramInfo[i].ParameterType);
+                    }
+                    else
+                    {
+                        throw new Exception("Parameter " + i + " is neither a delegate nor a FuncWrapper. " +
+                                            "Cannot pass callback method in its place");
+                    }
+                }
+                else
+                {
+                    parameters[i] = args[i].ToObject(paramInfo[i].ParameterType);
+                }
+            }
+
+            return parameters;
+        }
+
+        private object CreateCustomDelegate(string funcName, Type delegateType)
+        {
+            Type retType = delegateType.GetMethod("Invoke").ReturnType;
+            var genericWrapper = new GenericWrapper(arguments =>
+            {
+                if (retType == typeof(void))
+                {
+                    CallFunc(funcName, arguments);
+                    // We do not wait here since SuperWebSocket doesn't process messages while the
+                    // current thread is blocked. Waiting would bring the current client's thread
+                    // into a deadlock.
+                    return null;
+                }
+                else
+                {
+                    throw new NotImplementedException("We do not support callbacks with return " +
+                        "value yet. This is because we cannot wait for a callback to complete. " +
+                        "See more details here: https://redmine.viscenter.de/issues/1406.");
+
+                    //object result = null;
+                    //CallFunc(funcName, arguments)
+                    //  .OnSuccess(delegate(JToken res) { result = res.ToObject(retType); })
+                    //  .Wait();
+                    //return result;
+                }
+            });
+
+            return Dynamic.CoerceToDelegate(genericWrapper, delegateType);
+        }
+
+        private FuncWrapper CreateFuncWrapperDelegate(string remoteCallbackUUID)
+        {
+            return (FuncWrapper)delegate(object[] arguments)
+            {
+                return CallFunc(remoteCallbackUUID, arguments);
+            };
+        }
+
+        private void SendCallReply(int callID, Delegate nativeMethod, bool success, object retValue, object exception)
+        {
+            List<object> callReplyMessage = new List<object>();
+            callReplyMessage.Add("call-reply");
+            callReplyMessage.Add(callID);
+            callReplyMessage.Add(success);
+            if (!success)
+                callReplyMessage.Add(exception);
+            else if (nativeMethod.Method.ReturnType != typeof(void))
+                callReplyMessage.Add(retValue);
+            Send(JsonConvert.SerializeObject(callReplyMessage, settings));
         }
 
         void SendCallError(int callID, string reason)
