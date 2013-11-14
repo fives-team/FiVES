@@ -1,9 +1,7 @@
 using System;
 using FIVES;
 using System.Collections.Generic;
-using Events;
 using RenderablePlugin;
-using Math;
 using ClientManagerPlugin;
 
 namespace EditingNamespace
@@ -44,7 +42,7 @@ namespace EditingNamespace
             entity["position"]["x"] = position.x;
             entity["position"]["y"] = position.y;
             entity["position"]["z"] = position.z;
-            EntityRegistry.Instance.AddEntity(entity);
+            World.Instance.Add(entity);
             return entity.Guid.ToString ();
         }
 
@@ -66,7 +64,7 @@ namespace EditingNamespace
 
             entity["meshResource"]["uri"] = mesh.meshURI;
             entity["meshResource"]["visible"] = true;
-            EntityRegistry.Instance.AddEntity(entity);
+            World.Instance.Add(entity);
             return entity.Guid.ToString ();
         }
 

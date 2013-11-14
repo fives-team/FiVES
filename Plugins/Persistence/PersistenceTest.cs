@@ -13,7 +13,7 @@ namespace PersistencePlugin
     public class PersistenceTest
     {
         ComponentRegistry componentRegistry;
-        EntityRegistry entityRegistry;
+        EntityCollection entityRegistry;
         Configuration cfg;
         NHibernate.ISessionFactory sessionFactory;
         PersistencePlugin plugin;
@@ -25,7 +25,7 @@ namespace PersistencePlugin
 
         [SetUp()]
         public void SetUpDatabaseTest() {
-            entityRegistry = EntityRegistry.Instance;
+            entityRegistry = World.Instance;
             componentRegistry = ComponentRegistry.Instance;
         }
 
@@ -44,37 +44,33 @@ namespace PersistencePlugin
         [Test()]
         public void ShouldStoreAndRetrieveComponent()
         {
-            ComponentLayout layout = new ComponentLayout();
-            layout.AddAttribute<int>("IntAttribute");
-            layout.AddAttribute<string>("StringAttribute");
-
-            componentRegistry.DefineComponent("myComponent", Guid.NewGuid(), layout);
+            ComponentDefinition myComponent = new ComponentDefinition("myComponent");
+            myComponent.AddAttribute<int>("IntAttribute");
+            myComponent.AddAttribute<string>("StringAttribute");
+            componentRegistry.Register(myComponent);
 
             if (plugin == null) {
-                Console.WriteLine (" ==== [SHOULD STORE AND RETRIEVE COMPONENTS]: Initializing Plugin");
                 plugin = new PersistencePlugin ();
                 plugin.Initialize ();
             }
 
             Entity entity = new Entity();
 
-            Console.WriteLine (" ==== [SHOULD STORE AND RETRIEVE COMPONENTS]: Adding Entity " + entity.Guid);
-            entityRegistry.AddEntity(entity);
-            Console.WriteLine (" ==== [SHOULD STORE AND RETRIEVE COMPONENTS]: Setting Attributes for " + entity.Guid);
+            entityRegistry.Add(entity);
             entity["myComponent"]["IntAttribute"] = 42;
             entity["myComponent"]["StringAttribute"] = "Hello World!";
 
             // De-Activate on-remove event handler, as for tests, we only want to remove the entity from the local registry, not from the
             // persistence storage
-            entityRegistry.OnEntityRemoved -= plugin.OnEntityRemoved;
-            entityRegistry.RemoveEntity (entity.Guid);
+            entityRegistry.RemovedEntity -= plugin.OnEntityRemoved;
+            entityRegistry.Remove (entity);
 
             plugin.RetrieveEntitiesFromDatabase ();
 
-            //Entity storedEntity = entityRegistry.GetEntity(entity.Guid);
-            Assert.IsTrue ((int) entity["myComponent"]["IntAttribute"] == 42);
-            Assert.IsTrue ((string) entity["myComponent"]["StringAttribute"] == "Hello World!");
-            Assert.AreEqual(1, entity["myComponent"].Version);
+            Entity storedEntity = entityRegistry.FindEntity(entity.Guid.ToString());
+            Assert.AreEqual(42, storedEntity["myComponent"]["IntAttribute"]);
+            Assert.AreEqual("Hello World!", storedEntity["myComponent"]["StringAttribute"]);
+            Assert.AreEqual(1, storedEntity["myComponent"].Definition.Version);
         }
 
         [Test()]
@@ -82,39 +78,31 @@ namespace PersistencePlugin
         {
             Entity entity = new Entity();
             Entity childEntity = new Entity ();
-            Assert.True(entity.AddChildNode (childEntity));
+            entity.Children.Add(childEntity);
 
             if (plugin == null) {
-                Console.WriteLine (" ==== [SHOULD STORE AND RETRIEVE ENTITIES]: Initializing Plugin ");
                 plugin = new PersistencePlugin ();
                 plugin.Initialize ();
             }
 
 
-            Console.WriteLine (" ==== [SHOULD STORE AND RETRIEVE ENTITIES]: Adding Entity " + entity.Guid);
-            entityRegistry.AddEntity (entity);
-            Console.WriteLine (" ==== [SHOULD STORE AND RETRIEVE ENTITIES]: Adding Entity " + childEntity.Guid);
-            entityRegistry.AddEntity (childEntity);
+            entityRegistry.Add(entity);
 
             plugin.RetrieveEntitiesFromDatabase ();
 
-            ISet<Guid> guidsInRegistry = entityRegistry.GetAllGUIDs ();
-            Console.WriteLine (guidsInRegistry.ToString ());
-
-            Assert.True(guidsInRegistry.Contains(entity.Guid));
-            Assert.True(guidsInRegistry.Contains(childEntity.Guid));
-            Assert.IsTrue (entityRegistry.GetEntity (childEntity.Guid).Parent.Guid == entity.Guid);
+            Assert.True(entityRegistry.Contains(entity));
+            Assert.IsTrue (childEntity.Parent == entity);
         }
 
         [Test()]
         public void ShouldStoreAndRetrieveComponentRegistry ()
         {
-            if(!componentRegistry.IsRegistered("myComponent"))
+            if(componentRegistry.FindComponentDefinition("myComponent") != null)
             {
-                ComponentLayout layout = new ComponentLayout();
-                layout.AddAttribute<int>("IntAttribute");
-                layout.AddAttribute<string>("StringAttribute");
-                componentRegistry.DefineComponent("myComponent", Guid.NewGuid(), layout);
+                ComponentDefinition myComponent = new ComponentDefinition("myComponent");
+                myComponent.AddAttribute<int>("IntAttribute");
+                myComponent.AddAttribute<string>("StringAttribute");
+                componentRegistry.Register(myComponent);
             }
 
             ComponentRegistryPersistence persist = new ComponentRegistryPersistence ();
@@ -127,8 +115,9 @@ namespace PersistencePlugin
 
             plugin.RetrieveComponentRegistryFromDatabase ();
 
-            Assert.IsTrue (componentRegistry.GetAttributeType ("myComponent", "IntAttribute") == typeof(int));
-            Assert.IsTrue (componentRegistry.GetAttributeType ("myComponent", "StringAttribute") == typeof(string));
+            ReadOnlyComponentDefinition myComponentDef = componentRegistry.FindComponentDefinition("myComponent");
+            Assert.AreEqual(typeof(int), myComponentDef["IntAttribute"].Type);
+            Assert.AreEqual(typeof(string), myComponentDef["StringAttribute"].Type);
         }
 
         [Test()]
@@ -136,31 +125,25 @@ namespace PersistencePlugin
         {
             Entity entity = new Entity();
             Entity childEntity = new Entity ();
-            Assert.True(entity.AddChildNode (childEntity));
+            entity.Children.Add(childEntity);
 
             if (plugin == null) {
-                Console.WriteLine (" ==== [SHOULD STORE AND RETRIEVE ENTITIES]: Initializing Plugin ");
                 plugin = new PersistencePlugin ();
                 plugin.Initialize ();
             }
 
-            Console.WriteLine (" ==== [SHOULD STORE AND RETRIEVE ENTITIES]: Adding Entity " + entity.Guid);
-            entityRegistry.AddEntity (entity);
-            Console.WriteLine (" ==== [SHOULD STORE AND RETRIEVE ENTITIES]: Adding Entity " + childEntity.Guid);
-            entityRegistry.AddEntity (childEntity);
+            entityRegistry.Add (entity);
+            entityRegistry.Add (childEntity);
 
-            entityRegistry.RemoveEntity (childEntity.Guid);
-            entityRegistry.RemoveEntity (entity.Guid);
+            entityRegistry.Remove (childEntity);
+            entityRegistry.Remove (entity);
 
             if (!plugin.GlobalSession.IsOpen)
                 plugin.GlobalSession = plugin.SessionFactory.OpenSession();
             plugin.RetrieveEntitiesFromDatabase ();
 
-            ISet<Guid> guidsInRegistry = entityRegistry.GetAllGUIDs ();
-            Console.WriteLine (guidsInRegistry.ToString ());
-
-            Assert.True(!guidsInRegistry.Contains(entity.Guid));
-            Assert.True(!guidsInRegistry.Contains(childEntity.Guid));
+            Assert.True(entityRegistry.Contains(entity));
+            Assert.True(entityRegistry.Contains(childEntity));
         }
 
 /*        public void ShouldPersistUpgradedComponentLayout() {
@@ -192,31 +175,35 @@ namespace PersistencePlugin
         [Test()]
         public void ShouldPersistUpgradedEntity() {
 
-            ComponentLayout layout = new ComponentLayout ();
-            layout.AddAttribute<int> ("i");
-            layout.AddAttribute<float> ("f");
-            layout.AddAttribute<string> ("s");
-            layout.AddAttribute<bool> ("b");
-
             string name = "ComponentToUpgrade";
-            componentRegistry.DefineComponent (name, plugin.pluginGuid, layout);
-            Entity entity = new Entity ();
-            Guid entityGuid = entity.Guid;
 
-            entityRegistry.AddEntity (entity);
+            ComponentDefinition componentToUpgrade = new ComponentDefinition(name);
+            componentToUpgrade.AddAttribute<int>("i");
+            componentToUpgrade.AddAttribute<float>("f");
+            componentToUpgrade.AddAttribute<string>("s");
+            componentToUpgrade.AddAttribute<bool>("b");
+            componentRegistry.Register(componentToUpgrade);
+
+            Entity entity = new Entity ();
+
+            entityRegistry.Add (entity);
             entity[name]["i"] = 42;
             entity[name]["f"] = 3.14f;
             entity[name]["s"] = "foobar";
             entity[name]["b"] = false;
 
-            componentRegistry.UpgradeComponent(name, plugin.pluginGuid, layout, 2, TestUpgrader);
+            ComponentDefinition componentToUpgrade2 = new ComponentDefinition(name, 2);
+            componentToUpgrade2.AddAttribute<int>("i");
+            componentToUpgrade2.AddAttribute<float>("f");
+            componentToUpgrade2.AddAttribute<string>("s");
+            componentToUpgrade2.AddAttribute<bool>("b");
+            componentRegistry.Upgrade(componentToUpgrade2, TestUpgrader);
 
             plugin.RetrieveEntitiesFromDatabase ();
 
-            ISet<Guid> guidsInRegistry = entityRegistry.GetAllGUIDs ();
-            Assert.IsTrue(guidsInRegistry.Contains(entityGuid));
+            Assert.IsTrue(entityRegistry.Contains(entity));
 
-            Entity retrievedEntity = entityRegistry.GetEntity (entityGuid);
+            Entity retrievedEntity = entityRegistry.FindEntity (entity.Guid.ToString());
 
             Assert.AreEqual(retrievedEntity[name]["i"], 3);
             Assert.AreEqual(retrievedEntity[name]["f"], 42);
@@ -225,7 +212,7 @@ namespace PersistencePlugin
 
         }
 
-        public static void TestUpgrader(Component oldComponent, ref Component newComponent) {
+        public static void TestUpgrader(Component oldComponent, Component newComponent) {
             newComponent["f"] = (float)(int)oldComponent["i"];
             newComponent["i"] = (int)(float)oldComponent["f"];
             newComponent["b"] = oldComponent["b"];

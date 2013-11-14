@@ -2,7 +2,6 @@ using System;
 using FIVES;
 using System.Collections.Generic;
 using AuthPlugin;
-using Math;
 using ClientManagerPlugin;
 
 namespace AvatarPlugin
@@ -23,9 +22,9 @@ namespace AvatarPlugin
 
         public void Initialize ()
         {
-            ComponentLayout avatarLayout = new ComponentLayout();
-            avatarLayout.AddAttribute<string>("userLogin", null);
-            ComponentRegistry.Instance.DefineComponent("avatar", pluginGuid, avatarLayout);
+            ComponentDefinition avatar = new ComponentDefinition("avatar");
+            avatar.AddAttribute<string>("userLogin", null);
+            ComponentRegistry.Instance.Register(avatar);
 
             ClientManager.Instance.RegisterClientService("avatar", true, new Dictionary<string, Delegate> {
 				{"getAvatarEntityGuid", (Func<string, string>)GetAvatarEntityGuid},
@@ -41,9 +40,8 @@ namespace AvatarPlugin
                 ClientManager.Instance.NotifyWhenClientDisconnected(sessionKey, (Action<Guid>)Deactivate);
             });
 
-            foreach (var guid in EntityRegistry.Instance.GetAllGUIDs()) {
-                var entity = EntityRegistry.Instance.GetEntity(guid);
-                if (entity.HasComponent("avatar"))
+            foreach (var entity in World.Instance) {
+                if (entity.ContainsComponent("avatar"))
                     avatarEntities[(string)entity["avatar"]["userLogin"]] = entity;
             }
         }
@@ -58,7 +56,7 @@ namespace AvatarPlugin
                 newAvatar["avatar"]["userLogin"] = userLogin;
                 newAvatar["meshResource"]["uri"] = defaultAvatarMesh;
                 newAvatar["meshResource"]["visible"] = false;
-                EntityRegistry.Instance.AddEntity(newAvatar);
+                World.Instance.Add(newAvatar);
                 avatarEntities[userLogin] = newAvatar;
             }
 

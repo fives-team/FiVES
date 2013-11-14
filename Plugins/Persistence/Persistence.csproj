@@ -31,13 +31,13 @@
     <ConsolePause>false</ConsolePause>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="System" />
     <Reference Include="Iesi.Collections">
-      <HintPath>ThirdParty\Iesi.Collections.dll</HintPath>
+      <HintPath>..\..\packages\Iesi.Collections.3.2.0.4000\lib\Net35\Iesi.Collections.dll</HintPath>
     </Reference>
     <Reference Include="NHibernate">
-      <HintPath>ThirdParty\NHibernate.dll</HintPath>
+      <HintPath>..\..\packages\NHibernate.3.3.3.4001\lib\Net35\NHibernate.dll</HintPath>
     </Reference>
+    <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Configuration" />
@@ -61,12 +61,6 @@
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
-    <ProjectReference Include="..\..\Core\Core\Core.csproj">
-      <Project>{627CCFC6-4071-4119-92C6-8BC96E4310C8}</Project>
-      <Name>Core</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
     <None Include="MySql.Data.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
@@ -83,6 +77,20 @@
     <EmbeddedResource Include="Mappings\ComponentOwnerLayout.hbm.xml" />
     <EmbeddedResource Include="Mappings\ComponentRegistryPersistence.hbm.xml" />
     <EmbeddedResource Include="Mappings\ComponentLayout.hbm.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\Core\Collections\Collections.csproj">
+      <Project>{9c2af21f-4d8c-4ade-a5c4-135a6f50e18a}</Project>
+      <Name>Collections</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Core\DomainModel\DomainModel.csproj">
+      <Project>{79EF699D-6A88-4054-AF04-F22486DB47FA}</Project>
+      <Name>DomainModel</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Core\PluginManager\PluginManager.csproj">
+      <Project>{DB1099A1-B7FE-474F-A03A-41687D6C5C76}</Project>
+      <Name>PluginManager</Name>
+    </ProjectReference>
   </ItemGroup>
   <PropertyGroup>
     <PostBuildEvent Condition=" '$(OS)' == 'Windows_NT' ">xcopy /y "$(TargetDir)." "$(ProjectDir)..\..\BuiltLibs\" &amp;&amp; xcopy /y "$(ProjectDir)hibernate.cfg.xml" "$(ProjectDir)..\..\Core\FIVES\bin\$(ConfigurationName)\"</PostBuildEvent>

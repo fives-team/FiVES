@@ -45,7 +45,7 @@
     <Reference Include="Moq">
       <HintPath>..\..\packages\Moq.4.1.1309.1617\lib\net40\Moq.dll</HintPath>
     </Reference>
-    <Reference Include="System.configuration" />
+    <Reference Include="System.Configuration" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Connection.cs" />
@@ -79,13 +79,13 @@
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
-    <ProjectReference Include="..\..\Core\Core\Core.csproj">
-      <Project>{627CCFC6-4071-4119-92C6-8BC96E4310C8}</Project>
-      <Name>Core</Name>
-    </ProjectReference>
+    <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="packages.config" />
+    <ProjectReference Include="..\..\Core\PluginManager\PluginManager.csproj">
+      <Project>{DB1099A1-B7FE-474F-A03A-41687D6C5C76}</Project>
+      <Name>PluginManager</Name>
+    </ProjectReference>
   </ItemGroup>
   <PropertyGroup>
     <PostBuildEvent Condition=" '$(OS)' == 'Windows_NT' ">xcopy /y "$(TargetDir)." "$(ProjectDir)..\..\BuiltLibs\"</PostBuildEvent>

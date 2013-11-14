@@ -8,7 +8,7 @@
     <ProjectGuid>{A2D1D8E5-7C5C-4EA3-95C7-D8D97AB0B74E}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>FiVESMath</RootNamespace>
+    <RootNamespace>FIVES</RootNamespace>
     <AssemblyName>FiVESMath</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>

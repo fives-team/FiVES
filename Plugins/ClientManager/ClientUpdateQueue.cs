@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using FIVES;
-using Events;
 using System.Threading;
 
 namespace ClientManagerPlugin
@@ -13,7 +12,7 @@ namespace ClientManagerPlugin
     {
         internal struct UpdateInfo
         {
-            public string entityGuid;
+            public Guid entityGuid;
             public string componentName;
             public string attributeName;
             //public int timeStamp; /* not used yet */
@@ -80,12 +79,8 @@ namespace ClientManagerPlugin
         /// Subscribes to Attribute updates of all entities that were already in the scene when the client connected
         /// </summary>
         private void RegisterToExistingEntityUpdates() {
-            var entityGuids = EntityRegistry.Instance.GetAllGUIDs();
-            foreach (Guid guid in entityGuids)
-            {
-                Entity entity = EntityRegistry.Instance.GetEntity(guid);
-                entity.OnAttributeInComponentChanged += new Entity.AttributeInComponentChanged(AddEntityUpdateToQueue);
-            }
+            foreach (Entity entity in World.Instance)
+                entity.ChangedAttribute += new EventHandler<ChangedAttributeEventArgs>(AddEntityUpdateToQueue);
         }
 
         /// <summary>
@@ -93,9 +88,8 @@ namespace ClientManagerPlugin
         /// created after the client has connected
         /// </summary>
         private void RegisterToAddedEntitiesUpdates () {
-            EntityRegistry.Instance.OnEntityAdded += (object sender, EntityAddedOrRemovedEventArgs e) => {
-                Entity newEntity = EntityRegistry.Instance.GetEntity(e.elementId);
-                newEntity.OnAttributeInComponentChanged += new Entity.AttributeInComponentChanged(AddEntityUpdateToQueue);
+            World.Instance.AddedEntity += (object sender, EntityEventArgs e) => {
+                e.Entity.ChangedAttribute += new EventHandler<ChangedAttributeEventArgs>(AddEntityUpdateToQueue);
             };
         }
 
@@ -103,8 +97,8 @@ namespace ClientManagerPlugin
         /// Registers to entity removed event of entity registry to remove all entity updates of the removed entity that are still in the queue
         /// </summary>
         private void RegisterToEntityRemoved () {
-            EntityRegistry.Instance.OnEntityRemoved += (object sender, EntityAddedOrRemovedEventArgs e) => {
-                RemoveEntityFromQueue(e.elementId);
+            World.Instance.RemovedEntity += (object sender, EntityEventArgs e) => {
+                RemoveEntityFromQueue(e.Entity);
             };
         }
 
@@ -113,7 +107,7 @@ namespace ClientManagerPlugin
         /// </summary>
         /// <param name="sender">Entity that invoked the attribute change event</param>
         /// <param name="e">Event Arguments</param>
-        private void AddEntityUpdateToQueue(Object sender, AttributeInComponentEventArgs e) {
+        private void AddEntityUpdateToQueue(Object sender, ChangedAttributeEventArgs e) {
 
             lock (QueueLock)
             {
@@ -121,8 +115,7 @@ namespace ClientManagerPlugin
                 {
                     Monitor.Wait(QueueLock);
                 }
-                Guid entityGuid = ((Entity)sender).Guid;
-                UpdateQueue.Add(createUpdateInfoFromEventArgs(entityGuid, e));
+                UpdateQueue.Add(CreateUpdateInfoFromEventArgs((Entity)sender, e));
                 Monitor.PulseAll(QueueLock);
             }
         }
@@ -133,12 +126,12 @@ namespace ClientManagerPlugin
         /// <returns>The update info from event arguments.</returns>
         /// <param name="entityGuid">GUID of the entity triggering the AttributeChanged event</param>
         /// <param name="e">Event arguments</param>
-        private UpdateInfo createUpdateInfoFromEventArgs(Guid entityGuid, AttributeInComponentEventArgs e) {
+        private UpdateInfo CreateUpdateInfoFromEventArgs(Entity entity, ChangedAttributeEventArgs e) {
             UpdateInfo newUpdateInfo = new UpdateInfo();
-            newUpdateInfo.entityGuid = entityGuid.ToString();
-            newUpdateInfo.componentName = e.componentName;
-            newUpdateInfo.attributeName = e.attributeName;
-            newUpdateInfo.value = e.newValue;
+            newUpdateInfo.entityGuid = entity.Guid;
+            newUpdateInfo.componentName = e.Component.Definition.Name;
+            newUpdateInfo.attributeName = e.AttributeName;
+            newUpdateInfo.value = e.NewValue;
             return newUpdateInfo;
         }
 
@@ -146,12 +139,12 @@ namespace ClientManagerPlugin
         /// Removes all unsent update information of a removed entity from the update queue
         /// </summary>
         /// <param name="entityGuid">Guid of the removed entity/param>
-        private void RemoveEntityFromQueue(Guid entityGuid) {
+        private void RemoveEntityFromQueue(Entity entity) {
             lock (QueueLock)
             {
                 foreach (UpdateInfo entityUpdate in UpdateQueue)
                 {
-                    if (entityUpdate.entityGuid.Equals(entityGuid))
+                    if (entityUpdate.entityGuid.Equals(entity.Guid))
                     {
                         UpdateQueue.Remove(entityUpdate);
                     }

@@ -62,13 +62,20 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\Core\Core\Core.csproj">
-      <Project>{627CCFC6-4071-4119-92C6-8BC96E4310C8}</Project>
-      <Name>Core</Name>
+    <ProjectReference Include="..\..\Core\DomainModel\DomainModel.csproj">
+      <Project>{79EF699D-6A88-4054-AF04-F22486DB47FA}</Project>
+      <Name>DomainModel</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Core\PluginManager\PluginManager.csproj">
+      <Project>{DB1099A1-B7FE-474F-A03A-41687D6C5C76}</Project>
+      <Name>PluginManager</Name>
     </ProjectReference>
   </ItemGroup>
   <PropertyGroup>
     <PostBuildEvent Condition=" '$(OS)' == 'Windows_NT' ">xcopy /y "$(TargetDir)." "$(ProjectDir)..\..\BuiltLibs\" &amp;&amp; xcopy /y /s "$(ProjectDir)..\..\ThirdParty\V8.NET\Net40\Release" "$(ProjectDir)..\..\Core\FIVES\bin\$(ConfigurationName)\"</PostBuildEvent>
     <PostBuildEvent Condition=" '$(OS)' != 'Windows_NT' ">mkdir -p "$(ProjectDir)../../BuiltLibs/" &amp;&amp; cp "$(TargetDir)"/* "$(ProjectDir)../../BuiltLibs/" &amp;&amp; cp -r "$(ProjectDir)../../ThirdParty/V8.NET/Net40/Release"/* "$(ProjectDir)../../Core/FIVES/bin/$(ConfigurationName)/"</PostBuildEvent>
+  </PropertyGroup>
+  <PropertyGroup>
+    <PostBuildEvent>xcopy /y "$(TargetDir)." "$(ProjectDir)..\..\BuiltLibs\" &amp;&amp; xcopy /y /s "$(ProjectDir)..\..\ThirdParty\V8.NET\Net40\Release" "$(ProjectDir)..\..\Core\FIVES\bin\$(ConfigurationName)\"</PostBuildEvent>
   </PropertyGroup>
 </Project>

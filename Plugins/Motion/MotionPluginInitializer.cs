@@ -3,8 +3,6 @@ using System.Collections.Generic;
 using FIVES;
 using ClientManagerPlugin;
 using System.Threading;
-using Events;
-using Math;
 
 namespace MotionPlugin
 {
@@ -34,20 +32,19 @@ namespace MotionPlugin
         void DefineComponents()
         {
             // Velocity is represented as a vector (x,y,z) in world units per second.
-            ComponentLayout velocityLayout = new ComponentLayout();
-            velocityLayout.AddAttribute<float> ("x", 0f);
-            velocityLayout.AddAttribute<float> ("y", 0f);
-            velocityLayout.AddAttribute<float> ("z", 0f);
+            ComponentDefinition velocity = new ComponentDefinition("velocity");
+            velocity.AddAttribute<float> ("x", 0f);
+            velocity.AddAttribute<float> ("y", 0f);
+            velocity.AddAttribute<float> ("z", 0f);
+            ComponentRegistry.Instance.Register(velocity);
 
             // Rotation velocity is represented as an axis (x, y, z) and angular rotation r in radians per second.
-            ComponentLayout rotVelocityLayout = new ComponentLayout();
-            rotVelocityLayout.AddAttribute<float>("x", 0f);
-            rotVelocityLayout.AddAttribute<float>("y", 0f);
-            rotVelocityLayout.AddAttribute<float>("z", 0f);
-            rotVelocityLayout.AddAttribute<float>("r", 1f);
-
-            ComponentRegistry.Instance.DefineComponent("velocity", pluginGUID, velocityLayout);
-            ComponentRegistry.Instance.DefineComponent("rotVelocity", pluginGUID, rotVelocityLayout);
+            ComponentDefinition rotVelocity = new ComponentDefinition("rotVelocity");
+            rotVelocity.AddAttribute<float>("x", 0f);
+            rotVelocity.AddAttribute<float>("y", 0f);
+            rotVelocity.AddAttribute<float>("z", 0f);
+            rotVelocity.AddAttribute<float>("r", 1f);
+            ComponentRegistry.Instance.Register(rotVelocity);
         }
 
         void RegisterClientServices()
@@ -64,20 +61,19 @@ namespace MotionPlugin
         /// </summary>
         private void RegisterEntityEvents()
         {
-            registerToExistingEntities();
-            EntityRegistry.Instance.OnEntityAdded += new EntityRegistry.EntityAdded(handleOnNewEntity);
+            RegisterToExistingEntities();
+            World.Instance.AddedEntity += new EventHandler<EntityEventArgs>(HandleOnNewEntity);
         }
 
         /// <summary>
         /// Traverses the entity registry and registers the handler for changed attributes on each of them
         /// </summary>
-        private void registerToExistingEntities()
+        private void RegisterToExistingEntities()
         {
-            HashSet<Guid> existingEntities = EntityRegistry.Instance.GetAllGUIDs();
-            foreach (Guid g in existingEntities)
+            foreach (Entity entity in World.Instance)
             {
-                Entity entity = EntityRegistry.Instance.GetEntity(g);
-                entity.OnAttributeInComponentChanged += new Entity.AttributeInComponentChanged(handleOnAttributeChanged);
+                entity.ChangedAttribute +=
+                    new EventHandler<ChangedAttributeEventArgs>(HandleOnAttributeChanged);
             }
         }
 
@@ -86,15 +82,14 @@ namespace MotionPlugin
         /// </summary>
         /// <param name="sender">The Entity Registry</param>
         /// <param name="e">The Event Parameters</param>
-        private void handleOnNewEntity(Object sender, EntityAddedOrRemovedEventArgs e)
+        private void HandleOnNewEntity(Object sender, EntityEventArgs e)
         {
-            Entity entity = EntityRegistry.Instance.GetEntity(e.elementId);
-            entity.OnAttributeInComponentChanged += new Entity.AttributeInComponentChanged(handleOnAttributeChanged);
+            e.Entity.ChangedAttribute += new EventHandler<ChangedAttributeEventArgs>(HandleOnAttributeChanged);
         }
 
         private void Update(string guid, Vector velocity, RotVelocity rotVelocity, int timestamp)
         {
-            var entity = EntityRegistry.Instance.GetEntity(guid);
+            var entity = World.Instance.FindEntity(guid);
             entity["velocity"]["x"] = velocity.x;
             entity["velocity"]["y"] = velocity.y;
             entity["velocity"]["z"] = velocity.z;
@@ -111,7 +106,7 @@ namespace MotionPlugin
         /// </summary>
         /// <param name="sender">The entity that fired the event</param>
         /// <param name="e">The EventArgs</param>
-        private void handleOnAttributeChanged(Object sender, AttributeInComponentEventArgs e)
+        private void HandleOnAttributeChanged(Object sender, ChangedAttributeEventArgs e)
         {
             Entity entity = (Entity)sender;
             if (IsMoving(entity) && !ongoingMotion.Contains(entity.Guid))
@@ -157,9 +152,9 @@ namespace MotionPlugin
                 spinAxis.z = (float)updatedEntity["rotVelocity"]["z"];
                 float spinAngle = (float)updatedEntity["rotVelocity"]["r"];
 
-                Quat spinAsQuaternion = Math.Math.QuaternionFromAxisAngle(spinAxis, spinAngle);
+                Quat spinAsQuaternion = FIVES.Math.QuaternionFromAxisAngle(spinAxis, spinAngle);
 
-                Quat newRotationAsQuaternion = Math.Math.MultiplyQuaternions(spinAsQuaternion, entityRotation);
+                Quat newRotationAsQuaternion = FIVES.Math.MultiplyQuaternions(spinAsQuaternion, entityRotation);
                 updatedEntity["orientation"]["x"] = newRotationAsQuaternion.x;
                 updatedEntity["orientation"]["y"] = newRotationAsQuaternion.y;
                 updatedEntity["orientation"]["z"] = newRotationAsQuaternion.z;
@@ -188,10 +183,10 @@ namespace MotionPlugin
             entityRotation.z = (float)updatedEntity["orientation"]["z"];
             entityRotation.w = (float)updatedEntity["orientation"]["w"];
 
-            Vector axis = Math.Math.AxisFromQuaternion(entityRotation);
-            float angle = Math.Math.AngleFromQuaternion(entityRotation);
+            Vector axis = FIVES.Math.AxisFromQuaternion(entityRotation);
+            float angle = FIVES.Math.AngleFromQuaternion(entityRotation);
 
-            return Math.Math.RotateVectorByAxisAngle(velocity, axis, -angle) /* negative angle because we apply the inverse transform */;
+            return FIVES.Math.RotateVectorByAxisAngle(velocity, axis, -angle) /* negative angle because we apply the inverse transform */;
         }
 
         /// <summary>

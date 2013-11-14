@@ -4,13 +4,13 @@ using NHibernate.Cfg;
 using NHibernate;
 using NHibernate.Tool.hbm2ddl;
 using System.Collections.Generic;
-using Events;
 using System.Diagnostics;
 using Iesi.Collections.Generic;
 using System.Threading;
 using System.Data;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.IO;
+using NLog;
 
 
 namespace PersistencePlugin
@@ -44,10 +44,10 @@ namespace PersistencePlugin
         public void Initialize()
         {
             InitializeNHibernate ();
-            EntityRegistry.Instance.OnEntityAdded += OnEntityAdded;
-            EntityRegistry.Instance.OnEntityRemoved += OnEntityRemoved;
-            ComponentRegistry.Instance.OnEntityComponentUpgraded += OnComponentOfEntityUpgraded;
-            InitializePersistedCollections ();
+            World.Instance.AddedEntity += OnEntityAdded;
+            World.Instance.RemovedEntity += OnEntityRemoved;
+            ComponentRegistry.Instance.UpgradedComponent += OnComponentUpgraded;
+            InitializePersistedCollections();
             ThreadPool.QueueUserWorkItem(_ => PersistChangedEntities());
         }
 
@@ -81,15 +81,16 @@ namespace PersistencePlugin
         /// </summary>
         /// <param name="sender">Sender of the event (the EntityRegistry)</param>
         /// <param name="e">Event arguments</param>
-        internal void OnEntityAdded(Object sender, EntityAddedOrRemovedEventArgs e) {
-            Entity addedEntity = EntityRegistry.Instance.GetEntity (e.elementId);
+        internal void OnEntityAdded(Object sender, EntityEventArgs e)
+        {
+            Entity addedEntity = e.Entity;
             // Only persist entities if they are not added during intialization on Startup
-            if (!EntitiesToInitialize.Contains (e.elementId)) {
+            if (!EntitiesToInitialize.Contains (addedEntity.Guid)) {
                 AddEntityToPersisted (addedEntity);
             } else {
-                EntitiesToInitialize.Remove (e.elementId);
+                EntitiesToInitialize.Remove(addedEntity.Guid);
             }
-            addedEntity.OnAttributeInComponentChanged += new Entity.AttributeInComponentChanged(OnAttributeChanged);
+            addedEntity.ChangedAttribute += new EventHandler<ChangedAttributeEventArgs>(OnAttributeChanged);
         }
 
         /// <summary>
@@ -98,9 +99,8 @@ namespace PersistencePlugin
         /// </summary>
         /// <param name="sender">Sender of the event (the EntityRegistry)</param>
         /// <param name="e">Event Arguments</param>
-        internal void OnEntityRemoved(Object sender, EntityAddedOrRemovedEventArgs e) {
-            Entity entityToRemove = EntityRegistry.Instance.GetEntity (e.elementId);
-            RemoveEntityFromDatabase (entityToRemove);
+        internal void OnEntityRemoved(Object sender, EntityEventArgs e) {
+            RemoveEntityFromDatabase (e.Entity);
         }
 
         /// <summary>
@@ -109,11 +109,11 @@ namespace PersistencePlugin
         /// </summary>
         /// <param name="sender">Sender of the event (the Entity)</param>
         /// <param name="e">Event arguments</param>
-        internal void OnAttributeChanged(Object sender, AttributeInComponentEventArgs e) {
+        internal void OnAttributeChanged(Object sender, ChangedAttributeEventArgs e) {
             //Entity changedEntity = (Entity)sender;
-            Guid changedAttributeGuid = e.AttributeGuid;
+            Guid changedAttributeGuid = e.Component.Definition[e.AttributeName].Guid;
             // TODO: change cascading persistence of entity, but only persist component and take care to persist mapping to entity as well
-            AddAttributeToPersisted (changedAttributeGuid, e.newValue);
+            AddAttributeToPersisted (changedAttributeGuid, e.NewValue);
         }
 
         /// <summary>
@@ -121,10 +121,10 @@ namespace PersistencePlugin
         /// </summary>
         /// <param name="sender">Sender of the event (the Entity)</param>
         /// <param name="e">Event arguments</param>
-        internal void OnComponentOfEntityUpgraded(Object sender, EntityComponentUpgradedEventArgs e) {
+        internal void OnComponentUpgraded(Object sender, ComponentEventArgs e) {
 
             // TODO: change cascading persistence of entity, but only persist component and take care to persist mapping to entity as well
-            AddEntityToPersisted (e.entity);
+            AddEntityToPersisted (e.Component.Parent);
         }
         #endregion
 
@@ -167,11 +167,9 @@ namespace PersistencePlugin
             using (ISession session = SessionFactory.OpenSession())
             {
                 var transaction = session.BeginTransaction();
-                foreach (Guid guid in EntitiesToPersist)
+                foreach (Entity entity in EntitiesToPersist)
                 {
-                    Entity entity = EntityRegistry.Instance.GetEntity(guid);
-                    if(entity != null)
-                        session.SaveOrUpdate(entity);
+                    session.SaveOrUpdate(entity);
                 }
                 try
                 {
@@ -229,7 +227,7 @@ namespace PersistencePlugin
                 }
                 catch (Exception e)
                 {
-                    Console.WriteLine("An exception occured during Attribute update: " + e.Message);
+                    logger.WarnException("Failed to update Attribute", e);
                     transaction.Rollback();
                 }
                 finally
@@ -246,8 +244,8 @@ namespace PersistencePlugin
         private void AddEntityToPersisted(Entity changedEntity) {
             lock (entityQueueLock)
             {
-                if (!EntitiesToPersist.Contains(changedEntity.Guid))
-                    EntitiesToPersist.Add(changedEntity.Guid);
+                if (!EntitiesToPersist.Contains(changedEntity))
+                    EntitiesToPersist.Add(changedEntity);
             }
         }
 
@@ -298,7 +296,7 @@ namespace PersistencePlugin
         {
             ComponentRegistryPersistence persistedRegistry = null;
             using(ISession session = SessionFactory.OpenSession())
-                session.Get<ComponentRegistryPersistence> (ComponentRegistry.Instance.RegistryGuid);
+                session.Get<ComponentRegistryPersistence>(ComponentRegistryPersistence.Guid);
             if(persistedRegistry != null)
                 persistedRegistry.RegisterPersistedComponents ();
 
@@ -315,8 +313,11 @@ namespace PersistencePlugin
                 entitiesInDatabase = session.CreateQuery("from " + typeof(Entity)).List<Entity>();
                 foreach (Entity e in entitiesInDatabase)
                 {
-                    EntitiesToInitialize.Add(e.Guid);
-                    EntityRegistry.Instance.AddEntity(e);
+                    if (e.Parent == null)
+                    {
+                        EntitiesToInitialize.Add(e.Guid);
+                        World.Instance.Add(e);
+                    }
                 }
             }
         }
@@ -328,9 +329,11 @@ namespace PersistencePlugin
         private HashedSet<Guid> EntitiesToInitialize = new HashedSet<Guid>();
         private object entityQueueLock = new object();
         private object attributeQueueLock = new object();
-        private HashedSet<Guid> EntitiesToPersist = new HashedSet<Guid>();
+        private List<Entity> EntitiesToPersist = new List<Entity>();
         private Dictionary<Guid, object> AttributesToPersist = new Dictionary<Guid, object>();
         internal ISession GlobalSession;
         internal readonly Guid pluginGuid = new Guid("d51e4394-68cc-4801-82f2-6b2a865b28df");
+
+        private static Logger logger = LogManager.GetCurrentClassLogger();
     }
 }

@@ -79,7 +79,7 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Plugins\KIARA\KIARA.csproj">
-      <Project>{eefddd48-1795-4d62-a255-29167b0a3bc3}</Project>
+      <Project>{EEFDDD48-1795-4D62-A255-29167B0A3BC3}</Project>
       <Name>KIARA</Name>
     </ProjectReference>
   </ItemGroup>

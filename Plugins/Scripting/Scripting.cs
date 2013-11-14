@@ -1,5 +1,4 @@
-﻿using Events;
-using FIVES;
+﻿using FIVES;
 using NLog;
 using System;
 using System.Collections.Generic;
@@ -15,12 +14,11 @@ namespace ScriptingPlugin
 
         public Scripting()
         {
-            EntityRegistry.Instance.OnEntityAdded += HandleOnEntityAdded;
+            World.Instance.AddedEntity += HandleOnEntityAdded;
 
             // Register event handlers for all entities that were created before this plugin was loaded.
-            var guids = EntityRegistry.Instance.GetAllGUIDs();
-            foreach (var guid in guids)
-                HandleOnEntityAdded(EntityRegistry.Instance, new EntityAddedOrRemovedEventArgs(guid));
+            foreach (var entity in World.Instance)
+                HandleOnEntityAdded(World.Instance, new EntityEventArgs(entity));
 
             // FIXME: This is for debugging purposes only. Remove in release.
             registeredGlobalObjects["console"] = new CLRConsole();
@@ -38,19 +36,18 @@ namespace ScriptingPlugin
             newContextHandlers.Add(handler);
         }
 
-        private void HandleOnEntityAdded(object sender, EntityAddedOrRemovedEventArgs e)
+        private void HandleOnEntityAdded(object sender, EntityEventArgs e)
         {
-            Entity newEntity = EntityRegistry.Instance.GetEntity(e.elementId);
             // FIXME: This is not very efficient. Would be nice to be triggered only when anything in "scripting" 
             // component is changed, but without the need to create one. Essentially we need an event
             // OnComponentCreated.
-            newEntity.OnAttributeInComponentChanged += HandleOnAttributeInComponentChanged;
-            InitEntityContext(newEntity);
+            e.Entity.ChangedAttribute += HandleOnAttributeInComponentChanged;
+            InitEntityContext(e.Entity);
         }
 
-        private void HandleOnAttributeInComponentChanged(object sender, AttributeInComponentEventArgs e)
+        private void HandleOnAttributeInComponentChanged(object sender, ChangedAttributeEventArgs e)
         {
-            if (e.componentName == "scripting")
+            if (e.Component.Definition.Name == "scripting")
                 InitEntityContext((Entity)sender);
         }
 

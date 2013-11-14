@@ -77,7 +77,7 @@ namespace WebSocketJSON
                 List<object> convertedArgs = convertCallbackArguments(args);
                 List<object> callMessage = createCallMessage(callID, name, callbacks, convertedArgs);
 
-                string serializedMessage = JsonConvert.SerializeObject(callMessage);
+                string serializedMessage = JsonConvert.SerializeObject(callMessage, settings);
                 Send(serializedMessage);
 
                 if (IsOneWay(name))
@@ -279,7 +279,7 @@ namespace WebSocketJSON
                         callReplyMessage.Add(exception);
                     else if (nativeMethod.Method.ReturnType != typeof(void))
                         callReplyMessage.Add(returnValue);
-                    Send(JsonConvert.SerializeObject(callReplyMessage));
+                    Send(JsonConvert.SerializeObject(callReplyMessage, settings));
                 }
             } else {
                 SendCallError(callID, "Method " + methodName + " is not registered");
@@ -293,7 +293,7 @@ namespace WebSocketJSON
             errorReplyMessage.Add("call-error");
             errorReplyMessage.Add(callID);
             errorReplyMessage.Add(reason);
-            Send(JsonConvert.SerializeObject(errorReplyMessage));
+            Send(JsonConvert.SerializeObject(errorReplyMessage, settings));
         }
 
         void HandleCallError(List<JToken> data)
@@ -363,12 +363,14 @@ namespace WebSocketJSON
         private Dictionary<int, IWSJFuncCall> activeCalls = new Dictionary<int, IWSJFuncCall>();
         private Dictionary<string, Delegate> registeredFunctions = new Dictionary<string, Delegate>();
         private Dictionary<Delegate, string> registeredCallbacks = new Dictionary<Delegate, string>();
+        private JsonSerializerSettings settings = new JsonSerializerSettings();
 
         #region Testing
 
         internal WSJProtocol(IWSJFuncCallFactory factory)
         {
             wsjFuncCallFactory = factory;
+            settings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
         }
 
         private IWSJFuncCallFactory wsjFuncCallFactory;

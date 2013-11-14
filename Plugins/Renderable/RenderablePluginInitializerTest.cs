@@ -17,13 +17,13 @@ namespace RenderablePlugin
         [Test()]
         public void ShouldRegisterPositionComponent()
         {
-            Assert.True(ComponentRegistry.Instance.IsRegistered("meshResource"));
+            Assert.IsNotNull(ComponentRegistry.Instance.FindComponentDefinition("meshResource"));
         }
 
         [Test()]
         public void ShouldRegisterOrientationComponent()
         {
-            Assert.True(ComponentRegistry.Instance.IsRegistered("scale"));
+            Assert.IsNotNull(ComponentRegistry.Instance.FindComponentDefinition("scale"));
         }
 
         [Test()]
