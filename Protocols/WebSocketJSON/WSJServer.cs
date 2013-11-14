@@ -33,9 +33,9 @@ namespace WebSocketJSON
         /// <param name="onNewClient">The handler to be called for each new client.</param>
         public WSJServer(Action<Connection> onNewClient)
         {
-            NewSessionConnected += (session) => onNewClient(session.connectionAdapter);
-            NewMessageReceived += (session, value) => session.HandleMessage(value);
-            SessionClosed += (session, reason) => session.HandleClose(reason);
+            NewSessionConnected += (session) => onNewClient(new WSJConnection(session));
+            NewMessageReceived += (session, value) => session.HandleMessageReceived(value);
+            SessionClosed += (session, reason) => session.HandleClosed(reason.ToString());
         }
     }
 }

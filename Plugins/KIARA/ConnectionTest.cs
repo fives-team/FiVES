@@ -11,7 +11,7 @@ namespace KIARAPlugin
 
         public class ConnectionImpl : Connection
         {
-            public override event EventHandler<ClosedEventArgs> Closed;
+            public override event EventHandler Closed;
 
             public override void Disconnect()
             {

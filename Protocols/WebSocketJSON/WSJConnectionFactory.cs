@@ -1,6 +1,7 @@
 using System;
 using KIARAPlugin;
 using Newtonsoft.Json.Linq;
+using WebSocket4Net;
 
 namespace WebSocketJSON
 {
@@ -13,8 +14,17 @@ namespace WebSocketJSON
 
         public void OpenConnection(Server serverConfig, Context context, Action<Connection> onConnected)
         {
-            // TODO
-            throw new NotImplementedException();
+            // TODO: Tests
+            string protocol = ProtocolUtils.retrieveProtocolSetting<string>(serverConfig, "name", null);
+            if (protocol != "websocket-json")
+                throw new Error(ErrorCode.CONNECTION_ERROR, "Given сonfig is not for websocket-json protocol.");
+
+            int port = ProtocolUtils.retrieveProtocolSetting(serverConfig, "port", 34837);
+            string ip = ProtocolUtils.retrieveProtocolSetting(serverConfig, "ip", "Any");
+
+            WebSocket socket = new WebSocket("ws://" + ip + ":" + port + "/");
+            socket.Opened += (sender, e) => onConnected(new WSJConnection(socket));
+            socket.Open();
         }
 
         public void StartServer(Server serverConfig, Context context, Action<Connection> onNewClient)

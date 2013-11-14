@@ -61,15 +61,20 @@
     <Reference Include="Dynamitey">
       <HintPath>..\..\packages\Dynamitey.1.0.2.0\lib\net40\Dynamitey.dll</HintPath>
     </Reference>
+    <Reference Include="WebSocket4Net">
+      <HintPath>..\..\packages\WebSocket4Net.0.8\lib\net40\WebSocket4Net.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Exceptions\InvalidNumberOfArgs.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="WSJConnection.cs" />
     <Compile Include="WSJConnectionFactory.cs" />
     <Compile Include="WSJServer.cs" />
     <Compile Include="WSJSession.cs" />
     <Compile Include="WSJFuncCall.cs" />
     <Compile Include="WSJFuncCallTest.cs" />
-    <Compile Include="WSJSessionTest.cs" />
+    <Compile Include="WSJConnectionTest.cs" />
     <Compile Include="TestingWrappers.cs" />
     <Compile Include="WSJConnectionFactoryTest.cs" />
   </ItemGroup>

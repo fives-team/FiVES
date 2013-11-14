@@ -207,7 +207,7 @@ namespace ClientManagerPlugin
             if (!authenticatedClients.ContainsKey(secToken))
                 throw new Exception("Client with with given session key {0} is not authenticated.");
 
-            authenticatedClients[secToken].Closed += new EventHandler<ClosedEventArgs>((sender, e) =>
+            authenticatedClients[secToken].Closed += new EventHandler((sender, e) =>
             {
                 if (onNewEntityHandlers.ContainsKey(secToken))
                 {

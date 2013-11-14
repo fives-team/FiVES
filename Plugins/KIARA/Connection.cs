@@ -21,7 +21,7 @@ namespace KIARAPlugin
         /// <summary>
         /// Raised when a connection is closed.
         /// </summary>
-        public abstract event EventHandler<ClosedEventArgs> Closed;
+        public abstract event EventHandler Closed;
 
         /// <summary>
         /// Closes the connection.
