@@ -232,6 +232,14 @@ namespace WebSocketJSON
         {
             object[] parameters = new object[paramInfo.Count];
 
+            // Special handling for the first parameter if it's of type Connection.
+            if (paramInfo.Count > 0 && paramInfo[0].ParameterType.Equals(typeof(Connection))) {
+                parameters[0] = connectionAdapter;
+                var otherParams = ConvertParameters(args, callbacks, paramInfo.GetRange(1, paramInfo.Count - 1));
+                otherParams.CopyTo(parameters, 1);
+                return parameters;
+            }
+
             if (paramInfo.Count != args.Count)
             {
                 throw new InvalidNumberOfArgs("Incorrect number of arguments for a method. Expected: " +

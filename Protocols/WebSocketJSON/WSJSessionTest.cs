@@ -25,6 +25,7 @@ namespace WebSocketJSON
             void TestFunc2(float x);
             void TestCallback(int i, FuncWrapper callback);
             void TestCallback2(string a, Action<string> hello);
+            void TestFuncWithConn(Connection conn, int i, string s);
         }
 
         WSJSessionWrapper session;
@@ -182,6 +183,14 @@ namespace WebSocketJSON
             session.HandleMessage("['call',0,'testFunc',[],3.14]");
             mockHandlers.Verify(h => h.TestFunc(It.IsAny<int>(), It.IsAny<string>()), Times.Never());
             mockHandlers.Verify(h => h.TestFunc2(3.14f), Times.Once());
+        }
+
+        [Test()]
+        public void ShouldCorrectlySupplyConnectionParameter()
+        {
+            session.RegisterHandler("testFunc", (Action<Connection, int, string>)mockHandlers.Object.TestFuncWithConn);
+            session.HandleMessage("['call',0,'testFunc',[],42,'test-string']");
+            mockHandlers.Verify(h => h.TestFuncWithConn(session.connectionAdapter, 42, "test-string"), Times.Once());
         }
 
         // TODO: Should process IDL (when implemented).
