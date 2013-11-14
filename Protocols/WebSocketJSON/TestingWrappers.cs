@@ -5,12 +5,12 @@ namespace WebSocketJSON
 {
     public interface IWSJServerFactory
     {
-        IWSJServer Construct(Action<IProtocol> onNewClient);
+        IWSJServer Construct(Action<Connection> onNewClient);
     }
 
     public class WSJServerFactory : IWSJServerFactory
     {
-        public IWSJServer Construct(Action<IProtocol> onNewClient)
+        public IWSJServer Construct(Action<Connection> onNewClient)
         {
             return new WSJServer(onNewClient);
         }

@@ -9,16 +9,14 @@ namespace KIARAPlugin
     {
         ServiceImpl service;
         Context context;
-        Connection connection;
-        Mock<IProtocol> protocolMock;
+        Mock<Connection> connectionMock;
 
         [SetUp()]
         public void Init()
         {
             context = new Context();
             service = new ServiceImpl(context);
-            protocolMock = new Mock<IProtocol>();
-            connection = new Connection(protocolMock.Object);
+            connectionMock = new Mock<Connection>();
         }
 
         [Test()]
@@ -26,7 +24,7 @@ namespace KIARAPlugin
         {
             int numConnectedClients =  0;
             service.OnNewClient += (c) => numConnectedClients++;
-            service.HandleNewClient(connection);
+            service.HandleNewClient(connectionMock.Object);
             Assert.AreEqual(1, numConnectedClients);
         }
 
@@ -36,11 +34,14 @@ namespace KIARAPlugin
             Delegate d1 = (Action) delegate {};
             Delegate d2 = (Func<string, int>) delegate(string arg) { return 42; };
 
+            connectionMock.Setup(c => c.RegisterFuncImplementation("foobar", d1, "")).Verifiable();
+            connectionMock.Setup(c => c.RegisterFuncImplementation("barfoo", d2, "")).Verifiable();
+
             service["foobar"] = d1;
             service["barfoo"] = d2;
-            service.HandleNewClient(connection);
-            protocolMock.Verify(p => p.RegisterHandler("foobar", d1));
-            protocolMock.Verify(p => p.RegisterHandler("barfoo", d2));
+            service.HandleNewClient(connectionMock.Object);
+
+            connectionMock.VerifyAll();
         }
     }
 }

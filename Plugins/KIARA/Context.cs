@@ -29,17 +29,10 @@ namespace KIARAPlugin
     /// </summary>
     public class Context
     {
-        public static Context GlobalContext = new Context();
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="KIARA.Context"/> class.
-        /// </summary>
-        public Context() : this(ProtocolRegistry.Instance, new WebClientWrapper()) {}
+        public static Context DefaultContext = new Context();
 
         public void Initialize(string hint)
         {
-            // Currently we use hint as a config template, where {0} will be replaced with a service name.
-            configTemplate = hint;
         }
 
         /// <summary>
@@ -60,11 +53,8 @@ namespace KIARAPlugin
             Server server = SelectServer(fragment, config);
 
             string protocolName = server.protocol["name"].ToString();
-            IProtocolFactory protocolFactory = protocolRegistry.GetProtocolFactory(protocolName);
-            protocolFactory.OpenConnection(server, this, delegate(IProtocol p) {
-                Connection conn = new Connection(p);
-                onConnected(conn);
-            });
+            IConnectionFactory connectionFactory = protocolRegistry.GetConnectionFactory(protocolName);
+            connectionFactory.OpenConnection(server, this, onConnected);
         }
 
         /// <summary>
@@ -89,14 +79,9 @@ namespace KIARAPlugin
             Server server = SelectServer(fragment, config);
 
             string protocolName = server.protocol["name"].ToString();
-            IProtocolFactory protocolFactory = protocolRegistry.GetProtocolFactory(protocolName);
-            protocolFactory.StartServer(server, this, delegate(IProtocol p) {
-                Connection conn = new Connection(p);
-                onNewClient(conn);
-            });
+            IConnectionFactory connectionFactory = protocolRegistry.GetConnectionFactory(protocolName);
+            connectionFactory.StartServer(server, this, onNewClient);
         }
-
-        public Dictionary<string, object> ProtocolData = new Dictionary<string, object>();
 
         private Config RetrieveConfig(string configURI, out string fragment)
         {
@@ -123,7 +108,7 @@ namespace KIARAPlugin
             return JsonConvert.DeserializeObject<Config>(configContent);
         }
 
-        private bool IsSupportedServerProtocol(Server server) {
+        private bool IsServerProtocolSupported(Server server) {
             if (server.protocol == null)
                 return false;
 
@@ -141,8 +126,8 @@ namespace KIARAPlugin
 
             int serverNum = -1;
             if (!Int32.TryParse(fragment, out serverNum) || serverNum < 0 || serverNum >= config.servers.Count ||
-                !IsSupportedServerProtocol(config.servers[serverNum])) {
-                serverNum = config.servers.FindIndex(s => IsSupportedServerProtocol(s));
+                !IsServerProtocolSupported(config.servers[serverNum])) {
+                serverNum = config.servers.FindIndex(s => IsServerProtocolSupported(s));
             }
 
             if (serverNum == -1)
@@ -151,15 +136,7 @@ namespace KIARAPlugin
             return config.servers[serverNum];
         }
 
-        private IProtocolRegistry protocolRegistry;
-        private IWebClient webClient;
-        internal string configTemplate;
-
-        #region Testing
-        internal Context(IProtocolRegistry customProtocolRegistry, IWebClient customWebClient) {
-            protocolRegistry = customProtocolRegistry;
-            webClient = customWebClient;
-        }
-        #endregion
+        internal IProtocolRegistry protocolRegistry = ProtocolRegistry.Instance;
+        internal IWebClient webClient = new WebClientWrapper();
     }
 }

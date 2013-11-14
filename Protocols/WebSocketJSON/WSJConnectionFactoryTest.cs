@@ -7,7 +7,7 @@ using Newtonsoft.Json;
 namespace WebSocketJSON
 {
     [TestFixture()]
-    public class WSJProtocolFactoryTest
+    public class WSJConnectionFactoryTest
     {
         private Server config = JsonConvert.DeserializeObject<Server>(
             "{ services: '*', protocol: { name: 'websocket-json' } }");
@@ -17,10 +17,10 @@ namespace WebSocketJSON
             "{ services: '*', protocol: { name: 'other-protocol', id: 'test' } }");
 
         public interface IHandlers {
-            void NewClient(IProtocol protocol);
+            void NewClient(Connection connection);
         }
 
-        private WSJProtocolFactory factory;
+        private WSJConnectionFactory factory;
         private Mock<IWSJServerFactory> mockWSJServerFactory;
         private Mock<IWSJServer> mockWSJServer;
         private Mock<IHandlers> mockHandlers;
@@ -30,10 +30,11 @@ namespace WebSocketJSON
         {
             mockWSJServerFactory = new Mock<IWSJServerFactory>();
             mockWSJServer = new Mock<IWSJServer>();
-            mockWSJServerFactory.Setup(f => f.Construct(It.IsAny<Action<IProtocol>>())).Returns(mockWSJServer.Object);
+            mockWSJServerFactory.Setup(f => f.Construct(It.IsAny<Action<Connection>>())).Returns(mockWSJServer.Object);
             mockHandlers = new Mock<IHandlers>();
 
-            factory = new WSJProtocolFactory(mockWSJServerFactory.Object);
+            factory = new WSJConnectionFactory();
+            factory.wsjServerFactory = mockWSJServerFactory.Object;
         }
 
         [Test()]

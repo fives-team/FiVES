@@ -49,15 +49,15 @@ namespace WebSocketJSON
     }
 
     /// <summary>
-    /// WebSocketJSON protocol implementation.
+    /// WebSocketJSON session implementation. Contains Connection adapter for KIARA.
     /// </summary>
-    public class WSJProtocol : WebSocketSession<WSJProtocol>, IProtocol
+    public class WSJSession : WebSocketSession<WSJSession>
     {
-        public WSJProtocol() : this(new WSJFuncCallFactory()) {}
-
-        #region IProtocol implementation
-
-        public event Close OnClose;
+        public WSJSession()
+        {
+            connectionAdapter = new ConnectionAdapter(this);
+            settings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
+        }
 
         public void ProcessIDL(string parsedIDL)
         {
@@ -159,8 +159,6 @@ namespace WebSocketJSON
         {
             Close();
         }
-
-        #endregion
 
         /// <summary>
         /// Handles the close event. All calls are completely with an error.
@@ -352,9 +350,7 @@ namespace WebSocketJSON
         protected override void OnSessionClosed(SuperSocket.SocketBase.CloseReason reason)
         {
             base.OnSessionClosed(reason);
-
-            if (OnClose != null)
-                OnClose(reason.ToString());
+            connectionAdapter.HandleClosed(reason.ToString());
         }
 
         private int nextCallID = 0;
@@ -365,17 +361,46 @@ namespace WebSocketJSON
         private Dictionary<Delegate, string> registeredCallbacks = new Dictionary<Delegate, string>();
         private JsonSerializerSettings settings = new JsonSerializerSettings();
 
-        #region Testing
-
-        internal WSJProtocol(IWSJFuncCallFactory factory)
+        internal class ConnectionAdapter : Connection
         {
-            wsjFuncCallFactory = factory;
-            settings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
+            public ConnectionAdapter(WSJSession aSession)
+            {
+                session = aSession;
+            }
+
+            public override event EventHandler<ClosedEventArgs> Closed;
+
+            public override void Disconnect()
+            {
+                session.Disconnect();
+            }
+
+            protected override void ProcessIDL(string parsedIDL)
+            {
+                session.ProcessIDL(parsedIDL);
+            }
+
+            protected override IFuncCall CallFunc(string funcName, params object[] args)
+            {
+                return session.CallFunc(funcName, args);
+            }
+
+            protected override void RegisterHandler(string funcName, Delegate handler)
+            {
+                session.RegisterHandler(funcName, handler);
+            }
+
+            public void HandleClosed(string reason)
+            {
+                if (Closed != null)
+                    Closed(session, new ClosedEventArgs(reason));
+            }
+
+            private WSJSession session;
         }
 
-        private IWSJFuncCallFactory wsjFuncCallFactory;
-
-        #endregion
+        internal ConnectionAdapter connectionAdapter;
+        internal IWSJFuncCallFactory wsjFuncCallFactory = new WSJFuncCallFactory();
     }
 }
 

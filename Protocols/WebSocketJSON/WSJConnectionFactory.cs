@@ -5,24 +5,19 @@ using Newtonsoft.Json.Linq;
 namespace WebSocketJSON
 {
     /// <summary>
-    /// WebSocketJSON protocol factory implementation.
+    /// WebSocketJSON connection factory implementation.
     /// </summary>
-    public class WSJProtocolFactory : IProtocolFactory
+    public class WSJConnectionFactory : IConnectionFactory
     {
-        /// <summary>
-        /// Initializes a new instance of the <see cref="WebSocketJSON.WSJProtocolFactory"/> class.
-        /// </summary>
-        public WSJProtocolFactory() : this(new WSJServerFactory()) {}
+        #region IConnectionFactory implementation
 
-        #region IProtocolFactory implementation
-
-        public void OpenConnection(Server serverConfig, Context context, Action<IProtocol> onConnected)
+        public void OpenConnection(Server serverConfig, Context context, Action<Connection> onConnected)
         {
             // TODO
             throw new NotImplementedException();
         }
 
-        public void StartServer(Server serverConfig, Context context, Action<IProtocol> onNewClient)
+        public void StartServer(Server serverConfig, Context context, Action<Connection> onNewClient)
         {
             string protocol = ProtocolUtils.retrieveProtocolSetting<string>(serverConfig, "name", null);
             if (protocol != "websocket-json")
@@ -43,16 +38,7 @@ namespace WebSocketJSON
 
         #endregion
 
-        #region Testing
-
-        internal WSJProtocolFactory(IWSJServerFactory factory)
-        {
-            wsjServerFactory = factory;
-        }
-
-        IWSJServerFactory wsjServerFactory;
-
-        #endregion
+        internal IWSJServerFactory wsjServerFactory = new WSJServerFactory();
     }
 }
 

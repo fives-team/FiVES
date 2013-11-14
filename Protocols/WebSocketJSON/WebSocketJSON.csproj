@@ -64,14 +64,14 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="WSJProtocolFactory.cs" />
+    <Compile Include="WSJConnectionFactory.cs" />
     <Compile Include="WSJServer.cs" />
-    <Compile Include="WSJProtocol.cs" />
+    <Compile Include="WSJSession.cs" />
     <Compile Include="WSJFuncCall.cs" />
     <Compile Include="WSJFuncCallTest.cs" />
-    <Compile Include="WSJProtocolTest.cs" />
+    <Compile Include="WSJSessionTest.cs" />
     <Compile Include="TestingWrappers.cs" />
-    <Compile Include="WSJProtocolFactoryTest.cs" />
+    <Compile Include="WSJConnectionFactoryTest.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

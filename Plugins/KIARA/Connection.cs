@@ -16,17 +16,24 @@ namespace KIARAPlugin
     /// This class represenents a connection to the remote end. It may be used to load new IDL definition files,
     /// generate callable remote function  wrappers and to register local functions as implementations for remote calls.
     /// </summary>
-    public class Connection
+    public abstract class Connection
     {
         /// <summary>
-        /// Constructs connection given a protocol implementation. This for internal use only - please use
-        /// <see cref="KIARA.Context.openConnection"/> or <see cref="KIARA.Context.startServer"/> instead.
+        /// Raised when a connection is closed.
         /// </summary>
-        /// <param name="aProtocol">Protocol implementation.</param>
-        internal Connection(IProtocol aProtocol) : this(aProtocol, new WebClientWrapper()) {}
+        public abstract event EventHandler<ClosedEventArgs> Closed;
 
-        public event Close OnClose;
+        /// <summary>
+        /// Closes the connection.
+        /// </summary>
+        public abstract void Disconnect();
 
+        /// <summary>
+        /// Convenient wrapper around GenerateFuncWrapper. Can be used to quickly create function wrapper and call it
+        /// at once, e.g. <c>client["clientFunc"]("arg1", 42);</c>
+        /// </summary>
+        /// <param name="name">Function name.</param>
+        /// <returns>Function wrapper.</returns>
         public FuncWrapper this[string name]
         {
             get
@@ -39,11 +46,11 @@ namespace KIARAPlugin
         /// Loads an IDL definition file at <paramref name="uri"/> into the connection.
         /// </summary>
         /// <param name="uri">URI of the IDL definition file.</param>
-        public void LoadIDL(string uri)
+        public virtual void LoadIDL(string uri)
         {
             string contents = webClient.DownloadString(uri);
-            // TODO: Parse the IDL and pass parsed structure into processIDL.
-            protocol.ProcessIDL(contents);
+            // TODO: Parse the IDL and pass parsed structure into ProcessIDL.
+            ProcessIDL(contents);
         }
 
         /// <summary>
@@ -53,11 +60,11 @@ namespace KIARAPlugin
         /// <returns>The generated func wrapper.</returns>
         /// <param name="funcName">Name of the function to be wrapped.</param>
         /// <param name="typeMapping">Type mapping string.</param>
-        public FuncWrapper GenerateFuncWrapper(string funcName, string typeMapping = "")
+        public virtual FuncWrapper GenerateFuncWrapper(string funcName, string typeMapping = "")
         {
             // TODO: implement type mapping and add respective tests
             return (FuncWrapper) delegate(object[] args) {
-                return protocol.CallFunc(funcName, args);
+                return CallFunc(funcName, args);
             };
         }
 
@@ -68,30 +75,33 @@ namespace KIARAPlugin
         /// <param name="funcName">Name of the implemented function.</param>
         /// <param name="handler">Handler to be invoked upon remote call.</param>
         /// <param name="typeMapping">Type mapping string.</param>
-        public void RegisterFuncImplementation(string funcName, Delegate handler, string typeMapping = "")
+        public virtual void RegisterFuncImplementation(string funcName, Delegate handler, string typeMapping = "")
         {
             // TODO: implement type mapping and add respective tests
-            protocol.RegisterHandler(funcName, handler);
+            RegisterHandler(funcName, handler);
         }
 
-        public void Disconnect()
-        {
-            protocol.Disconnect();
-        }
+        /// <summary>
+        /// Processes the parsed IDL.
+        /// </summary>
+        /// <param name="parsedIDL">Plain IDL as string (parsing is not implemented yet).</param>
+        protected abstract void ProcessIDL(string parsedIDL);
 
-        private IProtocol protocol;
-        private IWebClient webClient;
+        /// <summary>
+        /// Calls a function with a given name and arguments on the remote end.
+        /// </summary>
+        /// <param name="funcName">Function name.</param>
+        /// <param name="args">Argunents.</param>
+        /// <returns>Object representing remote call.</returns>
+        protected abstract IFuncCall CallFunc(string funcName, params object[] args);
 
-        #region Testing
+        /// <summary>
+        /// Registers a handler to be invoked when a function with given name is invoked remotely.
+        /// </summary>
+        /// <param name="funcName">Function name.</param>
+        /// <param name="handler">Handler delegate.</param>
+        protected abstract void RegisterHandler(string funcName, Delegate handler);
 
-        internal Connection(IProtocol aProtocol, IWebClient client)
-        {
-            protocol = aProtocol;
-            webClient = client;
-
-            protocol.OnClose += (reason) => { if (OnClose != null) OnClose(reason); };
-        }
-
-        #endregion
+        internal IWebClient webClient = new WebClientWrapper();
     }
 }

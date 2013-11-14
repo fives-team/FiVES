@@ -14,7 +14,7 @@ namespace ClientManagerPlugin
 
         public ClientManager()
         {
-            clientService = ServiceFactory.CreateByURI("http://localhost/projects/test-client/kiara/fives.json");
+            clientService = ServiceFactory.Create("http://localhost/projects/test-client/kiara/fives.json");
 
             RegisterClientService("kiara", false, new Dictionary<string, Delegate>());
             RegisterClientMethod("kiara.implements", false, (Func<List<string>, List<bool>>)Implements);
@@ -207,7 +207,7 @@ namespace ClientManagerPlugin
             if (!authenticatedClients.ContainsKey(secToken))
                 throw new Exception("Client with with given session key {0} is not authenticated.");
 
-            authenticatedClients[secToken].OnClose += delegate(string reason)
+            authenticatedClients[secToken].Closed += new EventHandler<ClosedEventArgs>((sender, e) =>
             {
                 if (onNewEntityHandlers.ContainsKey(secToken))
                 {
@@ -228,7 +228,7 @@ namespace ClientManagerPlugin
                 }
                 callback(secToken);
                 authenticatedClients.Remove(secToken);
-            };
+            });
         }
 
         public void NotifyWhenAnyClientAuthenticated(Action<Guid> callback)

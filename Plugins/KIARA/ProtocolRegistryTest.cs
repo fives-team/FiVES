@@ -18,16 +18,16 @@ namespace KIARAPlugin
         [Test()]
         public void ShouldRegisterNewProtocols()
         {
-            var protocolFactory = new Mock<IProtocolFactory>();
-            protocolRegistry.RegisterProtocolFactory("test", protocolFactory.Object);
+            var connectionFactory = new Mock<IConnectionFactory>();
+            protocolRegistry.RegisterConnectionFactory("test", connectionFactory.Object);
             Assert.True(protocolRegistry.IsRegistered("test"));
-            Assert.AreEqual(protocolRegistry.GetProtocolFactory("test"), protocolFactory.Object);
+            Assert.AreEqual(protocolRegistry.GetConnectionFactory("test"), connectionFactory.Object);
         }
 
         public void ShouldThrowExceptionWhenAskingForNonRegisteredProtocol()
         {
             Assert.False(protocolRegistry.IsRegistered("unregistered-protocol"));
-            Assert.Throws<Error>(() => protocolRegistry.GetProtocolFactory("unregistered-protocol"));
+            Assert.Throws<Error>(() => protocolRegistry.GetConnectionFactory("unregistered-protocol"));
         }
     }
 }
