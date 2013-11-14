@@ -55,45 +55,42 @@ FIVES.Resources = FIVES.Resources || {};
     scm._createTransformForEntityGroup = function(entity) {
         var transformTag = XML3D.createElement("transform");
         transformTag.setAttribute("id", "transform-" + entity.guid) ;
-        transformTag.setAttribute("translation", this._createTranslationForEntityGroup(entity));
-        transformTag.setAttribute("rotation", this._createOrientationForEntityGroup(entity));
-        transformTag.setAttribute("scale", this._createScaleForEntityGroup(entity));
+        transformTag.translation.set(this._createTranslationForEntityGroup(entity));
+        transformTag.rotation.set(this._createRotationFromOrientation(entity));
+        transformTag.scale.set(this._createScaleForEntityGroup(entity));
         _mainDefs.appendChild(transformTag);
         entity.xml3dView.transformElement = transformTag;
     };
 
     scm._createTranslationForEntityGroup = function(entity) {
         var position = entity.position;
-        var translationAttribute = position.x + " " + position.y + " " + position.z;
-        return translationAttribute;
+        var xml3dPosition = new XML3DVec3(position.x, position.y, position.z);
+        return xml3dPosition;
     };
 
-    scm._createOrientationForEntityGroup = function(entity) {
+    scm._createRotationFromOrientation = function(entity) {
         var orientation = entity.orientation;
         var axisAngleRotation = new XML3DRotation();
         axisAngleRotation.setQuaternion(orientation, orientation.w);
-        var axis = axisAngleRotation._axis;
-        var angle = axisAngleRotation._angle;
-        var orientationAttribute =  axis.x + " " + axis.y + " " + axis.z + " " + angle;
-        return orientationAttribute;
+        return axisAngleRotation;
     };
 
     scm._createScaleForEntityGroup = function(entity) {
         var scale = entity.scale;
-        var scaleAttribute = scale.x + " " + scale.y + " " + scale.z;
-        return scaleAttribute;
+        var xml3dScale = new XML3DVec3(scale.x, scale.y, scale.z);
+        return xml3dScale;
     };
 
     scm.updateOrientation = function(entity) {
         var transformationForEntity = entity.getTransformElement();
         if(transformationForEntity)
-            transformationForEntity.setAttribute("rotation", this._createOrientationForEntityGroup(entity));
+            transformationForEntity.rotation.set(this._createRotationFromOrientation(entity));
     };
 
     scm.updatePosition = function(entity) {
         var transformationForEntity = entity.getTransformElement();
         if(transformationForEntity)
-            transformationForEntity.setAttribute("translation", this._createTranslationForEntityGroup(entity));
+            transformationForEntity.translation.set(this._createTranslationForEntityGroup(entity));
     };
 
     scm.updateCameraView = function(entity) {
