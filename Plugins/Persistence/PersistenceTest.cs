@@ -84,12 +84,10 @@ namespace PersistencePlugin
                 plugin.Initialize ();
             }
 
-
-            entityRegistry.Add(entity);
-
-            plugin.RetrieveEntitiesFromDatabase ();
-
-            Assert.True(entityRegistry.Contains(entity));
+            plugin.AddEntityToPersisted(entity);
+            //plugin.RetrieveEntitiesFromDatabase ();
+            //Assert.True(entityRegistry.Contains(entity));
+            //Assert.IsTrue (childEntity.Parent == entity);
         }
 
         [Test()]

@@ -46,8 +46,8 @@ namespace PersistencePlugin
             InitializeNHibernate ();
             World.Instance.AddedEntity += OnEntityAdded;
             World.Instance.RemovedEntity += OnEntityRemoved;
-            ComponentRegistry.Instance.UpgradedComponent += OnComponentUpgraded;
-            InitializePersistedCollections();
+            //ComponentRegistry.Instance.UpgradedComponent += OnComponentUpgraded;
+            //InitializePersistedCollections();
             ThreadPool.QueueUserWorkItem(_ => PersistChangedEntities());
         }
 
@@ -169,14 +169,22 @@ namespace PersistencePlugin
                 var transaction = session.BeginTransaction();
                 foreach (Entity entity in EntitiesToPersist)
                 {
-                    session.SaveOrUpdate(entity);
+                    try
+                    {
+                        session.SaveOrUpdate(entity);
+                    }
+                    catch (Exception e)
+                    {
+                        logger.LogException(LogLevel.Error, "Save or Update of Entity failed", e);
+                    }
                 }
                 try
                 {
                     transaction.Commit();
                 }
-                catch (Exception)
+                catch (Exception e)
                 {
+                    Console.WriteLine("Transaction to persist entities failed: " + e.Message);
                     transaction.Rollback();
                 }
                 finally
@@ -241,7 +249,7 @@ namespace PersistencePlugin
         /// Adds an enitity update to the list of entities that are queued to be persisted
         /// </summary>
         /// <param name="changedEntity">The entity to be persisted</param>
-        private void AddEntityToPersisted(Entity changedEntity) {
+        internal void AddEntityToPersisted(Entity changedEntity) {
             lock (entityQueueLock)
             {
                 if (!EntitiesToPersist.Contains(changedEntity))
