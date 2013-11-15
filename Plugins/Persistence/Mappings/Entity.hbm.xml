@@ -4,10 +4,10 @@
                    namespace="FIVES">
     <class name="Entity" lazy="false">
       <id name="Guid" type="Guid" />
-      <!--<many-to-one name="Parent" class="Entity" column ="ParentGUID"/>
-      <bag name="Children" cascade="all" inverse="true">
+      <many-to-one name="Parent" cascade="all" column="ParentGUID"/>
+      <set name="Children" cascade="all" inverse="true">
         <key column="ParentGUID" />
         <one-to-many class="Entity"/>
-      </bag> -->
+      </set>
     </class>
 </hibernate-mapping>
