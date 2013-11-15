@@ -53,7 +53,8 @@ namespace FIVES
             }
         }
 
-        /// <summary>
+		
+        /// <summary>git
         /// An event that is raised when a new component is created in this entity.
         /// </summary>
         public event EventHandler<ComponentEventArgs> CreatedComponent;
