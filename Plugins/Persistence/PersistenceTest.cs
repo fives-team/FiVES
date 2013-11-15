@@ -84,7 +84,7 @@ namespace PersistencePlugin
                 plugin.Initialize ();
             }
 
-            plugin.AddEntityToPersisted(entity);
+            World.Instance.Add(entity);
             //plugin.RetrieveEntitiesFromDatabase ();
             //Assert.True(entityRegistry.Contains(entity));
             //Assert.IsTrue (childEntity.Parent == entity);
