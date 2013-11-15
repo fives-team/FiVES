@@ -90,7 +90,7 @@ namespace PersistencePlugin
             } else {
                 EntitiesToInitialize.Remove(addedEntity.Guid);
             }
-            addedEntity.ChangedAttribute += new EventHandler<ChangedAttributeEventArgs>(OnAttributeChanged);
+           // addedEntity.ChangedAttribute += new EventHandler<ChangedAttributeEventArgs>(OnAttributeChanged);
         }
 
         /// <summary>
