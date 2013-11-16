@@ -15,9 +15,6 @@ namespace FIVES
         {
             Guid = Guid.NewGuid();
             Parent = null;
-
-            children.AddedEntity += HandleChildEntityAdded;
-            children.RemovedEntity += HandleChildEntityRemoved;
         }
 
         /// <summary>
@@ -49,18 +46,6 @@ namespace FIVES
                     CreateComponent(componentName);
 
                 return components[componentName];
-            }
-        }
-
-        /// <summary>
-        /// Collection of children of this entity. Children that are added are automatically removed from the list of
-        /// children of the previous parent if any.
-        /// </summary>
-        public ICollection<Entity> Children
-        {
-            get
-            {
-                return children;
             }
         }
 
@@ -112,21 +97,6 @@ namespace FIVES
                 ChangedAttribute(this, e);
         }
 
-        private void HandleChildEntityRemoved(object sender, EntityEventArgs e)
-        {
-            var entity = (Entity) e.Entity;
-            entity.Parent = null;
-        }
-
-        private void HandleChildEntityAdded(object sender, EntityEventArgs e)
-        {
-            var entity = (Entity) e.Entity;
-            if (entity.Parent != null)
-                entity.Parent.Children.Remove(entity);
-            entity.Parent = this;
-        }
-
-        private EntityCollection children = new EntityCollection();
         private Dictionary<string, Component> components = new Dictionary<string, Component>();
 
         internal IComponentRegistry componentRegistry = ComponentRegistry.Instance;

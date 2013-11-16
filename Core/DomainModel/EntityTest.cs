@@ -71,40 +71,6 @@ namespace FIVES
         }
 
         [Test()]
-        public void ShouldAddAndRemoveChildrenAndUpdateTheirParentProperty()
-        {
-            var child = new Entity();
-            
-            Assert.IsNull(child.Parent);
-            Assert.AreEqual(0, entity.Children.Count);
-            entity.Children.Add(child);
-            Assert.AreEqual(entity, child.Parent);
-            Assert.AreEqual(1, entity.Children.Count);
-            entity.Children.Remove(child);
-            Assert.IsNull(child.Parent);
-            Assert.AreEqual(0, entity.Children.Count);
-        }
-
-        [Test()]
-        public void ShouldCorrectlyUpdateParentAndChildrenPropertiesWhenMigratingChildFromAnotherEntity()
-        {
-            var child = new Entity();
-            var anotherEntity = new Entity();
-
-            anotherEntity.Children.Add(child);
-
-            Assert.AreEqual(anotherEntity, child.Parent);
-            Assert.AreEqual(1, anotherEntity.Children.Count);
-            Assert.AreEqual(0, entity.Children.Count);
-
-            entity.Children.Add(child);
-
-            Assert.AreEqual(entity, child.Parent);
-            Assert.AreEqual(0, anotherEntity.Children.Count);
-            Assert.AreEqual(1, entity.Children.Count);
-        }
-
-        [Test()]
         public void ShouldFireCreatedComponentEvents()
         {
             entity.CreatedComponent += mockHandlers.Object.CreatedComponent;

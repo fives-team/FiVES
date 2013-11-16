@@ -77,8 +77,6 @@ namespace PersistencePlugin
         public void ShouldStoreAndRetrieveEntities()
         {
             Entity entity = new Entity();
-            Entity childEntity = new Entity ();
-            entity.Children.Add(childEntity);
 
             if (plugin == null) {
                 plugin = new PersistencePlugin ();
@@ -91,7 +89,6 @@ namespace PersistencePlugin
             plugin.RetrieveEntitiesFromDatabase ();
 
             Assert.True(entityRegistry.Contains(entity));
-            Assert.IsTrue (childEntity.Parent == entity);
         }
 
         [Test()]
@@ -124,8 +121,6 @@ namespace PersistencePlugin
         public void ShouldDeleteEntity()
         {
             Entity entity = new Entity();
-            Entity childEntity = new Entity ();
-            entity.Children.Add(childEntity);
 
             if (plugin == null) {
                 plugin = new PersistencePlugin ();
@@ -133,9 +128,6 @@ namespace PersistencePlugin
             }
 
             entityRegistry.Add (entity);
-            entityRegistry.Add (childEntity);
-
-            entityRegistry.Remove (childEntity);
             entityRegistry.Remove (entity);
 
             if (!plugin.GlobalSession.IsOpen)
@@ -143,7 +135,6 @@ namespace PersistencePlugin
             plugin.RetrieveEntitiesFromDatabase ();
 
             Assert.True(entityRegistry.Contains(entity));
-            Assert.True(entityRegistry.Contains(childEntity));
         }
 
 /*        public void ShouldPersistUpgradedComponentLayout() {

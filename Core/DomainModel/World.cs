@@ -12,16 +12,5 @@ namespace FIVES
     public sealed class World : EntityCollection
     {
         public static World Instance = new World();
-
-        public World()
-        {
-            AddedEntity += HandleAddedEntity;
-        }
-
-        private void HandleAddedEntity(object sender, EntityEventArgs e)
-        {
-            if (e.Entity.Parent != null)
-                e.Entity.Parent.Children.Remove(e.Entity);
-        }
     }
 }
