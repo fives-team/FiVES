@@ -1,0 +1,12 @@
+﻿{
+  "info": "SyncServer",
+  "idlURL": "syncServer.kiara",
+  "servers": [{
+    "services": "*",
+    "protocol": {
+      "name": "websocket-json",
+      "port": 4374,
+      "host": "localhost"
+    }
+  }]
+}

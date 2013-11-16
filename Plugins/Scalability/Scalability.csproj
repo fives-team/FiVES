@@ -46,11 +46,23 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Scalability.cs" />
     <Compile Include="ScalabilityPluginInitializer.cs" />
+    <Compile Include="SyncMsg.cs" />
+    <Compile Include="SyncNode.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
     <None Include="packages.config" />
+    <None Include="app.config">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="syncServer.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="syncServer.kiara">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Core\DomainModel\DomainModel.csproj">
@@ -60,6 +72,10 @@
     <ProjectReference Include="..\..\Core\PluginManager\PluginManager.csproj">
       <Project>{DB1099A1-B7FE-474F-A03A-41687D6C5C76}</Project>
       <Name>PluginManager</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\KIARA\KIARA.csproj">
+      <Project>{eefddd48-1795-4d62-a255-29167b0a3bc3}</Project>
+      <Name>KIARA</Name>
     </ProjectReference>
   </ItemGroup>
   <PropertyGroup>

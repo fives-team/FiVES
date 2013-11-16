@@ -15,16 +15,16 @@ namespace ScalabilityPlugin
 
         public List<string> GetDependencies()
         {
-            return new List<string>();
+            return new List<string> { "KIARA" };
         }
 
         public void Initialize()
         {
-            // TODO: Load config
-            // TODO: If hub - start the sync server
-            // TODO: Connect to sync node (unless local)
-            // TODO: Load required plugins
-            // TODO: Set up listeners for changes
+            var scalability = Scalability.Instance;
+            if (scalability.IsSyncRelay)
+                scalability.StartSyncServer();
+            scalability.ConnectToSyncServer();
+            scalability.StartSync();
         }
     }
 }

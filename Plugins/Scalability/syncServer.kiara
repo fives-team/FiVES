@@ -1,0 +1,7 @@
+﻿struct syncMsg {
+  int timestamp;
+}
+
+service sync {
+
+}
