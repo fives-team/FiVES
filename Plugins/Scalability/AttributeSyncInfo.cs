@@ -5,8 +5,9 @@ using System.Text;
 
 namespace ScalabilityPlugin
 {
-    public abstract class SyncMsg
+    internal struct AttributeSyncInfo
     {
-        public long timestamp;
+        public long LastTimestamp;
+        public object LastValue;
     }
 }

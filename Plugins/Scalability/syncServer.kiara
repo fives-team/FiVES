@@ -1,7 +1,10 @@
-﻿struct syncMsg {
-  int timestamp;
+﻿struct EntitySyncInfo {
+  // TODO
 }
 
 service sync {
-
+    string getSyncID();
+	void addEntity(string guid, EntitySyncInfo info);
+	void removeEntity(string guid);
+	void updateAttribute(string guid, EntitySyncInfo info);
 }

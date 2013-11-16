@@ -8,6 +8,7 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace ScalabilityPlugin
 {
@@ -34,14 +35,17 @@ namespace ScalabilityPlugin
         internal void StartSyncServer()
         {
             var syncServer = ServiceFactory.Create(GetKIARAConfigURI());
-            syncServer.OnNewClient += HandleNewSyncNode;
-            syncServer["getActorID"] = (Func<string>)GetActorID;
+            syncServer.OnNewClient += AddSyncNode;
+            syncServer["getSyncID"] = (Func<string>)(LocalSyncID.ToString);
+            syncServer["addEntity"] = (Action<Guid, EntitySyncInfo>)HandleAddEntity;
+            syncServer["removeEntity"] = (Action<Guid>)HandleRemoveEntity;
+            syncServer["updateProperties"] = (Action<Guid, EntitySyncInfo>)HandleUpdateProperties;
         }
 
         internal void ConnectToSyncServer()
         {
             var remoteSyncServer = ServiceFactory.Discover(GetKIARAConfigURI());
-            remoteSyncServer.OnConnected += HandleNewSyncNode;
+            remoteSyncServer.OnConnected += AddSyncNode;
         }
 
         internal void LoadConfig()
@@ -63,22 +67,53 @@ namespace ScalabilityPlugin
             return "file:///" + configFile;
         }
 
-        private void HandleNewSyncNode(Connection connection)
+        private void AddSyncNode(Connection connection)
         {
-            var syncNode = new SyncNode(connection);  // this will block until other actor will reply with its ActorID
-            logger.Debug("Connected to remote sync node with ActorID = " + syncNode.RemoteActorID);
+            // Use new thread to prevent blocking the receiving thread, which will receive the remote SyncID.
+            Task.Factory.StartNew(delegate()
+            {
+                try
+                {
+                    Guid remoteSyncID = Guid.Parse(connection["getSyncID"]().Wait<string>());
 
-            if (!syncNode.RemoteActorID.Equals(LocalActorID))
-                remoteSyncNodes.Add(syncNode);
+                    // Set up function to remove the sync node when the connection is closed.
+                    connection.Closed += (sender, e) => remoteSyncNodes.TryRemove(remoteSyncID, out connection);
+
+                    remoteSyncNodes.TryAdd(remoteSyncID, connection);
+                    logger.Debug("Connected to remote sync node with SyncID = " + remoteSyncID);
+                }
+                catch (Exception e)
+                {
+                    logger.WarnException("Failed to add new sync node", e);
+                    return;
+                }
+            });
         }
 
-        private string GetActorID()
+        private void HandleAddEntity(Guid guid, EntitySyncInfo info)
         {
-            return LocalActorID.ToString();
+            // TODO: if syncInfo doesn't contain guid, create new entity. info contains copy of the syncInfo on the
+            // remote node. also create entity in the scene. setting properties can be done by calling
+            // HandleUpdateProperties
         }
 
-        private Guid LocalActorID = Guid.NewGuid();
-        private ConcurrentBag<SyncNode> remoteSyncNodes = new ConcurrentBag<SyncNode>();
+        private void HandleRemoveEntity(Guid guid)
+        {
+            // TODO: remove entity from syncInfo and from scene if present.
+        }
+
+        private void HandleUpdateProperties(Guid guid, EntitySyncInfo updatedProperties)
+        {
+            // TODO: if entity is present if the syncInfo - update its properties in the scene. use try-catch when
+            // updating properties, because some components may be undefined if certain plugins are not loaded.
+        }
+
+        private Guid LocalSyncID = Guid.NewGuid();
+
+        // Collection of remote sync nodes mapped from their SyncID to a Connection.
+        private ConcurrentDictionary<Guid, Connection> remoteSyncNodes = new ConcurrentDictionary<Guid, Connection>();
+
+        private Dictionary<Guid, EntitySyncInfo> syncInfo = new Dictionary<Guid, EntitySyncInfo>();
 
         private static Logger logger = LogManager.GetCurrentClassLogger();
     }
