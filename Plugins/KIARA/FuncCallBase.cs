@@ -48,6 +48,20 @@ namespace KIARAPlugin
             return this;
         }
 
+        public IFuncCall OnFailure(Action handler)
+        {
+            if (state == State.InProgress)
+            {
+                errorHandlers.Add((reason) => handler());
+                exceptionHandlers.Add((exception) => handler());
+            }
+            else if (state == State.Error || state == State.Exception)
+            {
+                handler();
+            }
+            return this;
+        }
+
         public T Wait<T>(int millisecondsTimeout = -1)
         {
             T result = default(T);

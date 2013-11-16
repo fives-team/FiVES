@@ -52,6 +52,14 @@ namespace KIARAPlugin
         IFuncCall OnError(Action<string> handler);
 
         /// <summary>
+        /// Adds a <paramref name="handler"/> to be called when the an error happened during the call or an exception 
+        /// is thrown.
+        /// </summary>
+        /// <returns>This call object.</returns>
+        /// <param name="handler">Handler to be executed upon successful completion of the call.</param>
+        IFuncCall OnFailure(Action handler);
+
+        /// <summary>
         /// Executes the call syncrhonously. Converts a value returned from the call into type <typeparamref name="T">
         /// and returns it. On error a <see cref="KIARA.Error"/> exception is raised. Remote exceptions are raised 
         /// locally. All assigned handlers for this call are executed before returning from this call. Times out after
