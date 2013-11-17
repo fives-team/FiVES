@@ -2,6 +2,7 @@ using System;
 using KIARAPlugin;
 using Newtonsoft.Json.Linq;
 using WebSocket4Net;
+using System.Net;
 
 namespace WebSocketJSON
 {
@@ -17,12 +18,12 @@ namespace WebSocketJSON
             ValidateProtocolName(serverConfig);
 
             int port = ProtocolUtils.retrieveProtocolSetting(serverConfig, "port", -1);
-            string ip = ProtocolUtils.retrieveProtocolSetting(serverConfig, "ip", (string)null);
+            string host = ProtocolUtils.retrieveProtocolSetting(serverConfig, "host", (string)null);
 
-            if (port == -1 || ip == null)
+            if (port == -1 || host == null)
                 throw new Error(ErrorCode.CONNECTION_ERROR, "No port and/or IP address is present in configuration.");
 
-            IWebSocket socket = webSocketFactory.Construct("ws://" + ip + ":" + port + "/");
+            IWebSocket socket = webSocketFactory.Construct("ws://" + host + ":" + port + "/");
             socket.Opened += (sender, e) => onConnected(new WSJConnection(socket));
             socket.Open();
         }
@@ -32,10 +33,14 @@ namespace WebSocketJSON
             ValidateProtocolName(serverConfig);
 
             int port = ProtocolUtils.retrieveProtocolSetting(serverConfig, "port", 34837);
-            string ip = ProtocolUtils.retrieveProtocolSetting(serverConfig, "ip", "Any");
+            string host = ProtocolUtils.retrieveProtocolSetting(serverConfig, "host", "Any");
+            IPAddress[] ipAddresses =  Dns.GetHostAddresses(host);
+
+            if (ipAddresses.Length == 0)
+                throw new Error(ErrorCode.CONNECTION_ERROR, "Cannot identify IP address by hostname.");
 
             IWSJServer server = wsjServerFactory.Construct(onNewClient);
-            server.Setup(ip, port);
+            server.Setup(ipAddresses[0].ToString(), port);  // we take first entry as it does not matter which one to take
             server.Start();
         }
 
