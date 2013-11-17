@@ -124,7 +124,7 @@ namespace PersistencePlugin
         internal void OnComponentUpgraded(Object sender, ComponentEventArgs e) {
 
             // TODO: change cascading persistence of entity, but only persist component and take care to persist mapping to entity as well
-            AddEntityToPersisted (e.Component.Parent);
+            //AddEntityToPersisted (e.Component.Parent);
         }
         #endregion
 
@@ -313,7 +313,7 @@ namespace PersistencePlugin
                 entitiesInDatabase = session.CreateQuery("from " + typeof(Entity)).List<Entity>();
                 foreach (Entity e in entitiesInDatabase)
                 {
-                    if (e.Parent == null)
+                    //if (e.Parent == null)
                     {
                         EntitiesToInitialize.Add(e.Guid);
                         World.Instance.Add(e);
