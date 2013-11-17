@@ -45,8 +45,8 @@ namespace ScalabilityPlugin
         /// </summary>
         public void StartSyncServer()
         {
-            var syncServer = ServiceFactory.Create(GetKIARAConfigURI());
-            syncServer.OnNewClient += AddSyncNode;
+            var syncServer = ServiceFactory.Create(ConvertFileNameToURI("syncServer.json"));
+            syncServer["clientHandshake"] = (Action<Connection, Guid>)HandleHandshakeFromClient;
         }
 
         /// <summary>
@@ -54,8 +54,8 @@ namespace ScalabilityPlugin
         /// </summary>
         public void ConnectToSyncServer()
         {
-            var remoteSyncServer = ServiceFactory.Discover(GetKIARAConfigURI());
-            remoteSyncServer.OnConnected += AddSyncNode;
+            var remoteSyncServer = ServiceFactory.Discover(ConvertFileNameToURI("syncClient.json"));
+            remoteSyncServer.OnConnected += HandleConnectedToServer;
         }
 
 
@@ -68,6 +68,9 @@ namespace ScalabilityPlugin
             World.Instance.RemovedEntity += HandleLocalRemovedEntity;
         }
 
+        /// <summary>
+        /// Loads configuration options from the library configuration file.
+        /// </summary>
         private void LoadConfig()
         {
             string scalabilityConfigPath = this.GetType().Assembly.Location;
@@ -76,12 +79,24 @@ namespace ScalabilityPlugin
             IsSyncRelay = Boolean.Parse(config.AppSettings.Settings["IsSyncRelay"].Value);
         }
 
-        private string GetKIARAConfigURI()
+        /// <summary>
+        /// Converts a file name to the URI that point to the file as if it was located in the same directory as the
+        /// current assembly.
+        /// </summary>
+        /// <param name="configFilename"></param>
+        /// <returns></returns>
+        private string ConvertFileNameToURI(string configFilename)
         {
-            var configFile = Path.Combine(Path.GetDirectoryName(this.GetType().Assembly.Location), "syncServer.json");
+            var configFile = Path.Combine(Path.GetDirectoryName(this.GetType().Assembly.Location), configFilename);
             return "file:///" + configFile;
         }
 
+        /// <summary>
+        /// Handler for the event AddedEntity event in the World. Invokes addEntity method on the connected sync nodes
+        /// to notify them about new entity.
+        /// </summary>
+        /// <param name="sender">Event sender.</param>
+        /// <param name="e">Event arguments.</param>
         private void HandleLocalAddedEntity(object sender, EntityEventArgs e)
         {
             e.Entity.ChangedAttribute += HandleLocalChangedAttribute;
@@ -91,12 +106,18 @@ namespace ScalabilityPlugin
                 var newSyncInfo = new EntitySyncInfo();
                 localSyncInfo.Add(e.Entity.Guid, newSyncInfo);
 
-                // This must be inside the lock to prevent changes to the newSyncInfo.
+                // This must be inside the lock to prevent concurrent changes to the newly created newSyncInfo.
                 foreach (Connection connection in remoteSyncNodes.Values)
                     connection["addEntity"](e.Entity.Guid, newSyncInfo);
             }
         }
 
+        /// <summary>
+        /// Handler for the event RemovedEntity event in the World. Invokes removeEntity method on the connected sync
+        /// nodes to notify them about removed entity.
+        /// </summary>
+        /// <param name="sender">Event sender.</param>
+        /// <param name="e">Event arguments.</param>
         private void HandleLocalRemovedEntity(object sender, EntityEventArgs e)
         {
             lock (localSyncInfo)
@@ -108,6 +129,12 @@ namespace ScalabilityPlugin
                 connection["remoteEntity"](e.Entity.Guid);
         }
 
+        /// <summary>
+        /// Handler for the event ChangedAttribute event in the Entity. Update local sync info for the attribute and
+        /// invokes changedAttributes method on the connected sync nodes to notify them about the change.
+        /// </summary>
+        /// <param name="sender">Event sender.</param>
+        /// <param name="e">Event arguments.</param>
         private void HandleLocalChangedAttribute(object sender, ChangedAttributeEventArgs e)
         {
             var attributePath = new AttributePath(e.Component.Name, e.AttributeName);
@@ -127,41 +154,75 @@ namespace ScalabilityPlugin
                 connection["changeAttributes"](e.Entity.Guid, changedAttributes);
         }
 
-        private void AddSyncNode(Connection connection)
+        /// <summary>
+        /// Invoked by the client to transmit their SyncID and request server's SyncID at the same time. Registers
+        /// client in the list of remote nodes and transmits back server's SyncID in a separate call. Not implemented
+        /// on the client side and thus should not be invoked by the server.
+        /// </summary>
+        /// <param name="connection">Connection to the client.</param>
+        /// <param name="clientSyncID">Client's SyncID.</param>
+        private void HandleHandshakeFromClient(Connection connection, Guid clientSyncID)
         {
-            // Use new thread to prevent blocking the receiving thread, which will receive the remote SyncID.
-            Task.Factory.StartNew(delegate()
-            {
-                try
-                {
-                    Guid remoteSyncID = connection["getSyncID"]().Wait<Guid>();
-
-                    // Set up function to remove the sync node when the connection is closed.
-                    connection.Closed += (sender, e) => remoteSyncNodes.TryRemove(remoteSyncID, out connection);
-
-                    remoteSyncNodes.TryAdd(remoteSyncID, connection);
-                    logger.Debug("Connected to remote sync node with SyncID = " + remoteSyncID);
-
-                    RegisterMethodHandlers(connection);
-                }
-                catch (Exception e)
-                {
-                    logger.WarnException("Failed to add new sync node", e);
-                    return;
-                }
-            });
+            AddNewSyncNode(connection, clientSyncID);
+            RegisterSyncMethodHandlers(connection);
+            connection["serverHandshake"](LocalSyncID);
         }
 
-        private void RegisterMethodHandlers(Connection connection)
+        /// <summary>
+        /// Invoked on the client upon connection to the server.
+        /// </summary>
+        /// <param name="connection">Connection to the server.</param>
+        private void HandleConnectedToServer(Connection connection)
         {
-            connection.RegisterFuncImplementation("getSyncID", (Func<Guid>)(delegate { return LocalSyncID; }));
+            connection.RegisterFuncImplementation("serverHandshake",
+                (Action<Connection, Guid>)HandleHandshakeFromServer);
+            RegisterSyncMethodHandlers(connection);
+            connection["clientHandshake"](LocalSyncID);
+        }
+
+        /// <summary>
+        /// Invoked by the server in response to the clientHandshake to transmit their SyncID. Registers server in the
+        /// list of remote nodes. Not implemented on the server side and thus should not be invoked by the client.
+        /// </summary>
+        /// <param name="connection">Connection to the server.</param>
+        /// <param name="serverSyncID">Server's SyncID.</param>
+        private void HandleHandshakeFromServer(Connection connection, Guid serverSyncID)
+        {
+            AddNewSyncNode(connection, serverSyncID);
+        }
+
+        /// <summary>
+        /// Adds a new sync node to the list of remote sync nodes.
+        /// </summary>
+        /// <param name="connection">Connection to the remote sync node.</param>
+        /// <param name="remoteSyncID">Remote node's SyncID.</param>
+        private void AddNewSyncNode(Connection connection, Guid remoteSyncID)
+        {
+            // Set up function to remove the sync node when the connection is closed.
+            connection.Closed += (sender, e) => remoteSyncNodes.TryRemove(remoteSyncID, out connection);
+
+            remoteSyncNodes.TryAdd(remoteSyncID, connection);
+            logger.Debug("Connected to remote sync node with SyncID = " + remoteSyncID);
+        }
+
+        /// <summary>
+        /// Registers sychronization method handler on a given connection.
+        /// </summary>
+        /// <param name="connection"></param>
+        private void RegisterSyncMethodHandlers(Connection connection)
+        {
             connection.RegisterFuncImplementation("addEntity", (Action<Guid, EntitySyncInfo>)HandleRemoteAddedEntity);
             connection.RegisterFuncImplementation("removeEntity", (Action<Guid>)HandleRemoteRemovedEntity);
             connection.RegisterFuncImplementation("changeAttributes",
                 (Action<Guid, EntitySyncInfo>)HandleRemoteChangedAttributes);
         }
 
-        private void HandleRemoteAddedEntity(Guid guid, EntitySyncInfo remoteSyncInfo)
+        /// <summary>
+        /// Handles an entity addition update from the remote sync node and adds a new entity locally.
+        /// </summary>
+        /// <param name="guid">Guid of the new entity.</param>
+        /// <param name="initialSyncInfo">Initial sync info for the entity.</param>
+        private void HandleRemoteAddedEntity(Guid guid, EntitySyncInfo initialSyncInfo)
         {
             lock (localSyncInfo)
             {
@@ -171,11 +232,15 @@ namespace ScalabilityPlugin
                     return;
                 }
 
-                localSyncInfo.Add(guid, remoteSyncInfo);
+                localSyncInfo.Add(guid, initialSyncInfo);
                 World.Instance.Add(new Entity(guid));
             }
         }
 
+        /// <summary>
+        /// Handles an entity removal update from the remote sync node and removes the entity locally.
+        /// </summary>
+        /// <param name="guid">Guid of the removed entity.</param>
         private void HandleRemoteRemovedEntity(Guid guid)
         {
             lock (localSyncInfo)
@@ -191,6 +256,12 @@ namespace ScalabilityPlugin
             }
         }
 
+        /// <summary>
+        /// Handles an update to a set of attributes on the remote sync node and performs updates locally to those
+        /// attributes whose value is older.
+        /// </summary>
+        /// <param name="guid">Guid of the entity containing affected attributes.</param>
+        /// <param name="changedAttributes">A set of modified attributes with their remote sync info.</param>
         private void HandleRemoteChangedAttributes(Guid guid, EntitySyncInfo changedAttributes)
         {
             lock (localSyncInfo)
