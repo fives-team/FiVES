@@ -102,7 +102,7 @@ namespace KIARAPlugin
                 if (handler.Method.GetParameters().Length == 0) {
                     handler.DynamicInvoke();
                 } else {
-                    Type argType = handler.Method.GetParameters()[0].GetType();
+                    Type argType = handler.Method.GetParameters()[0].ParameterType;
                     handler.DynamicInvoke(ConvertResult(retValue, argType));
                 }
             }
