@@ -12,14 +12,13 @@ namespace FIVES
     public sealed class Entity
     {
         public Entity()
-            : this(Guid.NewGuid())
         {
+            Guid = Guid.NewGuid();
         }
 
         public Entity(Guid guid)
         {
             Guid = guid;
-            Parent = null;
         }
 
         /// <summary>
@@ -53,11 +52,6 @@ namespace FIVES
                 return components[componentName];
             }
         }
-
-        /// <summary>
-        /// Parent of this entity. The value null is used to denote that the entity doesn't have a parent.
-        /// </summary>
-        public Entity Parent { get; private set; }
 
         /// <summary>
         /// An event that is raised when a new component is created in this entity.
