@@ -9,6 +9,7 @@ using System.Threading;
 
 namespace PersistencePlugin
 {
+    [Ignore()]
     [TestFixture()]
     public class PersistenceTest
     {

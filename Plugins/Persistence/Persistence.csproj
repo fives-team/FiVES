@@ -80,7 +80,7 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Core\Collections\Collections.csproj">
-      <Project>{9c2af21f-4d8c-4ade-a5c4-135a6f50e18a}</Project>
+      <Project>{9C2AF21F-4D8C-4ADE-A5C4-135A6F50E18A}</Project>
       <Name>Collections</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\Core\DomainModel\DomainModel.csproj">
