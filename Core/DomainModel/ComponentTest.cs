@@ -9,7 +9,7 @@ namespace FIVES
     public class ComponentTest
     {
         ComponentDefinition definition; // TODO: mock
-        Entity parent;  // TODO: mock
+        Entity containingEntity;  // TODO: mock
         Component component;
 
         [SetUp()]
@@ -20,11 +20,11 @@ namespace FIVES
             definition.AddAttribute<string>("a", "a_value");
             definition.AddAttribute<float>("b", 3.14f);
 
-            // Set up parent.
-            parent = new Entity();
+            // Set up containing entity.
+            containingEntity = new Entity();
 
             // Create component.
-            component = new Component(definition, parent);
+            component = new Component(definition, containingEntity);
         }
 
         [Test()]
@@ -41,9 +41,9 @@ namespace FIVES
         }
 
         [Test()]
-        public void ShouldRememberParent()
+        public void ShouldRememberContainingEntity()
         {
-            Assert.AreEqual(component.Parent, parent);
+            Assert.AreEqual(component.ContainingEntity, containingEntity);
         }
 
         [Test()]

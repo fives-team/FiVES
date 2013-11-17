@@ -22,9 +22,9 @@ namespace FIVES
         public ReadOnlyComponentDefinition Definition { get; private set; }
 
         /// <summary>
-        /// A parent entity that contains this component.
+        /// An entity that contains this component.
         /// </summary>
-        public Entity Parent { get; private set; }
+        public Entity ContainingEntity { get; private set; }
 
         /// <summary>
         /// Accessor that allows to get and set attribute values. Users must cast the value to correct type themselves.
@@ -61,17 +61,17 @@ namespace FIVES
         /// </summary>
         public event EventHandler<ChangedAttributeEventArgs> ChangedAttribute;
 
-        internal Component(ReadOnlyComponentDefinition definition, Entity parent)
+        internal Component(ReadOnlyComponentDefinition definition, Entity containingEntity)
         {
             Guid = Guid.NewGuid();
-            Parent = parent;
+            ContainingEntity = containingEntity;
             Definition = definition;
             InitializeAttributes();
         }
 
         internal void Upgrade(ReadOnlyComponentDefinition newDefinition, ComponentUpgrader upgrader)
         {
-            Component newComponent = new Component(newDefinition, Parent);
+            Component newComponent = new Component(newDefinition, ContainingEntity);
             upgrader(this, newComponent);
             attributes = newComponent.attributes;
             Definition = newDefinition;
