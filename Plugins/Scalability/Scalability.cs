@@ -1,4 +1,5 @@
-﻿using KIARAPlugin;
+﻿using FIVES;
+using KIARAPlugin;
 using NLog;
 using System;
 using System.Collections.Concurrent;
@@ -12,8 +13,17 @@ using System.Threading.Tasks;
 
 namespace ScalabilityPlugin
 {
-    // TODO: Document class and public members
-    public class Scalability
+    // TODO: Optimization: currently when an update arrives from remote end and gets applied locally, it also triggers
+    // sync events which send this very update back to the original sender. The latter will ignore it as it will
+    // contain same LastTimestamp and SyncID, but it will waste bandwidth. This can be optimized by sending updates
+    // manually to all nodes expect the original sender. However, we will also need to somehow disable sync handlers
+    // temporarily to avoid duplicate updates.
+
+    /// <summary>
+    /// Implements synchronization algorithm. Manages remote synchronization nodes and local synchronization state.
+    /// Processes local changes and distributes them to other nodes. Optionally also relays updates between nodes.
+    /// </summary>
+    class Scalability
     {
         public static Scalability Instance = new Scalability();
 
@@ -23,32 +33,42 @@ namespace ScalabilityPlugin
         public bool IsSyncRelay { get; private set; }
 
         /// <summary>
-        /// True if this instance of FiVES does not need to send local updates to remote sync server.
+        /// Constructs a new entity of Scalability class.
         /// </summary>
-        public bool IsSyncRoot { get; private set; }
-
         public Scalability()
         {
             LoadConfig();
         }
 
-        internal void StartSyncServer()
+        /// <summary>
+        /// Starts a local sync server.
+        /// </summary>
+        public void StartSyncServer()
         {
             var syncServer = ServiceFactory.Create(GetKIARAConfigURI());
             syncServer.OnNewClient += AddSyncNode;
-            syncServer["getSyncID"] = (Func<string>)(LocalSyncID.ToString);
-            syncServer["addEntity"] = (Action<Guid, EntitySyncInfo>)HandleAddEntity;
-            syncServer["removeEntity"] = (Action<Guid>)HandleRemoveEntity;
-            syncServer["updateProperties"] = (Action<Guid, EntitySyncInfo>)HandleUpdateProperties;
         }
 
-        internal void ConnectToSyncServer()
+        /// <summary>
+        /// Connects to a remove sync server.
+        /// </summary>
+        public void ConnectToSyncServer()
         {
             var remoteSyncServer = ServiceFactory.Discover(GetKIARAConfigURI());
             remoteSyncServer.OnConnected += AddSyncNode;
         }
 
-        internal void LoadConfig()
+
+        /// <summary>
+        /// Starts synchornization.
+        /// </summary>
+        public void StartSync()
+        {
+            World.Instance.AddedEntity += HandleLocalAddedEntity;
+            World.Instance.RemovedEntity += HandleLocalRemovedEntity;
+        }
+
+        private void LoadConfig()
         {
             string scalabilityConfigPath = this.GetType().Assembly.Location;
             Configuration config = ConfigurationManager.OpenExeConfiguration(scalabilityConfigPath);
@@ -56,15 +76,55 @@ namespace ScalabilityPlugin
             IsSyncRelay = Boolean.Parse(config.AppSettings.Settings["IsSyncRelay"].Value);
         }
 
-        internal void StartSync()
-        {
-            // TODO: Register handlers for change events
-        }
-
         private string GetKIARAConfigURI()
         {
             var configFile = Path.Combine(Path.GetDirectoryName(this.GetType().Assembly.Location), "syncServer.json");
             return "file:///" + configFile;
+        }
+
+        private void HandleLocalAddedEntity(object sender, EntityEventArgs e)
+        {
+            e.Entity.ChangedAttribute += HandleLocalChangedAttribute;
+
+            lock (localSyncInfo)
+            {
+                var newSyncInfo = new EntitySyncInfo();
+                localSyncInfo.Add(e.Entity.Guid, newSyncInfo);
+
+                // This must be inside the lock to prevent changes to the newSyncInfo.
+                foreach (Connection connection in remoteSyncNodes.Values)
+                    connection["addEntity"](e.Entity.Guid, newSyncInfo);
+            }
+        }
+
+        private void HandleLocalRemovedEntity(object sender, EntityEventArgs e)
+        {
+            lock (localSyncInfo)
+            {
+                localSyncInfo.Remove(e.Entity.Guid);
+            }
+
+            foreach (Connection connection in remoteSyncNodes.Values)
+                connection["remoteEntity"](e.Entity.Guid);
+        }
+
+        private void HandleLocalChangedAttribute(object sender, ChangedAttributeEventArgs e)
+        {
+            var attributePath = new AttributePath(e.Component.Name, e.AttributeName);
+            var newAttributeSyncInfo = new AttributeSyncInfo(LocalSyncID, e.NewValue);
+
+            lock (localSyncInfo)
+            {
+                EntitySyncInfo entitySyncInfo = localSyncInfo[e.Entity.Guid];
+                entitySyncInfo.Attributes[attributePath] = newAttributeSyncInfo;
+            }
+
+            // TODO: Optimization: we can send batch updates to improve performance. Received code is written to
+            // process batches already, but sending is trickier as we don't have network load feedback from KIARA yet.
+            var changedAttributes = new EntitySyncInfo();
+            changedAttributes.Attributes.Add(attributePath, newAttributeSyncInfo);
+            foreach (Connection connection in remoteSyncNodes.Values)
+                connection["changeAttributes"](e.Entity.Guid, changedAttributes);
         }
 
         private void AddSyncNode(Connection connection)
@@ -74,13 +134,15 @@ namespace ScalabilityPlugin
             {
                 try
                 {
-                    Guid remoteSyncID = Guid.Parse(connection["getSyncID"]().Wait<string>());
+                    Guid remoteSyncID = connection["getSyncID"]().Wait<Guid>();
 
                     // Set up function to remove the sync node when the connection is closed.
                     connection.Closed += (sender, e) => remoteSyncNodes.TryRemove(remoteSyncID, out connection);
 
                     remoteSyncNodes.TryAdd(remoteSyncID, connection);
                     logger.Debug("Connected to remote sync node with SyncID = " + remoteSyncID);
+
+                    RegisterMethodHandlers(connection);
                 }
                 catch (Exception e)
                 {
@@ -90,30 +152,87 @@ namespace ScalabilityPlugin
             });
         }
 
-        private void HandleAddEntity(Guid guid, EntitySyncInfo info)
+        private void RegisterMethodHandlers(Connection connection)
         {
-            // TODO: if syncInfo doesn't contain guid, create new entity. info contains copy of the syncInfo on the
-            // remote node. also create entity in the scene. setting properties can be done by calling
-            // HandleUpdateProperties
+            connection.RegisterFuncImplementation("getSyncID", (Func<Guid>)(delegate { return LocalSyncID; }));
+            connection.RegisterFuncImplementation("addEntity", (Action<Guid, EntitySyncInfo>)HandleRemoteAddedEntity);
+            connection.RegisterFuncImplementation("removeEntity", (Action<Guid>)HandleRemoteRemovedEntity);
+            connection.RegisterFuncImplementation("changeAttributes",
+                (Action<Guid, EntitySyncInfo>)HandleRemoteChangedAttributes);
         }
 
-        private void HandleRemoveEntity(Guid guid)
+        private void HandleRemoteAddedEntity(Guid guid, EntitySyncInfo remoteSyncInfo)
         {
-            // TODO: remove entity from syncInfo and from scene if present.
+            lock (localSyncInfo)
+            {
+                if (localSyncInfo.ContainsKey(guid))
+                {
+                    logger.Warn("Received addition of entity that is already present. Guid: " + guid);
+                    return;
+                }
+
+                localSyncInfo.Add(guid, remoteSyncInfo);
+                World.Instance.Add(new Entity(guid));
+            }
         }
 
-        private void HandleUpdateProperties(Guid guid, EntitySyncInfo updatedProperties)
+        private void HandleRemoteRemovedEntity(Guid guid)
         {
-            // TODO: if entity is present if the syncInfo - update its properties in the scene. use try-catch when
-            // updating properties, because some components may be undefined if certain plugins are not loaded.
+            lock (localSyncInfo)
+            {
+                if (!localSyncInfo.ContainsKey(guid))
+                {
+                    logger.Warn("Received removal of entity that does not exist. Guid: " + guid);
+                    return;
+                }
+
+                localSyncInfo.Remove(guid);
+                World.Instance.Remove(World.Instance.FindEntity(guid));
+            }
         }
 
+        private void HandleRemoteChangedAttributes(Guid guid, EntitySyncInfo changedAttributes)
+        {
+            lock (localSyncInfo)
+            {
+                if (!localSyncInfo.ContainsKey(guid))
+                {
+                    logger.Warn("Received updated properties for entity that does not exist. Guid: " + guid);
+                    return;
+                }
+
+                EntitySyncInfo localEntitySyncInfo = localSyncInfo[guid];
+                Entity updatedEntity = World.Instance.FindEntity(guid);
+                foreach (KeyValuePair<AttributePath, AttributeSyncInfo> attributePair in changedAttributes.Attributes)
+                {
+                    AttributePath attrPath = attributePair.Key;
+                    AttributeSyncInfo remoteAttrSyncInfo = attributePair.Value;
+
+
+                    if (!localEntitySyncInfo.Attributes.ContainsKey(attrPath))
+                    {
+                        localEntitySyncInfo.Attributes[attrPath] = remoteAttrSyncInfo;
+                    }
+                    else
+                    {
+                        if (localEntitySyncInfo.Attributes[attrPath].Sync(remoteAttrSyncInfo))
+                        {
+                            updatedEntity[attrPath.ComponentName][attrPath.AttributeName] =
+                                remoteAttrSyncInfo.LastValue;
+                        }
+                    }
+                }
+            }
+        }
+
+        // SyncID of this node.
         private Guid LocalSyncID = Guid.NewGuid();
 
         // Collection of remote sync nodes mapped from their SyncID to a Connection.
         private ConcurrentDictionary<Guid, Connection> remoteSyncNodes = new ConcurrentDictionary<Guid, Connection>();
 
-        private Dictionary<Guid, EntitySyncInfo> syncInfo = new Dictionary<Guid, EntitySyncInfo>();
+        // Sync info for entities in the World.
+        private Dictionary<Guid, EntitySyncInfo> localSyncInfo = new Dictionary<Guid, EntitySyncInfo>();
 
         private static Logger logger = LogManager.GetCurrentClassLogger();
     }

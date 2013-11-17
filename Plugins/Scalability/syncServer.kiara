@@ -1,10 +1,24 @@
-﻿struct EntitySyncInfo {
-  // TODO
+﻿struct Guid {
+
+}
+
+struct AttributeSyncInfo {
+  i64 LastTimestamp;
+  Guid LastSyncID;
+  any LastValue;
+}
+
+struct ComponentSyncInfo {
+  array<AttributeSyncInfo> Components;
+}
+
+struct EntitySyncInfo {
+  array<ComponentSyncInfo> Components;
 }
 
 service sync {
-    string getSyncID();
-	void addEntity(string guid, EntitySyncInfo info);
-	void removeEntity(string guid);
-	void updateAttribute(string guid, EntitySyncInfo info);
+    Guid getSyncID();
+	void addEntity(Guid guid, EntitySyncInfo remoteSyncInfo);
+	void removeEntity(Guid guid);
+	void changeAttributes(Guid guid, EntitySyncInfo changedAttributes);
 }
