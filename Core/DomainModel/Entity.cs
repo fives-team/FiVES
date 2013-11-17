@@ -12,8 +12,13 @@ namespace FIVES
     public sealed class Entity
     {
         public Entity()
+            : this(Guid.NewGuid())
         {
-            Guid = Guid.NewGuid();
+        }
+
+        public Entity(Guid guid)
+        {
+            Guid = guid;
             Parent = null;
         }
 
