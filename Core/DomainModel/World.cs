@@ -6,8 +6,7 @@ using System.Text;
 namespace FIVES
 {
     /// <summary>
-    /// Represents a collection of top-level entities in the world. When new entities are added to a World instance,
-    /// they are automatically removed from their parent if any and their Parent property is set to null.
+    /// Represents a collection of top-level entities in the world.
     /// </summary>
     public sealed class World : EntityCollection
     {
