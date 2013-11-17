@@ -69,7 +69,7 @@ namespace FIVES
             collection.Add(new Entity());
             collection.Add(new Entity());
 
-            Assert.AreEqual(entity, collection.FindEntity(entity.Guid.ToString()));
+            Assert.AreEqual(entity, collection.FindEntity(entity.Guid));
         }
 
         [Test()]
@@ -80,7 +80,7 @@ namespace FIVES
             var entity2 = new Entity();
 
             collection.Add(entity1);
-            collection.FindEntity(entity2.Guid.ToString());
+            collection.FindEntity(entity2.Guid);
         }
 
         [Test()]

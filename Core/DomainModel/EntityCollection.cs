@@ -78,18 +78,27 @@ namespace FIVES
         public event EventHandler<EntityEventArgs> RemovedEntity;
 
         /// <summary>
-        /// Finds an entity by its unique identifier. Throws EntityNotFoundException if entity is not found.
+        /// Finds an entity by its Guid as string. Throws EntityNotFoundException if entity is not found.
         /// </summary>
         /// <param name="guid">String representation of the unique identifier.</param>
         /// <returns>An entity.</returns>
         public Entity FindEntity(string guid)
         {
             Guid parsedGuid = Guid.Parse(guid);
+            return FindEntity(parsedGuid);
+        }
 
-            if (!entities.ContainsKey(parsedGuid))
+        /// <summary>
+        /// Finds an entity by its Guid. Throws EntityNotFoundException if entity is not found.
+        /// </summary>
+        /// <param name="guid">Guid of the entity.</param>
+        /// <returns>An entity.</returns>
+        public Entity FindEntity(Guid guid)
+        {
+            if (!entities.ContainsKey(guid))
                 throw new EntityNotFoundException("Entity with given guid is not found.");
 
-            return entities[parsedGuid];
+            return entities[guid];
         }
 
         internal EntityCollection()
