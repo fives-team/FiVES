@@ -18,6 +18,16 @@ namespace FIVES
             NewValue = newValue;
         }
 
+        /// <summary>
+        /// Returns containing entity. This is a shorthand for Component.ContainingEntity
+        /// </summary>
+        public Entity Entity {
+            get
+            {
+                return Component.ContainingEntity;
+            }
+        }
+
         public Component Component { get; private set;  }
         public string AttributeName { get; private set; }
         public object OldValue { get; private set; }

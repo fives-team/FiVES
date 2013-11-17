@@ -47,7 +47,7 @@ namespace ScriptingPlugin
 
         private void HandleOnAttributeInComponentChanged(object sender, ChangedAttributeEventArgs e)
         {
-            if (e.Component.Definition.Name == "scripting")
+            if (e.Component.Name == "scripting")
                 InitEntityContext((Entity)sender);
         }
 

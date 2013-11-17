@@ -66,7 +66,7 @@ namespace FIVES
             Assert.AreEqual(1, entity.Components.Count);
             var enumerator = entity.Components.GetEnumerator();
             Assert.IsTrue(enumerator.MoveNext());
-            Assert.AreEqual("test", enumerator.Current.Definition.Name);
+            Assert.AreEqual("test", enumerator.Current.Name);
             Assert.IsFalse(enumerator.MoveNext());
         }
 

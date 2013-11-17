@@ -12,6 +12,17 @@ namespace FIVES
     public sealed class Component
     {
         /// <summary>
+        /// Returns the name of the component. This is a shorthand for Definition.Name
+        /// </summary>
+        public string Name
+        {
+            get
+            {
+                return Definition.Name;
+            }
+        }
+
+        /// <summary>
         /// GUID that uniquely identifies this componentn.
         /// </summary>
         public Guid Guid { get; private set; }
