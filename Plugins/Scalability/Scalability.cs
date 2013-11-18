@@ -312,38 +312,34 @@ namespace ScalabilityPlugin
             EntitySyncInfo localEntitySyncInfo = localSyncInfo[entityGuid];
             Entity localEntity = World.Instance.FindEntity(entityGuid);
 
+            logger.Debug("Received an update to an attribute. Entity guid: " + entityGuid + ". " +
+                    "Attribute path: " + componentName + "." + attributeName + ". New value: " +
+                    remoteAttributeSyncInfo.LastValue + ". Timestamp: " + remoteAttributeSyncInfo.LastTimestamp +
+                    ". SyncID: " + remoteAttributeSyncInfo.LastSyncID);
+
             if (!localEntitySyncInfo.Components.ContainsKey(componentName) ||
                 !localEntitySyncInfo[componentName].Attributes.ContainsKey(attributeName))
             {
+                logger.Debug("Creating new attribute sync info.");
                 localEntitySyncInfo[componentName][attributeName] = remoteAttributeSyncInfo;
             }
             else if (!localEntitySyncInfo[componentName][attributeName].Sync(remoteAttributeSyncInfo))
             {
-                logger.Debug("Ignored an update to the attribute. Entity guid: " + entityGuid + ". " +
-                    "Attribute path: " + componentName + "." + attributeName + ". New value: " +
-                    remoteAttributeSyncInfo.LastValue + ". Remote timestamp: " +
-                    remoteAttributeSyncInfo.LastTimestamp + ". Local timestamp: " +
-                    localEntitySyncInfo[componentName][attributeName].LastTimestamp + ". Remote SyncID: " +
-                    remoteAttributeSyncInfo.LastSyncID + ". Local SyncID: " +
+                logger.Debug("Sync discarded the update. Local value: " +
+                    localEntitySyncInfo[componentName][attributeName].LastValue + ". Local timestamp: " +
+                    localEntitySyncInfo[componentName][attributeName].LastTimestamp + ". Local SyncID: " +
                     localEntitySyncInfo[componentName][attributeName].LastSyncID);
                 return;  // ignore this attribute because sync discarded remote value
             }
 
             try
             {
-                logger.Debug("Updating an attribute in response to sync message. Entity guid: " + entityGuid + ". " +
-                    "Attribute path: " + componentName + "." + attributeName + ". New value: " +
-                    remoteAttributeSyncInfo.LastValue + ". Remote timestamp: " +
-                    remoteAttributeSyncInfo.LastTimestamp + ". Local timestamp: " +
-                    localEntitySyncInfo[componentName][attributeName].LastTimestamp + ". Remote SyncID: " +
-                    remoteAttributeSyncInfo.LastSyncID + ". Local SyncID: " +
-                    localEntitySyncInfo[componentName][attributeName].LastSyncID);
                 localEntity[componentName][attributeName] = remoteAttributeSyncInfo.LastValue;
             }
             catch (ComponentAccessException e)
             {
                 // This is fine, because we may have some plugins not loaded on this node.
-                logger.DebugException("Ignoring an update an attribute. Component is not defined.", e);
+                logger.DebugException("Update is not applied to the World. Component is not defined.", e);
             }
         }
 
