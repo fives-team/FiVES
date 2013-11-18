@@ -16,7 +16,7 @@ namespace ScalabilityPlugin
     // TODO: Optimization: currently when an update arrives from remote end and gets applied locally, it also triggers
     // sync events which send this very update back to the original sender. The latter will ignore it as it will
     // contain same LastTimestamp and SyncID, but it will waste bandwidth. This can be optimized by sending updates
-    // manually to all nodes expect the original sender. However, we will also need to somehow disable sync handlers
+    // manually to all nodes except the original sender. However, we will also need to somehow disable sync handlers
     // temporarily to avoid duplicate updates.
 
     /// <summary>
@@ -334,7 +334,12 @@ namespace ScalabilityPlugin
 
             try
             {
-                localEntity[componentName][attributeName] = remoteAttributeSyncInfo.LastValue;
+                // This is necessary, because Json.NET serializes primitive types using basic JSON values, which do not
+                // retain original type (e.g. integer values always become int even if they were stored as float values
+                // before) and there is no way to change this.
+                var attributeType = localEntity[componentName].Definition[attributeName].Type;
+                var attributeValue = Convert.ChangeType(remoteAttributeSyncInfo.LastValue, attributeType);
+                localEntity[componentName][attributeName] = attributeValue;
             }
             catch (ComponentAccessException e)
             {
