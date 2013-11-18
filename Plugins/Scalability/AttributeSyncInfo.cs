@@ -45,7 +45,7 @@ namespace ScalabilityPlugin
         /// <returns>True if the local attribute has been set to a remote value.</returns>
         public bool Sync(AttributeSyncInfo remoteAttrSyncInfo)
         {
-            if (remoteAttrSyncInfo.LastTimestamp > LastTimestamp)
+            if (remoteAttrSyncInfo.LastTimestamp < LastTimestamp)
                 return false;
 
             // Equality sign in "<=" below is very important, because it ensures that we don't have circulating
