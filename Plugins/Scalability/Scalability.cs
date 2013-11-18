@@ -317,7 +317,7 @@ namespace ScalabilityPlugin
             {
                 localEntitySyncInfo[componentName][attributeName] = remoteAttributeSyncInfo;
             }
-            else if (!localEntitySyncInfo[componentName][componentName].Sync(remoteAttributeSyncInfo))
+            else if (!localEntitySyncInfo[componentName][attributeName].Sync(remoteAttributeSyncInfo))
             {
                 logger.Debug("Ignored an update to the attribute. Entity guid: " + entityGuid + ". " +
                     "Attribute path: " + componentName + "." + attributeName + ". New value: " +
