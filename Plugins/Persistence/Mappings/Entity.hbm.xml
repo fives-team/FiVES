@@ -4,10 +4,10 @@
                    namespace="FIVES">
     <class name="Entity" lazy="false">
       <id name="Guid" type="Guid" />
-      <many-to-one name="Parent" cascade="all" column="ParentGUID"/>
-      <set name="Children" cascade="all" inverse="true">
-        <key column="ParentGUID" />
-        <one-to-many class="Entity"/>
-      </set>
+      <map name="ComponentsDictionaryHandler" table="entityComponents" cascade="all">
+        <key column="EntityGuid" />
+        <index column="ComponentName" type="System.String" />
+        <many-to-many class="Component" />
+      </map>
     </class>
 </hibernate-mapping>
