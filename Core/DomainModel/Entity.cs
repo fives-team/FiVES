@@ -14,11 +14,13 @@ namespace FIVES
         public Entity()
         {
             Guid = Guid.NewGuid();
+            components = new Dictionary<string, Component>();
         }
 
         public Entity(Guid guid)
         {
             Guid = guid;
+            components = new Dictionary<string, Component>();
         }
 
         /// <summary>
@@ -34,6 +36,12 @@ namespace FIVES
         public ReadOnlyCollection<Component> Components
         {
             get { return new ReadOnlyCollection<Component>(components.Values); }
+        }
+
+        private IDictionary<string, Component> ComponentsDictionaryHandler
+        {
+            get { return components; }
+            set { components =  value; }
         }
 
         /// <summary>
@@ -97,7 +105,7 @@ namespace FIVES
                 ChangedAttribute(this, e);
         }
 
-        private Dictionary<string, Component> components = new Dictionary<string, Component>();
+        private IDictionary<string, Component> components { get; set; }
 
         internal IComponentRegistry componentRegistry = ComponentRegistry.Instance;
     }

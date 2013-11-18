@@ -72,6 +72,10 @@ namespace FIVES
         /// </summary>
         public event EventHandler<ChangedAttributeEventArgs> ChangedAttribute;
 
+        internal Component()
+        {
+        }
+
         internal Component(ReadOnlyComponentDefinition definition, Entity containingEntity)
         {
             Guid = Guid.NewGuid();
