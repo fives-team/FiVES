@@ -13,12 +13,6 @@ using System.Threading.Tasks;
 
 namespace ScalabilityPlugin
 {
-    // TODO: Optimization: currently when an update arrives from remote end and gets applied locally, it also triggers
-    // sync events which send this very update back to the original sender. The latter will ignore it as it will
-    // contain same LastTimestamp and SyncID, but it will waste bandwidth. This can be optimized by sending updates
-    // manually to all nodes except the original sender. However, we will also need to somehow disable sync handlers
-    // temporarily to avoid duplicate updates.
-
     /// <summary>
     /// Implements synchronization algorithm. Manages remote synchronization nodes and local synchronization state.
     /// Processes local changes and distributes them to other nodes. Optionally also relays updates between nodes.
@@ -103,6 +97,13 @@ namespace ScalabilityPlugin
         {
             e.Entity.ChangedAttribute += HandleLocalChangedAttribute;
 
+            // Ignore this change if it was caused by the scalability plugin itself.
+            lock (entityAdditions)
+            {
+                if (entityAdditions.Remove(e.Entity.Guid))
+                    return;
+            }
+
             lock (localSyncInfo)
             {
                 // Local sync info may already be present if this new entity was added in response to a sync message
@@ -114,8 +115,11 @@ namespace ScalabilityPlugin
                 }
 
                 // This must be inside the lock to prevent concurrent changes to entity's sync info.
-                foreach (Connection connection in remoteSyncNodes.Values)
-                    connection["addEntity"](e.Entity.Guid, localSyncInfo[e.Entity.Guid]);
+                lock (remoteSyncNodes)
+                {
+                    foreach (Connection connection in remoteSyncNodes)
+                        connection["addEntity"](e.Entity.Guid, localSyncInfo[e.Entity.Guid]);
+                }
             }
         }
 
@@ -127,6 +131,13 @@ namespace ScalabilityPlugin
         /// <param name="e">Event arguments.</param>
         private void HandleLocalRemovedEntity(object sender, EntityEventArgs e)
         {
+            // Ignore this change if it was caused by the scalability plugin itself.
+            lock (entityRemovals)
+            {
+                if (entityRemovals.Remove(e.Entity.Guid))
+                    return;
+            }
+
             lock (localSyncInfo)
             {
                 // Local sync info may already have been removed if this new entity was removed in response to a sync
@@ -135,8 +146,11 @@ namespace ScalabilityPlugin
                     localSyncInfo.Remove(e.Entity.Guid);
             }
 
-            foreach (Connection connection in remoteSyncNodes.Values)
-                connection["remoteEntity"](e.Entity.Guid);
+            lock (remoteSyncNodes)
+            {
+                foreach (Connection connection in remoteSyncNodes)
+                    connection["remoteEntity"](e.Entity.Guid);
+            }
         }
 
         /// <summary>
@@ -149,6 +163,20 @@ namespace ScalabilityPlugin
         {
             var componentName = e.Component.Name;
             var attributeName = e.AttributeName;
+
+            // Ignore this change if it was caused by the scalability plugin itself.
+            lock (ignoredAttributeChanges)
+            {
+                foreach (IgnoredAttributeChange change in ignoredAttributeChanges)
+                {
+                    if (change.EntityGuid == e.Entity.Guid && change.ComponentName == componentName &&
+                        change.AttributeName == attributeName && change.Value == e.NewValue)
+                    {
+                        ignoredAttributeChanges.Remove(change);
+                        return;
+                    }
+                }
+            }
 
             var newAttributeSyncInfo = new AttributeSyncInfo(LocalSyncID, e.NewValue);
 
@@ -168,8 +196,12 @@ namespace ScalabilityPlugin
             // process batches already, but sending is trickier as we don't have network load feedback from KIARA yet.
             var changedAttributes = new EntitySyncInfo();
             changedAttributes[componentName][attributeName] = newAttributeSyncInfo;
-            foreach (Connection connection in remoteSyncNodes.Values)
-                connection["changeAttributes"](e.Entity.Guid, changedAttributes);
+
+            lock (remoteSyncNodes)
+            {
+                foreach (Connection connection in remoteSyncNodes)
+                    connection["changeAttributes"](e.Entity.Guid, changedAttributes);
+            }
         }
 
         /// <summary>
@@ -223,9 +255,13 @@ namespace ScalabilityPlugin
         private void AddNewSyncNode(Connection connection, Guid remoteSyncID)
         {
             // Set up function to remove the sync node when the connection is closed.
-            connection.Closed += (sender, e) => remoteSyncNodes.TryRemove(remoteSyncID, out connection);
+            connection.Closed += delegate (object sender, EventArgs e) {
+                lock (remoteSyncNodes)
+                    remoteSyncNodes.Remove(connection);
+            };
 
-            remoteSyncNodes.TryAdd(remoteSyncID, connection);
+            lock (remoteSyncNodes)
+                remoteSyncNodes.Add(connection);
             logger.Debug("Connected to remote sync node with SyncID = " + remoteSyncID);
 
             // TODO: Sync all existing entities to the remote node.
@@ -237,10 +273,11 @@ namespace ScalabilityPlugin
         /// <param name="connection"></param>
         private void RegisterSyncMethodHandlers(Connection connection)
         {
-            connection.RegisterFuncImplementation("addEntity", (Action<Guid, EntitySyncInfo>)HandleRemoteAddedEntity);
-            connection.RegisterFuncImplementation("removeEntity", (Action<Guid>)HandleRemoteRemovedEntity);
+            connection.RegisterFuncImplementation("addEntity",
+                (Action<Connection, Guid, EntitySyncInfo>)HandleRemoteAddedEntity);
+            connection.RegisterFuncImplementation("removeEntity", (Action<Connection, Guid>)HandleRemoteRemovedEntity);
             connection.RegisterFuncImplementation("changeAttributes",
-                (Action<Guid, EntitySyncInfo>)HandleRemoteChangedAttributes);
+                (Action<Connection, Guid, EntitySyncInfo>)HandleRemoteChangedAttributes);
         }
 
         /// <summary>
@@ -248,7 +285,7 @@ namespace ScalabilityPlugin
         /// </summary>
         /// <param name="guid">Guid of the new entity.</param>
         /// <param name="initialSyncInfo">Initial sync info for the entity.</param>
-        private void HandleRemoteAddedEntity(Guid guid, EntitySyncInfo initialSyncInfo)
+        private void HandleRemoteAddedEntity(Connection connection, Guid guid, EntitySyncInfo initialSyncInfo)
         {
             lock (localSyncInfo)
             {
@@ -258,7 +295,12 @@ namespace ScalabilityPlugin
                     return;
                 }
 
+                if (IsSyncRelay)
+                    RelaySyncMessage(connection, "addEntity", guid, initialSyncInfo);
+
                 localSyncInfo.Add(guid, initialSyncInfo);
+                lock (entityAdditions)
+                    entityAdditions.Add(guid);
                 World.Instance.Add(new Entity(guid));
                 logger.Debug("Added an entity in response to sync message. Guid: " + guid);
             }
@@ -268,7 +310,7 @@ namespace ScalabilityPlugin
         /// Handles an entity removal update from the remote sync node and removes the entity locally.
         /// </summary>
         /// <param name="guid">Guid of the removed entity.</param>
-        private void HandleRemoteRemovedEntity(Guid guid)
+        private void HandleRemoteRemovedEntity(Connection connection, Guid guid)
         {
             lock (localSyncInfo)
             {
@@ -278,7 +320,12 @@ namespace ScalabilityPlugin
                     return;
                 }
 
+                if (IsSyncRelay)
+                    RelaySyncMessage(connection, "removeEntity", guid);
+
                 localSyncInfo.Remove(guid);
+                lock (entityRemovals)
+                    entityRemovals.Add(guid);
                 World.Instance.Remove(World.Instance.FindEntity(guid));
                 logger.Debug("Removed an entity in response to sync message. Guid: " + guid);
             }
@@ -290,8 +337,11 @@ namespace ScalabilityPlugin
         /// </summary>
         /// <param name="guid">Guid of the entity containing affected attributes.</param>
         /// <param name="changedAttributes">A set of modified attributes with their remote sync info.</param>
-        private void HandleRemoteChangedAttributes(Guid guid, EntitySyncInfo changedAttributes)
+        private void HandleRemoteChangedAttributes(Connection connection, Guid guid, EntitySyncInfo changedAttributes)
         {
+            if (IsSyncRelay)
+                RelaySyncMessage(connection, "changeAttributes", guid, changedAttributes);
+
             lock (localSyncInfo)
             {
                 if (!localSyncInfo.ContainsKey(guid))
@@ -306,7 +356,31 @@ namespace ScalabilityPlugin
             }
         }
 
-        private void HandleRemoteChangedAttribute(Guid entityGuid, string componentName, string attributeName,
+        /// <summary>
+        /// Relays sync message to other connected nodes, except the source node.
+        /// </summary>
+        /// <param name="sourceConnection">Connection to the source node.</param>
+        /// <param name="methodName">Name of the KIARA method.</param>
+        /// <param name="args">Arguments to the method.</param>
+        private void RelaySyncMessage(Connection sourceConnection, string methodName, params object[] args)
+        {
+            lock (remoteSyncNodes)
+            {
+                foreach (Connection connection in remoteSyncNodes)
+                    if (connection != sourceConnection)
+                        connection[methodName](args);
+            }
+        }
+
+        /// <summary>
+        /// Handles an update to a single attribute.
+        /// </summary>
+        /// <param name="entityGuid">Guid of the entity containing attribute.</param>
+        /// <param name="componentName">Name of the component containing attribute.</param>
+        /// <param name="attributeName">Name of the attribute.</param>
+        /// <param name="remoteAttributeSyncInfo">Remote sync info on this attribute.</param>
+        /// <returns>True if the attribute has been changed, false otherwise.</returns>
+        private bool HandleRemoteChangedAttribute(Guid entityGuid, string componentName, string attributeName,
             AttributeSyncInfo remoteAttributeSyncInfo)
         {
             EntitySyncInfo localEntitySyncInfo = localSyncInfo[entityGuid];
@@ -329,7 +403,7 @@ namespace ScalabilityPlugin
                     localEntitySyncInfo[componentName][attributeName].LastValue + ". Local timestamp: " +
                     localEntitySyncInfo[componentName][attributeName].LastTimestamp + ". Local SyncID: " +
                     localEntitySyncInfo[componentName][attributeName].LastSyncID);
-                return;  // ignore this attribute because sync discarded remote value
+                return false;  // ignore this attribute because sync discarded remote value
             }
 
             try
@@ -339,20 +413,59 @@ namespace ScalabilityPlugin
                 // before) and there is no way to change this.
                 var attributeType = localEntity[componentName].Definition[attributeName].Type;
                 var attributeValue = Convert.ChangeType(remoteAttributeSyncInfo.LastValue, attributeType);
+
+                // Ignore event for this change.
+                lock (ignoredAttributeChanges)
+                {
+                    var remoteChange = new IgnoredAttributeChange
+                    {
+                        EntityGuid = entityGuid,
+                        ComponentName = componentName,
+                        AttributeName = attributeName,
+                        Value = attributeValue
+                    };
+
+                    ignoredAttributeChanges.Add(remoteChange);
+                }
+
                 localEntity[componentName][attributeName] = attributeValue;
+
+                return true;
             }
             catch (ComponentAccessException e)
             {
                 // This is fine, because we may have some plugins not loaded on this node.
                 logger.DebugException("Update is not applied to the World. Component is not defined.", e);
+                return false;
             }
         }
+
+        /// <summary>
+        /// A specific attribute change that should be ignored.
+        /// </summary>
+        private class IgnoredAttributeChange
+        {
+            public Guid EntityGuid;
+            public string ComponentName;
+            public string AttributeName;
+            public object Value;
+        }
+
+        // Collection of attribute changes that should be discarded once. This is used to ignore changes to attributes
+        // that were caused by the scalability plugin itself in response to an update from remote node.
+        private List<IgnoredAttributeChange> ignoredAttributeChanges = new List<IgnoredAttributeChange>();
+
+        // Collection of entity additions or removals that should be ignored once. Similarly to the above, this is used
+        // to ignored additions or removals of entities that were caused by the scalability plugin itself in response
+        // to an update from the remote node.
+        private List<Guid> entityAdditions = new List<Guid>();
+        private List<Guid> entityRemovals = new List<Guid>();
 
         // SyncID of this node.
         private Guid LocalSyncID = Guid.NewGuid();
 
         // Collection of remote sync nodes mapped from their SyncID to a Connection.
-        private ConcurrentDictionary<Guid, Connection> remoteSyncNodes = new ConcurrentDictionary<Guid, Connection>();
+        private List<Connection> remoteSyncNodes = new List<Connection>();
 
         // Sync info for entities in the World.
         private Dictionary<Guid, EntitySyncInfo> localSyncInfo = new Dictionary<Guid, EntitySyncInfo>();
