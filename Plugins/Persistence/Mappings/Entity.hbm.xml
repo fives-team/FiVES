@@ -7,7 +7,7 @@
       <map name="ComponentsDictionaryHandler" table="entityComponents" cascade="all">
         <key column="EntityGuid" />
         <index column="ComponentName" type="System.String" />
-        <many-to-many class="Component" />
+        <many-to-many column ="ComponentGuid" class="Component" />
       </map>
     </class>
 </hibernate-mapping>
