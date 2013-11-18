@@ -3,6 +3,7 @@ using KIARAPlugin;
 using Newtonsoft.Json.Linq;
 using WebSocket4Net;
 using System.Net;
+using NLog;
 
 namespace WebSocketJSON
 {
@@ -25,6 +26,9 @@ namespace WebSocketJSON
 
             IWebSocket socket = webSocketFactory.Construct("ws://" + host + ":" + port + "/");
             socket.Opened += (sender, e) => onConnected(new WSJConnection(socket));
+            socket.Error += (sender, e) => {
+                logger.WarnException("Error in connection to " + host + ":" + port, e.Exception);
+            };
             socket.Open();
         }
 
@@ -63,6 +67,8 @@ namespace WebSocketJSON
 
         internal IWSJServerFactory wsjServerFactory = new WSJServerFactory();
         internal IWebSocketFactory webSocketFactory = new WebSocketFactory();
+
+        private static Logger logger = LogManager.GetCurrentClassLogger();
     }
 }
 
