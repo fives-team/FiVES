@@ -87,8 +87,8 @@ namespace ScalabilityPlugin
         /// <returns></returns>
         private string ConvertFileNameToURI(string configFilename)
         {
-            var configFile = Path.Combine(Path.GetDirectoryName(this.GetType().Assembly.Location), configFilename);
-            return "file://" + configFile;
+            var configFullPath = Path.Combine(Path.GetDirectoryName(this.GetType().Assembly.Location), configFilename);
+            return "file://" + configFullPath;
         }
 
         /// <summary>
