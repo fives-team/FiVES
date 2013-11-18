@@ -44,8 +44,6 @@ namespace ScriptingPlugin
         }
 
         #endregion
-
-        private readonly Guid pluginGUID = new Guid("90dd4c50-f09d-11e2-b778-0800200c9a66");
     }
 }
 

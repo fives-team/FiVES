@@ -58,7 +58,6 @@ namespace RenderablePlugin
         }
 
         #endregion
-        private readonly Guid pluginGUID = new Guid("aff8cd50-3214-41cb-b13e-583bc7b7ef3a");
     }
 }
 

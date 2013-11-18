@@ -229,7 +229,6 @@ namespace MotionPlugin
 
         private ISet<Guid> ongoingMotion = new HashSet<Guid>();
         private ISet<Guid> ongoingSpin = new HashSet<Guid>();
-        private readonly Guid pluginGUID = new Guid("bd5b8634-890c-4f59-a823-f9d2b1fd0c86");
     }
 }
 

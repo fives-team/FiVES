@@ -144,6 +144,5 @@ namespace AvatarPlugin
         Dictionary<string, Entity> avatarEntities = new Dictionary<string, Entity>();
         // string defaultAvatarMesh = "resources/models/defaultAvatar/avatar.xml3d";
         string defaultAvatarMesh = "resources/models/firetruck/xml3d/firetruck.xml";
-        Guid pluginGuid = new Guid("54b1215e-22cc-44ed-bef4-c92e4fb4edb5");
     }
 }

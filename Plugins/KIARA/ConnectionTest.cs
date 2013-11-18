@@ -63,7 +63,7 @@ namespace KIARAPlugin
         public void ShouldCallFunc()
         {
             var testFunc = connection.GenerateFuncWrapper("testFunc");
-            var funcCall = testFunc("testArg", 42);
+            testFunc("testArg", 42);
             mockConnectionImpl.Verify(c => c.CallFuncTest("testFunc", "testArg", 42), Times.Once());
         }
 

@@ -81,8 +81,6 @@ namespace LocationPlugin
 
             // We currently ignore timestamp, but may it in the future to implement dead reckoning.
         }
-
-        private readonly Guid pluginGUID = new Guid("90dd4c50-f09d-11e2-b778-0800200c9a66");
     }
 }
 
