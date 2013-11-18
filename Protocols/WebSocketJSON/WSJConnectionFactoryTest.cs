@@ -12,7 +12,7 @@ namespace WebSocketJSON
         private Server config = JsonConvert.DeserializeObject<Server>(
             "{ services: '*', protocol: { name: 'websocket-json' } }");
         private Server configWithIpAndPort = JsonConvert.DeserializeObject<Server>(
-            "{ services: '*', protocol: { name: 'websocket-json', port: 1234, ip: '127.0.0.1' } }");
+            "{ services: '*', protocol: { name: 'websocket-json', port: 1234, host: '127.0.0.1' } }");
         private Server nonWebSocketJSONConfig = JsonConvert.DeserializeObject<Server>(
             "{ services: '*', protocol: { name: 'other-protocol', id: 'test' } }");
 

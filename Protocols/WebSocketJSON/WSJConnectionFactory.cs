@@ -34,13 +34,16 @@ namespace WebSocketJSON
 
             int port = ProtocolUtils.retrieveProtocolSetting(serverConfig, "port", 34837);
             string host = ProtocolUtils.retrieveProtocolSetting(serverConfig, "host", "Any");
-            IPAddress[] ipAddresses =  Dns.GetHostAddresses(host);
-
-            if (ipAddresses.Length == 0)
-                throw new Error(ErrorCode.CONNECTION_ERROR, "Cannot identify IP address by hostname.");
+            string ip = "Any";
+            if (host != "Any") {
+                IPAddress[] ipAddresses =  Dns.GetHostAddresses(host);
+                if (ipAddresses.Length == 0)
+                    throw new Error(ErrorCode.CONNECTION_ERROR, "Cannot identify IP address by hostname.");
+                ip = ipAddresses[0].ToString();  // we take first entry as it does not matter which one is used
+            }
 
             IWSJServer server = wsjServerFactory.Construct(onNewClient);
-            server.Setup(ipAddresses[0].ToString(), port);  // we take first entry as it does not matter which one to take
+            server.Setup(ip, port);
             server.Start();
         }
 
