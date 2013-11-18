@@ -5,8 +5,7 @@
     "services": "*",
     "protocol": {
       "name": "websocket-json",
-      "port": 4374,
-      "host": "localhost"
+      "port": 4374
     }
   }]
 }
