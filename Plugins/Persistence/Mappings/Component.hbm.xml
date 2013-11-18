@@ -3,9 +3,7 @@
                    assembly="DomainModel"
                    namespace="FIVES">
     <class name="Component" lazy="false">
-        <id name="Guid" type = "Guid">
-            <generator class = "guid" />
-        </id>
+      <id name="Guid" type = "Guid" />
       <!--
       <map name="Attributes" table = "attributes_to_components" cascade = "all" lazy = "false">
         <key column = "componentID" />
