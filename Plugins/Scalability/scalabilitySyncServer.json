@@ -1,5 +1,5 @@
 {
-  "info": "SyncServer",
+  "info": "ScalabilitySyncServer",
   "idlURL": "syncServer.kiara",
   "servers": [{
     "services": "*",

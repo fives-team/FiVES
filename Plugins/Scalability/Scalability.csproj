@@ -54,23 +54,23 @@
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
-    <None Include="syncClient.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
     <None Include="packages.config" />
     <None Include="app.config">
       <SubType>Designer</SubType>
     </None>
-    <None Include="syncServer.json">
+    <None Include="scalabilitySyncClient.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="syncServer.kiara">
+    <None Include="scalabilitySyncServer.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="scalabilitySyncServer.kiara">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Core\DomainModel\DomainModel.csproj">
-      <Project>{79ef699d-6a88-4054-af04-f22486db47fa}</Project>
+      <Project>{79EF699D-6A88-4054-AF04-F22486DB47FA}</Project>
       <Name>DomainModel</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\Core\PluginManager\PluginManager.csproj">
@@ -78,7 +78,7 @@
       <Name>PluginManager</Name>
     </ProjectReference>
     <ProjectReference Include="..\KIARA\KIARA.csproj">
-      <Project>{eefddd48-1795-4d62-a255-29167b0a3bc3}</Project>
+      <Project>{EEFDDD48-1795-4D62-A255-29167B0A3BC3}</Project>
       <Name>KIARA</Name>
     </ProjectReference>
   </ItemGroup>

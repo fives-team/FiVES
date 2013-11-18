@@ -45,7 +45,7 @@ namespace ScalabilityPlugin
         /// </summary>
         public void StartSyncServer()
         {
-            var syncServer = ServiceFactory.Create(ConvertFileNameToURI("syncServer.json"));
+            var syncServer = ServiceFactory.Create(ConvertFileNameToURI("scalabilitySyncServer.json"));
             syncServer["clientHandshake"] = (Action<Connection, Guid>)HandleHandshakeFromClient;
         }
 
@@ -54,7 +54,7 @@ namespace ScalabilityPlugin
         /// </summary>
         public void ConnectToSyncServer()
         {
-            var remoteSyncServer = ServiceFactory.Discover(ConvertFileNameToURI("syncClient.json"));
+            var remoteSyncServer = ServiceFactory.Discover(ConvertFileNameToURI("scalabilitySyncClient.json"));
             remoteSyncServer.OnConnected += HandleConnectedToServer;
         }
 
@@ -88,7 +88,7 @@ namespace ScalabilityPlugin
         private string ConvertFileNameToURI(string configFilename)
         {
             var configFile = Path.Combine(Path.GetDirectoryName(this.GetType().Assembly.Location), configFilename);
-            return "file:///" + configFile;
+            return "file://" + configFile;
         }
 
         /// <summary>
@@ -163,6 +163,12 @@ namespace ScalabilityPlugin
         /// <param name="clientSyncID">Client's SyncID.</param>
         private void HandleHandshakeFromClient(Connection connection, Guid clientSyncID)
         {
+            if (clientSyncID == LocalSyncID)
+            {
+                logger.Debug("The server is local. Ignoring own handshake.");
+                return;
+            }
+
             AddNewSyncNode(connection, clientSyncID);
             RegisterSyncMethodHandlers(connection);
             connection["serverHandshake"](LocalSyncID);
