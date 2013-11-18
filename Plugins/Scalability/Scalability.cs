@@ -64,6 +64,8 @@ namespace ScalabilityPlugin
         /// </summary>
         public void StartSync()
         {
+            // Add sync info for all entities already present in the database. Sync all of them to other nodes if any.
+
             World.Instance.AddedEntity += HandleLocalAddedEntity;
             World.Instance.RemovedEntity += HandleLocalRemovedEntity;
         }
@@ -103,12 +105,17 @@ namespace ScalabilityPlugin
 
             lock (localSyncInfo)
             {
-                var newSyncInfo = new EntitySyncInfo();
-                localSyncInfo.Add(e.Entity.Guid, newSyncInfo);
+                // Local sync info may already be present if this new entity was added in response to a sync message
+                // from remote sync node.
+                if (!localSyncInfo.ContainsKey(e.Entity.Guid))
+                {
+                    var newSyncInfo = new EntitySyncInfo();
+                    localSyncInfo.Add(e.Entity.Guid, newSyncInfo);
+                }
 
-                // This must be inside the lock to prevent concurrent changes to the newly created newSyncInfo.
+                // This must be inside the lock to prevent concurrent changes to entity's sync info.
                 foreach (Connection connection in remoteSyncNodes.Values)
-                    connection["addEntity"](e.Entity.Guid, newSyncInfo);
+                    connection["addEntity"](e.Entity.Guid, localSyncInfo[e.Entity.Guid]);
             }
         }
 
@@ -122,7 +129,10 @@ namespace ScalabilityPlugin
         {
             lock (localSyncInfo)
             {
-                localSyncInfo.Remove(e.Entity.Guid);
+                // Local sync info may already have been removed if this new entity was removed in response to a sync
+                // message from remote sync node.
+                if (localSyncInfo.ContainsKey(e.Entity.Guid))
+                    localSyncInfo.Remove(e.Entity.Guid);
             }
 
             foreach (Connection connection in remoteSyncNodes.Values)
@@ -137,19 +147,27 @@ namespace ScalabilityPlugin
         /// <param name="e">Event arguments.</param>
         private void HandleLocalChangedAttribute(object sender, ChangedAttributeEventArgs e)
         {
-            var attributePath = new AttributePath(e.Component.Name, e.AttributeName);
+            var componentName = e.Component.Name;
+            var attributeName = e.AttributeName;
+
             var newAttributeSyncInfo = new AttributeSyncInfo(LocalSyncID, e.NewValue);
 
             lock (localSyncInfo)
             {
+                if (!localSyncInfo.ContainsKey(e.Entity.Guid))
+                {
+                    logger.Warn("Local attribute changed in an entity which has no sync info.");
+                    return;
+                }
+
                 EntitySyncInfo entitySyncInfo = localSyncInfo[e.Entity.Guid];
-                entitySyncInfo.Attributes[attributePath] = newAttributeSyncInfo;
+                entitySyncInfo[componentName][attributeName] = newAttributeSyncInfo;
             }
 
             // TODO: Optimization: we can send batch updates to improve performance. Received code is written to
             // process batches already, but sending is trickier as we don't have network load feedback from KIARA yet.
             var changedAttributes = new EntitySyncInfo();
-            changedAttributes.Attributes.Add(attributePath, newAttributeSyncInfo);
+            changedAttributes[componentName][attributeName] = newAttributeSyncInfo;
             foreach (Connection connection in remoteSyncNodes.Values)
                 connection["changeAttributes"](e.Entity.Guid, changedAttributes);
         }
@@ -209,6 +227,8 @@ namespace ScalabilityPlugin
 
             remoteSyncNodes.TryAdd(remoteSyncID, connection);
             logger.Debug("Connected to remote sync node with SyncID = " + remoteSyncID);
+
+            // TODO: Sync all existing entities to the remote node.
         }
 
         /// <summary>
@@ -240,6 +260,7 @@ namespace ScalabilityPlugin
 
                 localSyncInfo.Add(guid, initialSyncInfo);
                 World.Instance.Add(new Entity(guid));
+                logger.Debug("Added an entity in response to sync message. Guid: " + guid);
             }
         }
 
@@ -259,6 +280,7 @@ namespace ScalabilityPlugin
 
                 localSyncInfo.Remove(guid);
                 World.Instance.Remove(World.Instance.FindEntity(guid));
+                logger.Debug("Removed an entity in response to sync message. Guid: " + guid);
             }
         }
 
@@ -278,20 +300,50 @@ namespace ScalabilityPlugin
                     return;
                 }
 
-                EntitySyncInfo localEntitySyncInfo = localSyncInfo[guid];
-                Entity updatedEntity = World.Instance.FindEntity(guid);
-                foreach (KeyValuePair<AttributePath, AttributeSyncInfo> attributePair in changedAttributes.Attributes)
-                {
-                    AttributePath attrPath = attributePair.Key;
-                    AttributeSyncInfo remoteAttrSyncInfo = attributePair.Value;
+                foreach (KeyValuePair<string, ComponentSyncInfo> componentPair in changedAttributes.Components)
+                    foreach (KeyValuePair<string, AttributeSyncInfo> attributePair in componentPair.Value.Attributes)
+                        HandleRemoteChangedAttribute(guid, componentPair.Key, attributePair.Key, attributePair.Value);
+            }
+        }
 
-                    if (!localEntitySyncInfo.Attributes.ContainsKey(attrPath))
-                        localEntitySyncInfo.Attributes[attrPath] = remoteAttrSyncInfo;
-                    else if (!localEntitySyncInfo.Attributes[attrPath].Sync(remoteAttrSyncInfo))
-                        continue;  // ignore this attribute because sync discarded remote value
+        private void HandleRemoteChangedAttribute(Guid entityGuid, string componentName, string attributeName,
+            AttributeSyncInfo remoteAttributeSyncInfo)
+        {
+            EntitySyncInfo localEntitySyncInfo = localSyncInfo[entityGuid];
+            Entity localEntity = World.Instance.FindEntity(entityGuid);
 
-                    updatedEntity[attrPath.ComponentName][attrPath.AttributeName] = remoteAttrSyncInfo.LastValue;
-                }
+            if (!localEntitySyncInfo.Components.ContainsKey(componentName) ||
+                !localEntitySyncInfo[componentName].Attributes.ContainsKey(attributeName))
+            {
+                localEntitySyncInfo[componentName][attributeName] = remoteAttributeSyncInfo;
+            }
+            else if (!localEntitySyncInfo[componentName][componentName].Sync(remoteAttributeSyncInfo))
+            {
+                logger.Debug("Ignored an update to the attribute. Entity guid: " + entityGuid + ". " +
+                    "Attribute path: " + componentName + "." + attributeName + ". New value: " +
+                    remoteAttributeSyncInfo.LastValue + ". Remote timestamp: " +
+                    remoteAttributeSyncInfo.LastTimestamp + ". Local timestamp: " +
+                    localEntitySyncInfo[componentName][attributeName].LastTimestamp + ". Remote SyncID: " +
+                    remoteAttributeSyncInfo.LastSyncID + ". Local SyncID: " +
+                    localEntitySyncInfo[componentName][attributeName].LastSyncID);
+                return;  // ignore this attribute because sync discarded remote value
+            }
+
+            try
+            {
+                logger.Debug("Updating an attribute in response to sync message. Entity guid: " + entityGuid + ". " +
+                    "Attribute path: " + componentName + "." + attributeName + ". New value: " +
+                    remoteAttributeSyncInfo.LastValue + ". Remote timestamp: " +
+                    remoteAttributeSyncInfo.LastTimestamp + ". Local timestamp: " +
+                    localEntitySyncInfo[componentName][attributeName].LastTimestamp + ". Remote SyncID: " +
+                    remoteAttributeSyncInfo.LastSyncID + ". Local SyncID: " +
+                    localEntitySyncInfo[componentName][attributeName].LastSyncID);
+                localEntity[componentName][attributeName] = remoteAttributeSyncInfo.LastValue;
+            }
+            catch (ComponentAccessException e)
+            {
+                // This is fine, because we may have some plugins not loaded on this node.
+                logger.DebugException("Ignoring an update an attribute. Component is not defined.", e);
             }
         }
 

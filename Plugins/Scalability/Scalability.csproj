@@ -45,8 +45,8 @@
     <Reference Include="System.Configuration" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AttributePath.cs" />
     <Compile Include="AttributeSyncInfo.cs" />
+    <Compile Include="ComponentSyncInfo.cs" />
     <Compile Include="EntitySyncInfo.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Scalability.cs" />

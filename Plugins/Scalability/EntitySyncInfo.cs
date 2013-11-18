@@ -19,9 +19,30 @@ namespace ScalabilityPlugin
     class EntitySyncInfo
     {
         /// <summary>
-        /// A collection of entity's attributes.
+        /// Convenience operator for getting or setting attribute sync info. Allows to use square brackets without the
+        /// need to write the Components property name: entitySyncInfo["component"]. If a component sync info doesn't
+        /// exist when accessed via the getter - it will be automatically created. This allows to avoid checking
+        /// whether component exists first.
         /// </summary>
-        public Dictionary<AttributePath, AttributeSyncInfo> Attributes =
-            new Dictionary<AttributePath, AttributeSyncInfo>();
+        /// <param name="componentName">Component name.</param>
+        /// <returns>Relevant sync info.</returns>
+        public ComponentSyncInfo this[string componentName]
+        {
+            get
+            {
+                if (!Components.ContainsKey(componentName))
+                    Components[componentName] = new ComponentSyncInfo();
+                return Components[componentName];
+            }
+            set
+            {
+                Components[componentName] = value;
+            }
+        }
+
+        /// <summary>
+        /// A collection of entity's component sync info. Key is component name.
+        /// </summary>
+        public Dictionary<string, ComponentSyncInfo> Components = new Dictionary<string, ComponentSyncInfo>();
     }
 }
