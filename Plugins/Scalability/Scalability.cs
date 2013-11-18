@@ -285,19 +285,12 @@ namespace ScalabilityPlugin
                     AttributePath attrPath = attributePair.Key;
                     AttributeSyncInfo remoteAttrSyncInfo = attributePair.Value;
 
-
                     if (!localEntitySyncInfo.Attributes.ContainsKey(attrPath))
-                    {
                         localEntitySyncInfo.Attributes[attrPath] = remoteAttrSyncInfo;
-                    }
-                    else
-                    {
-                        if (localEntitySyncInfo.Attributes[attrPath].Sync(remoteAttrSyncInfo))
-                        {
-                            updatedEntity[attrPath.ComponentName][attrPath.AttributeName] =
-                                remoteAttrSyncInfo.LastValue;
-                        }
-                    }
+                    else if (!localEntitySyncInfo.Attributes[attrPath].Sync(remoteAttrSyncInfo))
+                        continue;  // ignore this attribute because sync discarded remote value
+
+                    updatedEntity[attrPath.ComponentName][attrPath.AttributeName] = remoteAttrSyncInfo.LastValue;
                 }
             }
         }
