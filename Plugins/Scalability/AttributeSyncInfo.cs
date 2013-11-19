@@ -5,6 +5,12 @@ using System.Text;
 
 namespace ScalabilityPlugin
 {
+    // Optimization: an object of this class is stored per attribute in the World. Therefore, we should carefully
+    // choose types to preserve memory. Firstly, there is no need to use 64-bit long for LastTimestamp - a smaller
+    // timestamp (e.g. in milliseconds) will suffice. Secondly, 128-bit GUID for LastSyncID is also too large. We can
+    // implement an approach where nodes can agree on a small unique identifier that will fit into 16 or even 8 bits.
+    // Finally, there is no need to store LastValue in this class as it can be retrieved from the World directly.
+
     /// <summary>
     /// This class is used represent the sync state of the attribute. It is also used to transfer updates as it
     /// contains all necessary information to consistently decide which value is to be assigned in case of conflicts.
