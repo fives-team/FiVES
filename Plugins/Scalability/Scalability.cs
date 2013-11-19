@@ -335,19 +335,20 @@ namespace ScalabilityPlugin
                 if (IsSyncRelay)
                     RelaySyncMessage(connection, "addEntity", guid, initialSyncInfo);
 
-                if (localSyncInfo.ContainsKey(guid))
+                if (!localSyncInfo.ContainsKey(guid))
                 {
-                    logger.Debug("Processing addition of entity as attribute update, because entity with guid " +
-                        guid + " is already present.");
-                    ProcessChangedAttributes(guid, initialSyncInfo);
-                    return;
+                    localSyncInfo.Add(guid, new EntitySyncInfo());
+                    lock (entityAdditions)
+                        entityAdditions.Add(guid);
+                    World.Instance.Add(new Entity(guid));
+                    logger.Debug("Added an entity in response to sync message. Guid: " + guid);
+                }
+                else
+                {
+                    logger.Debug("Processing addition of already existing entity. Guid: " + guid);
                 }
 
-                localSyncInfo.Add(guid, initialSyncInfo);
-                lock (entityAdditions)
-                    entityAdditions.Add(guid);
-                World.Instance.Add(new Entity(guid));
-                logger.Debug("Added an entity in response to sync message. Guid: " + guid);
+                ProcessChangedAttributes(guid, initialSyncInfo);
             }
         }
 
