@@ -55,8 +55,10 @@ FIVES.Models = FIVES.Models || {};
         this._cachedComponentUpdates[componentName] = this._cachedComponentUpdates[componentName] || {};
         this._cachedComponentUpdates[componentName][attributeName] = value;
 
-        if (componentName == "meshResource" && attributeName == "uri" && this.hasNoMesh)
+        if (componentName == "meshResource" && attributeName == "uri" && this.meshUnitialized) {
+            this.meshResource.meshURI = value;
             FIVES.Resources.SceneManager.addMeshForObject(this);
+        }
     };
 
     e.updatePosition = function(position) {
