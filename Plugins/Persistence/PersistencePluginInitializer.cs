@@ -47,7 +47,7 @@ namespace PersistencePlugin
             World.Instance.AddedEntity += OnEntityAdded;
             World.Instance.RemovedEntity += OnEntityRemoved;
             //ComponentRegistry.Instance.UpgradedComponent += OnComponentUpgraded;
-            //InitializePersistedCollections();
+            InitializePersistedCollections();
             ThreadPool.QueueUserWorkItem(_ => PersistChangedEntities());
         }
 
@@ -68,7 +68,6 @@ namespace PersistencePlugin
         /// the stored entities
         /// </summary>
         private void InitializePersistedCollections() {
-            RetrieveComponentRegistryFromDatabase ();
             RetrieveEntitiesFromDatabase ();
         }
 
@@ -90,7 +89,7 @@ namespace PersistencePlugin
             } else {
                 EntitiesToInitialize.Remove(addedEntity.Guid);
             }
-           // addedEntity.ChangedAttribute += new EventHandler<ChangedAttributeEventArgs>(OnAttributeChanged);
+            addedEntity.ChangedAttribute += new EventHandler<ChangedAttributeEventArgs>(OnAttributeChanged);
         }
 
         /// <summary>
@@ -110,10 +109,8 @@ namespace PersistencePlugin
         /// <param name="sender">Sender of the event (the Entity)</param>
         /// <param name="e">Event arguments</param>
         internal void OnAttributeChanged(Object sender, ChangedAttributeEventArgs e) {
-            //Entity changedEntity = (Entity)sender;
             Guid changedAttributeGuid = e.Component.Definition[e.AttributeName].Guid;
-            // TODO: change cascading persistence of entity, but only persist component and take care to persist mapping to entity as well
-            AddAttributeToPersisted (changedAttributeGuid, e.NewValue);
+            AddAttributeToPersisted (e.Component.Guid, e.AttributeName, e.NewValue);
         }
 
         /// <summary>
@@ -146,10 +143,10 @@ namespace PersistencePlugin
                 }
                 lock (attributeQueueLock)
                 {
-                    if (AttributesToPersist.Count > 0)
+                    if (ComponentAttributesToPersist.Count > 0)
                     {
                         CommitCurrentAttributeUpdates();
-                        AttributesToPersist.Clear();
+                        ComponentAttributesToPersist.Clear();
                     }
                 }
                 Thread.Sleep(5);
@@ -220,13 +217,14 @@ namespace PersistencePlugin
             using (IStatelessSession session = SessionFactory.OpenStatelessSession())
             {
                 var transaction = session.BeginTransaction();
-                foreach (KeyValuePair<Guid, object> attributeUpdate in AttributesToPersist)
+                foreach (KeyValuePair<Guid, ComponentUpdateInfo> attributeUpdate in ComponentAttributesToPersist)
                 {
-                    String updateQuery = "update Attribute set value = :newValue where Guid = :entityGuid";
+                    String updateQuery = "update attributes_to_components set value = :newValue where componentID = :componentGuid AND attributeName = :attributeName";
 
                     IQuery sqlQuery = session.CreateQuery(updateQuery)
-                        .SetBinary("newValue", ObjectToByteArray(attributeUpdate.Value))
-                        .SetParameter("entityGuid", attributeUpdate.Key);
+                        .SetBinary("newValue", ObjectToByteArray(attributeUpdate.Value.attributeValue))
+                        .SetParameter("componentGuid", attributeUpdate.Key)
+                        .SetParameter("attributeName", attributeUpdate.Value.attributeName);
                     sqlQuery.ExecuteUpdate();
                 }
                 try
@@ -260,16 +258,20 @@ namespace PersistencePlugin
         /// <summary>
         /// Adds an attribute update to the list of attribute that are queued to be persisted
         /// </summary>
-        /// <param name="changedAttributeGuid">Guid of the Attribute that has changed</param>
+        /// <param name="changedComponentGuid">Guid of the Attribute that has changed</param>
         /// <param name="newValue">New value of the changed attribute</param>
-        private void AddAttributeToPersisted(Guid changedAttributeGuid, object newValue)
+        private void AddAttributeToPersisted(Guid changedComponentGuid, string attributeName, object newValue)
         {
+            ComponentUpdateInfo updateInfo = new ComponentUpdateInfo();
+            updateInfo.attributeName = attributeName;
+            updateInfo.attributeValue = newValue;
+
             lock (attributeQueueLock)
             {
-                if (!AttributesToPersist.ContainsKey(changedAttributeGuid))
-                    AttributesToPersist.Add(changedAttributeGuid, newValue);
+                if (!ComponentAttributesToPersist.ContainsKey(changedComponentGuid))
+                    ComponentAttributesToPersist.Add(changedComponentGuid, updateInfo);
                 else
-                    AttributesToPersist[changedAttributeGuid] = newValue;
+                    ComponentAttributesToPersist[changedComponentGuid] = updateInfo;
             }
         }
 
@@ -298,19 +300,6 @@ namespace PersistencePlugin
         }
 
         /// <summary>
-        /// Retrieves the component registry from database.
-        /// </summary>
-        internal void RetrieveComponentRegistryFromDatabase()
-        {
-            ComponentRegistryPersistence persistedRegistry = null;
-            using(ISession session = SessionFactory.OpenSession())
-                session.Get<ComponentRegistryPersistence>(ComponentRegistryPersistence.Guid);
-            if(persistedRegistry != null)
-                persistedRegistry.RegisterPersistedComponents ();
-
-        }
-
-        /// <summary>
         /// Retrieves the entities from database.
         /// </summary>
         internal void RetrieveEntitiesFromDatabase()
@@ -332,13 +321,18 @@ namespace PersistencePlugin
 
         #endregion
 
+        private struct ComponentUpdateInfo {
+            public string attributeName;
+            public object attributeValue;
+        }
+
         private Configuration NHibernateConfiguration = new Configuration();
         internal ISessionFactory SessionFactory;
         private HashedSet<Guid> EntitiesToInitialize = new HashedSet<Guid>();
         private object entityQueueLock = new object();
         private object attributeQueueLock = new object();
         private List<Entity> EntitiesToPersist = new List<Entity>();
-        private Dictionary<Guid, object> AttributesToPersist = new Dictionary<Guid, object>();
+        private Dictionary<Guid, ComponentUpdateInfo> ComponentAttributesToPersist = new Dictionary<Guid, ComponentUpdateInfo>();
         internal ISession GlobalSession;
         internal readonly Guid pluginGuid = new Guid("d51e4394-68cc-4801-82f2-6b2a865b28df");
 
