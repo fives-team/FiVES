@@ -4,7 +4,7 @@
                    namespace="FIVES">
     <class name="Entity" lazy="false">
       <id name="Guid" type="Guid" />
-      <map name="ComponentsDictionaryHandler" table="entityComponents" cascade="all">
+      <map name="ComponentsDictionaryHandler" table="entityComponents" cascade="all" lazy="false">
         <key column="EntityGuid" />
         <index column="ComponentName" type="System.String" />
         <many-to-many column ="ComponentGuid" class="Component" />
