@@ -58,10 +58,32 @@ namespace ScalabilityPlugin
         /// </summary>
         public void StartSync()
         {
-            // Add sync info for all entities already present in the database. Sync all of them to other nodes if any.
+            CreateSyncInfoForExistingEntities();
 
             World.Instance.AddedEntity += HandleLocalAddedEntity;
             World.Instance.RemovedEntity += HandleLocalRemovedEntity;
+        }
+
+        /// <summary>
+        /// Adds a sync info for all entities that are already present in the world. If a sync info is already present
+        /// for some entity then it is replaced.
+        /// </summary>
+        private void CreateSyncInfoForExistingEntities()
+        {
+            foreach (Entity entity in World.Instance)
+            {
+                var entitySyncInfo = new EntitySyncInfo();
+                foreach (Component component in entity.Components)
+                {
+                    foreach (ReadOnlyAttributeDefinition attrDefinition in component.Definition.AttributeDefinitions)
+                    {
+                        entitySyncInfo[component.Name][attrDefinition.Name] =
+                            new AttributeSyncInfo(LocalSyncID, component[attrDefinition.Name]);
+                    }
+                }
+
+                localSyncInfo[entity.Guid] = entitySyncInfo;
+            }
         }
 
         /// <summary>
@@ -222,6 +244,7 @@ namespace ScalabilityPlugin
             AddNewSyncNode(connection, clientSyncID);
             RegisterSyncMethodHandlers(connection);
             connection["serverHandshake"](LocalSyncID);
+            SyncExistingEntitiesToRemoteNode(connection);
         }
 
         /// <summary>
@@ -234,6 +257,13 @@ namespace ScalabilityPlugin
                 (Action<Connection, Guid>)HandleHandshakeFromServer);
             RegisterSyncMethodHandlers(connection);
             connection["clientHandshake"](LocalSyncID);
+            SyncExistingEntitiesToRemoteNode(connection);
+        }
+
+        private void SyncExistingEntitiesToRemoteNode(Connection connection)
+        {
+            foreach (KeyValuePair<Guid, EntitySyncInfo> entityPair in localSyncInfo)
+                connection["addEntity"](entityPair.Key, entityPair.Value);
         }
 
         /// <summary>
@@ -289,14 +319,16 @@ namespace ScalabilityPlugin
         {
             lock (localSyncInfo)
             {
-                if (localSyncInfo.ContainsKey(guid))
-                {
-                    logger.Warn("Received addition of entity that is already present. Guid: " + guid);
-                    return;
-                }
-
                 if (IsSyncRelay)
                     RelaySyncMessage(connection, "addEntity", guid, initialSyncInfo);
+
+                if (localSyncInfo.ContainsKey(guid))
+                {
+                    logger.Debug("Processing addition of entity as attribute update, because entity with guid " +
+                        guid + " is already present.");
+                    ProcessChangedAttributes(guid, initialSyncInfo);
+                    return;
+                }
 
                 localSyncInfo.Add(guid, initialSyncInfo);
                 lock (entityAdditions)
@@ -314,14 +346,14 @@ namespace ScalabilityPlugin
         {
             lock (localSyncInfo)
             {
-                if (!localSyncInfo.ContainsKey(guid))
-                {
-                    logger.Warn("Received removal of entity that does not exist. Guid: " + guid);
-                    return;
-                }
-
                 if (IsSyncRelay)
                     RelaySyncMessage(connection, "removeEntity", guid);
+
+                if (!localSyncInfo.ContainsKey(guid))
+                {
+                    logger.Debug("Ignoring removal of entity that does not exist. Guid: " + guid);
+                    return;
+                }
 
                 localSyncInfo.Remove(guid);
                 lock (entityRemovals)
@@ -332,8 +364,7 @@ namespace ScalabilityPlugin
         }
 
         /// <summary>
-        /// Handles an update to a set of attributes on the remote sync node and performs updates locally to those
-        /// attributes whose value is older.
+        /// Relays the changes to attributes to other connected sync nodes and process them locally.
         /// </summary>
         /// <param name="guid">Guid of the entity containing affected attributes.</param>
         /// <param name="changedAttributes">A set of modified attributes with their remote sync info.</param>
@@ -342,11 +373,21 @@ namespace ScalabilityPlugin
             if (IsSyncRelay)
                 RelaySyncMessage(connection, "changeAttributes", guid, changedAttributes);
 
+            ProcessChangedAttributes(guid, changedAttributes);
+        }
+
+        /// <summary>
+        /// Processes changes to a set of attributes on the remote sync node and updates local values accordingly.
+        /// </summary>
+        /// <param name="guid">Guid of the entity containing affected attributes.</param>
+        /// <param name="changedAttributes">A set of modified attributes with their remote sync info.</param>
+        private void ProcessChangedAttributes(Guid guid, EntitySyncInfo changedAttributes)
+        {
             lock (localSyncInfo)
             {
                 if (!localSyncInfo.ContainsKey(guid))
                 {
-                    logger.Warn("Received updated properties for entity that does not exist. Guid: " + guid);
+                    logger.Warn("Ignoring changes to attributes in an entity that does not exist. Guid: " + guid);
                     return;
                 }
 
