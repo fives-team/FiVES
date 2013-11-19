@@ -74,19 +74,29 @@ namespace ScalabilityPlugin
             {
                 foreach (Entity entity in World.Instance)
                 {
-                    var entitySyncInfo = new EntitySyncInfo();
-                    foreach (Component component in entity.Components)
-                    {
-                        foreach (ReadOnlyAttributeDefinition attrDefinition in component.Definition.AttributeDefinitions)
-                        {
-                            entitySyncInfo[component.Name][attrDefinition.Name] =
-                                new AttributeSyncInfo(LocalSyncID, component[attrDefinition.Name]);
-                        }
-                    }
-
+                    var entitySyncInfo = CreateSyncInfoForNewEntity(entity);
                     localSyncInfo[entity.Guid] = entitySyncInfo;
                 }
             }
+        }
+
+        /// <summary>
+        /// Creates a new sync for an entity.
+        /// </summary>
+        /// <param name="entity">Entity for which sync info is to be created.</param>
+        /// <returns>Created sync info.</returns>
+        private EntitySyncInfo CreateSyncInfoForNewEntity(Entity entity)
+        {
+            var entitySyncInfo = new EntitySyncInfo();
+            foreach (Component component in entity.Components)
+            {
+                foreach (ReadOnlyAttributeDefinition attrDefinition in component.Definition.AttributeDefinitions)
+                {
+                    entitySyncInfo[component.Name][attrDefinition.Name] =
+                        new AttributeSyncInfo(LocalSyncID, component[attrDefinition.Name]);
+                }
+            }
+            return entitySyncInfo;
         }
 
         /// <summary>
@@ -135,7 +145,7 @@ namespace ScalabilityPlugin
                 // from remote sync node.
                 if (!localSyncInfo.ContainsKey(e.Entity.Guid))
                 {
-                    var newSyncInfo = new EntitySyncInfo();
+                    var newSyncInfo = CreateSyncInfoForNewEntity(e.Entity);
                     localSyncInfo.Add(e.Entity.Guid, newSyncInfo);
                 }
 
