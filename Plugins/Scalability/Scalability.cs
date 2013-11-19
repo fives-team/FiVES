@@ -58,10 +58,10 @@ namespace ScalabilityPlugin
         /// </summary>
         public void StartSync()
         {
-            CreateSyncInfoForExistingEntities();
-
             World.Instance.AddedEntity += HandleLocalAddedEntity;
             World.Instance.RemovedEntity += HandleLocalRemovedEntity;
+
+            CreateSyncInfoForExistingEntities();
         }
 
         /// <summary>
@@ -70,19 +70,22 @@ namespace ScalabilityPlugin
         /// </summary>
         private void CreateSyncInfoForExistingEntities()
         {
-            foreach (Entity entity in World.Instance)
+            lock (localSyncInfo)
             {
-                var entitySyncInfo = new EntitySyncInfo();
-                foreach (Component component in entity.Components)
+                foreach (Entity entity in World.Instance)
                 {
-                    foreach (ReadOnlyAttributeDefinition attrDefinition in component.Definition.AttributeDefinitions)
+                    var entitySyncInfo = new EntitySyncInfo();
+                    foreach (Component component in entity.Components)
                     {
-                        entitySyncInfo[component.Name][attrDefinition.Name] =
-                            new AttributeSyncInfo(LocalSyncID, component[attrDefinition.Name]);
+                        foreach (ReadOnlyAttributeDefinition attrDefinition in component.Definition.AttributeDefinitions)
+                        {
+                            entitySyncInfo[component.Name][attrDefinition.Name] =
+                                new AttributeSyncInfo(LocalSyncID, component[attrDefinition.Name]);
+                        }
                     }
-                }
 
-                localSyncInfo[entity.Guid] = entitySyncInfo;
+                    localSyncInfo[entity.Guid] = entitySyncInfo;
+                }
             }
         }
 
