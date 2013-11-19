@@ -51,5 +51,7 @@ namespace FIVES
             Name = name;
             Version = version;
         }
+
+        internal ReadOnlyComponentDefinition() { }
     }
 }

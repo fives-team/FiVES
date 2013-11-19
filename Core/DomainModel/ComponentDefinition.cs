@@ -37,6 +37,7 @@ namespace FIVES
     /// </summary>
     public sealed class ComponentDefinition : ReadOnlyComponentDefinition
     {
+        private ComponentDefinition() { }
         /// <summary>
         /// Constructs an instance of the ComponentDefinition.
         /// </summary>
