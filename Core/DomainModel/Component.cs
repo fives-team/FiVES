@@ -94,10 +94,11 @@ namespace FIVES
 
         private void InitializeAttributes()
         {
+            attributes = new Dictionary<string, object>();
             foreach (ReadOnlyAttributeDefinition attributeDefinition in Definition.AttributeDefinitions)
                 attributes.Add(attributeDefinition.Name, attributeDefinition.DefaultValue);
         }
 
-        private Dictionary<string, object> attributes = new Dictionary<string, object>();
+        private IDictionary<string, object> attributes {get; set;}
     }
 }
