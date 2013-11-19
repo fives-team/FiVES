@@ -37,5 +37,7 @@ namespace FIVES
             Type = type;
             DefaultValue = defaultValue;
         }
+
+        internal ReadOnlyAttributeDefinition() { }
     }
 }

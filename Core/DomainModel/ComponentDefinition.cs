@@ -104,7 +104,13 @@ namespace FIVES
             return attributeDefinitions.ContainsKey(attributeName);
         }
 
-        private Dictionary<string, ReadOnlyAttributeDefinition> attributeDefinitions =
+        private IDictionary<string, ReadOnlyAttributeDefinition> attributeDefinitions =
             new Dictionary<string, ReadOnlyAttributeDefinition>();
+
+        private IDictionary<string, ReadOnlyAttributeDefinition> attributeDefinitionsHandler
+        {
+            get { return attributeDefinitions; }
+            set { attributeDefinitions = value; }
+        }
     }
 }

@@ -93,6 +93,9 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Mappings\ComponentDefinition.hbm.xml" />
+    <EmbeddedResource Include="Mappings\ReadOnlyComponentDefinition.hbm.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Mappings\ReadOnlyAttributeDefinition.hbm.xml" />
   </ItemGroup>
 </Project>
