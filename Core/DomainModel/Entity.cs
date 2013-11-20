@@ -41,7 +41,11 @@ namespace FIVES
         private IDictionary<string, Component> ComponentsDictionaryHandler
         {
             get { return components; }
-            set { components =  value; }
+            set {
+                components =  value;
+                foreach (KeyValuePair<string, Component> entry in components)
+                    entry.Value.ChangedAttribute += HandleChangedComponentAttribute;
+            }
         }
 
         /// <summary>
