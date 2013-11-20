@@ -288,18 +288,6 @@ namespace PersistencePlugin
         }
 
         /// <summary>
-        /// Persists the component to database.
-        /// </summary>
-        /// <param name="component">Component.</param>
-        private void PersistComponentToDatabase(Component component) {
-            using(ISession session = SessionFactory.OpenSession()) {
-                var transaction = session.BeginTransaction ();
-                session.SaveOrUpdate (component);
-                transaction.Commit ();
-            }
-        }
-
-        /// <summary>
         /// Retrieves the entities from database.
         /// </summary>
         internal void RetrieveEntitiesFromDatabase()
