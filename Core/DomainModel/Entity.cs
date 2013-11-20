@@ -14,13 +14,11 @@ namespace FIVES
         public Entity()
         {
             Guid = Guid.NewGuid();
-            components = new Dictionary<string, Component>();
         }
 
         public Entity(Guid guid)
         {
             Guid = guid;
-            components = new Dictionary<string, Component>();
         }
 
         /// <summary>
@@ -109,7 +107,7 @@ namespace FIVES
                 ChangedAttribute(this, e);
         }
 
-        private IDictionary<string, Component> components { get; set; }
+        private IDictionary<string, Component> components = new Dictionary<string, Component>();
 
         internal IComponentRegistry componentRegistry = ComponentRegistry.Instance;
     }
