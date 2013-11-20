@@ -217,15 +217,18 @@ namespace PersistencePlugin
             using (IStatelessSession session = SessionFactory.OpenStatelessSession())
             {
                 var transaction = session.BeginTransaction();
-                foreach (KeyValuePair<Guid, ComponentUpdateInfo> attributeUpdate in ComponentAttributesToPersist)
+                foreach (KeyValuePair<Guid, Dictionary<string, object>> componentUpdate in ComponentAttributesToPersist)
                 {
-                    String updateQuery = "update attributes_to_components set value = :newValue where componentID = :componentGuid AND attributeName = :attributeName";
-
-                    IQuery sqlQuery = session.CreateSQLQuery(updateQuery)
-                        .SetBinary("newValue", ObjectToByteArray(attributeUpdate.Value.attributeValue))
-                        .SetParameter("componentGuid", attributeUpdate.Key)
-                        .SetParameter("attributeName", attributeUpdate.Value.attributeName);
-                    sqlQuery.ExecuteUpdate();
+                    Guid componentGuid = componentUpdate.Key;
+                    foreach(KeyValuePair<string, object> attributeUpdate in componentUpdate.Value)
+                    {
+                        String updateQuery = "update attributes_to_components set value = :newValue where componentID = :componentGuid AND attributeName = :attributeName";
+                        IQuery sqlQuery = session.CreateSQLQuery(updateQuery)
+                            .SetBinary("newValue", ObjectToByteArray(attributeUpdate.Value))
+                            .SetParameter("componentGuid", componentGuid)
+                            .SetParameter("attributeName", attributeUpdate.Key);
+                        sqlQuery.ExecuteUpdate();
+                    }
                 }
                 try
                 {
@@ -262,16 +265,12 @@ namespace PersistencePlugin
         /// <param name="newValue">New value of the changed attribute</param>
         private void AddAttributeToPersisted(Guid changedComponentGuid, string attributeName, object newValue)
         {
-            ComponentUpdateInfo updateInfo = new ComponentUpdateInfo();
-            updateInfo.attributeName = attributeName;
-            updateInfo.attributeValue = newValue;
-
             lock (attributeQueueLock)
             {
                 if (!ComponentAttributesToPersist.ContainsKey(changedComponentGuid))
-                    ComponentAttributesToPersist.Add(changedComponentGuid, updateInfo);
+                    ComponentAttributesToPersist.Add(changedComponentGuid, new Dictionary<string, object>());
                 else
-                    ComponentAttributesToPersist[changedComponentGuid] = updateInfo;
+                    ComponentAttributesToPersist[changedComponentGuid][attributeName] = newValue;
             }
         }
 
@@ -309,18 +308,13 @@ namespace PersistencePlugin
 
         #endregion
 
-        private struct ComponentUpdateInfo {
-            public string attributeName;
-            public object attributeValue;
-        }
-
         private Configuration NHibernateConfiguration = new Configuration();
         internal ISessionFactory SessionFactory;
         private HashedSet<Guid> EntitiesToInitialize = new HashedSet<Guid>();
         private object entityQueueLock = new object();
         private object attributeQueueLock = new object();
         private List<Entity> EntitiesToPersist = new List<Entity>();
-        private Dictionary<Guid, ComponentUpdateInfo> ComponentAttributesToPersist = new Dictionary<Guid, ComponentUpdateInfo>();
+        private Dictionary<Guid, Dictionary<string, object>> ComponentAttributesToPersist = new Dictionary<Guid, Dictionary<string, object>>();
         internal ISession GlobalSession;
         internal readonly Guid pluginGuid = new Guid("d51e4394-68cc-4801-82f2-6b2a865b28df");
 
