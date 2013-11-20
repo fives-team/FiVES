@@ -9,7 +9,7 @@ using System.Threading;
 
 namespace PersistencePlugin
 {
-    [Ignore()]
+    // [Ignore()]
     [TestFixture()]
     public class PersistenceTest
     {
@@ -84,36 +84,9 @@ namespace PersistencePlugin
                 plugin.Initialize ();
             }
 
-            World.Instance.Add(entity);
-            //plugin.RetrieveEntitiesFromDatabase ();
-            //Assert.True(entityRegistry.Contains(entity));
-            //Assert.IsTrue (childEntity.Parent == entity);
-        }
-
-        [Test()]
-        public void ShouldStoreAndRetrieveComponentRegistry ()
-        {
-            if(componentRegistry.FindComponentDefinition("myComponent") != null)
-            {
-                ComponentDefinition myComponent = new ComponentDefinition("myComponent");
-                myComponent.AddAttribute<int>("IntAttribute");
-                myComponent.AddAttribute<string>("StringAttribute");
-                componentRegistry.Register(myComponent);
-            }
-
-            ComponentRegistryPersistence persist = new ComponentRegistryPersistence ();
-            persist.GetComponentsFromRegistry ();
-
-            var session = sessionFactory.OpenSession ();
-            var trans = session.BeginTransaction ();
-            session.Save (persist);
-            trans.Commit ();
-
-            plugin.RetrieveComponentRegistryFromDatabase ();
-
-            ReadOnlyComponentDefinition myComponentDef = componentRegistry.FindComponentDefinition("myComponent");
-            Assert.AreEqual(typeof(int), myComponentDef["IntAttribute"].Type);
-            Assert.AreEqual(typeof(string), myComponentDef["StringAttribute"].Type);
+            plugin.AddEntityToPersisted(entity);
+            plugin.RetrieveEntitiesFromDatabase ();
+            Assert.True(World.Instance.Contains(entity));
         }
 
         [Test()]
