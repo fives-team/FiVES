@@ -87,7 +87,7 @@ namespace PersistencePlugin
             if (!EntitiesToInitialize.Contains (addedEntity.Guid)) {
                 AddEntityToPersisted (addedEntity);
             } else {
-                EntitiesToInitialize.Remove(addedEntity.Guid);
+                EntitiesToInitialize.Remove(addedEntity.Guid);                
             }
             addedEntity.ChangedAttribute += new EventHandler<ChangedAttributeEventArgs>(OnAttributeChanged);
         }
@@ -221,7 +221,7 @@ namespace PersistencePlugin
                 {
                     String updateQuery = "update attributes_to_components set value = :newValue where componentID = :componentGuid AND attributeName = :attributeName";
 
-                    IQuery sqlQuery = session.CreateQuery(updateQuery)
+                    IQuery sqlQuery = session.CreateSQLQuery(updateQuery)
                         .SetBinary("newValue", ObjectToByteArray(attributeUpdate.Value.attributeValue))
                         .SetParameter("componentGuid", attributeUpdate.Key)
                         .SetParameter("attributeName", attributeUpdate.Value.attributeName);
