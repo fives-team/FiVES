@@ -4,7 +4,6 @@ bin/
 *.pidb
 *test-results*
 .idea/
-BuiltLibs/
 Docs/html
 Docs/libpeerconnection.log
 packages

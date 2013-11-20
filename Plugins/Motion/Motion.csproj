@@ -16,7 +16,7 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>bin\Debug</OutputPath>
+    <OutputPath>..\..\Binaries\Debug</OutputPath>
     <DefineConstants>DEBUG;</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -25,7 +25,7 @@
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>full</DebugType>
     <Optimize>true</Optimize>
-    <OutputPath>bin\Release</OutputPath>
+    <OutputPath>..\..\Binaries\Release</OutputPath>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <ConsolePause>false</ConsolePause>
@@ -70,8 +70,4 @@
       <Name>ClientManager</Name>
     </ProjectReference>
   </ItemGroup>
-  <PropertyGroup>
-    <PostBuildEvent Condition=" '$(OS)' == 'Windows_NT' ">xcopy /y "$(TargetDir)." "$(ProjectDir)..\..\BuiltLibs\"</PostBuildEvent>
-    <PostBuildEvent Condition=" '$(OS)' != 'Windows_NT' ">mkdir -p "$(ProjectDir)../../BuiltLibs/" &amp;&amp; cp "$(TargetDir)"/* "$(ProjectDir)../../BuiltLibs/"</PostBuildEvent>
-  </PropertyGroup>
 </Project>
