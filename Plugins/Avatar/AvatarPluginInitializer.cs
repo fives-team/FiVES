@@ -22,7 +22,7 @@ namespace AvatarPlugin
         {
             get
             {
-                return new List<string> { "ClientManager", "Auth", "Renderable", "Motion" };
+                return new List<string> { "ClientManager", "Auth" };
             }
         }
 
@@ -30,7 +30,7 @@ namespace AvatarPlugin
         {
             get
             {
-                return new List<string>();
+                return new List<string> { "meshResource", "scale", "velocity", "rotVelocity" };
             }
         }
 
