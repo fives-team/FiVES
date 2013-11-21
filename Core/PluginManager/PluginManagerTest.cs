@@ -81,7 +81,16 @@ namespace FIVES
             Assert.IsTrue(pm.IsPluginLoaded("ValidPlugin2"));
         }
 
-        // TODO: component deps tests
+        [Test()]
+        public void ShouldLoadPluginWhenComponentDependenciesAreSatisfied()
+        {
+            pm.LoadPlugin(pathToPlugins + "ValidPlugin3.dll");
+            Assert.IsFalse(pm.IsPathLoaded(pathToPlugins + "ValidPlugin3.dll"));
+            Assert.IsFalse(pm.IsPluginLoaded("ValidPlugin3"));
+            ComponentRegistry.Instance.Register(new ComponentDefinition("testComponentForValidPlugin3"));
+            Assert.IsTrue(pm.IsPathLoaded(pathToPlugins + "ValidPlugin3.dll"));
+            Assert.IsTrue(pm.IsPluginLoaded("ValidPlugin3"));
+        }
     }
 }
 
