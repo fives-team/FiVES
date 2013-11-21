@@ -15,6 +15,13 @@ namespace KIARAPlugin
             Context.DefaultContext.StartServer(configURI, service.HandleNewClient);
             return service;
         }
+
+        public static ServiceWrapper Discover(string configURI)
+        {
+            ServiceWrapper service = new ServiceWrapper(Context.DefaultContext);
+            Context.DefaultContext.OpenConnection(configURI, service.HandleConnected);
+            return service;
+        }
     }
 }
 

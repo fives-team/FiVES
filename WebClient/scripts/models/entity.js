@@ -14,6 +14,9 @@ FIVES.Models = FIVES.Models || {};
      "use strict";
 
     var Entity = function(entityDocument) {
+        // FIXME: this should assign values to correct attributes, e.g.
+        // meshResouce.meshURI should actually be assigned to meshResource.uri.
+        // All uses of these properties must be updated respectively.
         this.guid = entityDocument.guid;
         this.position = entityDocument.position;
         this.orientation = entityDocument.orientation;
@@ -54,6 +57,11 @@ FIVES.Models = FIVES.Models || {};
     e.updateAttribute = function(componentName, attributeName, value) {
         this._cachedComponentUpdates[componentName] = this._cachedComponentUpdates[componentName] || {};
         this._cachedComponentUpdates[componentName][attributeName] = value;
+
+        if (componentName == "meshResource" && attributeName == "uri" && this.meshUnitialized) {
+            this.meshResource.meshURI = value;
+            FIVES.Resources.SceneManager.addMeshForObject(this);
+        }
     };
 
     e.updatePosition = function(position) {

@@ -48,6 +48,20 @@ namespace KIARAPlugin
             return this;
         }
 
+        public IFuncCall OnFailure(Action handler)
+        {
+            if (state == State.InProgress)
+            {
+                errorHandlers.Add((reason) => handler());
+                exceptionHandlers.Add((exception) => handler());
+            }
+            else if (state == State.Error || state == State.Exception)
+            {
+                handler();
+            }
+            return this;
+        }
+
         public T Wait<T>(int millisecondsTimeout = -1)
         {
             T result = default(T);
@@ -88,7 +102,7 @@ namespace KIARAPlugin
                 if (handler.Method.GetParameters().Length == 0) {
                     handler.DynamicInvoke();
                 } else {
-                    Type argType = handler.Method.GetParameters()[0].GetType();
+                    Type argType = handler.Method.GetParameters()[0].ParameterType;
                     handler.DynamicInvoke(ConvertResult(retValue, argType));
                 }
             }

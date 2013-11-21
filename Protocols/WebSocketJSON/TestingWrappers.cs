@@ -1,6 +1,7 @@
 using System;
 using KIARAPlugin;
 using WebSocket4Net;
+using SuperSocket.ClientEngine;
 
 namespace WebSocketJSON
 {
@@ -34,6 +35,7 @@ namespace WebSocketJSON
     {
         event EventHandler Opened;
         event EventHandler Closed;
+        event EventHandler<ErrorEventArgs> Error;
         event EventHandler<MessageReceivedEventArgs> MessageReceived;
         void Open();
         void Close();

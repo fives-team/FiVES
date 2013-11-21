@@ -30,10 +30,12 @@ FIVES.Resources = FIVES.Resources || {};
     };
 
     scm.addMeshForObject = function(fivesObject) {
-        if(!fivesObject.meshResource.meshURI)
-            console.warn("[WARNING] (SceneManager).addMeshForObject : No Resource URI specified for object " + fivesObject.guid);
-        else
+        if(!fivesObject.meshResource.meshURI) {
+            fivesObject.meshUnitialized = true;
+        } else {
+            delete fivesObject.meshUnitialized;
             FIVES.Resources.ResourceManager.loadExternalResource(fivesObject, this._addMeshToScene.bind(this));
+        }
     };
 
     scm._addMeshToScene = function(meshGroup, idSuffix) {

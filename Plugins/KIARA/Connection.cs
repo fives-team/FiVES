@@ -82,6 +82,30 @@ namespace KIARAPlugin
         }
 
         /// <summary>
+        /// Sets some property of the connection. May be used by subclasses to allow clients to configure them.
+        /// </summary>
+        /// <returns><c>true</c>, if property is supported and accepts given value, <c>false</c> otherwise.</returns>
+        /// <param name="name">Name of the property.</param>
+        /// <param name="value">Value to be set.</param>
+        public virtual bool SetProperty(string name, object value)
+        {
+            return false;
+        }
+
+        /// <summary>
+        /// Returns some property of the connection. May be used by subclasses to allow clients obtain some information
+        /// about the connection.
+        /// </summary>
+        /// <returns><c>true</c>, if property is supported, <c>false</c> otherwise.</returns>
+        /// <param name="name">Name of the property.</param>
+        /// <param name="value">Value to be returned.</param>
+        public virtual bool GetProperty(string name, out object value)
+        {
+            value = null;
+            return false;
+        }
+
+        /// <summary>
         /// Processes the parsed IDL.
         /// </summary>
         /// <param name="parsedIDL">Plain IDL as string (parsing is not implemented yet).</param>
