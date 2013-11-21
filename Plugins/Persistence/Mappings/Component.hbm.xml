@@ -1,16 +1,14 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <hibernate-mapping xmlns="urn:nhibernate-mapping-2.2" 
-                   assembly="Core"
+                   assembly="DomainModel"
                    namespace="FIVES">
     <class name="Component" lazy="false">
-        <id name="Guid" type = "Guid">
-            <generator class = "guid" />
-        </id>
-        <property name = "Version" />
-      <map name="Attributes" table = "attributes_to_components" cascade = "all" lazy = "false">
+      <id name="Guid" type = "Guid" />
+      <many-to-one name ="Definition" class="ComponentDefinition" insert="true" cascade="all"/>
+      <map name="attributes" table = "attributes_to_components" cascade = "all" lazy = "false">
         <key column = "componentID" />
         <index type = "string" column = "attributeName" />
-        <many-to-many column = "attributeID" class="Attribute" />
+        <element column = "value" type = "Serializable" />
       </map>
     </class>
 </hibernate-mapping>

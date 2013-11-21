@@ -105,6 +105,14 @@ namespace FIVES
         {
         }
 
+        internal EntityCollection(ICollection<Entity> entityCollection)
+        {
+            foreach (Entity entity in entityCollection)
+            {
+                entities.Add(entity.Guid, entity);
+            }
+        }
+
         private void HandleAdded(Entity entity)
         {
             if (AddedEntity != null)

@@ -36,6 +36,16 @@ namespace FIVES
             get { return new ReadOnlyCollection<Component>(components.Values); }
         }
 
+        private IDictionary<string, Component> ComponentsDictionaryHandler
+        {
+            get { return components; }
+            set {
+                components =  value;
+                foreach (KeyValuePair<string, Component> entry in components)
+                    entry.Value.ChangedAttribute += HandleChangedComponentAttribute;
+            }
+        }
+
         /// <summary>
         /// Accessor that allows to quickly get a component with a given name. Components that are registered with
         /// ComponentRegistry are created automatically when accessed.
@@ -53,7 +63,8 @@ namespace FIVES
             }
         }
 
-        /// <summary>
+		
+        /// <summary>git
         /// An event that is raised when a new component is created in this entity.
         /// </summary>
         public event EventHandler<ComponentEventArgs> CreatedComponent;
@@ -96,7 +107,7 @@ namespace FIVES
                 ChangedAttribute(this, e);
         }
 
-        private Dictionary<string, Component> components = new Dictionary<string, Component>();
+        private IDictionary<string, Component> components = new Dictionary<string, Component>();
 
         internal IComponentRegistry componentRegistry = ComponentRegistry.Instance;
     }

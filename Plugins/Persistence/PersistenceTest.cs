@@ -57,18 +57,18 @@ namespace PersistencePlugin
 
             Entity entity = new Entity();
 
-            entityRegistry.Add(entity);
+            World.Instance.Add(entity);
             entity["myComponent"]["IntAttribute"] = 42;
             entity["myComponent"]["StringAttribute"] = "Hello World!";
 
             // De-Activate on-remove event handler, as for tests, we only want to remove the entity from the local registry, not from the
             // persistence storage
-            entityRegistry.RemovedEntity -= plugin.OnEntityRemoved;
-            entityRegistry.Remove (entity);
+            World.Instance.RemovedEntity -= plugin.OnEntityRemoved;
+            World.Instance.Remove(entity);
 
             plugin.RetrieveEntitiesFromDatabase ();
 
-            Entity storedEntity = entityRegistry.FindEntity(entity.Guid.ToString());
+            Entity storedEntity = World.Instance.FindEntity(entity.Guid.ToString());
             Assert.AreEqual(42, storedEntity["myComponent"]["IntAttribute"]);
             Assert.AreEqual("Hello World!", storedEntity["myComponent"]["StringAttribute"]);
             Assert.AreEqual(1, storedEntity["myComponent"].Definition.Version);
@@ -84,38 +84,9 @@ namespace PersistencePlugin
                 plugin.Initialize ();
             }
 
-
-            entityRegistry.Add(entity);
-
+            plugin.AddEntityToPersisted(entity);
             plugin.RetrieveEntitiesFromDatabase ();
-
-            Assert.True(entityRegistry.Contains(entity));
-        }
-
-        [Test()]
-        public void ShouldStoreAndRetrieveComponentRegistry ()
-        {
-            if(componentRegistry.FindComponentDefinition("myComponent") != null)
-            {
-                ComponentDefinition myComponent = new ComponentDefinition("myComponent");
-                myComponent.AddAttribute<int>("IntAttribute");
-                myComponent.AddAttribute<string>("StringAttribute");
-                componentRegistry.Register(myComponent);
-            }
-
-            ComponentRegistryPersistence persist = new ComponentRegistryPersistence ();
-            persist.GetComponentsFromRegistry ();
-
-            var session = sessionFactory.OpenSession ();
-            var trans = session.BeginTransaction ();
-            session.Save (persist);
-            trans.Commit ();
-
-            plugin.RetrieveComponentRegistryFromDatabase ();
-
-            ReadOnlyComponentDefinition myComponentDef = componentRegistry.FindComponentDefinition("myComponent");
-            Assert.AreEqual(typeof(int), myComponentDef["IntAttribute"].Type);
-            Assert.AreEqual(typeof(string), myComponentDef["StringAttribute"].Type);
+            Assert.True(World.Instance.Contains(entity));
         }
 
         [Test()]
@@ -128,42 +99,17 @@ namespace PersistencePlugin
                 plugin.Initialize ();
             }
 
-            entityRegistry.Add (entity);
-            entityRegistry.Remove (entity);
+            World.Instance.Add (entity);
+            World.Instance.Remove (entity);
 
             if (!plugin.GlobalSession.IsOpen)
                 plugin.GlobalSession = plugin.SessionFactory.OpenSession();
             plugin.RetrieveEntitiesFromDatabase ();
 
-            Assert.True(entityRegistry.Contains(entity));
+            Assert.False(entityRegistry.Contains(entity));
         }
 
-/*        public void ShouldPersistUpgradedComponentLayout() {
-
-            ComponentLayout layout_1 = new ComponentLayout ();
-            ComponentLayout layout_2 = new ComponentLayout ();
-
-            layout_1 ["i"] = typeof(int);
-            layout_1 ["f"] = typeof(float);
-
-            layout_2 ["i"] = typeof(float);
-            layout_2 ["f"] = typeof(int);
-            layout_2 ["b"] = typeof(bool);
-
-            componentRegistry.defineComponent ("Comp1", plugin.pluginGuid, layout_1);
-
-            ComponentRegistryPersistence persist = new ComponentRegistryPersistence ();
-            persist.getComponentsFromRegistry ();
-
-            var session = sessionFactory.OpenSession ();
-            var trans = session.BeginTransaction ();
-            session.Save (persist);
-            trans.Commit ();
-
-            var newEntity = new Entity ();
-
-        }
-*/
+        [Ignore()]
         [Test()]
         public void ShouldPersistUpgradedEntity() {
 

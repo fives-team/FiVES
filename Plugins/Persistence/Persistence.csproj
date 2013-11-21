@@ -67,16 +67,16 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Mappings\Entity.hbm.xml" />
+    <EmbeddedResource Include="Mappings\Entity.hbm.xml">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
     <EmbeddedResource Include="hibernate.cfg.xml">
       <Gettext-ScanForTranslations>False</Gettext-ScanForTranslations>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </EmbeddedResource>
-    <EmbeddedResource Include="Mappings\Component.hbm.xml" />
-    <EmbeddedResource Include="Mappings\Attribute.hbm.xml" />
-    <EmbeddedResource Include="Mappings\ComponentOwnerLayout.hbm.xml" />
-    <EmbeddedResource Include="Mappings\ComponentRegistryPersistence.hbm.xml" />
-    <EmbeddedResource Include="Mappings\ComponentLayout.hbm.xml" />
+    <EmbeddedResource Include="Mappings\Component.hbm.xml">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Core\Collections\Collections.csproj">
@@ -91,5 +91,11 @@
       <Project>{DB1099A1-B7FE-474F-A03A-41687D6C5C76}</Project>
       <Name>PluginManager</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Mappings\ComponentDefinition.hbm.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Mappings\ReadOnlyAttributeDefinition.hbm.xml" />
   </ItemGroup>
 </Project>

@@ -72,6 +72,10 @@ namespace FIVES
         /// </summary>
         public event EventHandler<ChangedAttributeEventArgs> ChangedAttribute;
 
+        internal Component()
+        {
+        }
+
         internal Component(ReadOnlyComponentDefinition definition, Entity containingEntity)
         {
             Guid = Guid.NewGuid();
@@ -90,10 +94,11 @@ namespace FIVES
 
         private void InitializeAttributes()
         {
+            attributes = new Dictionary<string, object>();
             foreach (ReadOnlyAttributeDefinition attributeDefinition in Definition.AttributeDefinitions)
                 attributes.Add(attributeDefinition.Name, attributeDefinition.DefaultValue);
         }
 
-        private Dictionary<string, object> attributes = new Dictionary<string, object>();
+        private IDictionary<string, object> attributes {get; set;}
     }
 }
