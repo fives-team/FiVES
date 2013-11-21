@@ -60,7 +60,7 @@
     <Compile Include="FuncCallBaseTest.cs" />
     <Compile Include="IFuncCall.cs" />
     <Compile Include="IConnectionFactory.cs" />
-    <Compile Include="KIARA.cs" />
+    <Compile Include="KIARAPluginInitializer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ProtocolRegistry.cs" />
     <Compile Include="ProtocolRegistryTest.cs" />
