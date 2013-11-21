@@ -8,14 +8,28 @@ namespace ScalabilityPlugin
 {
     class ScalabilityPluginInitializer : IPluginInitializer
     {
-        public string GetName()
+        public string Name
         {
-            return "Scalability";
+            get
+            {
+                return "Scalability";
+            }
         }
 
-        public List<string> GetDependencies()
+        public List<string> RequiredPlugins
         {
-            return new List<string> { "KIARA" };
+            get
+            {
+                return new List<string> { "KIARA" };
+            }
+        }
+
+        public List<string> RequiredComponents
+        {
+            get
+            {
+                return new List<string>();
+            }
         }
 
         public void Initialize()

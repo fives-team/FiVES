@@ -8,14 +8,28 @@ namespace ValidPlugin1
 {
     public class ValidPlugin1Initializer : IPluginInitializer
     {
-        public string GetName()
+        public string Name
         {
-            return "ValidPlugin1";
+            get
+            {
+                return "ValidPlugin1";
+            }
         }
 
-        public List<string> GetDependencies()
+        public List<string> RequiredPlugins
         {
-            return new List<string>();
+            get
+            {
+                return new List<string>();
+            }
+        }
+
+        public List<string> RequiredComponents
+        {
+            get
+            {
+                return new List<string>();
+            }
         }
 
         public void Initialize()

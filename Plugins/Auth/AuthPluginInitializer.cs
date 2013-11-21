@@ -8,19 +8,34 @@ namespace AuthPlugin
     {
         #region IPluginInitializer implementation
 
-        public string GetName ()
+        public string Name
         {
-            return "Auth";
+            get
+            {
+                return "Auth";
+            }
         }
 
-        public List<string> GetDependencies ()
+        public List<string> RequiredPlugins
         {
-            return new List<string>();
+            get
+            {
+                return new List<string>();
+            }
+        }
+
+        public List<string> RequiredComponents
+        {
+            get
+            {
+                return new List<string>();
+            }
         }
 
         public void Initialize ()
         {
         }
+
         #endregion
     }
 }

@@ -23,23 +23,25 @@ namespace FIVES
     public interface IPluginInitializer
     {
         /// <summary>
-        /// Returns the name of the plugin.
+        /// The name of the plugin.
         /// </summary>
-        /// <returns>The name of the plugin.</returns>
-        string GetName();
+        string Name { get; }
 
         /// <summary>
-        /// Returns the list of names of the plugins that this plugin depends on.
+        /// List of names of the plugins that this plugin depends on.
         /// </summary>
-        /// <returns>The list of names of the plugins that this plugin depends on.</returns>
-        List<string> GetDependencies();
+        List<string> RequiredPlugins { get; }
+
+        /// <summary>
+        /// List of names of the components that this plugin depends on.
+        /// </summary>
+        List<string> RequiredComponents { get; }
 
         /// <summary>
         /// Initializes the plugin. This method will be called by the plugin manager when all dependency plugins have
         /// been loaded.
         /// </summary>
         void Initialize();
-
     }
 }
 

@@ -40,7 +40,7 @@ namespace KIARAPlugin
         /// Fragment part of the <paramref name="configURI"/> may be used to select the server by its index, e.g.
         /// <c>"http://www.example.org/config.json#3"</c>. If no fragment is provided, or index is invalid, first server
         /// with supported protocol is chosen. Upon connection <paramref name="onConnected"/> is called with the
-        /// constructed <see cref="KIARA.Connection"/> object.
+        /// constructed <see cref="KIARAPluginInitializer.Connection"/> object.
         /// </summary>
         /// <param name="configURI">
         /// URI where config is to be found. Data URIs starting with <c>"data:text/json;base64,"</c> are supported.
@@ -62,7 +62,7 @@ namespace KIARAPlugin
         /// the <paramref name="configURI"/> may be used to select the server by its index, e.g.
         /// <c>"http://www.example.org/config.json#3"</c>. If no fragment is provided, or index is invalid, first server
         /// with supported protocol is chosen. For each connected client <paramref name="onNewClient"/> is called with
-        /// constructed <see cref="KIARA.Connection"/> object.
+        /// constructed <see cref="KIARAPluginInitializer.Connection"/> object.
         /// </summary>
         /// <remarks>
         /// Note that <paramref name="onNewClient"/> may be executed on a different thread than the one you are calling

@@ -25,19 +25,6 @@ namespace RenderablePlugin
         {
             Assert.IsNotNull(ComponentRegistry.Instance.FindComponentDefinition("scale"));
         }
-
-        [Test()]
-        public void ShouldReturnCorrectName()
-        {
-            Assert.AreEqual("Renderable", plugin.GetName());
-        }
-
-        [Test()]
-        public void ShouldReturnCorrectDeps()
-        {
-            Assert.AreEqual(plugin.GetDependencies().Count, 1);
-            Assert.Contains("Location", plugin.GetDependencies());
-        }
     }
 }
 

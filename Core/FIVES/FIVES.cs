@@ -48,8 +48,9 @@ namespace FIVES
             logEntry.Append("Failed to load the following plugins due to missing dependencies:\n");
             foreach (var deferredPlugin in PluginManager.Instance.DeferredPlugins)
             {
-                logEntry.AppendFormat("{0}: (path: {1}, deps: {2})\n", deferredPlugin.Key,
-                    deferredPlugin.Value.path, String.Join(", ", deferredPlugin.Value.remainingDeps));
+                logEntry.AppendFormat("{0}: (path: {1}, plugin deps: {2}, component deps: {3})\n", deferredPlugin.Key,
+                    deferredPlugin.Value.path, String.Join(", ", deferredPlugin.Value.remainingPluginDeps),
+                    String.Join(", ", deferredPlugin.Value.remainingComponentDeps));
             }
             return logEntry;
         }

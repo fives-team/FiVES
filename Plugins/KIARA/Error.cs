@@ -30,7 +30,7 @@ namespace KIARAPlugin
     public class Error : Exception
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="KIARA.Error"/> class.
+        /// Initializes a new instance of the <see cref="KIARAPluginInitializer.Error"/> class.
         /// </summary>
         /// <param name="code">The error code.</param>
         /// <param name="reason">The reason.</param>

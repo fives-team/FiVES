@@ -25,18 +25,6 @@ namespace LocationPlugin
         {
             Assert.IsNotNull(ComponentRegistry.Instance.FindComponentDefinition("orientation"));
         }
-
-        [Test()]
-        public void ShouldReturnCorrectName()
-        {
-            Assert.AreEqual("Location", plugin.GetName());
-        }
-
-        [Test()]
-        public void ShouldReturnCorrectDeps()
-        {
-            Assert.IsEmpty(plugin.GetDependencies());
-        }
     }
 }
 

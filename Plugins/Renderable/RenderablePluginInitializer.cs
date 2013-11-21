@@ -9,14 +9,28 @@ namespace RenderablePlugin
     {
         #region IPluginInitializer implementation
 
-        public string GetName()
+        public string Name
         {
-            return "Renderable";
+            get
+            {
+                return "Renderable";
+            }
         }
 
-        public List<string> GetDependencies()
+        public List<string> RequiredPlugins
         {
-            return new List<string>() { "Location" };
+            get
+            {
+                return new List<string> { "Location" };
+            }
+        }
+
+        public List<string> RequiredComponents
+        {
+            get
+            {
+                return new List<string>();
+            }
         }
 
         public void Initialize()

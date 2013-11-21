@@ -5,7 +5,6 @@
   <class name="ComponentDefinition" lazy="false">
     <id name="Guid" type="Guid" />
     <property name="Name" />
-    <property name="Version" />
     <map name ="attributeDefinitionsHandler" table="attributes_to_definition" cascade ="all" lazy="false">
       <key column ="componentDefinitionGUID" />
       <index column ="attributeName" type="string" />

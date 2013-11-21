@@ -12,14 +12,28 @@ namespace LocationPlugin
     {
         #region IPluginInitializer implementation
 
-        public string GetName()
+        public string Name
         {
-            return "Location";
+            get
+            {
+                return "Location";
+            }
         }
 
-        public List<string> GetDependencies()
+        public List<string> RequiredPlugins
         {
-            return new List<string>();
+            get
+            {
+                return new List<string>();
+            }
+        }
+
+        public List<string> RequiredComponents
+        {
+            get
+            {
+                return new List<string>();
+            }
         }
 
         public void Initialize()

@@ -13,14 +13,28 @@ namespace EditingNamespace
     {
         #region IPluginInitializer implementation
 
-        public string GetName()
+        public string Name
         {
-            return "Editing";
+            get
+            {
+                return "Editing";
+            }
         }
 
-        public List<string> GetDependencies()
+        public List<string> RequiredPlugins
         {
-            return new List<string>() { "Renderable" };
+            get
+            {
+                return new List<string> { "Renderable" };
+            }
+        }
+
+        public List<string> RequiredComponents
+        {
+            get
+            {
+                return new List<string>();
+            }
         }
 
         public void Initialize()

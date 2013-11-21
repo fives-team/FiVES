@@ -12,16 +12,29 @@ namespace ClientManagerPlugin {
     {
         #region IPluginInitializer implementation
 
-        public string GetName()
+        public string Name
         {
-            return "ClientManager";
+            get
+            {
+                return "ClientManager";
+            }
         }
 
-        public List<string> GetDependencies()
+        public List<string> RequiredPlugins
         {
-            return new List<string>() { "Auth" };
+            get
+            {
+                return new List<string> { "Auth" };
+            }
         }
 
+        public List<string> RequiredComponents
+        {
+            get
+            {
+                return new List<string>();
+            }
+        }
         public void Initialize()
         {
         }

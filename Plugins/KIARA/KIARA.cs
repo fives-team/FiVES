@@ -7,18 +7,32 @@ using System.IO;
 
 namespace KIARAPlugin
 {
-    public class KIARA : IPluginInitializer
+    public class KIARAPluginInitializer : IPluginInitializer
     {
         #region IPluginInitializer implementation
 
-        public string GetName()
+        public string Name
         {
-            return "KIARA";
+            get
+            {
+                return "KIARA";
+            }
         }
 
-        public List<string> GetDependencies()
+        public List<string> RequiredPlugins
         {
-            return new List<string>();
+            get
+            {
+                return new List<string>();
+            }
+        }
+
+        public List<string> RequiredComponents
+        {
+            get
+            {
+                return new List<string>();
+            }
         }
 
         public void Initialize()
