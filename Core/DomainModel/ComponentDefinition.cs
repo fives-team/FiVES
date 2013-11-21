@@ -43,7 +43,7 @@ namespace FIVES
         /// </summary>
         /// <param name="name">Name of the component.</param>
         /// <param name="version">Version of the definition.</param>
-        public ComponentDefinition(string name, int version = 1) : base(name, version)
+        public ComponentDefinition(string name) : base(name)
         {
         }
 

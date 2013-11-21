@@ -88,14 +88,6 @@ namespace FIVES
             InitializeAttributes();
         }
 
-        internal void Upgrade(ReadOnlyComponentDefinition newDefinition, ComponentUpgrader upgrader)
-        {
-            Component newComponent = new Component(newDefinition, ContainingEntity);
-            upgrader(this, newComponent);
-            attributes = newComponent.attributes;
-            Definition = newDefinition;
-        }
-
         private static bool CanBeAssignedNull(Type type)
         {
             if (!type.IsValueType) return true; // ref-type

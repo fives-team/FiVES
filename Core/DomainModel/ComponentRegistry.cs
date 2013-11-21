@@ -45,34 +45,9 @@ namespace FIVES
                 throw new ComponentRegistrationException("Component with the same name is already registered.");
 
             registeredComponents.Add(definition.Name, definition);
-        }
 
-        /// <summary>
-        /// Upgrades a component to a new version. Version numbers must be sequential numbers starting from 1. This
-        /// method will raise an exception if the previous version is not found or if same or newer version is found.
-        /// </summary>
-        /// <param name="newDefinition">New definition of the component.</param>
-        /// <param name="upgrader">Upgrade function, see <see cref="ComponentUpgrader"/>.</param>
-        public void Upgrade(ComponentDefinition newDefinition, ComponentUpgrader upgrader)
-        {
-            string name = newDefinition.Name;
-            if (!registeredComponents.ContainsKey(name))
-                throw new ComponentUpgradeException("Existing definition of the component is not found.");
-
-            if (registeredComponents[name].Version != newDefinition.Version - 1)
-                throw new ComponentUpgradeException("Version of the exiting definition does not precede new version.");
-
-            registeredComponents.Remove(name);
-            registeredComponents.Add(name, newDefinition);
-
-            // Upgrade all entities.
-            foreach (var entity in world)
-            {
-                var component = (Component)entity[name];
-                component.Upgrade(newDefinition, upgrader);
-                if (UpgradedComponent != null)
-                    UpgradedComponent(this, new ComponentEventArgs(component));
-            }
+            if (RegisteredComponent != null)
+                RegisteredComponent(this, new RegisteredComponentEventArgs(definition));
         }
 
         /// <summary>
@@ -88,10 +63,7 @@ namespace FIVES
             return registeredComponents[componentName];
         }
 
-        /// <summary>
-        /// Raised when a component has been upgraded.
-        /// </summary>
-        public event EventHandler<ComponentEventArgs> UpgradedComponent;
+        public event EventHandler<RegisteredComponentEventArgs> RegisteredComponent;
 
         private Dictionary<string, ComponentDefinition> registeredComponents =
             new Dictionary<string, ComponentDefinition>();

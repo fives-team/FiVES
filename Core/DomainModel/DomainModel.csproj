@@ -63,9 +63,8 @@
     <Compile Include="Exceptions\ComponentAccessException.cs" />
     <Compile Include="ComponentDefinition.cs" />
     <Compile Include="Events\ComponentEventArgs.cs" />
-    <Compile Include="Exceptions\ComponentRegisteredException.cs" />
+    <Compile Include="Exceptions\ComponentRegistrationException.cs" />
     <Compile Include="ComponentRegistry.cs" />
-    <Compile Include="Exceptions\ComponentUpgradeException.cs" />
     <Compile Include="Entity.cs" />
     <Compile Include="EntityCollection.cs" />
     <Compile Include="Events\EntityEventArgs.cs" />
@@ -75,6 +74,7 @@
     <Compile Include="ReadOnlyAttributeDefinitionTest.cs" />
     <Compile Include="ReadOnlyComponentDefinition.cs" />
     <Compile Include="ReadOnlyComponentDefinitionTest.cs" />
+    <Compile Include="Events\RegisteredComponentEventArgs.cs" />
     <Compile Include="Testing Interfaces\IComponentRegistry.cs" />
     <Compile Include="World.cs" />
   </ItemGroup>
