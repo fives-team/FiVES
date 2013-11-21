@@ -90,6 +90,7 @@ namespace PersistencePlugin
                 EntitiesToInitialize.Remove(addedEntity.Guid);                
             }
             addedEntity.ChangedAttribute += new EventHandler<ChangedAttributeEventArgs>(OnAttributeChanged);
+            addedEntity.CreatedComponent += new EventHandler<ComponentEventArgs>(HandleComponentCreated);
         }
 
         /// <summary>
@@ -123,6 +124,12 @@ namespace PersistencePlugin
             // TODO: change cascading persistence of entity, but only persist component and take care to persist mapping to entity as well
             //AddEntityToPersisted (e.Component.Parent);
         }
+
+        internal void HandleComponentCreated(Object sender, ComponentEventArgs e)
+        {
+            AddEntityToPersisted((Entity)sender);
+        }
+
         #endregion
 
         #region database synchronisation
