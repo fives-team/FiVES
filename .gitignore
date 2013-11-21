@@ -12,3 +12,4 @@ Binaries/
 *.mdf
 TestResults
 Core/PluginManager/TestPlugins
+*~
