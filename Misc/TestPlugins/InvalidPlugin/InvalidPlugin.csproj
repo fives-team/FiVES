@@ -47,7 +47,7 @@
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent Condition=" '$(OS)' == 'Windows_NT' ">xcopy /y "$(TargetPath)" "$(ProjectDir)..\..\..\Binaries\$(ConfigurationName)\TestPlugins\"</PostBuildEvent>
-    <PostBuildEvent Condition=" '$(OS)' != 'Windows_NT' ">mkdir -p "$(ProjectDir)../../Binaries/${ConfigurationName}/TestPlugins/" &amp;&amp; cp "$(TargetPath)" "$(ProjectDir)../../Binaries/${ConfigurationName}/TestPlugins/"</PostBuildEvent>
+    <PostBuildEvent Condition=" '$(OS)' != 'Windows_NT' ">mkdir -p "$(ProjectDir)../../../Binaries/$(ConfigurationName)/TestPlugins/" &amp;&amp; cp "$(TargetPath)" "$(ProjectDir)../../../Binaries/$(ConfigurationName)/TestPlugins/"</PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
