@@ -11,7 +11,7 @@ namespace FIVES
     {
         class ReadOnlyComponentDefinitionImpl : ReadOnlyComponentDefinition
         {
-            public ReadOnlyComponentDefinitionImpl() : base("test-name")
+            public ReadOnlyComponentDefinitionImpl() : base("test-name", Guid.NewGuid())
             {
             }
 

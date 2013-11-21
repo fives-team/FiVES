@@ -40,9 +40,9 @@ namespace FIVES
         /// <returns>True if definition for such attribute is present, false otherwise.</returns>
         public abstract bool ContainsAttributeDefinition(string attributeName);
 
-        internal ReadOnlyComponentDefinition(string name)
+        internal ReadOnlyComponentDefinition(string name, Guid guid)
         {
-            Guid = Guid.NewGuid();
+            Guid = guid;
             Name = name;
         }
 

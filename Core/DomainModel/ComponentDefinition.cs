@@ -38,12 +38,23 @@ namespace FIVES
     public sealed class ComponentDefinition : ReadOnlyComponentDefinition
     {
         private ComponentDefinition() { }
+
         /// <summary>
         /// Constructs an instance of the ComponentDefinition.
         /// </summary>
         /// <param name="name">Name of the component.</param>
-        /// <param name="version">Version of the definition.</param>
-        public ComponentDefinition(string name) : base(name)
+        public ComponentDefinition(string name)
+            : base(name, Guid.NewGuid())
+        {
+        }
+
+        /// <summary>
+        /// Constructs an instance of the ComponentDefinition with specified GUID.
+        /// </summary>
+        /// <param name="name">Name of the component.</param>
+        /// <param name="guid">Guid for the component.</param>
+        public ComponentDefinition(string name, Guid guid)
+            : base(name, guid)
         {
         }
 
@@ -77,10 +88,19 @@ namespace FIVES
         /// <param name="defaultValue">Default value of the new attribute.</param>
         public void AddAttribute(string name, Type type, object defaultValue)
         {
-            if (attributeDefinitions.ContainsKey(name))
+            AddAttribute(new ReadOnlyAttributeDefinition(name, type, defaultValue, Guid.NewGuid()));
+        }
+
+        /// <summary>
+        /// Add a new attribute definition to the component definition.
+        /// </summary>
+        /// <param name="definition">Attribute definition.</param>
+        public void AddAttribute(ReadOnlyAttributeDefinition definition)
+        {
+            if (attributeDefinitions.ContainsKey(definition.Name))
                 throw new AttributeDefinitionException("Attribute with such name is already defined.");
 
-            attributeDefinitions[name] = new ReadOnlyAttributeDefinition(name, type, defaultValue);
+            attributeDefinitions[definition.Name] = definition;
         }
 
         public override ReadOnlyCollection<ReadOnlyAttributeDefinition> AttributeDefinitions

@@ -14,7 +14,7 @@ namespace FIVES
         [SetUp()]
         public void Init()
         {
-            definition = new ReadOnlyAttributeDefinition("test-name", typeof(int), 42);
+            definition = new ReadOnlyAttributeDefinition("test-name", typeof(int), 42, Guid.NewGuid());
         }
 
         [Test()]
