@@ -3,6 +3,7 @@ using FIVES;
 using KIARAPlugin;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 
@@ -14,7 +15,7 @@ namespace ClientManagerPlugin
 
         public ClientManager()
         {
-            clientService = ServiceFactory.Create("http://localhost/projects/test-client/kiara/fives.json");
+            clientService = ServiceFactory.Create(ConvertFileNameToURI("clientManagerServer.json"));
 
             RegisterClientService("kiara", false, new Dictionary<string, Delegate>());
             RegisterClientMethod("kiara.implements", false, (Func<List<string>, List<bool>>)Implements);
@@ -239,5 +240,17 @@ namespace ClientManagerPlugin
         }
 
         #endregion
+
+        /// <summary>
+        /// Converts a file name to the URI that point to the file as if it was located in the same directory as the
+        /// current assembly.
+        /// </summary>
+        /// <param name="configFilename"></param>
+        /// <returns></returns>
+        private string ConvertFileNameToURI(string configFilename)
+        {
+            var configFullPath = Path.Combine(Path.GetDirectoryName(this.GetType().Assembly.Location), configFilename);
+            return "file://" + configFullPath;
+        }
     }
 }

@@ -1,12 +1,11 @@
 {
-  "info": "TestServer",
-  "idlURL": "fives.kiara",
+  "info": "ClientManagerServer",
+  "idlURL": "../../WebClient/kiara/fives.kiara",
   "servers": [{
     "services": "*",
     "protocol": {
       "name": "websocket-json",
       "port": 34837,
-      "host": "localhost"
     }
   }]
 }
