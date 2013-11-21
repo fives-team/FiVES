@@ -60,6 +60,7 @@ namespace ScalabilityPlugin
         {
             World.Instance.AddedEntity += HandleLocalAddedEntity;
             World.Instance.RemovedEntity += HandleLocalRemovedEntity;
+            ComponentRegistry.Instance.RegisteredComponent += HandleLocalRegisteredComponent;
 
             CreateSyncInfoForExistingEntities();
         }
@@ -239,6 +240,22 @@ namespace ScalabilityPlugin
             }
         }
 
+        private void HandleLocalRegisteredComponent(object sender, RegisteredComponentEventArgs e)
+        {
+            // Ignore this change if it was caused by the scalability plugin itself.
+            lock (componentRegistrations)
+            {
+                if (componentRegistrations.Remove(e.ComponentDefinition.Guid))
+                    return;
+            }
+
+            lock (remoteSyncNodes)
+            {
+                foreach (Connection connection in remoteSyncNodes)
+                    connection["registerComponentDefinition"](e.ComponentDefinition);
+            }
+        }
+
         /// <summary>
         /// Invoked by the client to transmit their SyncID and request server's SyncID at the same time. Registers
         /// client in the list of remote nodes and transmits back server's SyncID in a separate call. Not implemented
@@ -254,10 +271,12 @@ namespace ScalabilityPlugin
                 return;
             }
 
-            AddNewSyncNode(connection, clientSyncID);
             RegisterSyncMethodHandlers(connection);
             connection["serverHandshake"](LocalSyncID);
+
+            AddNewSyncNode(connection, clientSyncID);
             SyncExistingEntitiesToRemoteNode(connection);
+            SyncExistingComponentDefinitionsToRemoteNode(connection);
         }
 
         /// <summary>
@@ -278,6 +297,12 @@ namespace ScalabilityPlugin
                 connection["addEntity"](entityPair.Key, entityPair.Value);
         }
 
+        private void SyncExistingComponentDefinitionsToRemoteNode(Connection connection)
+        {
+            foreach (ReadOnlyComponentDefinition roCompDef in ComponentRegistry.Instance.RegisteredComponents)
+                connection["registerComponentDefinition"]((ComponentDef)roCompDef);
+        }
+
         /// <summary>
         /// Invoked by the server in response to the clientHandshake to transmit their SyncID. Registers server in the
         /// list of remote nodes. Not implemented on the server side and thus should not be invoked by the client.
@@ -288,6 +313,7 @@ namespace ScalabilityPlugin
         {
             AddNewSyncNode(connection, serverSyncID);
             SyncExistingEntitiesToRemoteNode(connection);
+            SyncExistingComponentDefinitionsToRemoteNode(connection);
         }
 
         /// <summary>
@@ -321,6 +347,8 @@ namespace ScalabilityPlugin
             connection.RegisterFuncImplementation("removeEntity", (Action<Connection, Guid>)HandleRemoteRemovedEntity);
             connection.RegisterFuncImplementation("changeAttributes",
                 (Action<Connection, Guid, EntitySyncInfo>)HandleRemoteChangedAttributes);
+            connection.RegisterFuncImplementation("registerComponentDefinition",
+                (Action<Connection, ComponentDef>)HandleRemoteRegisteredComponentDefinition);
         }
 
         /// <summary>
@@ -388,6 +416,19 @@ namespace ScalabilityPlugin
                 RelaySyncMessage(connection, "changeAttributes", guid, changedAttributes);
 
             ProcessChangedAttributes(guid, changedAttributes);
+        }
+
+        private void HandleRemoteRegisteredComponentDefinition(Connection connection, ComponentDef componentDef)
+        {
+            if (IsSyncRelay)
+                RelaySyncMessage(connection, "registerComponentDefinition", componentDef);
+
+            if (ComponentRegistry.Instance.FindComponentDefinition(componentDef.Name) == null)
+            {
+                lock (componentRegistrations)
+                    componentRegistrations.Add(componentDef.Guid);
+                ComponentRegistry.Instance.Register((ComponentDefinition)componentDef);
+            }
         }
 
         /// <summary>
@@ -531,6 +572,11 @@ namespace ScalabilityPlugin
         // to an update from the remote node.
         private List<Guid> entityAdditions = new List<Guid>();
         private List<Guid> entityRemovals = new List<Guid>();
+
+        // Collection of component registrations that should be ignored once. Similarly to the above, this is used
+        // to ignored component registrations that were caused by the scalability plugin itself in response to an
+        // update from the remote node.
+        private List<Guid> componentRegistrations = new List<Guid>();
 
         // SyncID of this node.
         private Guid LocalSyncID = Guid.NewGuid();
