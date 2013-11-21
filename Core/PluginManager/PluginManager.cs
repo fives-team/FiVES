@@ -101,8 +101,8 @@ namespace FIVES
 
                     // Check if plugin has all required dependencies.
                     info.remainingPluginDeps =
-                        info.initializer.RequiredPlugins.FindAll(plugin => !LoadedPlugins.ContainsKey(plugin));
-                    info.remainingComponentDeps = info.initializer.RequiredComponents.FindAll(
+                        info.initializer.PluginDependencies.FindAll(plugin => !LoadedPlugins.ContainsKey(plugin));
+                    info.remainingComponentDeps = info.initializer.ComponentDependencies.FindAll(
                         component => ComponentRegistry.Instance.FindComponentDefinition(component) == null);
 
                     if (info.remainingPluginDeps.Count > 0 || info.remainingComponentDeps.Count > 0) {

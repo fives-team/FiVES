@@ -20,7 +20,7 @@ namespace ClientManagerPlugin {
             }
         }
 
-        public List<string> RequiredPlugins
+        public List<string> PluginDependencies
         {
             get
             {
@@ -28,7 +28,7 @@ namespace ClientManagerPlugin {
             }
         }
 
-        public List<string> RequiredComponents
+        public List<string> ComponentDependencies
         {
             get
             {

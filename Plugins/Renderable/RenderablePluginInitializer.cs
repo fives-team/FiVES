@@ -17,7 +17,7 @@ namespace RenderablePlugin
             }
         }
 
-        public List<string> RequiredPlugins
+        public List<string> PluginDependencies
         {
             get
             {
@@ -25,7 +25,7 @@ namespace RenderablePlugin
             }
         }
 
-        public List<string> RequiredComponents
+        public List<string> ComponentDependencies
         {
             get
             {

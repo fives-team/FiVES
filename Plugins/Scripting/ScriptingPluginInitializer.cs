@@ -19,7 +19,7 @@ namespace ScriptingPlugin
             }
         }
 
-        public List<string> RequiredPlugins
+        public List<string> PluginDependencies
         {
             get
             {
@@ -27,7 +27,7 @@ namespace ScriptingPlugin
             }
         }
 
-        public List<string> RequiredComponents
+        public List<string> ComponentDependencies
         {
             get
             {

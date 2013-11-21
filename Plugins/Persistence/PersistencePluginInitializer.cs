@@ -27,7 +27,7 @@ namespace PersistencePlugin
             }
         }
 
-        public List<string> RequiredPlugins
+        public List<string> PluginDependencies
         {
             get
             {
@@ -35,7 +35,7 @@ namespace PersistencePlugin
             }
         }
 
-        public List<string> RequiredComponents
+        public List<string> ComponentDependencies
         {
             get
             {

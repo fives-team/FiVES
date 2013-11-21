@@ -21,7 +21,7 @@ namespace EditingNamespace
             }
         }
 
-        public List<string> RequiredPlugins
+        public List<string> PluginDependencies
         {
             get
             {
@@ -29,7 +29,7 @@ namespace EditingNamespace
             }
         }
 
-        public List<string> RequiredComponents
+        public List<string> ComponentDependencies
         {
             get
             {

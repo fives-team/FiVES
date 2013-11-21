@@ -19,7 +19,7 @@ namespace KIARAPlugin
             }
         }
 
-        public List<string> RequiredPlugins
+        public List<string> PluginDependencies
         {
             get
             {
@@ -27,7 +27,7 @@ namespace KIARAPlugin
             }
         }
 
-        public List<string> RequiredComponents
+        public List<string> ComponentDependencies
         {
             get
             {

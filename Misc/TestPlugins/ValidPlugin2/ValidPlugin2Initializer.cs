@@ -16,7 +16,7 @@ namespace ValidPlugin2
             }
         }
 
-        public List<string> RequiredPlugins
+        public List<string> PluginDependencies
         {
             get
             {
@@ -24,7 +24,7 @@ namespace ValidPlugin2
             }
         }
 
-        public List<string> RequiredComponents
+        public List<string> ComponentDependencies
         {
             get
             {

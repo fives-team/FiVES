@@ -18,7 +18,7 @@ namespace MotionPlugin
             }
         }
 
-        public List<string> RequiredPlugins
+        public List<string> PluginDependencies
         {
             get
             {
@@ -26,7 +26,7 @@ namespace MotionPlugin
             }
         }
 
-        public List<string> RequiredComponents
+        public List<string> ComponentDependencies
         {
             get
             {
