@@ -16,7 +16,7 @@ namespace PersistencePlugin
         ComponentRegistry componentRegistry;
         EntityCollection entityRegistry;
         Configuration cfg;
-        NHibernate.ISessionFactory sessionFactory;
+        //NHibernate.ISessionFactory sessionFactory;
         PersistencePlugin plugin;
 
         public PersistenceTest ()
@@ -36,7 +36,7 @@ namespace PersistencePlugin
             cfg = new Configuration ();
             cfg.Configure ();
 
-            sessionFactory = cfg.BuildSessionFactory ();
+            //sessionFactory = cfg.BuildSessionFactory ();
 
             cfg.AddAssembly (typeof(Entity).Assembly);
             new SchemaExport (cfg).Execute (true, true, false);

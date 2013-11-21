@@ -11,7 +11,9 @@ namespace KIARAPlugin
 
         public class ConnectionImpl : Connection
         {
+#pragma warning disable 67
             public override event EventHandler Closed;
+#pragma warning restore 67
 
             public override void Disconnect()
             {
