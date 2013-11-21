@@ -33,7 +33,7 @@ namespace EditingNamespace
         {
             get
             {
-                return new List<string>();
+                return new List<string> { "position", "orientation", "scale", "meshResource" };
             }
         }
 

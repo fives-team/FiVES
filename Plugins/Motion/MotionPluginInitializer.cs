@@ -22,7 +22,7 @@ namespace MotionPlugin
         {
             get
             {
-                return new List<string> { "Location" };
+                return new List<string>();
             }
         }
 
@@ -30,15 +30,16 @@ namespace MotionPlugin
         {
             get
             {
-                return new List<string>();
+                return new List<string> { "position", "orientation" };
             }
         }
 
         public void Initialize()
         {
             DefineComponents();
-            RegisterClientServices();
             RegisterEntityEvents();
+
+            PluginManager.Instance.AddPluginLoadedHandler("ClientManager", RegisterClientServices);
         }
 
         #endregion
@@ -63,10 +64,8 @@ namespace MotionPlugin
 
         void RegisterClientServices()
         {
-            PluginManager.Instance.AddPluginLoadedHandler("ClientManager", delegate {
-                ClientManager.Instance.RegisterClientService("motion", true, new Dictionary<string, Delegate> {
-                        {"update", (Action<string, Vector, RotVelocity, int>) Update}
-                    });
+            ClientManager.Instance.RegisterClientService("motion", true, new Dictionary<string, Delegate> {
+                {"update", (Action<string, Vector, RotVelocity, int>) Update}
             });
         }
 

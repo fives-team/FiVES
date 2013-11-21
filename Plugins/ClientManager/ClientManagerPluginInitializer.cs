@@ -24,7 +24,7 @@ namespace ClientManagerPlugin {
         {
             get
             {
-                return new List<string> { "Auth" };
+                return new List<string> { "KIARA", "Auth" };
             }
         }
 
@@ -32,7 +32,7 @@ namespace ClientManagerPlugin {
         {
             get
             {
-                return new List<string>();
+                return new List<string> { "position", "orientation", "scale", "meshResource" };
             }
         }
         public void Initialize()

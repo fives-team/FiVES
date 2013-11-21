@@ -21,7 +21,7 @@ namespace RenderablePlugin
         {
             get
             {
-                return new List<string> { "Location" };
+                return new List<string>();
             }
         }
 

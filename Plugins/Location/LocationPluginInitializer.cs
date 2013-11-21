@@ -39,7 +39,8 @@ namespace LocationPlugin
         public void Initialize()
         {
             DefineComponents();
-            RegisterClientServices();
+
+            PluginManager.Instance.AddPluginLoadedHandler("ClientManager", RegisterClientServices);
         }
 
         #endregion
@@ -67,11 +68,9 @@ namespace LocationPlugin
 
         void RegisterClientServices()
         {
-            PluginManager.Instance.AddPluginLoadedHandler("ClientManager", delegate {
-                ClientManager.Instance.RegisterClientService("location", true, new Dictionary<string, Delegate> {
-                    {"updatePosition", (Action<string, string, Vector, int>) UpdatePosition},
-                    {"updateOrientation", (Action<string, string, Quat, int>) UpdateOrientation}
-                });
+            ClientManager.Instance.RegisterClientService("location", true, new Dictionary<string, Delegate> {
+                {"updatePosition", (Action<string, string, Vector, int>) UpdatePosition},
+                {"updateOrientation", (Action<string, string, Quat, int>) UpdateOrientation}
             });
         }
 
