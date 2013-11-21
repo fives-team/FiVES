@@ -434,7 +434,7 @@ namespace ScalabilityPlugin
         /// <param name="componentName">Name of the component containing attribute.</param>
         /// <param name="attributeName">Name of the attribute.</param>
         /// <param name="remoteAttributeSyncInfo">Remote sync info on this attribute.</param>
-        /// <returns>True if the attribute has been changed, false otherwise.</returns>
+        /// <returns>True if the update should be propagated to other sync nodes.</returns>
         private bool HandleRemoteChangedAttribute(Guid entityGuid, string componentName, string attributeName,
             AttributeSyncInfo remoteAttributeSyncInfo)
         {
@@ -446,53 +446,69 @@ namespace ScalabilityPlugin
                     remoteAttributeSyncInfo.LastValue + ". Timestamp: " + remoteAttributeSyncInfo.LastTimestamp +
                     ". SyncID: " + remoteAttributeSyncInfo.LastSyncID);
 
+            bool shouldUpdateLocalAttribute = false;
             if (!localEntitySyncInfo.Components.ContainsKey(componentName) ||
                 !localEntitySyncInfo[componentName].Attributes.ContainsKey(attributeName))
             {
+                shouldUpdateLocalAttribute = true;
                 logger.Debug("Creating new attribute sync info.");
                 localEntitySyncInfo[componentName][attributeName] = remoteAttributeSyncInfo;
             }
-            else if (!localEntitySyncInfo[componentName][attributeName].Sync(remoteAttributeSyncInfo))
+            else
             {
-                logger.Debug("Sync discarded the update. Local value: " +
-                    localEntitySyncInfo[componentName][attributeName].LastValue + ". Local timestamp: " +
-                    localEntitySyncInfo[componentName][attributeName].LastTimestamp + ". Local SyncID: " +
-                    localEntitySyncInfo[componentName][attributeName].LastSyncID);
-                return false;  // ignore this attribute because sync discarded remote value
-            }
-
-            try
-            {
-                // This is necessary, because Json.NET serializes primitive types using basic JSON values, which do not
-                // retain original type (e.g. integer values always become int even if they were stored as float values
-                // before) and there is no way to change this.
-                var attributeType = localEntity[componentName].Definition[attributeName].Type;
-                var attributeValue = Convert.ChangeType(remoteAttributeSyncInfo.LastValue, attributeType);
-
-                // Ignore event for this change.
-                lock (ignoredAttributeChanges)
+                AttributeSyncInfo localAttributeSyncInfo = localEntitySyncInfo[componentName][attributeName];
+                shouldUpdateLocalAttribute =
+                    (localAttributeSyncInfo.LastValue == null && remoteAttributeSyncInfo.LastValue != null) ||
+                    (localAttributeSyncInfo.LastValue != null &&
+                     !localAttributeSyncInfo.LastValue.Equals(remoteAttributeSyncInfo.LastValue));
+                if (!localAttributeSyncInfo.Sync(remoteAttributeSyncInfo))
                 {
-                    var remoteChange = new IgnoredAttributeChange
-                    {
-                        EntityGuid = entityGuid,
-                        ComponentName = componentName,
-                        AttributeName = attributeName,
-                        Value = attributeValue
-                    };
 
-                    ignoredAttributeChanges.Add(remoteChange);
+                    logger.Debug("Sync discarded the update. Local value: " + localAttributeSyncInfo.LastValue +
+                        ". Local timestamp: " + localAttributeSyncInfo.LastTimestamp + ". Local SyncID: " +
+                        localAttributeSyncInfo.LastSyncID);
+                    return false;  // ignore this update because sync discarded it
                 }
-
-                localEntity[componentName][attributeName] = attributeValue;
-
-                return true;
             }
-            catch (ComponentAccessException e)
+
+            if (shouldUpdateLocalAttribute)
             {
-                // This is fine, because we may have some plugins not loaded on this node.
-                logger.DebugException("Update is not applied to the World. Component is not defined.", e);
-                return false;
+                try
+                {
+                    // This is necessary, because Json.NET serializes primitive types using basic JSON values, which do
+                    // not retain original type (e.g. integer values always become int even if they were stored as
+                    // float values before) and there is no way to change this.
+                    var attributeType = localEntity[componentName].Definition[attributeName].Type;
+                    var attributeValue = Convert.ChangeType(remoteAttributeSyncInfo.LastValue, attributeType);
+
+                    // Ignore event for this change.
+                    lock (ignoredAttributeChanges)
+                    {
+                        var remoteChange = new IgnoredAttributeChange
+                        {
+                            EntityGuid = entityGuid,
+                            ComponentName = componentName,
+                            AttributeName = attributeName,
+                            Value = attributeValue
+                        };
+
+                        ignoredAttributeChanges.Add(remoteChange);
+                    }
+
+                    localEntity[componentName][attributeName] = attributeValue;
+                    return true;
+                }
+                catch (ComponentAccessException e)
+                {
+                    // This is fine, because we may have some plugins not loaded on this node.
+                    logger.DebugException("Update is not applied to the World. Component is not defined.", e);
+                }
             }
+
+            // If we are here, it means that this update was not discarded by sync and thus should be propagated to
+            // other nodes. This is still the case even if the value has been the same and local attribute has not been
+            // update, because we still need to update sync info on other nodes.
+            return true;
         }
 
         /// <summary>

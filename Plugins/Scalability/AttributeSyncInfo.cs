@@ -48,7 +48,7 @@ namespace ScalabilityPlugin
         /// Synchronizes the values of attributes given a remote sync info.
         /// </summary>
         /// <param name="remoteAttrSyncInfo">Remote sync info.</param>
-        /// <returns>True if the local attribute has been set to a remote value.</returns>
+        /// <returns>True if the local attribute sync info has been updated.</returns>
         public bool Sync(AttributeSyncInfo remoteAttrSyncInfo)
         {
             if (remoteAttrSyncInfo.LastTimestamp < LastTimestamp)
