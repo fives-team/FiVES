@@ -45,7 +45,7 @@ namespace FIVES
         private static StringBuilder CreateDeferredPluginsLogEntry()
         {
             StringBuilder logEntry = new StringBuilder();
-            logEntry.Append("Failed to load the following plugins due to missing dependencies:\n");
+            logEntry.Append("Loading of the following plugins was deferred due to missing dependencies:\n");
             foreach (var deferredPlugin in PluginManager.Instance.DeferredPlugins)
             {
                 logEntry.AppendFormat("{0}: (path: {1}, plugin deps: {2}, component deps: {3})\n", deferredPlugin.Key,
