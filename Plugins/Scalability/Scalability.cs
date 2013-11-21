@@ -270,7 +270,6 @@ namespace ScalabilityPlugin
                 (Action<Connection, Guid>)HandleHandshakeFromServer);
             RegisterSyncMethodHandlers(connection);
             connection["clientHandshake"](LocalSyncID);
-            SyncExistingEntitiesToRemoteNode(connection);
         }
 
         private void SyncExistingEntitiesToRemoteNode(Connection connection)
@@ -288,6 +287,7 @@ namespace ScalabilityPlugin
         private void HandleHandshakeFromServer(Connection connection, Guid serverSyncID)
         {
             AddNewSyncNode(connection, serverSyncID);
+            SyncExistingEntitiesToRemoteNode(connection);
         }
 
         /// <summary>
