@@ -26,6 +26,7 @@ namespace FIVES
             // TODO: mock ComponentDefinition
             ComponentDefinition test = new ComponentDefinition("test");
             test.AddAttribute<int>("a", 42);
+            test.AddAttribute<int?>("n", 5);
 
             mockComponentRegistry = new Mock<IComponentRegistry>();
             mockComponentRegistry.Setup(r => r.FindComponentDefinition("test")).Returns(test);
@@ -90,6 +91,30 @@ namespace FIVES
 
             mockHandlers.Verify(h => h.ChangedAttribute(It.IsAny<object>(),
                 It.IsAny<ChangedAttributeEventArgs>()), Times.Once());
+        }
+
+        [Test()]
+        public void ShouldNotFireChangedAttributeEventsWhenTheValueIsNotChanged()
+        {
+            entity.ChangedAttribute += mockHandlers.Object.ChangedAttribute;
+
+            entity["test"]["a"] = 42;
+
+            mockHandlers.Verify(h => h.ChangedAttribute(It.IsAny<object>(),
+                It.IsAny<ChangedAttributeEventArgs>()), Times.Never());
+        }
+
+        [Test()]
+        public void ShouldHandleNullValuesForAttributesCorrectly()
+        {
+            entity.ChangedAttribute += mockHandlers.Object.ChangedAttribute;
+
+            entity["test"]["n"] = null;
+            entity["test"]["n"] = null; // shouldn't cause AttributeChanged event
+            entity["test"]["n"] = 5;
+
+            mockHandlers.Verify(h => h.ChangedAttribute(It.IsAny<object>(),
+                It.IsAny<ChangedAttributeEventArgs>()), Times.Exactly(2));
         }
     }
 }

@@ -56,14 +56,18 @@ namespace FIVES
                 if (!Definition.ContainsAttributeDefinition(attributeName))
                     throw new KeyNotFoundException("Attribute is not present in the component definition.");
 
-                if (!Definition[attributeName].Type.IsAssignableFrom(value.GetType()))
+                if ((value == null && !CanBeAssignedNull(Definition[attributeName].Type))||
+                    (value != null && !Definition[attributeName].Type.IsAssignableFrom(value.GetType())))
                     throw new AttributeAssignmentException("Attribute can not be assigned from provided value.");
 
                 var oldValue = attributes[attributeName];
                 attributes[attributeName] = value;
 
                 if (ChangedAttribute != null)
-                    ChangedAttribute(this, new ChangedAttributeEventArgs(this, attributeName, oldValue, value));
+                {
+                    if ((oldValue == null && value != null) || (oldValue != null && !oldValue.Equals(value)))
+                        ChangedAttribute(this, new ChangedAttributeEventArgs(this, attributeName, oldValue, value));
+                }
             }
         }
 
@@ -90,6 +94,13 @@ namespace FIVES
             upgrader(this, newComponent);
             attributes = newComponent.attributes;
             Definition = newDefinition;
+        }
+
+        private static bool CanBeAssignedNull(Type type)
+        {
+            if (!type.IsValueType) return true; // ref-type
+            if (Nullable.GetUnderlyingType(type) != null) return true; // Nullable<T>
+            return false; // value-type
         }
 
         private void InitializeAttributes()
