@@ -38,9 +38,7 @@ namespace FIVES
         /// </summary>
         public Type Type { get; private set; }
 
-        // Necessary for persistance to initialize an empty objects. Values are set via private setters.
-        private ReadOnlyAttributeDefinition()
-        {
-        }
+        // Needed by persistence plugin.
+        internal ReadOnlyAttributeDefinition() { }
     }
 }

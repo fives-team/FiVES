@@ -37,8 +37,6 @@ namespace FIVES
     /// </summary>
     public sealed class ComponentDefinition : ReadOnlyComponentDefinition
     {
-        private ComponentDefinition() { }
-
         /// <summary>
         /// Constructs an instance of the ComponentDefinition.
         /// </summary>
@@ -124,14 +122,19 @@ namespace FIVES
             return attributeDefinitions.ContainsKey(attributeName);
         }
 
+        // Type converted from Dictionary<string, ReadOnlyAttributeDefinition> for persistence plugin.
         private IDictionary<string, ReadOnlyAttributeDefinition> attributeDefinitions =
             new Dictionary<string, ReadOnlyAttributeDefinition>();
 
+        // Needed by persistence plugin.
         private IDictionary<string, ReadOnlyAttributeDefinition> attributeDefinitionsHandler
         {
             get { return attributeDefinitions; }
             set { attributeDefinitions = value; }
         }
+
+        // Needed by persistence plugin.
+        internal ComponentDefinition() { }
     }
 }
 ;

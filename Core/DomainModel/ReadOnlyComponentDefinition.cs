@@ -46,6 +46,7 @@ namespace FIVES
             Name = name;
         }
 
+        // Needed by persistence plugin.
         internal ReadOnlyComponentDefinition() { }
     }
 }
