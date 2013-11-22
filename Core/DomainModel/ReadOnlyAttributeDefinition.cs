@@ -37,5 +37,10 @@ namespace FIVES
         /// Type of the attribute.
         /// </summary>
         public Type Type { get; private set; }
+
+        // Necessary for persistance to initialize an empty objects. Values are set via private setters.
+        private ReadOnlyAttributeDefinition()
+        {
+        }
     }
 }
