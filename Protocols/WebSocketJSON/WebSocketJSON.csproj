@@ -32,9 +32,6 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
-    <Reference Include="Newtonsoft.Json">
-      <HintPath>..\..\ThirdParty\Json50r6\Bin\Portable40\Newtonsoft.Json.dll</HintPath>
-    </Reference>
     <Reference Include="System.Configuration" />
     <Reference Include="SuperSocket.Common">
       <HintPath>..\..\ThirdParty\SuperWebSocket\Net40\Debug\SuperSocket.Common.dll</HintPath>
@@ -63,6 +60,9 @@
     </Reference>
     <Reference Include="WebSocket4Net">
       <HintPath>..\..\packages\WebSocket4Net.0.8\lib\net40\WebSocket4Net.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json">
+      <HintPath>..\..\packages\Newtonsoft.Json.5.0.6\lib\net40\Newtonsoft.Json.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
