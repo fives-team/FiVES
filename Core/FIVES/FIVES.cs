@@ -26,7 +26,7 @@ namespace FIVES
                 PluginManager.Instance.LoadPluginsFrom(pluginDir);
                 if (PluginManager.Instance.DeferredPlugins.Count > 0) {
                     StringBuilder logEntry = CreateDeferredPluginsLogEntry();
-                    logger.Warn(logEntry);
+                    logger.Info(logEntry);
                 }
             } else {
                 logger.Error("Plugin dir is not specified or does not exist");
