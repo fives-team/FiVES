@@ -10,22 +10,14 @@ namespace FIVES
     [TestFixture()]
     public class ComponentRegistryTest
     {
-        public interface IMockHandlers 
-        {
-            void UpgradedComponent(object sender, ComponentEventArgs e);
-        }
-
         // TODO: mock ComponentDefinition
         ComponentRegistry registry;
         ComponentDefinition definition;
-        Mock<IMockHandlers> mockHandlers;
 
         [SetUp()]
         public void Init()
         {
             registry = new ComponentRegistry();
-            mockHandlers = new Mock<IMockHandlers>();
-
             definition = new ComponentDefinition("test2");
             definition.AddAttribute<int>("a", 42);
         }

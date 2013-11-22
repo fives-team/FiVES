@@ -46,6 +46,9 @@
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
+    <Reference Include="Moq">
+      <HintPath>..\..\packages\Moq.4.1.1309.1617\lib\net40\Moq.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="IPluginInitializer.cs" />
@@ -59,7 +62,7 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\DomainModel\DomainModel.csproj">
-      <Project>{79ef699d-6a88-4054-af04-f22486db47fa}</Project>
+      <Project>{79EF699D-6A88-4054-AF04-F22486DB47FA}</Project>
       <Name>DomainModel</Name>
     </ProjectReference>
   </ItemGroup>
