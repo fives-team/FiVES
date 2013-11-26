@@ -26,7 +26,7 @@ namespace FIVES
                 PluginManager.Instance.LoadPluginsFrom(pluginDir);
                 if (PluginManager.Instance.DeferredPlugins.Count > 0) {
                     StringBuilder logEntry = CreateDeferredPluginsLogEntry();
-                    logger.Warn(logEntry);
+                    logger.Info(logEntry);
                 }
             } else {
                 logger.Error("Plugin dir is not specified or does not exist");
@@ -45,11 +45,12 @@ namespace FIVES
         private static StringBuilder CreateDeferredPluginsLogEntry()
         {
             StringBuilder logEntry = new StringBuilder();
-            logEntry.Append("Failed to load the following plugins due to missing dependencies:\n");
+            logEntry.Append("Loading of the following plugins was deferred due to missing dependencies:\n");
             foreach (var deferredPlugin in PluginManager.Instance.DeferredPlugins)
             {
-                logEntry.AppendFormat("{0}: (path: {1}, deps: {2})\n", deferredPlugin.Key,
-                    deferredPlugin.Value.path, String.Join(", ", deferredPlugin.Value.remainingDeps));
+                logEntry.AppendFormat("{0}: (path: {1}, plugin deps: {2}, component deps: {3})\n", deferredPlugin.Key,
+                    deferredPlugin.Value.path, String.Join(", ", deferredPlugin.Value.remainingPluginDeps),
+                    String.Join(", ", deferredPlugin.Value.remainingComponentDeps));
             }
             return logEntry;
         }

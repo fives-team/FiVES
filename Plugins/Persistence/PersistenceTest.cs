@@ -71,7 +71,6 @@ namespace PersistencePlugin
             Entity storedEntity = World.Instance.FindEntity(entity.Guid.ToString());
             Assert.AreEqual(42, storedEntity["myComponent"]["IntAttribute"]);
             Assert.AreEqual("Hello World!", storedEntity["myComponent"]["StringAttribute"]);
-            Assert.AreEqual(1, storedEntity["myComponent"].Definition.Version);
         }
 
         [Test()]
@@ -107,47 +106,6 @@ namespace PersistencePlugin
             plugin.RetrieveEntitiesFromDatabase ();
 
             Assert.False(entityRegistry.Contains(entity));
-        }
-
-        [Ignore()]
-        [Test()]
-        public void ShouldPersistUpgradedEntity() {
-
-            string name = "ComponentToUpgrade";
-
-            ComponentDefinition componentToUpgrade = new ComponentDefinition(name);
-            componentToUpgrade.AddAttribute<int>("i");
-            componentToUpgrade.AddAttribute<float>("f");
-            componentToUpgrade.AddAttribute<string>("s");
-            componentToUpgrade.AddAttribute<bool>("b");
-            componentRegistry.Register(componentToUpgrade);
-
-            Entity entity = new Entity ();
-
-            entityRegistry.Add (entity);
-            entity[name]["i"] = 42;
-            entity[name]["f"] = 3.14f;
-            entity[name]["s"] = "foobar";
-            entity[name]["b"] = false;
-
-            ComponentDefinition componentToUpgrade2 = new ComponentDefinition(name, 2);
-            componentToUpgrade2.AddAttribute<int>("i");
-            componentToUpgrade2.AddAttribute<float>("f");
-            componentToUpgrade2.AddAttribute<string>("s");
-            componentToUpgrade2.AddAttribute<bool>("b");
-            componentRegistry.Upgrade(componentToUpgrade2, TestUpgrader);
-
-            plugin.RetrieveEntitiesFromDatabase ();
-
-            Assert.IsTrue(entityRegistry.Contains(entity));
-
-            Entity retrievedEntity = entityRegistry.FindEntity (entity.Guid.ToString());
-
-            Assert.AreEqual(retrievedEntity[name]["i"], 3);
-            Assert.AreEqual(retrievedEntity[name]["f"], 42);
-            Assert.IsNull(retrievedEntity[name]["s"]);
-            Assert.AreEqual(retrievedEntity[name]["b"], false);
-
         }
 
         public static void TestUpgrader(Component oldComponent, Component newComponent) {

@@ -76,24 +76,12 @@ namespace FIVES
         /// </summary>
         public event EventHandler<ChangedAttributeEventArgs> ChangedAttribute;
 
-        internal Component()
-        {
-        }
-
         internal Component(ReadOnlyComponentDefinition definition, Entity containingEntity)
         {
             Guid = Guid.NewGuid();
             ContainingEntity = containingEntity;
             Definition = definition;
             InitializeAttributes();
-        }
-
-        internal void Upgrade(ReadOnlyComponentDefinition newDefinition, ComponentUpgrader upgrader)
-        {
-            Component newComponent = new Component(newDefinition, ContainingEntity);
-            upgrader(this, newComponent);
-            attributes = newComponent.attributes;
-            Definition = newDefinition;
         }
 
         private static bool CanBeAssignedNull(Type type)
@@ -110,6 +98,9 @@ namespace FIVES
                 attributes.Add(attributeDefinition.Name, attributeDefinition.DefaultValue);
         }
 
-        private IDictionary<string, object> attributes {get; set;}
+        private IDictionary<string, object> attributes { get; set; }
+
+        // Needed by persistence plugin.
+        internal Component() { }
     }
 }

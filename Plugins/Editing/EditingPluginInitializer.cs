@@ -13,14 +13,28 @@ namespace EditingNamespace
     {
         #region IPluginInitializer implementation
 
-        public string GetName()
+        public string Name
         {
-            return "Editing";
+            get
+            {
+                return "Editing";
+            }
         }
 
-        public List<string> GetDependencies()
+        public List<string> PluginDependencies
         {
-            return new List<string>() { "Renderable" };
+            get
+            {
+                return new List<string> { "Renderable" };
+            }
+        }
+
+        public List<string> ComponentDependencies
+        {
+            get
+            {
+                return new List<string> { "position", "orientation", "scale", "meshResource" };
+            }
         }
 
         public void Initialize()

@@ -29,14 +29,17 @@ namespace FIVES
 
         public PluginManager()
         {
-            OnAnyPluginInitialized += UpdateDeferredPlugins;
+            OnAnyPluginInitialized += HandleInitializedPlugin;
             OnAnyPluginInitialized += (sender, e) => Logger.Debug("Loaded plugin {0}", e.pluginName);
+
+            ComponentRegistry.Instance.RegisteredComponent += HandleRegistredComponent;
         }
 
         public struct LoadedPluginInfo {
             public string path;
             public IPluginInitializer initializer;
-            public List<string> remainingDeps;
+            public List<string> remainingPluginDeps;
+            public List<string> remainingComponentDeps;
         }
 
         private List<string> AttemptedFilenames = new List<string>();
@@ -89,7 +92,7 @@ namespace FIVES
                     info.initializer = (IPluginInitializer)Activator.CreateInstance(initializerType);
 
                     // Check if plugin with the same name was already loaded.
-                    name = info.initializer.GetName();
+                    name = info.initializer.Name;
                     if (LoadedPlugins.ContainsKey(name)) {
                         Logger.Warn("Cannot load plugin from " + path + ". Plugin with the same name '" + name +
                                     "' was already loaded from " + LoadedPlugins[name].path + ".");
@@ -97,9 +100,12 @@ namespace FIVES
                     }
 
                     // Check if plugin has all required dependencies.
-                    var dependencies = info.initializer.GetDependencies();
-                    info.remainingDeps = dependencies.FindAll(depencency => !LoadedPlugins.ContainsKey(depencency));
-                    if (info.remainingDeps.Count > 0) {
+                    info.remainingPluginDeps =
+                        info.initializer.PluginDependencies.FindAll(plugin => !LoadedPlugins.ContainsKey(plugin));
+                    info.remainingComponentDeps = info.initializer.ComponentDependencies.FindAll(
+                        component => ComponentRegistry.Instance.FindComponentDefinition(component) == null);
+
+                    if (info.remainingPluginDeps.Count > 0 || info.remainingComponentDeps.Count > 0) {
                         DeferredPlugins.Add(name, info);
                         return;
                     }
@@ -127,19 +133,42 @@ namespace FIVES
 
         /// <summary>
         /// Updates deferred plugins by removing <paramref name="loadedPlugin"/> from the list of their remaining
-        /// dependecies. Plugins that have no other remaining dependencies are initialized.
+        /// dependecies.
         /// </summary>
         /// <param name="loadedPlugin">Loaded plugin name.</param>
-        private void UpdateDeferredPlugins(Object sender, PluginInitializedEventArgs e)
+        private void HandleInitializedPlugin(Object sender, PluginInitializedEventArgs e)
         {
             // Iterate over deferred plugins and remove |loadedPlugin| from the list of dependencies.
             foreach (var info in DeferredPlugins.Values)
-                info.remainingDeps.Remove(e.pluginName);
+                info.remainingPluginDeps.Remove(e.pluginName);
 
+            LoadDeferredPluginsWithNoDeps();
+        }
+
+        /// <summary>
+        /// Updates deferred plugins by removing <paramref name="loadedPlugin"/> from the list of their remaining
+        /// dependecies.
+        /// </summary>
+        /// <param name="loadedPlugin">Loaded plugin name.</param>
+        private void HandleRegistredComponent(Object sender, RegisteredComponentEventArgs e)
+        {
+            // Iterate over deferred plugins and remove |loadedPlugin| from the list of dependencies.
+            foreach (var info in DeferredPlugins.Values)
+                info.remainingComponentDeps.Remove(e.ComponentDefinition.Name);
+
+            LoadDeferredPluginsWithNoDeps();
+        }
+
+        /// <summary>
+        /// Loads plugins from the deferred list that have no deps.
+        /// </summary>
+        private void LoadDeferredPluginsWithNoDeps()
+        {
             // Find plugins that have no other dependencies.
             Dictionary<string, LoadedPluginInfo> pluginsWithNoDeps = new Dictionary<string, LoadedPluginInfo>();
-            foreach (var plugin in DeferredPlugins) {
-                if (plugin.Value.remainingDeps.Count == 0)
+            foreach (var plugin in DeferredPlugins)
+            {
+                if (plugin.Value.remainingPluginDeps.Count == 0 && plugin.Value.remainingComponentDeps.Count == 0)
                     pluginsWithNoDeps.Add(plugin.Key, plugin.Value);
             }
 
@@ -148,13 +177,17 @@ namespace FIVES
                 DeferredPlugins.Remove(entry.Key);
 
             // Initialize these plugins and move them to loadedPlugins dictionary.
-            foreach (var entry in pluginsWithNoDeps) {
+            foreach (var entry in pluginsWithNoDeps)
+            {
                 string name = entry.Key;
                 LoadedPluginInfo pluginInfo = entry.Value;
 
-                try {
+                try
+                {
                     pluginInfo.initializer.Initialize();
-                } catch (Exception ex) {
+                }
+                catch (Exception ex)
+                {
                     Logger.WarnException("Exception occured during initialization of " + name + " plugin.", ex);
                     DeferredPlugins.Remove(name);
                     return;
@@ -172,7 +205,7 @@ namespace FIVES
         /// <param name="pluginDirectory">Directory in which plugins are too be looked for.</param>
         public void LoadPluginsFrom(string pluginDirectory)
         {
-            string[] files = Directory.GetFiles(pluginDirectory);
+            string[] files = Directory.GetFiles(pluginDirectory, "*.dll");
             foreach (string filename in files)
                 LoadPlugin(filename);
         }

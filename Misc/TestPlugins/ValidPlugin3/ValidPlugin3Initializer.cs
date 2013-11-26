@@ -4,31 +4,31 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace ValidPlugin2
+namespace ValidPlugin3
 {
-    public class ValidPlugin2Initializer : IPluginInitializer
+    public class ValidPlugin3Initializer : IPluginInitializer
     {
         public string Name
         {
-            get
+            get 
             {
-                return "ValidPlugin2";
+                return "ValidPlugin3";
             }
         }
 
         public List<string> PluginDependencies
         {
-            get
+            get 
             {
-                return new List<string> { "ValidPlugin1" };
+                return new List<string>();
             }
         }
 
         public List<string> ComponentDependencies
         {
-            get
+            get 
             {
-                return new List<string>();
+                return new List<string> { "testComponentForValidPlugin3" };
             }
         }
 

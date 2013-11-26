@@ -11,8 +11,8 @@ namespace FIVES
     {
         class ReadOnlyComponentDefinitionImpl : ReadOnlyComponentDefinition
         {
-            public ReadOnlyComponentDefinitionImpl() : base("test-name", 3) 
-            { 
+            public ReadOnlyComponentDefinitionImpl() : base("test-name", Guid.NewGuid())
+            {
             }
 
             public override ReadOnlyCollection<ReadOnlyAttributeDefinition> AttributeDefinitions
@@ -50,12 +50,6 @@ namespace FIVES
         public void ShouldReturnCorrectName()
         {
             Assert.AreEqual("test-name", definition.Name);
-        }
-
-        [Test()]
-        public void ShouldReturnCorrectVersion()
-        {
-            Assert.AreEqual(3, definition.Version);
         }
     }
 }

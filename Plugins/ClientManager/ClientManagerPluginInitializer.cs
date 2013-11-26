@@ -12,16 +12,29 @@ namespace ClientManagerPlugin {
     {
         #region IPluginInitializer implementation
 
-        public string GetName()
+        public string Name
         {
-            return "ClientManager";
+            get
+            {
+                return "ClientManager";
+            }
         }
 
-        public List<string> GetDependencies()
+        public List<string> PluginDependencies
         {
-            return new List<string>() { "Auth" };
+            get
+            {
+                return new List<string> { "KIARA", "Auth" };
+            }
         }
 
+        public List<string> ComponentDependencies
+        {
+            get
+            {
+                return new List<string> { "position", "orientation", "scale", "meshResource" };
+            }
+        }
         public void Initialize()
         {
         }

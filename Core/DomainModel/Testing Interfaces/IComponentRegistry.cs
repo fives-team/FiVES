@@ -12,8 +12,6 @@ namespace FIVES
     {
         ReadOnlyCollection<ReadOnlyComponentDefinition> RegisteredComponents { get; }
         void Register(ComponentDefinition definition);
-        void Upgrade(ComponentDefinition newDefinition, ComponentUpgrader upgrader);
         ReadOnlyComponentDefinition FindComponentDefinition(string componentName);
-        event EventHandler<ComponentEventArgs> UpgradedComponent;
     }
 }

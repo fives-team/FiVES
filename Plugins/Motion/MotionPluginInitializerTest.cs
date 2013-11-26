@@ -25,19 +25,6 @@ namespace MotionPlugin
         {
             Assert.IsNotNull(ComponentRegistry.Instance.FindComponentDefinition("rotVelocity"));
         }
-
-        [Test()]
-        public void ShouldReturnCorrectName()
-        {
-            Assert.AreEqual("Motion", plugin.GetName());
-        }
-
-        [Test()]
-        public void ShouldReturnCorrectDeps()
-        {
-            Assert.AreEqual(plugin.GetDependencies().Count, 1);
-            Assert.Contains("Location", plugin.GetDependencies());
-        }
     }
 }
 

@@ -53,6 +53,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ValidPlugin1", "Misc\TestPl
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Scalability", "Plugins\Scalability\Scalability.csproj", "{1B8D92BC-677F-43EA-BB5A-17E0A3BCE534}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ValidPlugin3", "Misc\TestPlugins\ValidPlugin3\ValidPlugin3.csproj", "{B698B7A2-8E46-4D92-9229-1A68F8BFC545}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -143,6 +145,10 @@ Global
 		{1B8D92BC-677F-43EA-BB5A-17E0A3BCE534}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1B8D92BC-677F-43EA-BB5A-17E0A3BCE534}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1B8D92BC-677F-43EA-BB5A-17E0A3BCE534}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B698B7A2-8E46-4D92-9229-1A68F8BFC545}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B698B7A2-8E46-4D92-9229-1A68F8BFC545}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B698B7A2-8E46-4D92-9229-1A68F8BFC545}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B698B7A2-8E46-4D92-9229-1A68F8BFC545}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -170,6 +176,7 @@ Global
 		{7A706737-1B7B-460E-880B-E8C737C0AB04} = {4493E16B-2266-45D8-A0B5-F998EF9B790E}
 		{6190805B-0E95-49AC-9C08-70AB7E833B03} = {4493E16B-2266-45D8-A0B5-F998EF9B790E}
 		{1B829184-E0FE-4FEA-84DB-96051D1F74A6} = {4493E16B-2266-45D8-A0B5-F998EF9B790E}
+		{B698B7A2-8E46-4D92-9229-1A68F8BFC545} = {4493E16B-2266-45D8-A0B5-F998EF9B790E}
 	EndGlobalSection
 	GlobalSection(MonoDevelopProperties) = preSolution
 		StartupItem = Core\FIVES\FIVES.csproj

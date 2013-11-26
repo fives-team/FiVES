@@ -307,7 +307,7 @@ namespace WebSocketJSON
 
         private void HandleCallReply(List<JToken> data)
         {
-            int callID = Convert.ToInt32(data[1]);
+            int callID = (int)data[1];
             if (activeCalls.ContainsKey(callID))
             {
                 bool success = data[2].ToObject<bool>();

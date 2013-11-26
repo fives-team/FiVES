@@ -22,11 +22,6 @@ namespace FIVES
         public string Name { get; private set; }
 
         /// <summary>
-        /// Version of the component.
-        /// </summary>
-        public int Version { get; private set; }
-
-        /// <summary>
         /// A collection of attribute definitions.
         /// </summary>
         public abstract ReadOnlyCollection<ReadOnlyAttributeDefinition> AttributeDefinitions { get; }
@@ -45,13 +40,13 @@ namespace FIVES
         /// <returns>True if definition for such attribute is present, false otherwise.</returns>
         public abstract bool ContainsAttributeDefinition(string attributeName);
 
-        internal ReadOnlyComponentDefinition(string name, int version)
+        internal ReadOnlyComponentDefinition(string name, Guid guid)
         {
-            Guid = Guid.NewGuid();
+            Guid = guid;
             Name = name;
-            Version = version;
         }
 
+        // Needed by persistence plugin.
         internal ReadOnlyComponentDefinition() { }
     }
 }

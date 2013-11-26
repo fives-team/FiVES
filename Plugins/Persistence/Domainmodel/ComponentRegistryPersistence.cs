@@ -18,7 +18,7 @@ namespace PersistencePlugin
             foreach (KeyValuePair<string, ReadOnlyComponentDefinition> definitionPair in this.OwnerRegisteredComponents)
             {
                 ReadOnlyComponentDefinition roDefinition = definitionPair.Value;
-                ComponentDefinition definition = new ComponentDefinition(roDefinition.Name, roDefinition.Version);
+                ComponentDefinition definition = new ComponentDefinition(roDefinition.Name);
                 foreach (ReadOnlyAttributeDefinition attrDef in definition.AttributeDefinitions)
                     definition.AddAttribute(attrDef.Name, attrDef.Type, attrDef.DefaultValue);
                 Registry.Register (definition);

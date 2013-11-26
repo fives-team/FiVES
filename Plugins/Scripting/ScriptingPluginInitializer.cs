@@ -11,22 +11,28 @@ namespace ScriptingPlugin
     {
         #region IPluginInitializer implementation
 
-        /// <summary>
-        /// Returns the name of the plugin.
-        /// </summary>
-        /// <returns>The name of the plugin.</returns>
-        public string GetName()
+        public string Name
         {
-            return "Scripting";
+            get
+            {
+                return "Scripting";
+            }
         }
 
-        /// <summary>
-        /// Returns the list of names of the plugins that this plugin depends on.
-        /// </summary>
-        /// <returns>The list of names of the plugins that this plugin depends on.</returns>
-        public List<string> GetDependencies()
+        public List<string> PluginDependencies
         {
-            return new List<string>();
+            get
+            {
+                return new List<string>();
+            }
+        }
+
+        public List<string> ComponentDependencies
+        {
+            get
+            {
+                return new List<string>();
+            }
         }
 
         /// <summary>

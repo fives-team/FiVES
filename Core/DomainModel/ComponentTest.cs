@@ -16,7 +16,7 @@ namespace FIVES
         public void Init()
         {
             // Set up definition.
-            definition = new ComponentDefinition("test-component", 1);
+            definition = new ComponentDefinition("test-component");
             definition.AddAttribute<string>("a", "a_value");
             definition.AddAttribute<float>("b", 3.14f);
 
@@ -87,25 +87,6 @@ namespace FIVES
             Assert.AreEqual(b.GetType(), typeof(float));
             Assert.AreEqual(a, "a_value");
             Assert.AreEqual(b, 3.14f);
-        }
-
-        [Test()]
-        public void ShouldUpgradeAttributes()
-        {
-            component["b"] = 2f;
-
-            // Create new definition
-            ComponentDefinition newDefinition = new ComponentDefinition("test-component", 2); // TODO: mock
-            newDefinition.AddAttribute<string>("a2", "");
-            newDefinition.AddAttribute<float>("b", 0.0f);
-
-            component.Upgrade(newDefinition, (comp1, comp2) => { 
-                comp2["a2"] = comp1["a"]; 
-                comp2["b"] = 1 / (float)comp1["b"]; 
-            });
-
-            Assert.AreEqual(component["a2"], "a_value");
-            Assert.AreEqual(component["b"], 0.5f);
         }
     }
 }

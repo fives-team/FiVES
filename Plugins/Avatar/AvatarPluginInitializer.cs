@@ -10,14 +10,28 @@ namespace AvatarPlugin
     {
         #region IPluginInitializer implementation
 
-        public string GetName ()
+        public string Name
         {
-            return "Avatar";
+            get
+            {
+                return "Avatar";
+            }
         }
 
-        public List<string> GetDependencies ()
+        public List<string> PluginDependencies
         {
-            return new List<string> { "ClientManager", "Auth", "Renderable", "Motion" };
+            get
+            {
+                return new List<string> { "ClientManager", "Auth" };
+            }
+        }
+
+        public List<string> ComponentDependencies
+        {
+            get
+            {
+                return new List<string> { "meshResource", "scale", "velocity", "rotVelocity" };
+            }
         }
 
         public void Initialize ()

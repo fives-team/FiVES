@@ -82,9 +82,15 @@ namespace FIVES
         }
 
         [Test()]
-        public void ShouldCorrectlyLoadTwoPluginsWhoseDepsWereResolvedAtTheSameTime()
+        public void ShouldLoadPluginWhenComponentDependenciesAreSatisfied()
         {
-            // TODO
+            pm.LoadPlugin(pathToPlugins + "ValidPlugin3.dll");
+            Assert.IsFalse(pm.IsPathLoaded(pathToPlugins + "ValidPlugin3.dll"));
+            Assert.IsFalse(pm.IsPluginLoaded("ValidPlugin3"));
+            // TODO: mock
+            ComponentRegistry.Instance.Register(new ComponentDefinition("testComponentForValidPlugin3"));
+            Assert.IsTrue(pm.IsPathLoaded(pathToPlugins + "ValidPlugin3.dll"));
+            Assert.IsTrue(pm.IsPluginLoaded("ValidPlugin3"));
         }
     }
 }

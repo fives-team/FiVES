@@ -12,20 +12,35 @@ namespace LocationPlugin
     {
         #region IPluginInitializer implementation
 
-        public string GetName()
+        public string Name
         {
-            return "Location";
+            get
+            {
+                return "Location";
+            }
         }
 
-        public List<string> GetDependencies()
+        public List<string> PluginDependencies
         {
-            return new List<string>();
+            get
+            {
+                return new List<string>();
+            }
+        }
+
+        public List<string> ComponentDependencies
+        {
+            get
+            {
+                return new List<string>();
+            }
         }
 
         public void Initialize()
         {
             DefineComponents();
-            RegisterClientServices();
+
+            PluginManager.Instance.AddPluginLoadedHandler("ClientManager", RegisterClientServices);
         }
 
         #endregion
@@ -53,11 +68,9 @@ namespace LocationPlugin
 
         void RegisterClientServices()
         {
-            PluginManager.Instance.AddPluginLoadedHandler("ClientManager", delegate {
-                ClientManager.Instance.RegisterClientService("location", true, new Dictionary<string, Delegate> {
-                    {"updatePosition", (Action<string, string, Vector, int>) UpdatePosition},
-                    {"updateOrientation", (Action<string, string, Quat, int>) UpdateOrientation}
-                });
+            ClientManager.Instance.RegisterClientService("location", true, new Dictionary<string, Delegate> {
+                {"updatePosition", (Action<string, string, Vector, int>) UpdatePosition},
+                {"updateOrientation", (Action<string, string, Quat, int>) UpdateOrientation}
             });
         }
 

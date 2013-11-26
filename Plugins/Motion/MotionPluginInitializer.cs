@@ -10,21 +10,36 @@ namespace MotionPlugin
     {
         #region IPluginInitializer implementation
 
-        public string GetName()
+        public string Name
         {
-            return "Motion";
+            get
+            {
+                return "Motion";
+            }
         }
 
-        public List<string> GetDependencies()
+        public List<string> PluginDependencies
         {
-            return new List<string> { "Location" };
+            get
+            {
+                return new List<string>();
+            }
+        }
+
+        public List<string> ComponentDependencies
+        {
+            get
+            {
+                return new List<string> { "position", "orientation" };
+            }
         }
 
         public void Initialize()
         {
             DefineComponents();
-            RegisterClientServices();
             RegisterEntityEvents();
+
+            PluginManager.Instance.AddPluginLoadedHandler("ClientManager", RegisterClientServices);
         }
 
         #endregion
@@ -49,10 +64,8 @@ namespace MotionPlugin
 
         void RegisterClientServices()
         {
-            PluginManager.Instance.AddPluginLoadedHandler("ClientManager", delegate {
-                ClientManager.Instance.RegisterClientService("motion", true, new Dictionary<string, Delegate> {
-                        {"update", (Action<string, Vector, RotVelocity, int>) Update}
-                    });
+            ClientManager.Instance.RegisterClientService("motion", true, new Dictionary<string, Delegate> {
+                {"update", (Action<string, Vector, RotVelocity, int>) Update}
             });
         }
 

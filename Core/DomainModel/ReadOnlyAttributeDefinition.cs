@@ -10,6 +10,14 @@ namespace FIVES
     /// </summary>
     public sealed class ReadOnlyAttributeDefinition
     {
+        public ReadOnlyAttributeDefinition(string name, Type type, object defaultValue, Guid guid)
+        {
+            Guid = guid;
+            Name = name;
+            Type = type;
+            DefaultValue = defaultValue;
+        }
+
         /// <summary>
         /// GUID that identifies this attribute definition.
         /// </summary>
@@ -30,14 +38,7 @@ namespace FIVES
         /// </summary>
         public Type Type { get; private set; }
 
-        internal ReadOnlyAttributeDefinition(string name, Type type, object defaultValue)
-        {
-            Guid = Guid.NewGuid();
-            Name = name;
-            Type = type;
-            DefaultValue = defaultValue;
-        }
-
+        // Needed by persistence plugin.
         internal ReadOnlyAttributeDefinition() { }
     }
 }

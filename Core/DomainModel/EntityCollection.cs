@@ -101,10 +101,7 @@ namespace FIVES
             return entities[guid];
         }
 
-        internal EntityCollection()
-        {
-        }
-
+        // Needed by persistence plugin.
         internal EntityCollection(ICollection<Entity> entityCollection)
         {
             foreach (Entity entity in entityCollection)
@@ -112,6 +109,9 @@ namespace FIVES
                 entities.Add(entity.Guid, entity);
             }
         }
+
+        // Needed for testing.
+        internal EntityCollection() { }
 
         private void HandleAdded(Entity entity)
         {

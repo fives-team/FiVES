@@ -13,6 +13,19 @@ struct EntitySyncInfo {
     map<AttributePath, ComponentSyncInfo> Components;  // FIXME: there is no map in KIARA, find out what should be here
 }
 
+struct AttributeDef {
+    string Guid;
+    string Name;
+    any DefaultValue;
+    string Type;  // contains AssemblyQualifiedName of the type
+}
+
+struct ComponentDef {
+    string Guid;
+    string Name;
+    array<AttributeDef> AttributeDefs;
+}
+
 service sync {
     // Called by client on the server to initiate communication. Transmits the client's SyncID to server and signals
     // that all other methods of the interface have been registered and ready to be called.
@@ -40,4 +53,10 @@ service sync {
     // @param guid Guid of the affected entity.
     // @param changedAttributes Collection of the affected attributes with their sync info.
     void changeAttributes(string guid, EntitySyncInfo changedAttributes);
+
+    // Called to notify the other parties that a plugin handling given component definition has been loaded remotely.
+    // The receving side should register the component locally and remove this component from the deferred plugins'
+    // dependencies.
+    // @param definition Component definition.
+    void registerComponentDefinition(ComponentDefinition definition);
 }
