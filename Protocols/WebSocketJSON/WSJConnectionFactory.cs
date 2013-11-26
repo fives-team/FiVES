@@ -4,6 +4,7 @@ using Newtonsoft.Json.Linq;
 using WebSocket4Net;
 using System.Net;
 using NLog;
+using SuperSocket.SocketBase.Config;
 
 namespace WebSocketJSON
 {
@@ -36,18 +37,25 @@ namespace WebSocketJSON
         {
             ValidateProtocolName(serverConfig);
 
-            int port = ProtocolUtils.retrieveProtocolSetting(serverConfig, "port", 34837);
+            ServerConfig config = new ServerConfig();
+            config.Port = ProtocolUtils.retrieveProtocolSetting(serverConfig, "port", 34837);
+            config.MaxRequestLength = 100000;
+
             string host = ProtocolUtils.retrieveProtocolSetting(serverConfig, "host", "Any");
-            string ip = "Any";
-            if (host != "Any") {
-                IPAddress[] ipAddresses =  Dns.GetHostAddresses(host);
+            if (host != "Any")
+            {
+                IPAddress[] ipAddresses = Dns.GetHostAddresses(host);
                 if (ipAddresses.Length == 0)
                     throw new Error(ErrorCode.CONNECTION_ERROR, "Cannot identify IP address by hostname.");
-                ip = ipAddresses[0].ToString();  // we take first entry as it does not matter which one is used
+                config.Ip = ipAddresses[0].ToString();  // we take first entry as it does not matter which one is used
+            }
+            else
+            {
+                config.Ip = "Any";
             }
 
             IWSJServer server = wsjServerFactory.Construct(onNewClient);
-            server.Setup(ip, port);
+            server.Setup(config);
             server.Start();
         }
 

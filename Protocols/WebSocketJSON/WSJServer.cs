@@ -8,16 +8,17 @@ using SuperSocket.SocketBase.Protocol;
 using SuperSocket.SocketBase.Command;
 using SuperSocket.SocketBase.Logging;
 using SuperWebSocket.Protocol;
+using SuperSocket.SocketBase.Config;
 
 namespace WebSocketJSON
 {
     #region Testing
     public interface IWSJServer
     {
-        bool Setup(string ip, int port, ISocketServerFactory socketServerFactory = null,
-                   IReceiveFilterFactory<IWebSocketFragment> receiveFilterFactory = null, ILogFactory logFactory = null,
-                   IEnumerable<IConnectionFilter> connectionFilters = null,
-                   IEnumerable<ICommandLoader> commandLoaders = null);
+        bool Setup(IServerConfig config, ISocketServerFactory socketServerFactory = null,
+            IReceiveFilterFactory<IWebSocketFragment> receiveFilterFactory = null, ILogFactory logFactory = null,
+            IEnumerable<IConnectionFilter> connectionFilters = null,
+            IEnumerable<SuperSocket.SocketBase.Command.ICommandLoader> commandLoaders = null);
         bool Start();
     }
     #endregion
@@ -33,9 +34,12 @@ namespace WebSocketJSON
         /// <param name="onNewClient">The handler to be called for each new client.</param>
         public WSJServer(Action<Connection> onNewClient)
         {
-            NewSessionConnected += (session) => onNewClient(new WSJConnection(session));
+            NewSessionConnected += (session) =>
+            {
+                session.SocketSession.Closed += (genericSession, reason) => session.HandleClosed(reason.ToString());
+                onNewClient(new WSJConnection(session));
+            };
             NewMessageReceived += (session, value) => session.HandleMessageReceived(value);
-            SessionClosed += (session, reason) => session.HandleClosed(reason.ToString());
         }
     }
 }

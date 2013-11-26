@@ -3,6 +3,7 @@ using System;
 using Moq;
 using KIARAPlugin;
 using Newtonsoft.Json;
+using SuperSocket.SocketBase.Config;
 
 namespace WebSocketJSON
 {
@@ -54,7 +55,8 @@ namespace WebSocketJSON
         public void ShouldUsePortAndIpFromConfig()
         {
             factory.StartServer(configWithIpAndPort, null, mockHandlers.Object.NewClient);
-            mockWSJServer.Verify(s => s.Setup("127.0.0.1", 1234, null, null, null, null, null), Times.Once());
+            mockWSJServer.Verify(s => s.Setup(It.Is<IServerConfig>(c => c.Ip == "127.0.0.1" && c.Port == 1234), null,
+                null, null, null, null), Times.Once());
 
             mockWebSocketFactory.Setup(f => f.Construct("ws://127.0.0.1:1234/")).Returns(mockWebSocket.Object);
             factory.OpenConnection(configWithIpAndPort, null, mockHandlers.Object.OnConnected);
@@ -65,7 +67,16 @@ namespace WebSocketJSON
         public void ShouldUseDefaultPortAndIpForServerIfNotInConfig()
         {
             factory.StartServer(config, null, mockHandlers.Object.NewClient);
-            mockWSJServer.Verify(s => s.Setup("Any", 34837, null, null, null, null, null), Times.Once());
+            mockWSJServer.Verify(s => s.Setup(It.Is<IServerConfig>(c => c.Ip == "Any" && c.Port == 34837), null, null,
+                null, null, null), Times.Once());
+        }
+
+        [Test()]
+        public void ShouldSetMaxRequestLengthTo100000InConfig()
+        {
+            factory.StartServer(config, null, mockHandlers.Object.NewClient);
+            mockWSJServer.Verify(s => s.Setup(It.Is<IServerConfig>(c => c.MaxRequestLength == 100000), null, null,
+                null, null, null), Times.Once());
         }
 
         [Test()]
