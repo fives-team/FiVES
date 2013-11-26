@@ -9,7 +9,6 @@ using System.Threading;
 
 namespace PersistencePlugin
 {
-    [Ignore()]
     [TestFixture()]
     public class PersistenceTest
     {
@@ -42,6 +41,7 @@ namespace PersistencePlugin
             new SchemaExport (cfg).Execute (true, true, false);
         }
 
+        [Ignore()]
         [Test()]
         public void ShouldStoreAndRetrieveComponent()
         {
@@ -73,6 +73,7 @@ namespace PersistencePlugin
             Assert.AreEqual("Hello World!", storedEntity["myComponent"]["StringAttribute"]);
         }
 
+        [Ignore()]
         [Test()]
         public void ShouldStoreAndRetrieveEntities()
         {
@@ -88,6 +89,7 @@ namespace PersistencePlugin
             Assert.True(World.Instance.Contains(entity));
         }
 
+        [Ignore()]
         [Test()]
         public void ShouldDeleteEntity()
         {
