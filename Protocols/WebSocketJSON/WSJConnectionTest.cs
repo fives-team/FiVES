@@ -203,9 +203,18 @@ namespace WebSocketJSON
         [Test()]
         public void ShouldCorrectlySupplyConnectionParameter()
         {
-            connection.RegisterHandler("testFunc", (Action<Connection, int, string>)mockHandlers.Object.TestFuncWithConn);
+            connection.RegisterHandler("testFunc",
+                                       (Action<Connection, int, string>)mockHandlers.Object.TestFuncWithConn);
             connection.HandleMessage("['call',0,'testFunc',[],42,'test-string']");
             mockHandlers.Verify(h => h.TestFuncWithConn(connection, 42, "test-string"), Times.Once());
+        }
+
+        [Test()]
+        public void ShouldCorrectlyHandleFloatAndDoubleNaNAndInfinity()
+        {
+            connection.CallFunc("testFunc", float.NaN, float.PositiveInfinity, float.NegativeInfinity, double.NaN,
+                                double.PositiveInfinity, double.NegativeInfinity);
+            Assert.AreEqual("[\"call\",0,\"testFunc\",[],null,null,null,null,null,null]", connection.sentMessages[0]);
         }
 
         // TODO: Should process IDL (when implemented).

@@ -78,6 +78,7 @@
     <Compile Include="WSJConnectionTest.cs" />
     <Compile Include="TestingWrappers.cs" />
     <Compile Include="WSJConnectionFactoryTest.cs" />
+    <Compile Include="StandardFloatConverter.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

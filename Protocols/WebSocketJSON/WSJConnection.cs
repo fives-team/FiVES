@@ -114,6 +114,7 @@ namespace WebSocketJSON
         internal WSJConnection()
         {
             settings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
+            settings.Converters.Add(new StandardFloatConverter());
         }
 
         internal void HandleClosed(object sender, EventArgs e)
