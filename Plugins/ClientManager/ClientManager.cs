@@ -48,30 +48,16 @@ namespace ClientManagerPlugin
 
         Dictionary<string, object> ConstructEntityInfo(Entity entity)
         {
-            // TODO: Generalize
-            var entityInfo = new Dictionary<string, object> {
-                { "guid", entity.Guid.ToString() },
-                { "position", new Dictionary<string, object> {
-                    { "x", entity["position"]["x"] },
-                    { "y", entity["position"]["y"] },
-                    { "z", entity["position"]["z"] },
-                }},
-                { "orientation", new Dictionary<string, object> {
-                    { "x", entity["orientation"]["x"] },
-                    { "y", entity["orientation"]["y"] },
-                    { "z", entity["orientation"]["z"] },
-                    { "w", entity["orientation"]["w"] }
-                }},
-                { "scale", new Dictionary<string, object> {
-                    { "x", entity["scale"]["x"] },
-                    { "y", entity["scale"]["y"] },
-                    { "z", entity["scale"]["z"] },
-                }},
-                { "meshResource", new Dictionary<string, object> {
-                    { "meshURI", entity["meshResource"]["uri"] },
-                    { "visible", entity["meshResource"]["visible"] },
-                }},
-            };
+            var entityInfo = new Dictionary<string, object>();
+            entityInfo["guid"] = entity.Guid;
+
+            foreach (Component component in entity.Components)
+            {
+                var componentInfo = new Dictionary<string, object>();
+                foreach (ReadOnlyAttributeDefinition attrDefinition in component.Definition.AttributeDefinitions)
+                    componentInfo[attrDefinition.Name] = component[attrDefinition.Name];
+                entityInfo[component.Name] = componentInfo;
+            }
 
             return entityInfo;
         }

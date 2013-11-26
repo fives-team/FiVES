@@ -18,10 +18,10 @@ FIVES.Models = FIVES.Models || {};
         // meshResouce.meshURI should actually be assigned to meshResource.uri.
         // All uses of these properties must be updated respectively.
         this.guid = entityDocument.guid;
-        this.position = entityDocument.position;
-        this.orientation = entityDocument.orientation;
-        this.scale= entityDocument.scale;
-        this.meshResource = entityDocument.meshResource;
+        this.position = entityDocument.position || {x:0,y:0,z:0};
+        this.orientation = entityDocument.orientation || {x:0,y:0,z:0,w:1};
+        this.scale= entityDocument.scale|| {x:1,y:1,z:1};
+        this.meshResource = entityDocument.meshResource || {uri:"",visible:true};
         this._cachedComponentUpdates = {};
         this._attributeUpdateHandle = setInterval(this._flushUpdates.bind(this), 30);
     };
@@ -58,10 +58,8 @@ FIVES.Models = FIVES.Models || {};
         this._cachedComponentUpdates[componentName] = this._cachedComponentUpdates[componentName] || {};
         this._cachedComponentUpdates[componentName][attributeName] = value;
 
-        if (componentName == "meshResource" && attributeName == "uri" && this.meshUnitialized) {
-            this.meshResource.meshURI = value;
+        if (componentName == "meshResource" && attributeName == "uri" && this.meshUnitialized)
             FIVES.Resources.SceneManager.addMeshForObject(this);
-        }
     };
 
     e.updatePosition = function(position) {

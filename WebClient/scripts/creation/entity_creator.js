@@ -36,7 +36,7 @@ FIVES.Creation = FIVES.Creation || {};
             var scaleFactor = Math.random() * 2 + 0.5;
             var scale = { x: scaleFactor, y: scaleFactor, z: scaleFactor};
             var orientation = { x: 0, y: 0, z: 0, w: 1};
-            var mesh = {meshUri: "resources/models/firetruck/xml3d/firetruck.xml", visible: true};
+            var mesh = {uri: "resources/models/firetruck/xml3d/firetruck.xml", visible: true};
             var call = FIVES.Communication.FivesCommunicator.createMeshEntity(position, orientation, scale, mesh);
             i ++;
         }
@@ -85,8 +85,8 @@ FIVES.Creation = FIVES.Creation || {};
     };
 
     var _retrieveMesh = function () {
-        var meshURI = $("#select-mesh").val();
-        return {meshURI: meshURI, visible: true};
+        var uri = $("#select-mesh").val();
+        return {uri: uri, visible: true};
     }
     FIVES.Creation.EntityCreator = new EntityCreator();
 }());

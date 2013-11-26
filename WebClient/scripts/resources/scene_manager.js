@@ -30,7 +30,7 @@ FIVES.Resources = FIVES.Resources || {};
     };
 
     scm.addMeshForObject = function(fivesObject) {
-        if(!fivesObject.meshResource.meshURI) {
+        if(!fivesObject.meshResource.uri) {
             fivesObject.meshUnitialized = true;
         } else {
             delete fivesObject.meshUnitialized;

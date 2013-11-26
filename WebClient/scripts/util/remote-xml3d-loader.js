@@ -23,7 +23,7 @@ CARAMEL.Utility = CARAMEL.Utility || {};
             
             $.ajax({
                 type: "GET",
-                url: fivesObject.meshResource.meshURI,
+                url: fivesObject.meshResource.uri,
                 success: function(response) {
                     self._handleLoadedXML3D(fivesObject, response, loadedCB);
                 },
@@ -39,7 +39,7 @@ CARAMEL.Utility = CARAMEL.Utility || {};
             var loadedXML3DEl = $(loadedDocument).children("xml3d")[0];
 
             // construct full path to the files by analysing urlOnServer
-            var url = fivesObject.meshResource.meshURI;
+            var url = fivesObject.meshResource.uri;
             var urlLastSlash = url.lastIndexOf("/"); 
             var urlPath = url.slice(0,  urlLastSlash + 1);
             this._adjustReferences(loadedXML3DEl, urlPath);

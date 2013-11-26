@@ -52,6 +52,10 @@
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
+    <ProjectReference Include="..\..\Core\Collections\Collections.csproj">
+      <Project>{9c2af21f-4d8c-4ade-a5c4-135a6f50e18a}</Project>
+      <Name>Collections</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\Core\DomainModel\DomainModel.csproj">
       <Project>{79EF699D-6A88-4054-AF04-F22486DB47FA}</Project>
       <Name>DomainModel</Name>
