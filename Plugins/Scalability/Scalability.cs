@@ -134,9 +134,9 @@ namespace ScalabilityPlugin
             e.Entity.ChangedAttribute += HandleLocalChangedAttribute;
 
             // Ignore this change if it was caused by the scalability plugin itself.
-            lock (entityAdditions)
+            lock (remoteEntityAdditions)
             {
-                if (entityAdditions.Remove(e.Entity.Guid))
+                if (remoteEntityAdditions.Remove(e.Entity.Guid))
                     return;
             }
 
@@ -168,9 +168,9 @@ namespace ScalabilityPlugin
         private void HandleLocalRemovedEntity(object sender, EntityEventArgs e)
         {
             // Ignore this change if it was caused by the scalability plugin itself.
-            lock (entityRemovals)
+            lock (remoteEntityRemovals)
             {
-                if (entityRemovals.Remove(e.Entity.Guid))
+                if (remoteEntityRemovals.Remove(e.Entity.Guid))
                     return;
             }
 
@@ -201,14 +201,14 @@ namespace ScalabilityPlugin
             var attributeName = e.AttributeName;
 
             // Ignore this change if it was caused by the scalability plugin itself.
-            lock (ignoredAttributeChanges)
+            lock (remoteAttributeChanges)
             {
-                foreach (IgnoredAttributeChange change in ignoredAttributeChanges)
+                foreach (RemoteAttributeChange change in remoteAttributeChanges)
                 {
                     if (change.EntityGuid == e.Entity.Guid && change.ComponentName == componentName &&
                         change.AttributeName == attributeName && change.Value == e.NewValue)
                     {
-                        ignoredAttributeChanges.Remove(change);
+                        remoteAttributeChanges.Remove(change);
                         return;
                     }
                 }
@@ -243,9 +243,9 @@ namespace ScalabilityPlugin
         private void HandleLocalRegisteredComponent(object sender, RegisteredComponentEventArgs e)
         {
             // Ignore this change if it was caused by the scalability plugin itself.
-            lock (componentRegistrations)
+            lock (remoteComponentRegistrations)
             {
-                if (componentRegistrations.Remove(e.ComponentDefinition.Guid))
+                if (remoteComponentRegistrations.Remove(e.ComponentDefinition.Guid))
                     return;
             }
 
@@ -366,8 +366,8 @@ namespace ScalabilityPlugin
                 if (!localSyncInfo.ContainsKey(guid))
                 {
                     localSyncInfo.Add(guid, new EntitySyncInfo());
-                    lock (entityAdditions)
-                        entityAdditions.Add(guid);
+                    lock (remoteEntityAdditions)
+                        remoteEntityAdditions.Add(guid);
                     World.Instance.Add(new Entity(guid));
                     logger.Debug("Added an entity in response to sync message. Guid: " + guid);
                 }
@@ -398,8 +398,8 @@ namespace ScalabilityPlugin
                 }
 
                 localSyncInfo.Remove(guid);
-                lock (entityRemovals)
-                    entityRemovals.Add(guid);
+                lock (remoteEntityRemovals)
+                    remoteEntityRemovals.Add(guid);
                 World.Instance.Remove(World.Instance.FindEntity(guid));
                 logger.Debug("Removed an entity in response to sync message. Guid: " + guid);
             }
@@ -425,8 +425,8 @@ namespace ScalabilityPlugin
 
             if (ComponentRegistry.Instance.FindComponentDefinition(componentDef.Name) == null)
             {
-                lock (componentRegistrations)
-                    componentRegistrations.Add(componentDef.Guid);
+                lock (remoteComponentRegistrations)
+                    remoteComponentRegistrations.Add(componentDef.Guid);
                 ComponentRegistry.Instance.Register((ComponentDefinition)componentDef);
             }
         }
@@ -446,9 +446,15 @@ namespace ScalabilityPlugin
                     return;
                 }
 
+                Entity localEntity = World.Instance.FindEntity(guid);
                 foreach (KeyValuePair<string, ComponentSyncInfo> componentPair in changedAttributes.Components)
+                {
                     foreach (KeyValuePair<string, AttributeSyncInfo> attributePair in componentPair.Value.Attributes)
-                        HandleRemoteChangedAttribute(guid, componentPair.Key, attributePair.Key, attributePair.Value);
+                    {
+                        HandleRemoteChangedAttribute(localEntity, componentPair.Key, attributePair.Key,
+                                                     attributePair.Value);
+                    }
+                }
             }
         }
 
@@ -471,16 +477,16 @@ namespace ScalabilityPlugin
         /// <summary>
         /// Handles an update to a single attribute.
         /// </summary>
-        /// <param name="entityGuid">Guid of the entity containing attribute.</param>
+        /// <param name="localEntity">Entity containing attribute.</param>
         /// <param name="componentName">Name of the component containing attribute.</param>
         /// <param name="attributeName">Name of the attribute.</param>
         /// <param name="remoteAttributeSyncInfo">Remote sync info on this attribute.</param>
         /// <returns>True if the update should be propagated to other sync nodes.</returns>
-        private bool HandleRemoteChangedAttribute(Guid entityGuid, string componentName, string attributeName,
+        private bool HandleRemoteChangedAttribute(Entity localEntity, string componentName, string attributeName,
             AttributeSyncInfo remoteAttributeSyncInfo)
         {
             EntitySyncInfo localEntitySyncInfo = localSyncInfo[entityGuid];
-            Entity localEntity = World.Instance.FindEntity(entityGuid);
+
 
             logger.Debug("Received an update to an attribute. Entity guid: " + entityGuid + ". " +
                     "Attribute path: " + componentName + "." + attributeName + ". New value: " +
@@ -522,9 +528,9 @@ namespace ScalabilityPlugin
                     var attributeValue = Convert.ChangeType(remoteAttributeSyncInfo.LastValue, attributeType);
 
                     // Ignore event for this change.
-                    lock (ignoredAttributeChanges)
+                    lock (remoteAttributeChanges)
                     {
-                        var remoteChange = new IgnoredAttributeChange
+                        var remoteChange = new RemoteAttributeChange
                         {
                             EntityGuid = entityGuid,
                             ComponentName = componentName,
@@ -532,7 +538,7 @@ namespace ScalabilityPlugin
                             Value = attributeValue
                         };
 
-                        ignoredAttributeChanges.Add(remoteChange);
+                        remoteAttributeChanges.Add(remoteChange);
                     }
 
                     localEntity[componentName][attributeName] = attributeValue;
@@ -554,7 +560,7 @@ namespace ScalabilityPlugin
         /// <summary>
         /// A specific attribute change that should be ignored.
         /// </summary>
-        private class IgnoredAttributeChange
+        private class RemoteAttributeChange
         {
             public Guid EntityGuid;
             public string ComponentName;
@@ -564,18 +570,18 @@ namespace ScalabilityPlugin
 
         // Collection of attribute changes that should be discarded once. This is used to ignore changes to attributes
         // that were caused by the scalability plugin itself in response to an update from remote node.
-        private List<IgnoredAttributeChange> ignoredAttributeChanges = new List<IgnoredAttributeChange>();
+        private List<RemoteAttributeChange> remoteAttributeChanges = new List<RemoteAttributeChange>();
 
         // Collection of entity additions or removals that should be ignored once. Similarly to the above, this is used
         // to ignored additions or removals of entities that were caused by the scalability plugin itself in response
         // to an update from the remote node.
-        private List<Guid> entityAdditions = new List<Guid>();
-        private List<Guid> entityRemovals = new List<Guid>();
+        private List<Guid> remoteEntityAdditions = new List<Guid>();
+        private List<Guid> remoteEntityRemovals = new List<Guid>();
 
         // Collection of component registrations that should be ignored once. Similarly to the above, this is used
         // to ignored component registrations that were caused by the scalability plugin itself in response to an
         // update from the remote node.
-        private List<Guid> componentRegistrations = new List<Guid>();
+        private List<Guid> remoteComponentRegistrations = new List<Guid>();
 
         // SyncID of this node.
         private Guid LocalSyncID = Guid.NewGuid();
