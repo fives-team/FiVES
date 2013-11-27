@@ -504,7 +504,6 @@ namespace ScalabilityPlugin
                      !localAttributeSyncInfo.LastValue.Equals(remoteAttributeSyncInfo.LastValue));
                 if (!localAttributeSyncInfo.Sync(remoteAttributeSyncInfo))
                 {
-
                     logger.Debug("Sync discarded the update. Local value: " + localAttributeSyncInfo.LastValue +
                         ". Local timestamp: " + localAttributeSyncInfo.LastTimestamp + ". Local SyncID: " +
                         localAttributeSyncInfo.LastSyncID);
