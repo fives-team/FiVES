@@ -12,7 +12,7 @@ namespace ClientManagerPlugin
 {
     public class ClientManager
     {
-        public static ClientManager Instance = new ClientManager();
+        public static ClientManager Instance;
 
         public ClientManager()
         {

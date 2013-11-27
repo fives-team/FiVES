@@ -35,8 +35,10 @@ namespace ClientManagerPlugin {
                 return new List<string> { "position", "orientation", "scale", "meshResource" };
             }
         }
+
         public void Initialize()
         {
+            ClientManager.Instance = new ClientManager();
         }
 
         #endregion
