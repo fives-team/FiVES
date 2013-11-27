@@ -205,7 +205,7 @@ namespace ScalabilityPlugin
             {
                 foreach (RemoteAttributeChange change in remoteAttributeChanges)
                 {
-                    if (change.EntityGuid == e.Entity.Guid && change.ComponentName == componentName &&
+                    if (change.Entity == e.Entity && change.ComponentName == componentName &&
                         change.AttributeName == attributeName && change.Value == e.NewValue)
                     {
                         remoteAttributeChanges.Remove(change);
@@ -485,10 +485,9 @@ namespace ScalabilityPlugin
         private bool HandleRemoteChangedAttribute(Entity localEntity, string componentName, string attributeName,
             AttributeSyncInfo remoteAttributeSyncInfo)
         {
-            EntitySyncInfo localEntitySyncInfo = localSyncInfo[entityGuid];
+            EntitySyncInfo localEntitySyncInfo = localSyncInfo[localEntity.Guid];
 
-
-            logger.Debug("Received an update to an attribute. Entity guid: " + entityGuid + ". " +
+            logger.Debug("Received an update to an attribute. Entity guid: " + localEntity.Guid + ". " +
                     "Attribute path: " + componentName + "." + attributeName + ". New value: " +
                     remoteAttributeSyncInfo.LastValue + ". Timestamp: " + remoteAttributeSyncInfo.LastTimestamp +
                     ". SyncID: " + remoteAttributeSyncInfo.LastSyncID);
@@ -532,7 +531,7 @@ namespace ScalabilityPlugin
                     {
                         var remoteChange = new RemoteAttributeChange
                         {
-                            EntityGuid = entityGuid,
+                            Entity = localEntity,
                             ComponentName = componentName,
                             AttributeName = attributeName,
                             Value = attributeValue
@@ -562,7 +561,7 @@ namespace ScalabilityPlugin
         /// </summary>
         private class RemoteAttributeChange
         {
-            public Guid EntityGuid;
+            public Entity Entity;
             public string ComponentName;
             public string AttributeName;
             public object Value;
