@@ -7,7 +7,7 @@ namespace AuthPlugin
 {
     public class Authentication
     {
-        public static Authentication Instance = new Authentication();
+        public static Authentication Instance;
 
         /// <summary>
         /// Authenticate the user with a specified <paramref name="login"/> and <paramref name="password"/>. Returns

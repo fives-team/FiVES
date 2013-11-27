@@ -10,7 +10,7 @@ namespace ScriptingPlugin
 {
     public class Scripting
     {
-        public static Scripting Instance = new Scripting();
+        public static Scripting Instance;
 
         public Scripting()
         {
