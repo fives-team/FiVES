@@ -4,8 +4,7 @@ namespace RenderablePlugin
 {
     public struct MeshResource
     {
-        public string meshURI;
+        public string uri;
         public bool visible;
     }
 }
-

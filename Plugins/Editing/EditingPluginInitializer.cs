@@ -76,7 +76,7 @@ namespace EditingNamespace
             entity["scale"]["y"] = scale.y;
             entity["scale"]["z"] = scale.z;
 
-            entity["meshResource"]["uri"] = mesh.meshURI;
+            entity["meshResource"]["uri"] = mesh.uri;
             entity["meshResource"]["visible"] = true;
             World.Instance.Add(entity);
             return entity.Guid.ToString ();
