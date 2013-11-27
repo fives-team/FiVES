@@ -59,4 +59,7 @@ service sync {
     // dependencies.
     // @param definition Component definition.
     void registerComponentDefinition(ComponentDefinition definition);
+
+    // Returns immediately with no action. Used to estimate the round trip time of a message.
+    void ping();
 }
