@@ -20,7 +20,7 @@ namespace FIVES
         [Test()]
         public void ShouldLoadAllValidPluginsInDirectory()
         {
-            pm.LoadPluginsFrom(pathToPlugins);
+            pm.LoadPluginsFrom(pathToPlugins, null);
             Assert.IsTrue(pm.IsPathLoaded(pathToPlugins + "ValidPlugin1.dll"));
             Assert.IsTrue(pm.IsPathLoaded(pathToPlugins + "ValidPlugin2.dll"));
             Assert.IsTrue(pm.IsPluginLoaded("ValidPlugin1"));
@@ -30,9 +30,18 @@ namespace FIVES
         [Test()]
         public void ShouldOmitInvalidPluginsInDirectory()
         {
-            pm.LoadPluginsFrom(pathToPlugins);
+            pm.LoadPluginsFrom(pathToPlugins, null);
             Assert.IsFalse(pm.IsPathLoaded(pathToPlugins + "InValidPlugin1.dll"));
             Assert.IsFalse(pm.IsPathLoaded(pathToPlugins + "InvalidAssembly.dll"));
+        }
+
+        [Test()]
+        public void ShouldUseFiltersToSelectPlugins()
+        {
+            pm.LoadPluginsFrom(pathToPlugins, new string[] { "Plugin1" });
+            Assert.IsTrue(pm.IsPathLoaded(pathToPlugins + "ValidPlugin1.dll"));
+            Assert.IsFalse(pm.IsPathLoaded(pathToPlugins + "ValidPlugin2.dll"));
+            Assert.IsTrue(pm.IsPluginLoaded("ValidPlugin1"));
         }
 
         [Test()]

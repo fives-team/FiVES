@@ -218,14 +218,33 @@ namespace FIVES
         }
 
         /// <summary>
-        /// Attempts to load all valid plugins from the <paramref name="pluginDirectory"/>.
+        /// Attempts to load all valid plugins from the <paramref name="pluginDirectory"/>. If pluginFilters is not
+        /// null, it is used as a set of acceptable plugin filenames. Plugin is only loaded if it contains at least of
+        /// the substrings from pluginFilters.
         /// </summary>
         /// <param name="pluginDirectory">Directory in which plugins are too be looked for.</param>
-        public void LoadPluginsFrom(string pluginDirectory)
+        /// <param name="pluginFilters>List of substrings against which plugins are checked before loaded.</param>
+        public void LoadPluginsFrom(string pluginDirectory, string[] pluginFilters)
         {
             string[] files = Directory.GetFiles(pluginDirectory, "*.dll");
             foreach (string filename in files)
-                LoadPlugin(filename);
+            {
+                if (pluginFilters != null)
+                {
+                    foreach (string filter in pluginFilters)
+                    {
+                        if (filename.Contains(filter))
+                        {
+                            LoadPlugin(filename);
+                            continue;
+                        }
+                    }
+                }
+                else
+                {
+                    LoadPlugin(filename);
+                }
+            }
         }
 
         /// <summary>

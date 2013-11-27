@@ -22,9 +22,18 @@ namespace FIVES
                 logger.Error("Configuration is missing or corrupt.");
             }
 
+            // Load configuration options.
+            string[] pluginFilters = null;
+            try {
+                string pluginFilterList = ConfigurationManager.AppSettings["PluginFilters"].ToString();
+                pluginFilters = pluginFilterList.Split(',');
+            } catch (ConfigurationErrorsException) {
+                // This is optional element.
+            }
+
             logger.Info("Loading plugins");
             if (pluginDir != null && Directory.Exists(pluginDir)) {
-                PluginManager.Instance.LoadPluginsFrom(pluginDir);
+                PluginManager.Instance.LoadPluginsFrom(pluginDir, pluginFilters);
                 if (PluginManager.Instance.DeferredPlugins.Count > 0)
                     logger.Info(CreateDeferredPluginsLogEntry());
             } else {
