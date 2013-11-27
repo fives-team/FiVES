@@ -36,8 +36,6 @@ namespace RenderablePlugin
         public void Initialize()
         {
             DefineComponents();
-
-            PluginManager.Instance.AddPluginLoadedHandler("ClientManager", (Action)RegisterClientServices);
         }
 
         private void DefineComponents()
@@ -52,23 +50,6 @@ namespace RenderablePlugin
             scale.AddAttribute<float>("y", 1f);
             scale.AddAttribute<float>("z", 1f);
             ComponentRegistry.Instance.Register(scale);
-        }
-
-        void RegisterClientServices()
-        {
-            ClientManager.Instance.RegisterClientService("mesh", true, new Dictionary<string, Delegate> {
-                {"notifyAboutVisibilityUpdates", (Action<string, Action<bool>>) NotifyAboutVisibilityUpdates},
-            });
-        }
-
-        private void NotifyAboutVisibilityUpdates(string guid, Action<bool> callback)
-        {
-            var entity = World.Instance.FindEntity(guid);
-            entity["meshResource"].ChangedAttribute += (sender, e) =>
-            {
-                if (e.AttributeName == "visible")
-                    callback((bool)e.NewValue);
-            };
         }
 
         #endregion

@@ -136,10 +136,18 @@ namespace NativeClient
         void HandleNewObject(JToken entityInfo)
         {
             EntityInfo info = new EntityInfo {
-                Guid = entityInfo["guid"].ToString(),
-                Position = entityInfo["position"].ToObject<Vector>(),
-                Orientation = entityInfo["orientation"].ToObject<Quat>()
+                Guid = entityInfo["guid"].ToString()
             };
+
+            if (entityInfo["position"] != null)
+                info.Position = entityInfo["position"].ToObject<Vector>();
+            else
+                info.Position = new Vector { x = 0, y = 0, z = 0 };
+
+            if (entityInfo["orientation"] != null)
+                info.Orientation = entityInfo["orientation"].ToObject<Quat>();
+            else
+                info.Orientation = new Quat { x = 0, y = 0, z = 0, w = 1 };
 
             Logger.Info("New entity: {0}", info.Guid);
 

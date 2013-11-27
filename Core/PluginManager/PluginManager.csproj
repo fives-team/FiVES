@@ -65,6 +65,10 @@
       <Project>{79EF699D-6A88-4054-AF04-F22486DB47FA}</Project>
       <Name>DomainModel</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Collections\Collections.csproj">
+      <Project>{9C2AF21F-4D8C-4ADE-A5C4-135A6F50E18A}</Project>
+      <Name>Collections</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it.

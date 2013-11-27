@@ -14,6 +14,7 @@ namespace WebSocketJSON
 {
     public delegate object GenericWrapper(params object[] arguments);
 
+    // TODO: rewrite plugin to use processing loop. This will allow to simplify code by removing locks in this class.
     public class WSJConnection : Connection
     {
         public WSJConnection(WSJSession aSession)
@@ -50,6 +51,8 @@ namespace WebSocketJSON
         /// <param name="message">The incoming message.</param>
         public void HandleMessage(object sender, MessageReceivedEventArgs e)
         {
+            logger.Debug("Received: " + e.Message);
+
             List<JToken> data = null;
             // FIXME: Occasionally we receive JSON with some random bytes appended. The reason is
             // unclear, but to be safe we ignore messages that have parsing errors.
@@ -75,40 +78,41 @@ namespace WebSocketJSON
 
         protected override void ProcessIDL(string parsedIDL)
         {
-            lock (objLock)
-            {
-                // TODO
-            }
+            // TODO
         }
 
         protected override IFuncCall CallFunc(string funcName, params object[] args)
         {
-            lock (functionLock)
+            int callID = getValidCallID();
+
+            // Register delegates as callbacks. Pass their registered names instead.
+            List<int> callbacks;
+            List<object> convertedArgs = convertCallbackArguments(args, out callbacks);
+            List<object> callMessage = createCallMessage(callID, funcName, callbacks, convertedArgs);
+
+            string serializedMessage = JsonConvert.SerializeObject(callMessage, settings);
+
+            IWSJFuncCall callObj = null;
+            if (!IsOneWay(funcName))
             {
-                int callID = getValidCallID();
+                callObj = wsjFuncCallFactory.Construct();
 
-                // Register delegates as callbacks. Pass their registered names instead.
-                List<int> callbacks = createCallbacksFromArguments(args);
-                List<object> convertedArgs = convertCallbackArguments(args);
-                List<object> callMessage = createCallMessage(callID, funcName, callbacks, convertedArgs);
-
-                string serializedMessage = JsonConvert.SerializeObject(callMessage, settings);
-                Send(serializedMessage);
-
-                if (IsOneWay(funcName))
-                    return null;
-
-                IWSJFuncCall callObj = wsjFuncCallFactory.Construct();
-
-                lock (objLock)
+                // It is important to add an active call to the list before sending it, otherwise we may end up
+                // receiving call-reply before this happens, which will trigger unnecessary call-error and crash the
+                // other end.
+                lock (activeCalls)
                     activeCalls.Add(callID, callObj);
-                return callObj;
             }
+
+            Send(serializedMessage);
+
+            return callObj;
         }
 
         protected override void RegisterHandler(string funcName, Delegate handler)
         {
-            registeredFunctions[funcName] = handler;
+            lock (registeredFunctions)
+                registeredFunctions[funcName] = handler;
         }
 
         internal WSJConnection()
@@ -119,12 +123,15 @@ namespace WebSocketJSON
 
         internal void HandleClosed(object sender, EventArgs e)
         {
-            lock (objLock)
+            IWSJFuncCall[] removedCalls = new IWSJFuncCall[activeCalls.Count];
+            lock (activeCalls)
             {
-                foreach (var call in activeCalls)
-                    call.Value.HandleError("Connection closed.");
+                activeCalls.Values.CopyTo(removedCalls, 0);
                 activeCalls.Clear();
             }
+
+            foreach (var call in removedCalls)
+                call.HandleError("Connection closed.");
 
             if (Closed != null)
                 Closed(this, e);
@@ -132,6 +139,7 @@ namespace WebSocketJSON
 
         internal virtual void Send(string message)
         {
+            logger.Debug("Sending: " + message);
             if (isClientConnection)
                 socket.Send(message);
             else
@@ -142,9 +150,16 @@ namespace WebSocketJSON
         {
             int callID = data[1].ToObject<int>();
             string methodName = data[2].ToObject<string>();
-            if (registeredFunctions.ContainsKey(methodName))
+
+            Delegate nativeMethod = null;
+            lock (registeredFunctions)
             {
-                Delegate nativeMethod = registeredFunctions[methodName];
+                if (registeredFunctions.ContainsKey(methodName))
+                    nativeMethod = registeredFunctions[methodName];
+            }
+
+            if (nativeMethod != null)
+            {
                 object[] parameters;
                 try
                 {
@@ -294,14 +309,24 @@ namespace WebSocketJSON
             int callID = data[1].ToObject<int>();
             string reason = data[2].ToObject<string>();
 
-            // Call error with callID=-1 means something we've sent something that was not understood by other side or
-            // was malformed. This probably means that protocols aren't incompatible or incorrectly implemented on
-            // either side.
+            // Call error with callID = -1 means we've sent something that was not understood by other side or was
+            // malformed. This probably means that protocols aren't incompatible or incorrectly implemented on either
+            // side.
             if (callID == -1)
                 throw new Exception(reason);
 
-            if (activeCalls.ContainsKey(callID))
-                activeCalls[callID].HandleError(reason);
+            IWSJFuncCall failedCall = null;
+            lock (activeCalls)
+            {
+                if (activeCalls.ContainsKey(callID))
+                {
+                    failedCall = activeCalls[callID];
+                    activeCalls.Remove(callID);
+                }
+            }
+
+            if (failedCall != null)
+                failedCall.HandleError(reason);
             else
                 SendCallError(-1, "Invalid callID: " + callID);
         }
@@ -309,17 +334,25 @@ namespace WebSocketJSON
         private void HandleCallReply(List<JToken> data)
         {
             int callID = (int)data[1];
-            if (activeCalls.ContainsKey(callID))
+
+            IWSJFuncCall completedCall = null;
+            lock (activeCalls)
+            {
+                if (activeCalls.ContainsKey(callID))
+                {
+                    completedCall = activeCalls[callID];
+                    activeCalls.Remove(callID);
+                }
+            }
+
+            if (completedCall != null)
             {
                 bool success = data[2].ToObject<bool>();
                 JToken result = data.Count == 4 ? data[3] : new JValue((object)null);
                 if (success)
-                    activeCalls[callID].HandleSuccess(result);
+                    completedCall.HandleSuccess(result);
                 else
-                    activeCalls[callID].HandleException(result);
-
-                lock (objLock)
-                    activeCalls.Remove(callID);
+                    completedCall.HandleException(result);
             }
             else
             {
@@ -329,7 +362,10 @@ namespace WebSocketJSON
 
         private int getValidCallID()
         {
-            return nextCallID++;
+            lock (nextCallIDLock)
+            {
+                return nextCallID++;
+            }
         }
 
         private bool IsOneWay(string qualifiedMethodName)
@@ -356,16 +392,20 @@ namespace WebSocketJSON
             return callMessage;
         }
 
-        private List<object> convertCallbackArguments(object[] args)
+        private List<object> convertCallbackArguments(object[] args, out List<int> callbacks)
         {
-            List<object> convertedArgs = new List<object>();
+            callbacks = createCallbacksFromArguments(args);
 
+            List<object> convertedArgs = new List<object>();
             for (int i = 0; i < args.Length; i++)
             {
                 if (args[i] is Delegate)
                 {
                     var arg = args[i] as Delegate;
-                    convertedArgs.Add(registeredCallbacks[arg]);
+                    string callbackGuid = null;
+                    lock (registeredCallbacks)
+                        callbackGuid = registeredCallbacks[arg];
+                    convertedArgs.Add(callbackGuid);
                 }
                 else
                 {
@@ -375,7 +415,6 @@ namespace WebSocketJSON
             return convertedArgs;
         }
 
-
         private List<int> createCallbacksFromArguments(object[] args)
         {
             List<int> callbacks = new List<int>();
@@ -384,28 +423,32 @@ namespace WebSocketJSON
                 if (args[i] is Delegate)
                 {
                     var arg = args[i] as Delegate;
-                    if (!registeredCallbacks.ContainsKey(arg))
+
+                    string callbackGuid = null;
+                    lock (registeredCallbacks)
                     {
-                        registerCallbackFunction(arg);
+                        if (!registeredCallbacks.ContainsKey(arg))
+                        {
+                            callbackGuid = Guid.NewGuid().ToString();
+                            registeredCallbacks[arg] = callbackGuid;
+                        }
+                        else
+                        {
+                            callbackGuid = registeredCallbacks[arg];
+                        }
                     }
+
+                    lock (registeredFunctions)
+                        registeredFunctions[callbackGuid] = arg;
+
                     callbacks.Add(i);
                 }
             }
             return callbacks;
         }
 
-        private void registerCallbackFunction(Delegate arg)
-        {
-            var callbackUUID = Guid.NewGuid().ToString();
-            registeredCallbacks[arg] = callbackUUID;
-            registeredFunctions[callbackUUID] = arg;
-        }
-
+        private object nextCallIDLock = new object();
         private int nextCallID = 0;
-
-        // FIXME: rewrite plugin to use processing loop. This will solve many multithreading issues.
-        private object objLock = new object();  // needed because multiple threads may decide to send something
-        private object functionLock = new object();
 
         private Dictionary<int, IWSJFuncCall> activeCalls = new Dictionary<int, IWSJFuncCall>();
         private Dictionary<string, Delegate> registeredFunctions = new Dictionary<string, Delegate>();

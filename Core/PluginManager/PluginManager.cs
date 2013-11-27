@@ -35,16 +35,33 @@ namespace FIVES
             ComponentRegistry.Instance.RegisteredComponent += HandleRegistredComponent;
         }
 
-        public struct LoadedPluginInfo {
-            public string path;
-            public IPluginInitializer initializer;
-            public List<string> remainingPluginDeps;
-            public List<string> remainingComponentDeps;
+        public struct PluginInfo {
+            public string Name;
+            public string Path;
+            public IPluginInitializer Initializer;
+            public List<string> RemainingPluginDeps;
+            public List<string> RemainingComponentDeps;
         }
 
-        private List<string> AttemptedFilenames = new List<string>();
-        private Dictionary<string, LoadedPluginInfo> LoadedPlugins = new Dictionary<string, LoadedPluginInfo>();
-        public Dictionary<string, LoadedPluginInfo> DeferredPlugins = new Dictionary<string, LoadedPluginInfo>();
+        public ReadOnlyCollection<PluginInfo> LoadedPlugins
+        {
+            get
+            {
+                return new ReadOnlyCollection<PluginInfo>(loadedPlugins.Values);
+            }
+        }
+
+        public ReadOnlyCollection<PluginInfo> DeferredPlugins
+        {
+            get
+            {
+                return new ReadOnlyCollection<PluginInfo>(deferredPlugins.Values);
+            }
+        }
+
+        private List<string> attemptedFilenames = new List<string>();
+        private Dictionary<string, PluginInfo> loadedPlugins = new Dictionary<string, PluginInfo>();
+        private Dictionary<string, PluginInfo> deferredPlugins = new Dictionary<string, PluginInfo>();
 
         private static Logger Logger = LogManager.GetCurrentClassLogger();
 
@@ -68,10 +85,10 @@ namespace FIVES
         {
             string canonicalPath = GetCanonicalPath(path);
             string name;
-            if (!AttemptedFilenames.Contains(canonicalPath)) {
+            if (!attemptedFilenames.Contains(canonicalPath)) {
                 try {
                     // Add this plugin to the list of loaded paths.
-                    AttemptedFilenames.Add(canonicalPath);
+                    attemptedFilenames.Add(canonicalPath);
 
                     // Load an assembly.
                     Assembly assembly = Assembly.LoadFrom(canonicalPath);
@@ -87,37 +104,38 @@ namespace FIVES
                     }
 
                     // Construct basic plugin info.
-                    LoadedPluginInfo info = new LoadedPluginInfo();
-                    info.path = canonicalPath;
-                    info.initializer = (IPluginInitializer)Activator.CreateInstance(initializerType);
+                    PluginInfo info = new PluginInfo();
+                    info.Path = canonicalPath;
+                    info.Initializer = (IPluginInitializer)Activator.CreateInstance(initializerType);
 
                     // Check if plugin with the same name was already loaded.
-                    name = info.initializer.Name;
-                    if (LoadedPlugins.ContainsKey(name)) {
+                    name = info.Initializer.Name;
+                    info.Name = name;
+                    if (loadedPlugins.ContainsKey(name)) {
                         Logger.Warn("Cannot load plugin from " + path + ". Plugin with the same name '" + name +
-                                    "' was already loaded from " + LoadedPlugins[name].path + ".");
+                                    "' was already loaded from " + loadedPlugins[name].Path + ".");
                         return;
                     }
 
                     // Check if plugin has all required dependencies.
-                    info.remainingPluginDeps =
-                        info.initializer.PluginDependencies.FindAll(plugin => !LoadedPlugins.ContainsKey(plugin));
-                    info.remainingComponentDeps = info.initializer.ComponentDependencies.FindAll(
+                    info.RemainingPluginDeps =
+                        info.Initializer.PluginDependencies.FindAll(plugin => !loadedPlugins.ContainsKey(plugin));
+                    info.RemainingComponentDeps = info.Initializer.ComponentDependencies.FindAll(
                         component => ComponentRegistry.Instance.FindComponentDefinition(component) == null);
 
-                    if (info.remainingPluginDeps.Count > 0 || info.remainingComponentDeps.Count > 0) {
-                        DeferredPlugins.Add(name, info);
+                    if (info.RemainingPluginDeps.Count > 0 || info.RemainingComponentDeps.Count > 0) {
+                        deferredPlugins.Add(name, info);
                         return;
                     }
 
                     try {
                         // Initialize plugin.
-                        info.initializer.Initialize();
+                        info.Initializer.Initialize();
                     } catch (Exception e) {
                         Logger.WarnException("Exception occured during initialization of " + name + " plugin.", e);
                         return;
                     }
-                    LoadedPlugins.Add(name, info);
+                    loadedPlugins.Add(name, info);
                 } catch (BadImageFormatException e) {
                     Logger.InfoException(path + " is not a valid assembly and thus cannot be loaded as a plugin.", e);
                     return;
@@ -139,8 +157,8 @@ namespace FIVES
         private void HandleInitializedPlugin(Object sender, PluginInitializedEventArgs e)
         {
             // Iterate over deferred plugins and remove |loadedPlugin| from the list of dependencies.
-            foreach (var info in DeferredPlugins.Values)
-                info.remainingPluginDeps.Remove(e.pluginName);
+            foreach (var info in deferredPlugins.Values)
+                info.RemainingPluginDeps.Remove(e.pluginName);
 
             LoadDeferredPluginsWithNoDeps();
         }
@@ -153,8 +171,8 @@ namespace FIVES
         private void HandleRegistredComponent(Object sender, RegisteredComponentEventArgs e)
         {
             // Iterate over deferred plugins and remove |loadedPlugin| from the list of dependencies.
-            foreach (var info in DeferredPlugins.Values)
-                info.remainingComponentDeps.Remove(e.ComponentDefinition.Name);
+            foreach (var info in deferredPlugins.Values)
+                info.RemainingComponentDeps.Remove(e.ComponentDefinition.Name);
 
             LoadDeferredPluginsWithNoDeps();
         }
@@ -165,35 +183,35 @@ namespace FIVES
         private void LoadDeferredPluginsWithNoDeps()
         {
             // Find plugins that have no other dependencies.
-            Dictionary<string, LoadedPluginInfo> pluginsWithNoDeps = new Dictionary<string, LoadedPluginInfo>();
-            foreach (var plugin in DeferredPlugins)
+            Dictionary<string, PluginInfo> pluginsWithNoDeps = new Dictionary<string, PluginInfo>();
+            foreach (var plugin in deferredPlugins)
             {
-                if (plugin.Value.remainingPluginDeps.Count == 0 && plugin.Value.remainingComponentDeps.Count == 0)
+                if (plugin.Value.RemainingPluginDeps.Count == 0 && plugin.Value.RemainingComponentDeps.Count == 0)
                     pluginsWithNoDeps.Add(plugin.Key, plugin.Value);
             }
 
             // Remove selected plugins from the deferred list.
             foreach (var entry in pluginsWithNoDeps)
-                DeferredPlugins.Remove(entry.Key);
+                deferredPlugins.Remove(entry.Key);
 
             // Initialize these plugins and move them to loadedPlugins dictionary.
             foreach (var entry in pluginsWithNoDeps)
             {
                 string name = entry.Key;
-                LoadedPluginInfo pluginInfo = entry.Value;
+                PluginInfo pluginInfo = entry.Value;
 
                 try
                 {
-                    pluginInfo.initializer.Initialize();
+                    pluginInfo.Initializer.Initialize();
                 }
                 catch (Exception ex)
                 {
                     Logger.WarnException("Exception occured during initialization of " + name + " plugin.", ex);
-                    DeferredPlugins.Remove(name);
+                    deferredPlugins.Remove(name);
                     return;
                 }
 
-                LoadedPlugins[name] = pluginInfo;
+                loadedPlugins[name] = pluginInfo;
                 if (OnAnyPluginInitialized != null)
                     OnAnyPluginInitialized(this, new PluginInitializedEventArgs(name));
             }
@@ -219,12 +237,12 @@ namespace FIVES
         {
             // Check if we've attempted loading this filename before.
             string canonicalPath = GetCanonicalPath(path);
-            if (!AttemptedFilenames.Contains(canonicalPath))
+            if (!attemptedFilenames.Contains(canonicalPath))
                 return false;
 
             // Check if the plugin was loaded.
-            foreach (var plugin in LoadedPlugins) {
-                if (plugin.Value.path == canonicalPath)
+            foreach (var plugin in loadedPlugins) {
+                if (plugin.Value.Path == canonicalPath)
                     return true;
             }
 
@@ -238,7 +256,7 @@ namespace FIVES
         /// <param name="name">Plugin name.</param>
         public bool IsPluginLoaded(string name)
         {
-            return LoadedPlugins.ContainsKey(name);
+            return loadedPlugins.ContainsKey(name);
         }
 
         /// <summary>

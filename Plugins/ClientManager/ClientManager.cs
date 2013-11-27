@@ -21,12 +21,9 @@ namespace ClientManagerPlugin
             RegisterClientMethod("kiara.implements", false, (Func<List<string>, List<bool>>)Implements);
             RegisterClientMethod("kiara.implements", true, (Func<List<string>, List<bool>>)AuthenticatedImplements);
 
-            RegisterClientService("auth", false, new Dictionary<string, Delegate>());
-            clientService.OnNewClient += delegate(Connection connection)
-            {
-                connection.RegisterFuncImplementation("auth.login",
-                    (Func<Connection, string, string, string>)Authenticate);
-            };
+            RegisterClientService("auth", false, new Dictionary<string, Delegate> {
+                {"login", (Func<Connection, string, string, string>)Authenticate}
+            });
 
             RegisterClientService("objectsync", true, new Dictionary<string, Delegate> {
                 {"listObjects", (Func<List<Dictionary<string, object>>>) ListObjects},

@@ -30,11 +30,19 @@ FIVES.Resources = FIVES.Resources || {};
     };
 
     scm.addMeshForObject = function(fivesObject) {
-        if(!fivesObject.meshResource.uri) {
-            fivesObject.meshUnitialized = true;
-        } else {
-            delete fivesObject.meshUnitialized;
+        if(fivesObject.meshResource.uri && fivesObject.meshResource.visible)
             FIVES.Resources.ResourceManager.loadExternalResource(fivesObject, this._addMeshToScene.bind(this));
+    };
+
+    scm.removeEntity = function(entity) {
+        if (entity.xml3dView.transformElement) {
+            _mainDefs.removeChild(entity.xml3dView.transformElement);
+            delete entity.xml3dView.transformElement;
+        }
+
+        if (entity.xml3dView.groupElement) {
+            _xml3dElement.removeChild(entity.xml3dView.groupElement);
+            delete entity.xml3dView.groupElement;
         }
     };
 
@@ -93,6 +101,14 @@ FIVES.Resources = FIVES.Resources || {};
         var transformationForEntity = entity.getTransformElement();
         if(transformationForEntity)
             transformationForEntity.translation.set(this._createTranslationForEntityGroup(entity));
+    };
+
+    scm.updateMesh = function(entity) {
+        // When mesh URI is updated, we need to download new model and recreate the mesh in the scene again. Also, as
+        // visible attribute is not yet supported for <group> nodes in XML3D, we also need to remove/add the entity
+        // from/to the scene to correctly handle visible attribute in the meshResource component.
+        scm.removeEntity(entity);
+        scm.addMeshForObject(entity);
     };
 
     scm.updateCameraView = function(entity) {

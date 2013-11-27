@@ -54,10 +54,43 @@ namespace AvatarPlugin
                 ClientManager.Instance.NotifyWhenClientDisconnected(sessionKey, (Action<Guid>)Deactivate);
             });
 
-            foreach (var entity in World.Instance) {
-                if (entity.ContainsComponent("avatar"))
-                    avatarEntities[(string)entity["avatar"]["userLogin"]] = entity;
+            World.Instance.AddedEntity += HandleAddedEntity;
+
+            foreach (var entity in World.Instance)
+                CheckAndRegisterAvatarEntity(entity);
+        }
+
+        void HandleAddedEntity (object sender, EntityEventArgs e)
+        {
+            if (!CheckAndRegisterAvatarEntity(e.Entity))
+                e.Entity.CreatedComponent += HandleCreatedComponent;
+        }
+
+        void HandleCreatedComponent(object sender, ComponentEventArgs e)
+        {
+            if (e.Component.Name == "avatar")
+                e.Component.ChangedAttribute += HandleChangedAvatarComponent;
+        }
+
+        void HandleChangedAvatarComponent(object sender, ChangedAttributeEventArgs e)
+        {
+            if (e.AttributeName == "userLogin")
+            {
+                if (e.OldValue != null && avatarEntities.ContainsKey((string)e.OldValue))
+                    avatarEntities.Remove((string)e.OldValue);
+                avatarEntities[(string)e.NewValue] = e.Entity;
             }
+        }
+
+        bool CheckAndRegisterAvatarEntity(Entity entity)
+        {
+            if (entity.ContainsComponent("avatar"))
+            {
+                avatarEntities[(string)entity["avatar"]["userLogin"]] = entity;
+                return true;
+            }
+
+            return false;
         }
 
         #endregion
@@ -71,7 +104,6 @@ namespace AvatarPlugin
                 newAvatar["meshResource"]["uri"] = defaultAvatarMesh;
                 newAvatar["meshResource"]["visible"] = false;
                 World.Instance.Add(newAvatar);
-                avatarEntities[userLogin] = newAvatar;
             }
 
             return avatarEntities[userLogin];
