@@ -51,6 +51,8 @@ namespace WebSocketJSON
         /// <param name="message">The incoming message.</param>
         public void HandleMessage(object sender, MessageReceivedEventArgs e)
         {
+            logger.Debug("Received: " + e.Message);
+
             List<JToken> data = null;
             // FIXME: Occasionally we receive JSON with some random bytes appended. The reason is
             // unclear, but to be safe we ignore messages that have parsing errors.
@@ -95,7 +97,6 @@ namespace WebSocketJSON
                 return null;
 
             IWSJFuncCall callObj = wsjFuncCallFactory.Construct();
-
             lock (activeCalls)
                 activeCalls.Add(callID, callObj);
             return callObj;
@@ -131,6 +132,7 @@ namespace WebSocketJSON
 
         internal virtual void Send(string message)
         {
+            logger.Debug("Sending: " + message);
             if (isClientConnection)
                 socket.Send(message);
             else
@@ -353,7 +355,10 @@ namespace WebSocketJSON
 
         private int getValidCallID()
         {
-            return nextCallID++;
+            lock (nextCallIDLock)
+            {
+                return nextCallID++;
+            }
         }
 
         private bool IsOneWay(string qualifiedMethodName)
@@ -435,6 +440,7 @@ namespace WebSocketJSON
             return callbacks;
         }
 
+        private object nextCallIDLock = new object();
         private int nextCallID = 0;
 
         private Dictionary<int, IWSJFuncCall> activeCalls = new Dictionary<int, IWSJFuncCall>();
