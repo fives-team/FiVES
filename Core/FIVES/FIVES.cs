@@ -34,10 +34,9 @@ namespace FIVES
 
             logger.Info("Loading complete");
 
-            Console.WriteLine("The server is up and running. Press any key to stop it...");
-
-            // Wait for any key to be pressed.
-            Console.ReadKey();
+            // Wait for 'q' key to be pressed.
+            Console.WriteLine("The server is up and running. Press 'q' to stop it...");
+            while (Console.ReadKey().KeyChar != 'q');
 
             return 0;
         }
