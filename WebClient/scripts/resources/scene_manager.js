@@ -35,14 +35,14 @@ FIVES.Resources = FIVES.Resources || {};
     };
 
     scm.removeEntity = function(entity) {
-        if (entity.transformElement) {
-            _mainDefs.removeChild(entity.transformElement);
-            delete entity.transformElement;
+        if (entity.xml3dView.transformElement) {
+            _mainDefs.removeChild(entity.xml3dView.transformElement);
+            delete entity.xml3dView.transformElement;
         }
 
-        if (entity.groupElement) {
-            _xml3dElement.removeChild(entity.groupElement);
-            delete entity.groupElement;
+        if (entity.xml3dView.groupElement) {
+            _xml3dElement.removeChild(entity.xml3dView.groupElement);
+            delete entity.xml3dView.groupElement;
         }
     };
 
