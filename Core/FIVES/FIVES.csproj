@@ -66,5 +66,9 @@
       <Project>{DB1099A1-B7FE-474F-A03A-41687D6C5C76}</Project>
       <Name>PluginManager</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Collections\Collections.csproj">
+      <Project>{9C2AF21F-4D8C-4ADE-A5C4-135A6F50E18A}</Project>
+      <Name>Collections</Name>
+    </ProjectReference>
   </ItemGroup>
 </Project>

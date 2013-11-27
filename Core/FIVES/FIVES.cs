@@ -3,6 +3,7 @@ using System.Configuration;
 using NLog;
 using System.IO;
 using System.Text;
+using System.Collections.Generic;
 
 namespace FIVES
 {
@@ -24,15 +25,17 @@ namespace FIVES
             logger.Info("Loading plugins");
             if (pluginDir != null && Directory.Exists(pluginDir)) {
                 PluginManager.Instance.LoadPluginsFrom(pluginDir);
-                if (PluginManager.Instance.DeferredPlugins.Count > 0) {
-                    StringBuilder logEntry = CreateDeferredPluginsLogEntry();
-                    logger.Info(logEntry);
-                }
+                if (PluginManager.Instance.DeferredPlugins.Count > 0)
+                    logger.Info(CreateDeferredPluginsLogEntry());
             } else {
                 logger.Error("Plugin dir is not specified or does not exist");
             }
 
-            logger.Info("Loading complete");
+            var loadedPlugins = new List<PluginManager.PluginInfo>(PluginManager.Instance.LoadedPlugins);
+            List<string> loadedPluginNames = loadedPlugins.ConvertAll(info => info.Name);
+            logger.Info("Initialized plugins: " + String.Join(", ", loadedPluginNames));
+
+            PluginManager.Instance.OnAnyPluginInitialized += HandlePluginInitialized;
 
             // Wait for 'q' key to be pressed.
             Console.WriteLine("The server is up and running. Press 'q' to stop it...");
@@ -41,17 +44,23 @@ namespace FIVES
             return 0;
         }
 
-        private static StringBuilder CreateDeferredPluginsLogEntry()
+        private static void HandlePluginInitialized(object sender, PluginInitializedEventArgs e)
+        {
+            logger.Info("Plugin " + e.pluginName + " loaded");
+        }
+
+        private static string CreateDeferredPluginsLogEntry()
         {
             StringBuilder logEntry = new StringBuilder();
-            logEntry.Append("Loading of the following plugins was deferred due to missing dependencies:\n");
-            foreach (var deferredPlugin in PluginManager.Instance.DeferredPlugins)
+            logEntry.Append("Initalization of the following plugins was deferred due to missing dependencies:\n");
+            foreach (PluginManager.PluginInfo pluginInfo in PluginManager.Instance.DeferredPlugins)
             {
-                logEntry.AppendFormat("{0}: (path: {1}, plugin deps: {2}, component deps: {3})\n", deferredPlugin.Key,
-                    deferredPlugin.Value.path, String.Join(", ", deferredPlugin.Value.remainingPluginDeps),
-                    String.Join(", ", deferredPlugin.Value.remainingComponentDeps));
+                logEntry.AppendFormat("  {0}: (path: {1}, plugin deps: [{2}], component deps: [{3}])\n", pluginInfo.Name,
+                                      pluginInfo.Path, String.Join(", ", pluginInfo.RemainingPluginDeps),
+                                      String.Join(", ", pluginInfo.RemainingComponentDeps));
             }
-            return logEntry;
+            var finalString = logEntry.ToString();
+            return finalString.Substring(0, finalString.Length - 1);  // remove trailing "\n"
         }
     }
 }
