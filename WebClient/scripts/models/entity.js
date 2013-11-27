@@ -52,14 +52,13 @@ FIVES.Models = FIVES.Models || {};
             FIVES.Resources.SceneManager.updatePosition(this);
         else if(componentName == "orientation")
             FIVES.Resources.SceneManager.updateOrientation(this);
+        else if (componentName == "meshResource")
+            FIVES.Resources.SceneManager.updateMesh(this);
     };
 
     e.updateAttribute = function(componentName, attributeName, value) {
         this._cachedComponentUpdates[componentName] = this._cachedComponentUpdates[componentName] || {};
         this._cachedComponentUpdates[componentName][attributeName] = value;
-
-        if (componentName == "meshResource" && attributeName == "uri" && this.meshUnitialized)
-            FIVES.Resources.SceneManager.addMeshForObject(this);
     };
 
     e.updatePosition = function(position) {
