@@ -91,14 +91,21 @@ namespace WebSocketJSON
             List<object> callMessage = createCallMessage(callID, funcName, callbacks, convertedArgs);
 
             string serializedMessage = JsonConvert.SerializeObject(callMessage, settings);
+
+            IWSJFuncCall callObj = null;
+            if (!IsOneWay(funcName))
+            {
+                callObj = wsjFuncCallFactory.Construct();
+
+                // It is important to add an active call to the list before sending it, otherwise we may end up
+                // receiving call-reply before this happens, which will trigger unnecessary call-error and crash the
+                // other end.
+                lock (activeCalls)
+                    activeCalls.Add(callID, callObj);
+            }
+
             Send(serializedMessage);
 
-            if (IsOneWay(funcName))
-                return null;
-
-            IWSJFuncCall callObj = wsjFuncCallFactory.Construct();
-            lock (activeCalls)
-                activeCalls.Add(callID, callObj);
             return callObj;
         }
 
