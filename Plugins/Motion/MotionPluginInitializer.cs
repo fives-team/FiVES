@@ -56,9 +56,9 @@ namespace MotionPlugin
             // Rotation velocity is represented as an axis (x, y, z) and angular rotation r in radians per second.
             ComponentDefinition rotVelocity = new ComponentDefinition("rotVelocity");
             rotVelocity.AddAttribute<float>("x", 0f);
-            rotVelocity.AddAttribute<float>("y", 0f);
+            rotVelocity.AddAttribute<float>("y", 1f);
             rotVelocity.AddAttribute<float>("z", 0f);
-            rotVelocity.AddAttribute<float>("r", 1f);
+            rotVelocity.AddAttribute<float>("r", 0f);
             ComponentRegistry.Instance.Register(rotVelocity);
         }
 
@@ -157,7 +157,7 @@ namespace MotionPlugin
         private void UpdateSpin(Entity updatedEntity) {
             while (IsSpinning(updatedEntity))
             {
-                Quat entityRotation = EntityRotationAsQuaternion(updatedEntity);                ;
+                Quat entityRotation = EntityRotationAsQuaternion(updatedEntity);
 
                 Vector spinAxis = new Vector();
                 spinAxis.x = (float)updatedEntity["rotVelocity"]["x"];
@@ -208,11 +208,11 @@ namespace MotionPlugin
         /// <param name="entity">Entity to get orientation from</param>
         /// <returns></returns>
         private Quat EntityRotationAsQuaternion(Entity entity) {
-                    Quat entityRotation = new Quat();
-                    entityRotation.x = (float)entity["orientation"]["x"];
-                    entityRotation.y = (float)entity["orientation"]["y"];
-                    entityRotation.z = (float)entity["orientation"]["z"];
-                    entityRotation.w = (float)entity["orientation"]["w"];
+            Quat entityRotation = new Quat();
+            entityRotation.x = (float)entity["orientation"]["x"];
+            entityRotation.y = (float)entity["orientation"]["y"];
+            entityRotation.z = (float)entity["orientation"]["z"];
+            entityRotation.w = (float)entity["orientation"]["w"];
 
             return entityRotation;
         }
