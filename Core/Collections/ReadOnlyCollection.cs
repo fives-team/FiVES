@@ -7,31 +7,33 @@ namespace FIVES
 {
     /// <summary>
     /// Read-only wrapper around a list. Write operations are implemented explicitly only (can only be accessed via the
-    /// pointer to the base interface) and will result in an NotSupportedException exception if executed.
+    /// pointer to the base interface) and will result in an NotSupportedException exception if executed. Underlying
+    /// implementation creates a copy of the collection at the time of construction to allow lock-free usage. However,
+    /// users must be aware that changes in the original collection will not be reflected.
     /// </summary>
     /// <typeparam name="T">Type of the elements stored in the list.</typeparam>
     public class ReadOnlyCollection<T> : ICollection<T>
     {
         public ReadOnlyCollection(ICollection<T> collection)
         {
-            writableCollection = collection;
+            collectionClone = new List<T>(collection);
         }
 
         #region ICollection implementation
 
         public bool Contains(T item)
         {
-            return writableCollection.Contains(item);
+            return collectionClone.Contains(item);
         }
 
         public void CopyTo(T[] array, int arrayIndex)
         {
-            writableCollection.CopyTo(array, arrayIndex);
+            collectionClone.CopyTo(array, arrayIndex);
         }
 
         public int Count
         {
-            get { return writableCollection.Count; }
+            get { return collectionClone.Count; }
         }
 
         public bool IsReadOnly
@@ -41,7 +43,7 @@ namespace FIVES
 
         public IEnumerator<T> GetEnumerator()
         {
-            return writableCollection.GetEnumerator();
+            return collectionClone.GetEnumerator();
         }
 
         void ICollection<T>.Add(T item)
@@ -61,11 +63,11 @@ namespace FIVES
 
         System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
         {
-            return writableCollection.GetEnumerator();
+            return collectionClone.GetEnumerator();
         }
 
         #endregion
 
-        private ICollection<T> writableCollection;
+        private ICollection<T> collectionClone;
     }
 }
