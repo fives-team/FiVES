@@ -101,7 +101,7 @@ namespace NativeClient
         /// <param name="callbacks">Callbacks.</param>
         /// <param name="args">Arguments.</param>
         public int Call(string funcName, List<int> callbacks, params object[] args) {
-            int callID = NextCallID++;
+            int callID = GetNextCallID();
             List<object> message = new List<object>();
             message.Add("call");
             message.Add(callID);
@@ -113,7 +113,12 @@ namespace NativeClient
             Logger.Debug("Sending: {0}", serializedMessage);
             socket.Send(serializedMessage);
             return callID;
+        }
 
+        private int GetNextCallID()
+        {
+            lock (nextCallIDLock)
+                return nextCallID++;
         }
 
         /// <summary>
@@ -234,7 +239,8 @@ namespace NativeClient
         /// <summary>
         /// Next call ID. Used to generate unique call IDs.
         /// </summary>
-        static int NextCallID = 0;
+        object nextCallIDLock = new object();
+        int nextCallID = 0;
 
         /// <summary>
         /// Settings for the JSON.NET.
