@@ -17,7 +17,7 @@ namespace FIVES
             string pluginDir = null;
             ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
             try {
-                pluginDir = ConfigurationManager.AppSettings["PluginDir"].ToString();
+                pluginDir = ConfigurationManager.AppSettings["PluginDir"];
             } catch (ConfigurationErrorsException) {
                 logger.Error("Configuration is missing or corrupt.");
             }
@@ -25,10 +25,11 @@ namespace FIVES
             // Load configuration options.
             string[] pluginFilters = null;
             try {
-                string pluginFilterList = ConfigurationManager.AppSettings["PluginFilters"].ToString();
-                pluginFilters = pluginFilterList.Split(',');
+                string pluginFilterList = ConfigurationManager.AppSettings["PluginFilters"];
+                if (pluginFilterList != null)
+                    pluginFilters = pluginFilterList.Split(',');
             } catch (ConfigurationErrorsException) {
-                // This is optional element.
+                // This is optional element. Ignore error.
             }
 
             logger.Info("Loading plugins");
