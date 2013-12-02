@@ -229,12 +229,19 @@ namespace NativeClient
             List<JToken> parsedMessage = JsonConvert.DeserializeObject<List<JToken>>(e.Message);
             string messageType = parsedMessage[0].ToObject<string>();
 
-            if (messageType == "call-error")
-                logger.Error("Received error message: {0}", e.Message);
-            else if (messageType == "call")
-                HandleCallMessage(e.Message, parsedMessage);
-            else if (messageType == "call-reply")
-                HandleCallReplyMessage(e.Message, parsedMessage);
+            try
+            {
+                if (messageType == "call-error")
+                    logger.Error("Received error message: {0}", e.Message);
+                else if (messageType == "call")
+                    HandleCallMessage(e.Message, parsedMessage);
+                else if (messageType == "call-reply")
+                    HandleCallReplyMessage(e.Message, parsedMessage);
+            }
+            catch (Exception ex)
+            {
+                logger.ErrorException("Failed to parse incoming message: " + e.Message, ex);
+            }
         }
 
         /// <summary>
