@@ -8,6 +8,7 @@ using System.Reflection;
 using Dynamitey;
 using System.Runtime.InteropServices;
 using WebSocket4Net;
+using NLog;
 
 namespace WebSocketJSON
 {
@@ -23,6 +24,8 @@ namespace WebSocketJSON
         {
             if (Closed != null)
                 Closed(this, new ClosedEventArgs(reason));
+
+            logger.Warn("Connection closed: " + reason);
         }
 
         public void HandleMessageReceived(string message)
@@ -30,6 +33,8 @@ namespace WebSocketJSON
             if (MessageReceived != null)
                 MessageReceived(this, new MessageReceivedEventArgs(message));
         }
+
+        private static Logger logger = LogManager.GetCurrentClassLogger();
     }
 }
 
