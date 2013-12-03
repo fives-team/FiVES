@@ -7,9 +7,9 @@ using System.Collections.Generic;
 
 namespace FIVES
 {
-    public class MainClass
+    public class Application
     {
-        private static Logger logger = LogManager.GetCurrentClassLogger();
+        public static ApplicationController Controller = null;
 
         static int Main(string[] args)
         {
@@ -37,9 +37,16 @@ namespace FIVES
 
             PluginManager.Instance.OnAnyPluginInitialized += HandlePluginInitialized;
 
-            // Wait for 'q' key to be pressed.
-            Console.WriteLine("The server is up and running. Press 'q' to stop it...");
-            while (Console.ReadKey().KeyChar != 'q');
+            if (Controller == null)
+            {
+                // Wait for 'q' key to be pressed.
+                Console.WriteLine("The server is up and running. Press 'q' to stop it...");
+                while (Console.ReadKey().KeyChar != 'q') ;
+            }
+            else
+            {
+                Controller.WaitForTerminate();
+            }
 
             return 0;
         }
@@ -62,6 +69,8 @@ namespace FIVES
             var finalString = logEntry.ToString();
             return finalString.Substring(0, finalString.Length - 1);  // remove trailing "\n"
         }
+
+        private static Logger logger = LogManager.GetCurrentClassLogger();
     }
 }
 
