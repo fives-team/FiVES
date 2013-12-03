@@ -70,8 +70,6 @@ namespace TerminalPlugin
 
             // Reconfigure existing loggers.
             LogManager.ReconfigExistingLoggers();
-
-            LogManager.GetCurrentClassLogger().Error("test");
         }
 
         public static void RedirectLogMessage(string message)

@@ -15,9 +15,11 @@ namespace TerminalPlugin
         {
             this.controller = controller;
 
-            RegisterCommand("help", "Shows help text for all commands", false, ShowHelp);
-            RegisterCommand("quit", "Shuts the server down.", false, ShutDown, new List<string> { "q" });
-            RegisterCommand("clean", "Removes all entities from the server", false, RemoveAllEntities);
+            RegisterCommand("help", "Shows help for a command or all commands if none specified.", false, ShowHelp,
+                new List<string> { "h", "?" });
+            RegisterCommand("quit", "Shuts the server down.", false, ShutDown, new List<string> { "q", "exit" });
+            RegisterCommand("clean", "Removes all entities from the server.", false, RemoveAllEntities,
+                new List<string> { "clear" });
 
             Task.Factory.StartNew(TerminalThreadFunc);
         }
@@ -50,32 +52,32 @@ namespace TerminalPlugin
         /// <exception cref="ArgumentException">
         ///   Thrown when a command or any of its aliases are already registered.
         /// </exception>
-        /// <param name="commands">List of command aliases.</param>
+        /// <param name="name">Name of the command.</param>
         /// <param name="helpText">Help text used for this command in the help command.</param>
         /// <param name="caseSensitive">True if name is case-sensitive.</param>
         /// <param name="aliases">An optional set of aliases.</param>
         /// <param name="handler">Handler to be invoked when command is executed.</param>
-        public void RegisterCommand(string command, string helpText, bool caseSensitive, Action<string> handler,
+        public void RegisterCommand(string name, string helpText, bool caseSensitive, Action<string> handler,
                                     List<string> aliases = null)
         {
-            if (command == null)
-                throw new ArgumentException("Command can not be null", "command");
+            if (name == null)
+                throw new ArgumentException("Command can not be null", "name");
 
             if (handler == null)
                 throw new ArgumentException("Handler can not be null", "handler");
 
             var info = new CommandInfo
             {
-                Command = command,
+                Name = name,
                 HelpText = helpText,
                 CaseSensitive = caseSensitive,
                 Handler = handler,
-                Aliases = aliases
+                Aliases = aliases ?? new List<string>()
             };
 
             lock (commands)
             {
-                AddCommand(command, info);
+                AddCommand(name, info);
 
                 if (aliases != null)
                 {
@@ -85,12 +87,12 @@ namespace TerminalPlugin
             }
         }
 
-        private void AddCommand(string alias, CommandInfo info)
+        private void AddCommand(string name, CommandInfo info)
         {
-            if (!commands.ContainsKey(alias.ToLower()))
-                commands.Add(alias.ToLower(), info);
+            if (!commands.ContainsKey(name.ToLower()))
+                commands.Add(name.ToLower(), info);
             else
-                throw new ArgumentException("Command is already registered", alias);
+                throw new ArgumentException("Command is already registered", name);
         }
 
         private void ShutDown(string commandLine)
@@ -122,29 +124,26 @@ namespace TerminalPlugin
                     string commandName = commandNames[0];
                     CommandInfo info = commands[commandName];
 
-                    if (info.Aliases.Count > 0)
-                        commandNames.RemoveAll(name => info.Aliases.Contains(name));
+                    commandNames.Remove(info.Name);
+                    commandNames.RemoveAll(name => info.Aliases.Contains(name));
 
-                    PrintCommandHelp(info);
+                    WriteLine("  " + info.Name);
+                    WriteLine("    " + info.HelpText);
+
+                    if (info.Aliases.Count > 0)
+                        WriteLine("    aliases: " + String.Join(", ", info.Aliases));
                 }
+
+                WriteLine();
             }
             else
             {
                 CommandInfo info;
                 if (IsValidCommand(command, out info))
-                    PrintCommandHelp(info);
+                    WriteLine(info.HelpText);
                 else
                     WriteLine("There is no such command: " + command);
             }
-        }
-
-        private void PrintCommandHelp(CommandInfo info)
-        {
-            WriteLine("  " + info.Command);
-            WriteLine("    " + info.HelpText);
-
-            if (info.Aliases.Count > 0)
-                WriteLine("    aliases: " + String.Join(", ", info.Aliases));
         }
 
         private void RemoveAllEntities(string commandLine)
@@ -155,10 +154,9 @@ namespace TerminalPlugin
 
         private void TerminalThreadFunc()
         {
-            Console.WriteLine("The server is up and running. Press 'q' to stop it...");
-            while (Console.ReadKey().KeyChar != 'q') ;
+            WriteLine("The server is up and running. Use 'quit' command to stop it...");
 
-            // Example code for controlling the cursor. Works on Windows. Need to be tested on Linux.
+            UpdateCommandLineUnlocked();
 
             while (true)
             {
@@ -190,16 +188,18 @@ namespace TerminalPlugin
                 else if (keyInfo.Key == ConsoleKey.Enter)
                 {
                     string command = currentCommand.ToString();
-                    WriteLine(">> " + command);
-
-                    CommandInfo info;
-                    if (IsValidCommand(command, out info))
-                        info.Handler(command);
-                    else
-                        WriteLine("Invalid command");
 
                     currentCommand.Clear();
                     cursorPosition = 0;
+
+                    WriteLine(commandLinePrefix + command);
+
+                    CommandInfo info;
+                    if (IsValidCommand(command, out info))
+                        // Using new thread to avoid handlers crashing terminal plugin with unhandled exceptions.
+                        Task.Factory.StartNew(() => info.Handler(command));
+                    else
+                        WriteLine("Invalid command");
                 }
                 else if (IsText(keyInfo))
                 {
@@ -229,22 +229,18 @@ namespace TerminalPlugin
 
             info = commands[key];
             if (commands[key].CaseSensitive)
-            {
-                if (info.Command.Equals(key))
-                    return true;
-                else if (info.Aliases != null && info.Aliases.Contains(key))
-                    return true;
-                else
-                    return false;
-            }
-
-            return true;
+                return info.Name.Equals(key) || info.Aliases.Contains(key);
+            else
+                return true;
         }
 
+        /// <summary>
+        /// Updates the command line. Make should you obtain consoleLock before calling this method.
+        /// </summary>
         private void UpdateCommandLineUnlocked()
         {
             StringBuilder commandLine = new StringBuilder();
-            commandLine.Append(">> ");
+            commandLine.Append(commandLinePrefix);
             commandLine.Append(currentCommand.ToString());
             while (commandLine.Length < previousCommandLineLength)
                 commandLine.Append(' ');
@@ -269,12 +265,12 @@ namespace TerminalPlugin
                 consoleKey == ConsoleKey.OemComma || consoleKey == ConsoleKey.OemMinus ||
                 consoleKey == ConsoleKey.Add || consoleKey == ConsoleKey.Divide || consoleKey == ConsoleKey.Multiply ||
                 consoleKey == ConsoleKey.Subtract || consoleKey == ConsoleKey.Oem102 ||
-                consoleKey == ConsoleKey.Decimal;
+                consoleKey == ConsoleKey.Decimal || consoleKey == ConsoleKey.Spacebar;
         }
 
         private class CommandInfo
         {
-            public string Command;
+            public string Name;
             public string HelpText;
             public bool CaseSensitive;
             public Action<string> Handler;
@@ -287,7 +283,8 @@ namespace TerminalPlugin
 
         private Dictionary<string, CommandInfo> commands = new Dictionary<string, CommandInfo>();
 
-        private int previousCommandLineLength = 3;  // empty command line is ">> "
+        private const string commandLinePrefix = ">> ";
+        private int previousCommandLineLength = commandLinePrefix.Length;
         private StringBuilder currentCommand = new StringBuilder();
         private int cursorPosition = 0;
     }
