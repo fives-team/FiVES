@@ -7,19 +7,17 @@ using System.Threading.Tasks;
 
 namespace TerminalPlugin
 {
+    /// <summary>
+    /// This class implements the terminal plugin API.
+    /// </summary>
     public class Terminal
     {
         public static Terminal Instance;
 
-        public Terminal(ApplicationController controller)
+        public Terminal()
         {
-            this.controller = controller;
-
             RegisterCommand("help", "Shows help for a command or all commands if none specified.", false, ShowHelp,
                 new List<string> { "h", "?" });
-            RegisterCommand("quit", "Shuts the server down.", false, ShutDown, new List<string> { "q", "exit" });
-            RegisterCommand("clean", "Removes all entities from the server.", false, RemoveAllEntities,
-                new List<string> { "clear" });
 
             Task.Factory.StartNew(TerminalThreadFunc);
         }
@@ -95,12 +93,6 @@ namespace TerminalPlugin
                 throw new ArgumentException("Command is already registered", name);
         }
 
-        private void ShutDown(string commandLine)
-        {
-            WriteLine("Shutting down the server...");
-            controller.Terminate();
-        }
-
         private void ShowHelp(string commandLine)
         {
             string command = null;
@@ -124,8 +116,8 @@ namespace TerminalPlugin
                     string commandName = commandNames[0];
                     CommandInfo info = commands[commandName];
 
-                    commandNames.Remove(info.Name);
-                    commandNames.RemoveAll(name => info.Aliases.Contains(name));
+                    commandNames.Remove(info.Name.ToLower());
+                    info.Aliases.ForEach(name => commandNames.Remove(name.ToLower()));
 
                     WriteLine("  " + info.Name);
                     WriteLine("    " + info.HelpText);
@@ -144,12 +136,6 @@ namespace TerminalPlugin
                 else
                     WriteLine("There is no such command: " + command);
             }
-        }
-
-        private void RemoveAllEntities(string commandLine)
-        {
-            World.Instance.Clear();
-            WriteLine("Removed all entities");
         }
 
         private void TerminalThreadFunc()
@@ -198,7 +184,7 @@ namespace TerminalPlugin
                     if (IsValidCommand(command, out info))
                         // Using new thread to avoid handlers crashing terminal plugin with unhandled exceptions.
                         Task.Factory.StartNew(() => info.Handler(command));
-                    else
+                    else if (command != "")
                         WriteLine("Invalid command");
                 }
                 else if (IsText(keyInfo))
