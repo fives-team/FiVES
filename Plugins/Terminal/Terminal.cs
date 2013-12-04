@@ -12,19 +12,10 @@ namespace TerminalPlugin
     {
         public static Terminal Instance;
 
-        public Terminal(ApplicationController controller)
+        public Terminal()
         {
-            this.controller = controller;
-
             RegisterCommand("help", "Shows help for a command or all commands if none specified.", false, ShowHelp,
                 new List<string> { "h", "?" });
-            RegisterCommand("quit", "Shuts the server down.", false, ShutDown, new List<string> { "q", "exit" });
-            RegisterCommand("removeEntities", "Removes all entities from the server.", false, RemoveAllEntities,
-                new List<string> { "re", "clean" });
-            RegisterCommand("numEntities", "Prints number of entities in the world.", false, PrintNumEntities,
-                new List<string> { "ne" });
-            RegisterCommand("numClients", "Prints number of authenticated clients.", false, PrintNumClients,
-                new List<string> { "nc" });
 
             Task.Factory.StartNew(TerminalThreadFunc);
         }
@@ -100,12 +91,6 @@ namespace TerminalPlugin
                 throw new ArgumentException("Command is already registered", name);
         }
 
-        private void ShutDown(string commandLine)
-        {
-            WriteLine("Shutting down the server...");
-            controller.Terminate();
-        }
-
         private void ShowHelp(string commandLine)
         {
             string command = null;
@@ -149,30 +134,6 @@ namespace TerminalPlugin
                 else
                     WriteLine("There is no such command: " + command);
             }
-        }
-
-        private void RemoveAllEntities(string commandLine)
-        {
-            World.Instance.Clear();
-            WriteLine("Removed all entities");
-        }
-
-        private void PrintNumEntities(string commandLine)
-        {
-            WriteLine("Number of entities: " + World.Instance.Count);
-        }
-
-        private void PrintNumClients(string commandLine)
-        {
-            if (!PluginManager.Instance.IsPluginLoaded("ClientManager"))
-                WriteLine("ClientManager plugin is not loaded on this server");
-            else
-                WriteLine("Number of authenticated clients: " + GetNumClients());
-        }
-
-        private int GetNumClients()
-        {
-            return ClientManager.Instance.GetNumAuthenticatedClients();
         }
 
         private void TerminalThreadFunc()
