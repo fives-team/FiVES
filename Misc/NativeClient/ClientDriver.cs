@@ -122,9 +122,9 @@ namespace NativeClient
 
         void MoveEntity(EntityInfo info)
         {
-            info.Position.x = DateTime.Now.Ticks;
+            info.Position.x = Timestamps.FloatMilliseconds;
             communicator.Call("location.updatePosition", worldManager.SessionKey, info.Guid, info.Position,
-                              UnixTimestamp.Now);
+                              Timestamps.UnixTimestamp);
         }
 
         void MoveLocallyCreatedEntities()
@@ -149,7 +149,7 @@ namespace NativeClient
             info.Orientation = aa.ToQuaternion();
 
             communicator.Call("location.updateOrientation", worldManager.SessionKey, info.Guid, info.Orientation,
-                              UnixTimestamp.Now);
+                              Timestamps.UnixTimestamp);
         }
 
         void RotateLocallyCreatedEntities()

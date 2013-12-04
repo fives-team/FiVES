@@ -59,9 +59,9 @@
     <Compile Include="AxisAngleTest.cs" />
     <Compile Include="Authenticator.cs" />
     <Compile Include="Communicator.cs" />
-    <Compile Include="UnixTimestamp.cs" />
     <Compile Include="WorldManager.cs" />
     <Compile Include="UpdateInfo.cs" />
+    <Compile Include="Timestamps.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
