@@ -222,6 +222,11 @@ namespace ClientManagerPlugin
             OnAuthenticated += callback;
         }
 
+        public int GetNumAuthenticatedClients()
+        {
+            return authenticatedClients.Count;
+        }
+
         #endregion
 
         /// <summary>

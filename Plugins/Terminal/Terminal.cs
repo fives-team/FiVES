@@ -1,4 +1,5 @@
-﻿using FIVES;
+﻿using ClientManagerPlugin;
+using FIVES;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -18,8 +19,12 @@ namespace TerminalPlugin
             RegisterCommand("help", "Shows help for a command or all commands if none specified.", false, ShowHelp,
                 new List<string> { "h", "?" });
             RegisterCommand("quit", "Shuts the server down.", false, ShutDown, new List<string> { "q", "exit" });
-            RegisterCommand("clean", "Removes all entities from the server.", false, RemoveAllEntities,
-                new List<string> { "clear" });
+            RegisterCommand("removeEntities", "Removes all entities from the server.", false, RemoveAllEntities,
+                new List<string> { "re", "clean" });
+            RegisterCommand("numEntities", "Prints number of entities in the world.", false, PrintNumEntities,
+                new List<string> { "ne" });
+            RegisterCommand("numClients", "Prints number of authenticated clients.", false, PrintNumClients,
+                new List<string> { "nc" });
 
             Task.Factory.StartNew(TerminalThreadFunc);
         }
@@ -150,6 +155,24 @@ namespace TerminalPlugin
         {
             World.Instance.Clear();
             WriteLine("Removed all entities");
+        }
+
+        private void PrintNumEntities(string commandLine)
+        {
+            WriteLine("Number of entities: " + World.Instance.Count);
+        }
+
+        private void PrintNumClients(string commandLine)
+        {
+            if (!PluginManager.Instance.IsPluginLoaded("ClientManager"))
+                WriteLine("ClientManager plugin is not loaded on this server");
+            else
+                WriteLine("Number of authenticated clients: " + GetNumClients());
+        }
+
+        private int GetNumClients()
+        {
+            return ClientManager.Instance.GetNumAuthenticatedClients();
         }
 
         private void TerminalThreadFunc()
