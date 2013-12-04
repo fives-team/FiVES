@@ -17,6 +17,8 @@ namespace ScalabilityPlugin
     /// Implements synchronization algorithm. Manages remote synchronization nodes and local synchronization state.
     /// Processes local changes and distributes them to other nodes. Optionally also relays updates between nodes.
     /// </summary>
+    /// TODO: For testing, mock Connection class and check that Scalability sends correct messages to other nodes on
+    /// relevant changes in the domain model. Also use the same connection to send mock messages from other nodes.
     class Scalability
     {
         public static Scalability Instance = new Scalability();
