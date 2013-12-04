@@ -129,8 +129,8 @@ namespace TerminalPlugin
                     string commandName = commandNames[0];
                     CommandInfo info = commands[commandName];
 
-                    commandNames.Remove(info.Name);
-                    commandNames.RemoveAll(name => info.Aliases.Contains(name));
+                    commandNames.Remove(info.Name.ToLower());
+                    info.Aliases.ForEach(name => commandNames.Remove(name.ToLower()));
 
                     WriteLine("  " + info.Name);
                     WriteLine("    " + info.HelpText);
@@ -221,7 +221,7 @@ namespace TerminalPlugin
                     if (IsValidCommand(command, out info))
                         // Using new thread to avoid handlers crashing terminal plugin with unhandled exceptions.
                         Task.Factory.StartNew(() => info.Handler(command));
-                    else
+                    else if (command != "")
                         WriteLine("Invalid command");
                 }
                 else if (IsText(keyInfo))
