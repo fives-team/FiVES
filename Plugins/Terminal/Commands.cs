@@ -1,5 +1,4 @@
-﻿using ClientManagerPlugin;
-using FIVES;
+﻿using FIVES;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,6 +6,9 @@ using System.Text;
 
 namespace TerminalPlugin
 {
+    /// <summary>
+    /// This class will contain commands that operate with core classes (not specific to any plugin).
+    /// </summary>
     class Commands
     {
         public static Commands Instance;
@@ -21,8 +23,6 @@ namespace TerminalPlugin
                 RemoveAllEntities, new List<string> { "re", "clean" });
             Terminal.Instance.RegisterCommand("numEntities", "Prints number of entities in the world.", false,
                 PrintNumEntities, new List<string> { "ne" });
-            Terminal.Instance.RegisterCommand("numClients", "Prints number of authenticated clients.", false,
-                PrintNumClients, new List<string> { "nc" });
         }
 
         public void ShutDown(string commandLine)
@@ -40,19 +40,6 @@ namespace TerminalPlugin
         public void PrintNumEntities(string commandLine)
         {
             Terminal.Instance.WriteLine("Number of entities: " + World.Instance.Count);
-        }
-
-        public void PrintNumClients(string commandLine)
-        {
-            if (!PluginManager.Instance.IsPluginLoaded("ClientManager"))
-                Terminal.Instance.WriteLine("ClientManager plugin is not loaded on this server");
-            else
-                Terminal.Instance.WriteLine("Number of authenticated clients: " + GetNumClients());
-        }
-
-        private int GetNumClients()
-        {
-            return ClientManager.Instance.GetNumAuthenticatedClients();
         }
 
         private ApplicationController controller;

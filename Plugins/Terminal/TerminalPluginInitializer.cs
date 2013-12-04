@@ -10,6 +10,9 @@ using System.Text;
 
 namespace TerminalPlugin
 {
+    /// <summary>
+    /// This is Terminal plugin initializer.
+    /// </summary>
     public class TerminalPluginInitializer : IPluginInitializer
     {
         public string Name

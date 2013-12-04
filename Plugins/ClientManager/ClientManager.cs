@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using TerminalPlugin;
 
 namespace ClientManagerPlugin
 {
@@ -33,12 +34,25 @@ namespace ClientManagerPlugin
                     (Action<string, Action<List<ClientUpdateQueue.UpdateInfo>>>) NotifyAboutObjectUpdates},
             });
 
+            PluginManager.Instance.AddPluginLoadedHandler("Terminal", RegisterTerminalCommands);
+
             // DEBUG
             //            clientService["scripting.createServerScriptFor"] = (Action<string, string>)createServerScriptFor;
             //            clientService.OnNewClient += delegate(Connection connection) {
             //                var getAnswer = connection.generateFuncWrapper("getAnswer");
             //                getAnswer((Action<int>) delegate(int answer) { Console.WriteLine("The answer is {0}", answer); });
             //            };
+        }
+
+        private void RegisterTerminalCommands()
+        {
+            Terminal.Instance.RegisterCommand("numClients", "Prints number of authenticated clients.", false,
+                PrintNumClients, new List<string> { "nc" });
+        }
+
+        private void PrintNumClients(string commandLine)
+        {
+            Terminal.Instance.WriteLine("Number of connected clients: " + authenticatedClients.Count);
         }
 
         #region Client interface
@@ -220,11 +234,6 @@ namespace ClientManagerPlugin
         public void NotifyWhenAnyClientAuthenticated(Action<Guid> callback)
         {
             OnAuthenticated += callback;
-        }
-
-        public int GetNumAuthenticatedClients()
-        {
-            return authenticatedClients.Count;
         }
 
         #endregion

@@ -76,6 +76,10 @@
       <Project>{EEFDDD48-1795-4D62-A255-29167B0A3BC3}</Project>
       <Name>KIARA</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Terminal\Terminal.csproj">
+      <Project>{fdf2de99-68cf-4947-952c-2d2bcc846f3e}</Project>
+      <Name>Terminal</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <None Include="clientManagerServer.json">

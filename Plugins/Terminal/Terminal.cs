@@ -1,5 +1,4 @@
-﻿using ClientManagerPlugin;
-using FIVES;
+﻿using FIVES;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,6 +7,9 @@ using System.Threading.Tasks;
 
 namespace TerminalPlugin
 {
+    /// <summary>
+    /// This class implements the terminal plugin API.
+    /// </summary>
     public class Terminal
     {
         public static Terminal Instance;
