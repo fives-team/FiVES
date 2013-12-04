@@ -25,7 +25,8 @@ namespace WebSocketJSON
             if (Closed != null)
                 Closed(this, new ClosedEventArgs(reason));
 
-            logger.Warn("Connection closed: " + reason);
+            if (!reason.Equals("ClientClosing"))
+                logger.Warn("Connection closed: " + reason);
         }
 
         public void HandleMessageReceived(string message)
