@@ -34,7 +34,8 @@ namespace NativeClient
         /// </summary>
         public void StartSimulation()
         {
-            Logger.Info("Connecting to the server");
+            logger.Info("Connecting to the server");
+
             communicator = new Communicator();
             communicator.Connected += HandleConnected;
             communicator.Disconnected += HandleDisconnected;
@@ -73,7 +74,7 @@ namespace NativeClient
 
         void HandleConnected(object sender, EventArgs e)
         {
-            Logger.Info("Authenticating as a client");
+            logger.Info("Authenticating as a client");
 
             Authenticator authenticator = new Authenticator(communicator);
             authenticator.Authenticated += HandleAuthenticated;
@@ -81,7 +82,7 @@ namespace NativeClient
 
         void HandleAuthenticated(object sender, AuthenticatedEventArgs e)
         {
-            Logger.Info("Loading world");
+            logger.Info("Loading world");
 
             worldManager = new WorldManager(communicator, e.SessionKey);
             worldManager.Loaded += HandleWorldLoaded;
@@ -99,13 +100,13 @@ namespace NativeClient
         {
             if (EnableMovement)
             {
-                Logger.Info("Starting to move entities");
+                logger.Info("Starting to move entities");
                 StartMovingLocallyCreatedEntities();
             }
 
             if (EnableRotation)
             {
-                Logger.Info("Starting to rotate entities");
+                logger.Info("Starting to rotate entities");
                 StartRotatingLocallyCreatedEntities();
             }
         }
@@ -173,6 +174,6 @@ namespace NativeClient
         Communicator communicator;
         WorldManager worldManager;
 
-        static Logger Logger = LogManager.GetCurrentClassLogger();
+        static Logger logger = LogManager.GetCurrentClassLogger();
     }
 }
