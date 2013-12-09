@@ -124,8 +124,6 @@ namespace NativeClient
             message.AddRange(args);
 
             var serializedMessage = JsonConvert.SerializeObject(message, settings);
-            logger.Debug("Sending: {0}", serializedMessage);
-
             socket.Send(serializedMessage);
 
             return callID;
@@ -173,7 +171,6 @@ namespace NativeClient
             socket.Opened += (sender, e) => logger.Info("Connected to the server");
             socket.Error += (sender, e) => logger.ErrorException("Connection error", e.Exception);
             socket.Closed += (sender, e) => logger.Info("Connection closed");
-            socket.Message += (sender, e) => logger.Debug("Received: {0}", e.Message);
             socket.Message += HandleMessage;
             socket.Opened += HandleOpened;
             socket.Closed += HandleClosed;

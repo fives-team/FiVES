@@ -31,7 +31,6 @@ namespace FIVES
         public PluginManager()
         {
             OnAnyPluginInitialized += HandleInitializedPlugin;
-            OnAnyPluginInitialized += (sender, e) => Logger.Debug("Loaded plugin {0}", e.pluginName);
 
             ComponentRegistry.Instance.RegisteredComponent += HandleRegistredComponent;
         }

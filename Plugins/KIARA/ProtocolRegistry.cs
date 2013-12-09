@@ -95,7 +95,7 @@ namespace KIARAPlugin
                     return;
                 }
                 RegisterConnectionFactory(connectionFactory.Name, connectionFactory);
-                logger.Debug("Registered protocol {0}", connectionFactory.Name);
+                logger.Info("Registered protocol {0}", connectionFactory.Name);
             } catch (BadImageFormatException e) {
                 logger.InfoException(filename + " is not a valid assembly and thus cannot be loaded as a protocol.", e);
                 return;

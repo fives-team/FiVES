@@ -38,8 +38,6 @@ namespace WebSocketJSON
         /// <param name="message">The incoming message.</param>
         public void HandleMessage(object sender, MessageEventArgs e)
         {
-            logger.Debug("Received: " + e.Message);
-
             List<JToken> data = null;
             // FIXME: Occasionally we receive JSON with some random bytes appended. The reason is
             // unclear, but to be safe we ignore messages that have parsing errors.
@@ -167,7 +165,6 @@ namespace WebSocketJSON
                 }
                 catch (Exception e)
                 {
-                    logger.DebugException("Exception in method handler", e);
                     exception = e;
                     success = false;
                 }
