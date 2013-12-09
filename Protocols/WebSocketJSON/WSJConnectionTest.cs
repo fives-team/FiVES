@@ -12,9 +12,9 @@ namespace WebSocketJSON
     {
         private class WSJConnectionWrapper : WSJConnection
         {
-            internal override void Send(string message)
+            internal override void SendSerializedMessage(string serializedMessage)
             {
-                sentMessages.Add(message);
+                sentMessages.Add(serializedMessage);
             }
 
             public new IFuncCall CallFunc(string funcName, params object[] args)
