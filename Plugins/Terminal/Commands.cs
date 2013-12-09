@@ -23,6 +23,8 @@ namespace TerminalPlugin
                 RemoveAllEntities, new List<string> { "re", "clean" });
             Terminal.Instance.RegisterCommand("numEntities", "Prints number of entities in the world.", false,
                 PrintNumEntities, new List<string> { "ne" });
+            Terminal.Instance.RegisterCommand("plugins", "Prints list of loaded and deferred plugins if any.", false,
+                                              ListPlugins);
         }
 
         public void ShutDown(string commandLine)
@@ -40,6 +42,24 @@ namespace TerminalPlugin
         public void PrintNumEntities(string commandLine)
         {
             Terminal.Instance.WriteLine("Number of entities: " + World.Instance.Count);
+        }
+
+        public void ListPlugins(string commandLine)
+        {
+            Terminal.Instance.WriteLine("Loaded plugins:");
+            foreach (PluginManager.PluginInfo info in PluginManager.Instance.LoadedPlugins)
+                Terminal.Instance.WriteLine("  " + info.Name);
+
+            if (PluginManager.Instance.DeferredPlugins.Count > 0) {
+                Terminal.Instance.WriteLine("Deferred plugins:");
+                foreach (PluginManager.PluginInfo info in PluginManager.Instance.DeferredPlugins)
+                {
+                    string deferredPluginInfo = String.Format("  {0}: (plugin deps: [{1}], component deps: [{2}])",
+                                                              info.Name, String.Join(", ", info.RemainingPluginDeps),
+                                                              String.Join(", ", info.RemainingComponentDeps));
+                    Terminal.Instance.WriteLine(deferredPluginInfo);
+                }
+            }
         }
 
         private ApplicationController controller;
