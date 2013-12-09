@@ -38,6 +38,32 @@ namespace FIVES
         }
 
         [Test()]
+        public void ShouldConvertCompatibleDefaultValues()
+        {
+            ComponentDefinition def = new ComponentDefinition("defTypeTest");
+
+            def.AddAttribute<double>("c", 42.0);
+            def.AddAttribute<int?>("e", null);
+            def.AddAttribute<int?>("f", 34);
+
+            Assert.Catch<AttributeDefinitionException>(delegate {
+                def.AddAttribute<double>("d", 42);
+            });
+
+            Assert.Catch<AttributeDefinitionException>(delegate {
+            def.AddAttribute<double>("a", 42);
+            });
+
+            Assert.Catch<AttributeDefinitionException>(delegate {
+                def.AddAttribute<double>("b", 42f);
+            });
+
+            Assert.Catch<AttributeDefinitionException>(delegate {
+                def.AddAttribute<int>("g", 3.14);
+            });
+        }
+
+        [Test()]
         public void ShouldInitializeGuid()
         {
             Assert.IsNotNull(entity.Guid);

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Reflection;
 
 namespace FIVES
 {
@@ -15,7 +16,25 @@ namespace FIVES
             Guid = guid;
             Name = name;
             Type = type;
-            DefaultValue = defaultValue;
+
+            try
+            {
+                MethodInfo castMethod = GetType().GetMethod("Cast", BindingFlags.NonPublic | BindingFlags.Static);
+                MethodInfo specificCastMethod = castMethod.MakeGenericMethod(type);
+                DefaultValue = specificCastMethod.Invoke(null, new object[] { defaultValue });
+            }
+            catch (TargetInvocationException e)
+            {
+                if (e.InnerException is InvalidCastException)
+                {
+                    throw new AttributeDefinitionException(
+                        "Default value for the attribute can not be cast to its type.");
+                }
+                else
+                {
+                    throw e.InnerException;
+                }
+            }
         }
 
         /// <summary>
@@ -37,6 +56,11 @@ namespace FIVES
         /// Type of the attribute.
         /// </summary>
         public Type Type { get; private set; }
+
+        private static T Cast<T>(object o)
+        {
+            return (T)o;
+        }
 
         // Needed by persistence plugin.
         internal ReadOnlyAttributeDefinition() { }
