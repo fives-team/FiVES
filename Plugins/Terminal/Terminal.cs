@@ -265,8 +265,6 @@ namespace TerminalPlugin
 
         private object consoleLock = new object();
 
-        private ApplicationController controller;
-
         private Dictionary<string, CommandInfo> commands = new Dictionary<string, CommandInfo>();
 
         private const string commandLinePrefix = ">> ";
