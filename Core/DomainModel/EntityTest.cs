@@ -51,7 +51,7 @@ namespace FIVES
             });
 
             Assert.Catch<AttributeDefinitionException>(delegate {
-            def.AddAttribute<double>("a", 42);
+                def.AddAttribute<double>("a", 42);
             });
 
             Assert.Catch<AttributeDefinitionException>(delegate {
