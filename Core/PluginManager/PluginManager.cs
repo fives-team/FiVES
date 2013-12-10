@@ -219,15 +219,14 @@ namespace FIVES
         }
 
         /// <summary>
-        /// Attempts to load all valid plugins from the <paramref name="pluginDirectory"/>. If pluginFilters is not
-        /// null, it is used as a set of acceptable plugin filenames. Plugin is only loaded if it contains at least of
-        /// the substrings from pluginFilters.
+        /// Attempts to load all valid plugins from the <paramref name="pluginDirectory"/>. By default all plugins in
+        /// the directory are loaded. However, pluginWhiteList and pluginBlackList may be used to filter loaded plugins
+        /// based on their filename. Both may be null and pluginWhiteList takes precendence when both are defined. In
+        /// either case list is used as a set of substrings against which filename is checked.
         /// </summary>
         /// <param name="pluginDirectory">Directory in which plugins are too be looked for.</param>
         /// <param name="pluginWhiteList">List of plugins which can be loaded. Ignored if null.</param>
-        /// <param name="pluginBlackList">
-        ///   List of plugins which must be ignored. Ignored if null or if pluginWhiteList is defined.
-        /// </param>
+        /// <param name="pluginBlackList">List of plugins which must be ignored. Ignored if null.</param>
         public void LoadPluginsFrom(string pluginDirectory, string[] pluginWhiteList, string[] pluginBlackList)
         {
             string[] files = Directory.GetFiles(pluginDirectory, "*.dll");
