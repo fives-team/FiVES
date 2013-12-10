@@ -34,6 +34,7 @@ namespace AuthPlugin
 
         public void Initialize ()
         {
+            Authentication.Instance = new Authentication();
         }
 
         #endregion
