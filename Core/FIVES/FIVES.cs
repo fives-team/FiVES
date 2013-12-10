@@ -15,16 +15,17 @@ namespace FIVES
         {
             // Load configuration options.
             string pluginDir = null;
-            ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
+            string[] pluginWhiteList = null;
+            string[] pluginBlackList = null;
             try {
-                pluginDir = ConfigurationManager.AppSettings["PluginDir"].ToString();
+                pluginDir = LoadPluginConfig(ref pluginWhiteList, ref pluginBlackList);
             } catch (ConfigurationErrorsException) {
                 logger.Error("Configuration is missing or corrupt.");
             }
 
             logger.Info("Loading plugins");
             if (pluginDir != null && Directory.Exists(pluginDir)) {
-                PluginManager.Instance.LoadPluginsFrom(pluginDir);
+                PluginManager.Instance.LoadPluginsFrom(pluginDir, pluginWhiteList, pluginBlackList);
                 if (PluginManager.Instance.DeferredPlugins.Count > 0)
                     logger.Info(CreateDeferredPluginsLogEntry());
             } else {
@@ -49,6 +50,18 @@ namespace FIVES
             }
 
             return 0;
+        }
+
+        private static string LoadPluginConfig(ref string[] whiteList, ref string[] blackList)
+        {
+            ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
+            string pluginWhiteListStr = ConfigurationManager.AppSettings["PluginWhiteList"];
+            if (pluginWhiteListStr != null)
+                whiteList = pluginWhiteListStr.Split(',');
+            string pluginBlackListStr = ConfigurationManager.AppSettings["PluginBlackList"];
+            if (pluginBlackListStr != null)
+                blackList = pluginBlackListStr.Split(',');
+            return ConfigurationManager.AppSettings["PluginDir"];
         }
 
         private static void HandlePluginInitialized(object sender, PluginInitializedEventArgs e)

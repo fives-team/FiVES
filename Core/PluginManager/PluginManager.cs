@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
+using System.Linq;
 using NLog;
 
 namespace FIVES
@@ -218,14 +219,34 @@ namespace FIVES
         }
 
         /// <summary>
-        /// Attempts to load all valid plugins from the <paramref name="pluginDirectory"/>.
+        /// Attempts to load all valid plugins from the <paramref name="pluginDirectory"/>. By default all plugins in
+        /// the directory are loaded. However, pluginWhiteList and pluginBlackList may be used to filter loaded plugins
+        /// based on their filename. Both may be null and pluginWhiteList takes precendence when both are defined. In
+        /// either case list is used as a set of substrings against which filename is checked.
         /// </summary>
         /// <param name="pluginDirectory">Directory in which plugins are too be looked for.</param>
-        public void LoadPluginsFrom(string pluginDirectory)
+        /// <param name="pluginWhiteList">List of plugins which can be loaded. Ignored if null.</param>
+        /// <param name="pluginBlackList">List of plugins which must be ignored. Ignored if null.</param>
+        public void LoadPluginsFrom(string pluginDirectory, string[] pluginWhiteList, string[] pluginBlackList)
         {
             string[] files = Directory.GetFiles(pluginDirectory, "*.dll");
             foreach (string filename in files)
-                LoadPlugin(filename);
+            {
+                if (pluginWhiteList != null)
+                {
+                    if (pluginWhiteList.Any(whiteListEntry => filename.Contains(whiteListEntry)))
+                        LoadPlugin(filename);
+                }
+                else if (pluginBlackList != null)
+                {
+                    if (!pluginBlackList.Any(blackListEntry => filename.Contains(blackListEntry)))
+                        LoadPlugin(filename);
+                }
+                else
+                {
+                    LoadPlugin(filename);
+                }
+            }
         }
 
         /// <summary>
