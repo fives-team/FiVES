@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
+using System.Linq;
 using NLog;
 
 namespace FIVES
@@ -223,22 +224,24 @@ namespace FIVES
         /// the substrings from pluginFilters.
         /// </summary>
         /// <param name="pluginDirectory">Directory in which plugins are too be looked for.</param>
-        /// <param name="pluginFilters>List of substrings against which plugins are checked before loaded.</param>
-        public void LoadPluginsFrom(string pluginDirectory, string[] pluginFilters)
+        /// <param name="pluginWhiteList">List of plugins which can be loaded. Ignored if null.</param>
+        /// <param name="pluginBlackList">
+        ///   List of plugins which must be ignored. Ignored if null or if pluginWhiteList is defined.
+        /// </param>
+        public void LoadPluginsFrom(string pluginDirectory, string[] pluginWhiteList, string[] pluginBlackList)
         {
             string[] files = Directory.GetFiles(pluginDirectory, "*.dll");
             foreach (string filename in files)
             {
-                if (pluginFilters != null)
+                if (pluginWhiteList != null)
                 {
-                    foreach (string filter in pluginFilters)
-                    {
-                        if (filename.Contains(filter))
-                        {
-                            LoadPlugin(filename);
-                            continue;
-                        }
-                    }
+                    if (pluginWhiteList.Any(whiteListEntry => filename.Contains(whiteListEntry)))
+                        LoadPlugin(filename);
+                }
+                else if (pluginBlackList != null)
+                {
+                    if (!pluginBlackList.Any(blackListEntry => filename.Contains(blackListEntry)))
+                        LoadPlugin(filename);
                 }
                 else
                 {

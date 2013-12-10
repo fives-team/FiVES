@@ -20,7 +20,7 @@ namespace FIVES
         [Test()]
         public void ShouldLoadAllValidPluginsInDirectory()
         {
-            pm.LoadPluginsFrom(pathToPlugins, null);
+            pm.LoadPluginsFrom(pathToPlugins, null, null);
             Assert.IsTrue(pm.IsPathLoaded(pathToPlugins + "ValidPlugin1.dll"));
             Assert.IsTrue(pm.IsPathLoaded(pathToPlugins + "ValidPlugin2.dll"));
             Assert.IsTrue(pm.IsPluginLoaded("ValidPlugin1"));
@@ -30,17 +30,26 @@ namespace FIVES
         [Test()]
         public void ShouldOmitInvalidPluginsInDirectory()
         {
-            pm.LoadPluginsFrom(pathToPlugins, null);
+            pm.LoadPluginsFrom(pathToPlugins, null, null);
             Assert.IsFalse(pm.IsPathLoaded(pathToPlugins + "InValidPlugin1.dll"));
             Assert.IsFalse(pm.IsPathLoaded(pathToPlugins + "InvalidAssembly.dll"));
         }
 
         [Test()]
-        public void ShouldUseFiltersToSelectPlugins()
+        public void ShouldUseWhiteList()
         {
-            pm.LoadPluginsFrom(pathToPlugins, new string[] { "Plugin1" });
-            Assert.IsTrue(pm.IsPathLoaded(pathToPlugins + "ValidPlugin1.dll"));
+            pm.LoadPluginsFrom(pathToPlugins, new string[] { "Plugin1" }, null);
             Assert.IsFalse(pm.IsPathLoaded(pathToPlugins + "ValidPlugin2.dll"));
+            Assert.IsTrue(pm.IsPathLoaded(pathToPlugins + "ValidPlugin1.dll"));
+            Assert.IsTrue(pm.IsPluginLoaded("ValidPlugin1"));
+        }
+
+        [Test()]
+        public void ShouldUseBlackList()
+        {
+            pm.LoadPluginsFrom(pathToPlugins, null, new string[] { "Plugin2" });
+            Assert.IsFalse(pm.IsPathLoaded(pathToPlugins + "ValidPlugin2.dll"));
+            Assert.IsTrue(pm.IsPathLoaded(pathToPlugins + "ValidPlugin1.dll"));
             Assert.IsTrue(pm.IsPluginLoaded("ValidPlugin1"));
         }
 

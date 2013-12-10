@@ -15,26 +15,24 @@ namespace FIVES
         {
             // Load configuration options.
             string pluginDir = null;
+            string[] pluginWhiteList = null;
+            string[] pluginBlackList = null;
             ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
             try {
                 pluginDir = ConfigurationManager.AppSettings["PluginDir"];
+                string pluginWhiteListStr = ConfigurationManager.AppSettings["PluginWhiteList"];
+                if (pluginWhiteListStr != null)
+                    pluginWhiteList = pluginWhiteListStr.Split(',');
+                string pluginBlackListStr = ConfigurationManager.AppSettings["PluginBlackList"];
+                if (pluginBlackListStr != null)
+                    pluginBlackList = pluginBlackListStr.Split(',');
             } catch (ConfigurationErrorsException) {
                 logger.Error("Configuration is missing or corrupt.");
             }
 
-            // Load configuration options.
-            string[] pluginFilters = null;
-            try {
-                string pluginFilterList = ConfigurationManager.AppSettings["PluginFilters"];
-                if (pluginFilterList != null)
-                    pluginFilters = pluginFilterList.Split(',');
-            } catch (ConfigurationErrorsException) {
-                // This is optional element. Ignore error.
-            }
-
             logger.Info("Loading plugins");
             if (pluginDir != null && Directory.Exists(pluginDir)) {
-                PluginManager.Instance.LoadPluginsFrom(pluginDir, pluginFilters);
+                PluginManager.Instance.LoadPluginsFrom(pluginDir, pluginWhiteList, pluginBlackList);
                 if (PluginManager.Instance.DeferredPlugins.Count > 0)
                     logger.Info(CreateDeferredPluginsLogEntry());
             } else {
