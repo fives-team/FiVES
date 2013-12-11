@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using FIVES;
 
-namespace Eventloop
+namespace EventloopPlugin
 {
     public class EventloopPluginInitializer : IPluginInitializer
     {
