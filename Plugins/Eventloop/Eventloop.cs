@@ -24,6 +24,22 @@ namespace EventloopPlugin
 
         public Eventloop()
         {
+            ThreadPool.QueueUserWorkItem(_ => tickFired());
         }
+        /// <summary>
+        /// Function that fires the event periodically
+        /// </summary>
+        private void tickFired()
+        {
+            while (true)
+            {
+                if (TickFired != null)
+                    TickFired(this, new TickEventArgs(stopwatch.Elapsed));
+                Thread.Sleep(tickInterval);
+            }
+        }
+
+        private int tickInterval = 30;
+        private Stopwatch stopwatch = new Stopwatch();
     }
 }
