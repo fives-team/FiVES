@@ -25,6 +25,7 @@ namespace EventloopPlugin
         public Eventloop()
         {
             readIntervalFromConfig();
+            stopwatch.Start();
             ThreadPool.QueueUserWorkItem(_ => tickFired());
         }
 
