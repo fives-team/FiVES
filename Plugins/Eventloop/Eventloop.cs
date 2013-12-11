@@ -33,7 +33,10 @@ namespace EventloopPlugin
         /// </summary>
         private void readIntervalFromConfig()
         {
-            string configValue = ConfigurationManager.AppSettings["tickinterval"];
+            string eventloopConfigPath = this.GetType().Assembly.Location;
+            Configuration config = ConfigurationManager.OpenExeConfiguration(eventloopConfigPath);
+
+            string configValue = config.AppSettings.Settings["tickinterval"].Value;
             int.TryParse(configValue, out tickInterval);
         }
 
