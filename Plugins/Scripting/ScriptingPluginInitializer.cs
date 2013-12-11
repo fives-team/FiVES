@@ -41,14 +41,14 @@ namespace ScriptingPlugin
         /// </summary>
         public void Initialize()
         {
-            Scripting.Instance = new Scripting();
-
             // Register 'scripting' component.
             ComponentDefinition scripting = new ComponentDefinition("scripting");
             scripting.AddAttribute<string>("ownerScript");
             scripting.AddAttribute<string>("serverScript");
-            scripting.AddAttribute<string> ("clientScript");
+            scripting.AddAttribute<string>("clientScript");
             ComponentRegistry.Instance.Register(scripting);
+
+            Scripting.Instance = new Scripting();
         }
 
         #endregion
