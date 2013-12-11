@@ -11,22 +11,22 @@ namespace EventloopPlugin
     {
         public string Name
         {
-            get { throw new NotImplementedException(); }
+            get { return "Eventloop"; }
         }
 
         public List<string> PluginDependencies
         {
-            get { throw new NotImplementedException(); }
+            get { return new List<string> { }; }
         }
 
         public List<string> ComponentDependencies
         {
-            get { throw new NotImplementedException(); }
+            get { return new List<string> { }; }
         }
 
         public void Initialize()
         {
-            throw new NotImplementedException();
+            Eventloop.Instance = new Eventloop();
         }
     }
 }
