@@ -24,8 +24,19 @@ namespace EventloopPlugin
 
         public Eventloop()
         {
+            readIntervalFromConfig();
             ThreadPool.QueueUserWorkItem(_ => tickFired());
         }
+
+        /// <summary>
+        /// Reads the interval in which the events are fired from the App.cfg file
+        /// </summary>
+        private void readIntervalFromConfig()
+        {
+            string configValue = ConfigurationManager.AppSettings["tickinterval"];
+            int.TryParse(configValue, out tickInterval);
+        }
+
         /// <summary>
         /// Function that fires the event periodically
         /// </summary>
