@@ -57,7 +57,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ValidPlugin3", "Misc\TestPl
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Terminal", "Plugins\Terminal\Terminal.csproj", "{FDF2DE99-68CF-4947-952C-2D2BCC846F3E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Eventloop", "Plugins\Eventloop\Eventloop.csproj", "{6CD0FE0E-7D56-4E24-8568-625A13C37130}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EventLoop", "Plugins\Eventloop\EventLoop.csproj", "{6CD0FE0E-7D56-4E24-8568-625A13C37130}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

@@ -40,8 +40,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Eventloop.cs" />
-    <Compile Include="EventloopPluginInitializer.cs" />
+    <Compile Include="EventLoop.cs" />
+    <Compile Include="EventLoopPluginInitializer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TickEventArgs.cs" />
   </ItemGroup>

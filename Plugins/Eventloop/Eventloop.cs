@@ -13,16 +13,16 @@ namespace EventLoopPlugin
     /// Implements a simple event loop to which plugins can register. The Loop fires its event in a fixed interval that can be specified
     /// in the config file. The EventArgs with which the event is invoked contain the time in milliseconds since the application is running
     /// </summary>
-    public class Eventloop
+    public class EventLoop
     {
-        public static Eventloop Instance;
+        public static EventLoop Instance;
 
         /// <summary>
         /// Event Handler to which other plugins can register
         /// </summary>
         public event EventHandler<TickEventArgs> TickFired;
 
-        public Eventloop()
+        public EventLoop()
         {
             readIntervalFromConfig();
             stopwatch.Start();

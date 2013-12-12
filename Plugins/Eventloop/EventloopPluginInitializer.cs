@@ -26,7 +26,7 @@ namespace EventLoopPlugin
 
         public void Initialize()
         {
-            Eventloop.Instance = new Eventloop();
+            EventLoop.Instance = new EventLoop();
         }
     }
 }
