@@ -24,15 +24,15 @@ namespace EventLoopPlugin
 
         public EventLoop()
         {
-            readIntervalFromConfig();
+            ReadIntervalFromConfig();
             stopwatch.Start();
-            Task.Factory.StartNew(eventLoopThread, TaskCreationOptions.LongRunning);
+            Task.Factory.StartNew(EventLoopThread, TaskCreationOptions.LongRunning);
         }
 
         /// <summary>
         /// Reads the interval in which the events are fired from the App.cfg file
         /// </summary>
-        private void readIntervalFromConfig()
+        private void ReadIntervalFromConfig()
         {
             string eventloopConfigPath = this.GetType().Assembly.Location;
             Configuration config = ConfigurationManager.OpenExeConfiguration(eventloopConfigPath);
@@ -44,7 +44,7 @@ namespace EventLoopPlugin
         /// <summary>
         /// Function that fires the event periodically
         /// </summary>
-        private void eventLoopThread()
+        private void EventLoopThread()
         {
             while (true)
             {
