@@ -26,7 +26,7 @@ namespace EventloopPlugin
         {
             readIntervalFromConfig();
             stopwatch.Start();
-            ThreadPool.QueueUserWorkItem(_ => tickFired());
+            Task.Factory.StartNew(tickFired, TaskCreationOptions.LongRunning);
         }
 
         /// <summary>
