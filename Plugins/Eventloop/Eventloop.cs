@@ -7,7 +7,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace EventloopPlugin
+namespace EventLoopPlugin
 {
     /// <summary>
     /// Implements a simple event loop to which plugins can register. The Loop fires its event in a fixed interval that can be specified

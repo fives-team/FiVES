@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace EventloopPlugin
+namespace EventLoopPlugin
 {
     /// <summary>
     /// EventArgs that are used by the TickFired-Event of the eventloop provided by the EventLoop-Plugin. The EventArgs contain the time at which the

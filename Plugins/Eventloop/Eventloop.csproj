@@ -7,8 +7,8 @@
     <ProjectGuid>{6CD0FE0E-7D56-4E24-8568-625A13C37130}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>EventloopPlugin</RootNamespace>
-    <AssemblyName>Eventloop</AssemblyName>
+    <RootNamespace>EventLoopPlugin</RootNamespace>
+    <AssemblyName>EventLoop</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
