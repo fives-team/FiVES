@@ -20,7 +20,7 @@ namespace EventloopPlugin
         /// <summary>
         /// Event Handler to which other plugins can register
         /// </summary>
-        public event EventHandler TickFired;
+        public event EventHandler<TickEventArgs> TickFired;
 
         public Eventloop()
         {
