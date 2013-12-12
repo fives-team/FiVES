@@ -26,7 +26,7 @@ namespace EventLoopPlugin
         {
             readIntervalFromConfig();
             stopwatch.Start();
-            Task.Factory.StartNew(tickFired, TaskCreationOptions.LongRunning);
+            Task.Factory.StartNew(eventLoopThread, TaskCreationOptions.LongRunning);
         }
 
         /// <summary>
@@ -44,7 +44,7 @@ namespace EventLoopPlugin
         /// <summary>
         /// Function that fires the event periodically
         /// </summary>
-        private void tickFired()
+        private void eventLoopThread()
         {
             while (true)
             {
