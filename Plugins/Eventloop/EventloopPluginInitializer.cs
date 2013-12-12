@@ -11,7 +11,7 @@ namespace EventloopPlugin
     {
         public string Name
         {
-            get { return "Eventloop"; }
+            get { return "EventLoop"; }
         }
 
         public List<string> PluginDependencies
