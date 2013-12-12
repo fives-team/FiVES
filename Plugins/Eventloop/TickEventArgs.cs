@@ -8,10 +8,10 @@ namespace EventloopPlugin
 {
     class TickEventArgs : EventArgs
     {
-        public TickEventArgs(TimeSpan timespan)
+        public TickEventArgs(TimeSpan timestamp)
         {
-            Timespan = timespan;
+            TimeStamp = timestamp;
         }
-        public TimeSpan Timespan { get; private set; }
+        public TimeSpan TimeStamp { get; private set; }
     }
 }
