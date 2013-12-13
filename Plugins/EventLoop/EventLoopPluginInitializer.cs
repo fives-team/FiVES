@@ -7,7 +7,7 @@ using FIVES;
 
 namespace EventLoopPlugin
 {
-    public class EventloopPluginInitializer : IPluginInitializer
+    public class EventLoopPluginInitializer : IPluginInitializer
     {
         public string Name
         {
