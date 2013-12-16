@@ -41,7 +41,6 @@ namespace WebSocketJSON
         }
 
         WSJSession session;
-        private System.Net.Sockets.TcpClient client;
 
         #region This part of the interface is only used for client sockets
         event EventHandler ISocket.Opened
