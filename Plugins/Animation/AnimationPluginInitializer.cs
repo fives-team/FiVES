@@ -26,13 +26,13 @@ namespace AnimationPlugin
 
         public void Initialize()
         {
-            throw new NotImplementedException();
+            RegisterComponents();
         }
 
         private void RegisterComponents()
         {
-            ComponentDefinition animationComponent = new ComponentDefinition();
-            animationComponent.AddAttribute<float>("keyframe", 0);
+            ComponentDefinition animationComponent = new ComponentDefinition("animation");
+            animationComponent.AddAttribute<float>("keyframe", 0f);
         }
     }
 }
