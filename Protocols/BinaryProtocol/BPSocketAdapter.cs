@@ -113,7 +113,7 @@ namespace BinaryProtocol
                 {
                     if (incompleteMessageSize == null)
                     {
-                        incompleteMessage = new byte[sizeof(int)];
+                        incompleteMessageSize = new byte[sizeof(int)];
                         messageSizeCompletedBytes = 0;
                     }
 
