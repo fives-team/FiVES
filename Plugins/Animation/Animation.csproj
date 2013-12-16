@@ -40,8 +40,23 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AnimationManager.cs" />
     <Compile Include="AnimationPluginInitializer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\Core\DomainModel\DomainModel.csproj">
+      <Project>{79ef699d-6a88-4054-af04-f22486db47fa}</Project>
+      <Name>DomainModel</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Core\PluginManager\PluginManager.csproj">
+      <Project>{db1099a1-b7fe-474f-a03a-41687d6c5c76}</Project>
+      <Name>PluginManager</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Eventloop\EventLoop.csproj">
+      <Project>{6cd0fe0e-7d56-4e24-8568-625a13c37130}</Project>
+      <Name>EventLoop</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
