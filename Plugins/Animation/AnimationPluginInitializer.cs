@@ -27,6 +27,7 @@ namespace AnimationPlugin
         public void Initialize()
         {
             RegisterComponents();
+            manager = new AnimationManager();
         }
 
         private void RegisterComponents()
@@ -34,5 +35,7 @@ namespace AnimationPlugin
             ComponentDefinition animationComponent = new ComponentDefinition("animation");
             animationComponent.AddAttribute<float>("keyframe", 0f);
         }
+
+        AnimationManager manager;
     }
 }
