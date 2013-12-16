@@ -103,6 +103,12 @@ namespace BinaryProtocol
 
         private void HandleFinishedRead(IAsyncResult ar)
         {
+            if (!IsConnected)
+            {
+                HandleNotConnected();
+                return;
+            }
+
             int readBytes = stream.EndRead(ar);
             int offset = 0;
 
@@ -157,10 +163,7 @@ namespace BinaryProtocol
                 }
             }
 
-            if (client.Connected)
-                stream.BeginRead(receiveBuffer, 0, receiveBuffer.Length, HandleFinishedRead, null);
-            else
-                HandleNotConnected();
+            stream.BeginRead(receiveBuffer, 0, receiveBuffer.Length, HandleFinishedRead, null);
         }
 
         private byte[] receiveBuffer;
