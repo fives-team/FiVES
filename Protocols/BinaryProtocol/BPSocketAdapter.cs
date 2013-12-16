@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net.Sockets;
 using System.Text;
@@ -27,7 +28,7 @@ namespace BinaryProtocol
 
         public event EventHandler Closed;
 
-        public event EventHandler<ErrorEventArgs> Error;
+        public event EventHandler<WebSocketJSON.ErrorEventArgs> Error;
 
         public event EventHandler<MessageEventArgs> Message;
 
@@ -46,15 +47,26 @@ namespace BinaryProtocol
         {
             if (client.Connected)
             {
-                // Each message is preceded by the 4-byte length and the content is encoded using UTF8.
-                byte[] msg = System.Text.Encoding.UTF8.GetBytes(message);
-                byte[] msgLength = BitConverter.GetBytes(msg.Length);
-                stream.Write(msgLength, 0, msgLength.Length);
-                stream.Write(msg, 0, msg.Length);
+                try
+                {
+                    // Each message is preceded by the 4-byte length and the content is encoded using UTF8.
+                    byte[] msg = System.Text.Encoding.UTF8.GetBytes(message);
+                    byte[] msgLength = BitConverter.GetBytes(msg.Length);
+                    stream.BeginWrite(msgLength, 0, msgLength.Length, (ar) => stream.EndWrite(ar), null);
+                    stream.BeginWrite(msg, 0, msg.Length, (ar) => stream.EndWrite(ar), null);
+                }
+                catch (IOException e)
+                {
+                    HandleError(e);
+                }
             }
             else
             {
-                HandleNotConnected();
+                if (!HandleNotConnected())
+                {
+                    HandleError(new IOException(
+                        "Failed to send. Socket is not opened yet or have been closed already."));
+                }
             }
         }
 
@@ -66,22 +78,23 @@ namespace BinaryProtocol
             }
         }
 
-        private void HandleNotConnected()
+        private bool HandleNotConnected()
         {
             int wasOpened = Interlocked.CompareExchange(ref isOpened, 0, 1);
             if (wasOpened == 1)
             {
                 if (Closed != null)
                     Closed(this, new EventArgs());
+                return true;
             }
-            else
-            {
-                if (Error != null) 
-                {
-                    var e = new Exception("Failed to send. Socket is not yet opened or have been closed already");
-                    Error(this, new ErrorEventArgs(e));
-                }
-            }
+
+            return false;
+        }
+
+        private void HandleError(Exception exception)
+        {
+            if (Error != null)
+                Error(this, new WebSocketJSON.ErrorEventArgs(exception));
         }
 
         private void HandleConnected(IAsyncResult ar)
@@ -105,65 +118,76 @@ namespace BinaryProtocol
         {
             if (!IsConnected)
             {
-                HandleNotConnected();
+                if (!HandleNotConnected())
+                {
+                    HandleError(new IOException(
+                        "Can not read from socket that has been already closed or not yet opened."));
+                }
                 return;
             }
 
-            int readBytes = stream.EndRead(ar);
-            int offset = 0;
-
-            while (offset < readBytes)
+            try
             {
-                int availableBytes = readBytes - offset;
-                if (incompleteMessage == null)
-                {
-                    if (incompleteMessageSize == null)
-                    {
-                        incompleteMessageSize = new byte[sizeof(int)];
-                        messageSizeCompletedBytes = 0;
-                    }
+                int readBytes = stream.EndRead(ar);
+                int offset = 0;
 
-                    if (availableBytes + messageSizeCompletedBytes >= incompleteMessageSize.Length)
-                    {
-                        Buffer.BlockCopy(receiveBuffer, offset, incompleteMessageSize, messageSizeCompletedBytes,
-                            incompleteMessageSize.Length - messageSizeCompletedBytes);
-                        offset += incompleteMessageSize.Length - messageSizeCompletedBytes;
-                        int messageSize = BitConverter.ToInt32(incompleteMessageSize, 0);
-                        incompleteMessageSize = null;
-                        incompleteMessage = new byte[messageSize];
-                        messageCompletedBytes = 0;
-                    }
-                    else
-                    {
-                        Buffer.BlockCopy(receiveBuffer, offset, incompleteMessageSize, messageSizeCompletedBytes,
-                            availableBytes);
-                        messageSizeCompletedBytes += availableBytes;
-                        offset += availableBytes;
-                    }
-                }
-                else
+                while (offset < readBytes)
                 {
-                    if (availableBytes + messageCompletedBytes >= incompleteMessage.Length)
+                    int availableBytes = readBytes - offset;
+                    if (incompleteMessage == null)
                     {
-                        Buffer.BlockCopy(receiveBuffer, offset, incompleteMessage, messageCompletedBytes,
-                            incompleteMessage.Length - messageCompletedBytes);
-                        offset += incompleteMessage.Length - messageCompletedBytes;
-                        string message = System.Text.Encoding.UTF8.GetString(incompleteMessage);
-                        if (Message != null)
-                            Message(this, new MessageEventArgs(message));
-                        incompleteMessage = null;
+                        if (incompleteMessageSize == null)
+                        {
+                            incompleteMessageSize = new byte[sizeof(int)];
+                            messageSizeCompletedBytes = 0;
+                        }
+
+                        if (availableBytes + messageSizeCompletedBytes >= incompleteMessageSize.Length)
+                        {
+                            Buffer.BlockCopy(receiveBuffer, offset, incompleteMessageSize, messageSizeCompletedBytes,
+                                incompleteMessageSize.Length - messageSizeCompletedBytes);
+                            offset += incompleteMessageSize.Length - messageSizeCompletedBytes;
+                            int messageSize = BitConverter.ToInt32(incompleteMessageSize, 0);
+                            incompleteMessageSize = null;
+                            incompleteMessage = new byte[messageSize];
+                            messageCompletedBytes = 0;
+                        }
+                        else
+                        {
+                            Buffer.BlockCopy(receiveBuffer, offset, incompleteMessageSize, messageSizeCompletedBytes,
+                                availableBytes);
+                            messageSizeCompletedBytes += availableBytes;
+                            offset += availableBytes;
+                        }
                     }
                     else
                     {
-                        Buffer.BlockCopy(receiveBuffer, offset, incompleteMessage, messageCompletedBytes,
-                            availableBytes);
-                        messageCompletedBytes += availableBytes;
-                        offset += availableBytes;
+                        if (availableBytes + messageCompletedBytes >= incompleteMessage.Length)
+                        {
+                            Buffer.BlockCopy(receiveBuffer, offset, incompleteMessage, messageCompletedBytes,
+                                incompleteMessage.Length - messageCompletedBytes);
+                            offset += incompleteMessage.Length - messageCompletedBytes;
+                            string message = System.Text.Encoding.UTF8.GetString(incompleteMessage);
+                            if (Message != null)
+                                Message(this, new MessageEventArgs(message));
+                            incompleteMessage = null;
+                        }
+                        else
+                        {
+                            Buffer.BlockCopy(receiveBuffer, offset, incompleteMessage, messageCompletedBytes,
+                                availableBytes);
+                            messageCompletedBytes += availableBytes;
+                            offset += availableBytes;
+                        }
                     }
                 }
+
+                stream.BeginRead(receiveBuffer, 0, receiveBuffer.Length, HandleFinishedRead, null);
             }
-
-            stream.BeginRead(receiveBuffer, 0, receiveBuffer.Length, HandleFinishedRead, null);
+            catch (IOException e)
+            {
+                HandleError(e);
+            }
         }
 
         private byte[] receiveBuffer;
