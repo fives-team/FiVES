@@ -59,9 +59,12 @@ namespace WebSocketJSON
             server.Start();
         }
 
-        public string GetName()
+        public string Name
         {
-            return "websocket-json";
+            get
+            {
+                return "websocket-json";
+            }
         }
 
         private void ValidateProtocolName(Server serverConfig)
