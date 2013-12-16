@@ -50,10 +50,14 @@ namespace BinaryProtocol
                 try
                 {
                     // Each message is preceded by the 4-byte length and the content is encoded using UTF8.
-                    byte[] msg = System.Text.Encoding.UTF8.GetBytes(message);
-                    byte[] msgLength = BitConverter.GetBytes(msg.Length);
-                    stream.BeginWrite(msgLength, 0, msgLength.Length, (ar) => stream.EndWrite(ar), null);
-                    stream.BeginWrite(msg, 0, msg.Length, (ar) => stream.EndWrite(ar), null);
+                    byte[] messageBytes = System.Text.Encoding.UTF8.GetBytes(message);
+                    byte[] lenBytes = BitConverter.GetBytes(messageBytes.Length);
+
+                    byte[] bytes = new byte[lenBytes.Length + messageBytes.Length];
+                    Buffer.BlockCopy(lenBytes, 0, bytes, 0, lenBytes.Length);
+                    Buffer.BlockCopy(messageBytes, 0, bytes, lenBytes.Length, messageBytes.Length);
+
+                    stream.BeginWrite(bytes, 0, bytes.Length, (ar) => stream.EndWrite(ar), null);
                 }
                 catch (IOException e)
                 {
