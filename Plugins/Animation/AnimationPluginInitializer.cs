@@ -11,22 +11,28 @@ namespace AnimationPlugin
     {
         public string Name
         {
-            get { throw new NotImplementedException(); }
+            get { return "Animation"; }
         }
 
         public List<string> PluginDependencies
         {
-            get { throw new NotImplementedException(); }
+            get { return new List<string> {"EventLoop"}; }
         }
 
         public List<string> ComponentDependencies
         {
-            get { throw new NotImplementedException(); }
+            get { return new List<string>(); }
         }
 
         public void Initialize()
         {
             throw new NotImplementedException();
+        }
+
+        private void RegisterComponents()
+        {
+            ComponentDefinition animationComponent = new ComponentDefinition();
+            animationComponent.AddAttribute<float>("keyframe", 0);
         }
     }
 }
