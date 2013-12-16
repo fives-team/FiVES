@@ -12,12 +12,14 @@ namespace NativeClient
         {
             Logger.Info("Reading configuration");
 
-            string serverURI = null;
+            string host = null;
+            int ip = 0;
             bool enableMovement, enableRotation;
 
             ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
             try {
-                serverURI = ConfigurationManager.AppSettings["ServerURI"].ToString();
+                host = ConfigurationManager.AppSettings["ServerHost"].ToString();
+                ip = Int32.Parse(ConfigurationManager.AppSettings["ServerPort"]);
                 enableMovement = ConfigurationManager.AppSettings["EnableMovement"].ToString() == "true";
                 enableRotation = ConfigurationManager.AppSettings["EnableRotatation"].ToString() == "true";
             } catch (ConfigurationErrorsException e) {
@@ -27,7 +29,7 @@ namespace NativeClient
 
             Logger.Info("Initiailizing client");
 
-            new ClientDriver(serverURI, enableMovement, enableRotation);
+            new ClientDriver(host, ip, enableMovement, enableRotation);
 
             Console.WriteLine("Client is running. Please any key to quit...");
             Console.ReadKey();

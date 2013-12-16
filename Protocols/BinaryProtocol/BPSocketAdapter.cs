@@ -9,7 +9,7 @@ using WebSocketJSON;
 
 namespace BinaryProtocol
 {
-    class BPSocketAdapter : ISocket
+    public class BPSocketAdapter : ISocket
     {
         public BPSocketAdapter(string aHost, int aPort)
         {
@@ -56,6 +56,14 @@ namespace BinaryProtocol
             else
             {
                 HandleNotConnected();
+            }
+        }
+
+        public bool IsConnected
+        {
+            get
+            {
+                return client.Connected;
             }
         }
 

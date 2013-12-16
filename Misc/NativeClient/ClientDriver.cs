@@ -12,11 +12,11 @@ namespace NativeClient
 {
     public class ClientDriver
     {
-        public ClientDriver(string serverURI, bool enableMovement, bool enableRotation)
+        public ClientDriver(string host, int ip, bool enableMovement, bool enableRotation)
         {
             Logger.Info("Connecting to the server");
 
-            communicator = new Communicator(serverURI);
+            communicator = new Communicator(host, ip);
             communicator.Connected += HandleConnected;
             communicator.Disconnected += HandleDisconnected;
 
