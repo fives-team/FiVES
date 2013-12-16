@@ -24,7 +24,7 @@ namespace WebSocketJSON
 
             public void HandleMessage(string message)
             {
-                base.HandleMessage(this, new WebSocket4Net.MessageReceivedEventArgs(message));
+                base.HandleMessage(this, new MessageEventArgs(message));
             }
 
             public new void RegisterHandler(string funcName, Delegate handler)

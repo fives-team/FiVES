@@ -17,39 +17,26 @@ namespace WebSocketJSON
     // TODO: rewrite plugin to use processing loop. This will allow to simplify code by removing locks in this class.
     public class WSJConnection : Connection
     {
-        public WSJConnection(WSJSession aSession)
+        public WSJConnection(ISocket aSocket)
             : this()
         {
-            isClientConnection = false;
-            session = aSession;
-            session.Closed += HandleClosed;
-            session.MessageReceived += HandleMessage;
-        }
-
-        public WSJConnection(IWebSocket aSocket)
-            : this()
-        {
-            isClientConnection = true;
             socket = aSocket;
             socket.Closed += HandleClosed;
-            socket.MessageReceived += HandleMessage;
+            socket.Message += HandleMessage;
         }
 
         public override event EventHandler Closed;
 
         public override void Disconnect()
         {
-            if (isClientConnection)
-                socket.Close();
-            else
-                session.Close();
+            socket.Close();
         }
 
         /// <summary>
         /// Handles an incoming message.
         /// </summary>
         /// <param name="message">The incoming message.</param>
-        public void HandleMessage(object sender, MessageReceivedEventArgs e)
+        public void HandleMessage(object sender, MessageEventArgs e)
         {
             logger.Debug("Received: " + e.Message);
 
@@ -140,10 +127,7 @@ namespace WebSocketJSON
         internal virtual void Send(string message)
         {
             logger.Debug("Sending: " + message);
-            if (isClientConnection)
-                socket.Send(message);
-            else
-                session.Send(message);
+            socket.Send(message);
         }
 
         private void HandleCall(List<JToken> data)
@@ -455,9 +439,7 @@ namespace WebSocketJSON
         private Dictionary<Delegate, string> registeredCallbacks = new Dictionary<Delegate, string>();
         private JsonSerializerSettings settings = new JsonSerializerSettings();
 
-        bool isClientConnection;
-        private IWebSocket socket;
-        private WSJSession session;
+        private ISocket socket;
 
         private static Logger logger = LogManager.GetCurrentClassLogger();
 
