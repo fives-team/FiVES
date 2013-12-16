@@ -27,7 +27,6 @@ namespace BinaryProtocol
 
         public event EventHandler Closed;
 
-        // ???
         public event EventHandler<ErrorEventArgs> Error;
 
         public event EventHandler<MessageEventArgs> Message;
