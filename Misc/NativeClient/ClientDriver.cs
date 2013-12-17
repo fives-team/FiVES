@@ -122,20 +122,17 @@ namespace NativeClient
 
         void MoveEntity(EntityInfo info)
         {
-            info.Position.x += 0.1;
-
+            info.Position.x = DateTime.Now.Ticks;
             communicator.Call("location.updatePosition", worldManager.SessionKey, info.Guid, info.Position,
                               UnixTimestamp.Now);
         }
 
         void MoveLocallyCreatedEntities()
         {
-            while (true) {
+            while (true)
+            {
                 lock (worldManager.Entities)
-                {
-                    lock (worldManager.Entities)
-                        worldManager.Entities.FindAll(e => e.IsLocallyCreated).ForEach(MoveEntity);
-                }
+                    worldManager.Entities.FindAll(e => e.IsLocallyCreated).ForEach(MoveEntity);
                 Thread.Sleep(ActionDelayMs);
             }
         }
@@ -157,16 +154,13 @@ namespace NativeClient
 
         void RotateLocallyCreatedEntities()
         {
-            while (true) {
+            while (true)
+            {
                 lock (worldManager.Entities)
-                {
-                    lock (worldManager.Entities)
-                        worldManager.Entities.FindAll(e => e.IsLocallyCreated).ForEach(RotateEntity);
-                }
+                    worldManager.Entities.FindAll(e => e.IsLocallyCreated).ForEach(RotateEntity);
                 Thread.Sleep(ActionDelayMs);
             }
         }
-
 
         string ServerURI = null;
         string ServerHost = "127.0.0.1";
