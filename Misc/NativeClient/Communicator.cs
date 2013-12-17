@@ -54,15 +54,29 @@ namespace NativeClient
     /// </summary>
     class Communicator
     {
-        public Communicator(string host, int port)
+        public Communicator()
+        {
+            settings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
+        }
+
+        /// <summary>
+        /// Opens a binary protocol connection.
+        /// </summary>
+        /// <param name="host">Server host.</param>
+        /// <param name="port">Server port.</param>
+        public void OpenConnection(string host, int port)
         {
             socket = new BPSocketAdapter(host, port);
             Initialize();
         }
 
-        public Communicator(string uri)
+        /// <summary>
+        /// Opens a WebSocket-JSON protocol connection.
+        /// </summary>
+        /// <param name="serverURI">Server URI.</param>
+        public void OpenConnection(string serverURI)
         {
-            socket = new WebSocketSocketAdapter(uri);
+            socket = new WebSocketSocketAdapter(serverURI);
             Initialize();
         }
 
@@ -111,7 +125,9 @@ namespace NativeClient
 
             var serializedMessage = JsonConvert.SerializeObject(message, settings);
             logger.Debug("Sending: {0}", serializedMessage);
+
             socket.Send(serializedMessage);
+
             return callID;
         }
 
@@ -196,8 +212,8 @@ namespace NativeClient
         void HandleCallReplyMessage(string message, List<JToken> parsedMessage)
         {
             int callID = parsedMessage[1].ToObject<int>();
-            Action<CallReply> callback;
 
+            Action<CallReply> callback;
             lock (expectedReplies)
             {
                 if (!expectedReplies.ContainsKey(callID))

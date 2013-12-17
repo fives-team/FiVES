@@ -10,31 +10,16 @@ namespace NativeClient
 
         public static void Main(string[] args)
         {
+            var clientDriver = new ClientDriver();
+
             Logger.Info("Reading configuration");
 
-            string host = null;
-            int ip = 0;
-            string uri = null;
-            bool enableMovement, enableRotation;
-
             ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
-            try {
-                uri = ConfigurationManager.AppSettings["ServerURI"];
-                host = ConfigurationManager.AppSettings["ServerHost"];
-                Int32.TryParse(ConfigurationManager.AppSettings["ServerPort"], out ip);
-                enableMovement = ConfigurationManager.AppSettings["EnableMovement"] == "true";
-                enableRotation = ConfigurationManager.AppSettings["EnableRotatation"] == "true";
-            } catch (ConfigurationErrorsException e) {
-                Logger.FatalException("Configuration is missing or corrupt.", e);
-                return;
-            }
+            clientDriver.Configure(ConfigurationManager.AppSettings);
 
-            Logger.Info("Initiailizing client");
+            Logger.Info("Starting simulation");
 
-            if (uri != null)
-                new ClientDriver(uri, enableMovement, enableRotation);
-            else
-                new ClientDriver(host, ip, enableMovement, enableRotation);
+            clientDriver.StartSimulation();
 
             Console.WriteLine("Client is running. Please any key to quit...");
             Console.ReadKey();
