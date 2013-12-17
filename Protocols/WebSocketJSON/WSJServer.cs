@@ -37,7 +37,9 @@ namespace WebSocketJSON
             NewSessionConnected += (session) =>
             {
                 session.SocketSession.Closed += (genericSession, reason) => session.HandleClosed(reason.ToString());
-                onNewClient(new WSJConnection(session));
+
+                var socketAdapter = new WSJSessionSocketAdapter(session);
+                onNewClient(new WSJConnection(socketAdapter));
             };
             NewMessageReceived += (session, value) => session.HandleMessageReceived(value);
         }

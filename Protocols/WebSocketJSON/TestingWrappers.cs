@@ -31,32 +31,16 @@ namespace WebSocketJSON
         }
     }
 
-    public interface IWebSocket
-    {
-        event EventHandler Opened;
-        event EventHandler Closed;
-        event EventHandler<ErrorEventArgs> Error;
-        event EventHandler<MessageReceivedEventArgs> MessageReceived;
-        void Open();
-        void Close();
-        void Send(string message);
-    }
-
-    public class WebSocketWrapper : WebSocket, IWebSocket
-    {
-        public WebSocketWrapper(string uri) : base(uri) { }
-    }
-
     public interface IWebSocketFactory
     {
-        IWebSocket Construct(string uri);
+        ISocket Construct(string uri);
     }
 
     public class WebSocketFactory : IWebSocketFactory
     {
-        public IWebSocket Construct(string uri)
+        public ISocket Construct(string uri)
         {
-            return new WebSocketWrapper(uri);
+            return new WebSocketSocketAdapter(uri);
         }
     }
 }

@@ -27,7 +27,7 @@ namespace WebSocketJSON
         private Mock<IWSJServer> mockWSJServer;
         private Mock<IHandlers> mockHandlers;
         private Mock<IWebSocketFactory> mockWebSocketFactory;
-        Mock<IWebSocket> mockWebSocket;
+        Mock<ISocket> mockWebSocket;
 
         [SetUp()]
         public void Init()
@@ -37,7 +37,7 @@ namespace WebSocketJSON
             mockWSJServerFactory.Setup(f => f.Construct(It.IsAny<Action<Connection>>())).Returns(mockWSJServer.Object);
             mockHandlers = new Mock<IHandlers>();
             mockWebSocketFactory = new Mock<IWebSocketFactory>();
-            mockWebSocket = new Mock<IWebSocket>();
+            mockWebSocket = new Mock<ISocket>();
 
             factory = new WSJConnectionFactory();
             factory.wsjServerFactory = mockWSJServerFactory.Object;

@@ -94,8 +94,8 @@ namespace KIARAPlugin
                     Logger.WarnException("Exception occured during construction of protocol factory for " + filename + ".", ex);
                     return;
                 }
-                RegisterConnectionFactory(connectionFactory.GetName(), connectionFactory);
-                Logger.Debug("Registered protocol {0}", connectionFactory.GetName());
+                RegisterConnectionFactory(connectionFactory.Name, connectionFactory);
+                Logger.Debug("Registered protocol {0}", connectionFactory.Name);
             } catch (BadImageFormatException e) {
                 Logger.InfoException(filename + " is not a valid assembly and thus cannot be loaded as a protocol.", e);
                 return;

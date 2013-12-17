@@ -12,14 +12,18 @@ namespace NativeClient
         {
             Logger.Info("Reading configuration");
 
-            string serverURI = null;
+            string host = null;
+            int ip = 0;
+            string uri = null;
             bool enableMovement, enableRotation;
 
             ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
             try {
-                serverURI = ConfigurationManager.AppSettings["ServerURI"].ToString();
-                enableMovement = ConfigurationManager.AppSettings["EnableMovement"].ToString() == "true";
-                enableRotation = ConfigurationManager.AppSettings["EnableRotatation"].ToString() == "true";
+                uri = ConfigurationManager.AppSettings["ServerURI"];
+                host = ConfigurationManager.AppSettings["ServerHost"];
+                Int32.TryParse(ConfigurationManager.AppSettings["ServerPort"], out ip);
+                enableMovement = ConfigurationManager.AppSettings["EnableMovement"] == "true";
+                enableRotation = ConfigurationManager.AppSettings["EnableRotatation"] == "true";
             } catch (ConfigurationErrorsException e) {
                 Logger.FatalException("Configuration is missing or corrupt.", e);
                 return;
@@ -27,7 +31,10 @@ namespace NativeClient
 
             Logger.Info("Initiailizing client");
 
-            new ClientDriver(serverURI, enableMovement, enableRotation);
+            if (uri != null)
+                new ClientDriver(uri, enableMovement, enableRotation);
+            else
+                new ClientDriver(host, ip, enableMovement, enableRotation);
 
             Console.WriteLine("Client is running. Please any key to quit...");
             Console.ReadKey();

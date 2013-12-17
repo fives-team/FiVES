@@ -4,6 +4,8 @@ using WebSocket4Net;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using NLog;
+using BinaryProtocol;
+using WebSocketJSON;
 
 namespace NativeClient
 {
@@ -52,19 +54,16 @@ namespace NativeClient
     /// </summary>
     class Communicator
     {
-        public Communicator(string serverURI)
+        public Communicator(string host, int port)
         {
-            socket = new WebSocket(serverURI);
-            socket.Opened += (sender, e) => Logger.Info("Connected to the server");
-            socket.Error += (sender, e) => Logger.ErrorException("Connection error", e.Exception);
-            socket.Closed += (sender, e) => Logger.Info("Connection closed");
-            socket.MessageReceived += (sender, e) => Logger.Debug("Received: {0}", e.Message);
-            socket.MessageReceived += HandleMessage;
-            socket.Opened += HandleOpened;
-            socket.Closed += HandleClosed;
-            socket.Open();
+            socket = new BPSocketAdapter(host, port);
+            Initialize();
+        }
 
-            settings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
+        public Communicator(string uri)
+        {
+            socket = new WebSocketSocketAdapter(uri);
+            Initialize();
         }
 
         /// <summary>
@@ -81,7 +80,7 @@ namespace NativeClient
         {
             get
             {
-                return socket.State == WebSocketState.Open;
+                return socket.IsConnected;
             }
         }
 
@@ -148,6 +147,20 @@ namespace NativeClient
                 ExpectedReplies.Add(callID, callback);
         }
 
+        void Initialize()
+        {
+            socket.Opened += (sender, e) => Logger.Info("Connected to the server");
+            socket.Error += (sender, e) => Logger.ErrorException("Connection error", e.Exception);
+            socket.Closed += (sender, e) => Logger.Info("Connection closed");
+            socket.Message += (sender, e) => Logger.Debug("Received: {0}", e.Message);
+            socket.Message += HandleMessage;
+            socket.Opened += HandleOpened;
+            socket.Closed += HandleClosed;
+            socket.Open();
+
+            settings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
+        }
+
         void HandleOpened(object sender, EventArgs e)
         {
             if (Connected != null)
@@ -190,7 +203,7 @@ namespace NativeClient
             callback(new CallReply(message, parsedMessage));
         }
 
-        void HandleMessage(object sender, MessageReceivedEventArgs e)
+        void HandleMessage(object sender, MessageEventArgs e)
         {
             List<JToken> parsedMessage = JsonConvert.DeserializeObject<List<JToken>>(e.Message);
             string messageType = parsedMessage[0].ToObject<string>();
@@ -206,7 +219,7 @@ namespace NativeClient
         /// <summary>
         /// Underlying Web Socket connection.
         /// </summary>
-        WebSocket socket;
+        ISocket socket;
 
         /// <summary>
         /// Registered functions to be invoked on call from another side.
