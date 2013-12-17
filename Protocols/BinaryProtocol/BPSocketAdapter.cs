@@ -176,48 +176,19 @@ namespace BinaryProtocol
                     if (incompleteMessage == null)
                     {
                         if (incompleteMessageSize == null)
-                        {
-                            incompleteMessageSize = new byte[sizeof(int)];
-                            messageSizeCompletedBytes = 0;
-                        }
+                            InitializeMessageSize();
 
                         if (availableBytes + messageSizeCompletedBytes >= incompleteMessageSize.Length)
-                        {
-                            Buffer.BlockCopy(receiveBuffer, offset, incompleteMessageSize, messageSizeCompletedBytes,
-                                incompleteMessageSize.Length - messageSizeCompletedBytes);
-                            offset += incompleteMessageSize.Length - messageSizeCompletedBytes;
-                            int messageSize = BitConverter.ToInt32(incompleteMessageSize, 0);
-                            incompleteMessageSize = null;
-                            incompleteMessage = new byte[messageSize];
-                            messageCompletedBytes = 0;
-                        }
+                            ReadCompleteMessageSize(ref offset);
                         else
-                        {
-                            Buffer.BlockCopy(receiveBuffer, offset, incompleteMessageSize, messageSizeCompletedBytes,
-                                availableBytes);
-                            messageSizeCompletedBytes += availableBytes;
-                            offset += availableBytes;
-                        }
+                            ReadPartialMessageSize(ref offset, availableBytes);
                     }
                     else
                     {
                         if (availableBytes + messageCompletedBytes >= incompleteMessage.Length)
-                        {
-                            Buffer.BlockCopy(receiveBuffer, offset, incompleteMessage, messageCompletedBytes,
-                                incompleteMessage.Length - messageCompletedBytes);
-                            offset += incompleteMessage.Length - messageCompletedBytes;
-                            string message = System.Text.Encoding.UTF8.GetString(incompleteMessage);
-                            if (Message != null)
-                                Message(this, new MessageEventArgs(message));
-                            incompleteMessage = null;
-                        }
+                            ReadCompleteMessage(ref offset);
                         else
-                        {
-                            Buffer.BlockCopy(receiveBuffer, offset, incompleteMessage, messageCompletedBytes,
-                                availableBytes);
-                            messageCompletedBytes += availableBytes;
-                            offset += availableBytes;
-                        }
+                            ReadPartialMessage(ref offset, availableBytes);
                     }
                 }
 
@@ -227,6 +198,72 @@ namespace BinaryProtocol
             {
                 HandleError(e);
             }
+        }
+
+        /// <summary>
+        /// Reads part of the message from the buffer.
+        /// </summary>
+        /// <param name="offset">Position at the buffer where reading should start.</param>
+        /// <param name="availableBytes">Number of bytes that are available.</param>
+        /// <returns>New offset.</returns>
+        private void ReadPartialMessage(ref int offset, int availableBytes)
+        {
+            Buffer.BlockCopy(receiveBuffer, offset, incompleteMessage, messageCompletedBytes,
+                availableBytes);
+            messageCompletedBytes += availableBytes;
+            offset += availableBytes;
+        }
+
+        /// <summary>
+        /// Reads completed message from the buffer.
+        /// </summary>
+        /// <param name="offset">Position at the buffer where reading should start.</param>
+        /// <returns>New offset.</returns>
+        private void ReadCompleteMessage(ref int offset)
+        {
+            Buffer.BlockCopy(receiveBuffer, offset, incompleteMessage, messageCompletedBytes,
+                incompleteMessage.Length - messageCompletedBytes);
+            offset += incompleteMessage.Length - messageCompletedBytes;
+            string message = System.Text.Encoding.UTF8.GetString(incompleteMessage);
+            if (Message != null)
+                Message(this, new MessageEventArgs(message));
+            incompleteMessage = null;
+        }
+
+        /// <summary>
+        /// Reads part of the message size from the buffer.
+        /// </summary>
+        /// <param name="offset">Position at the buffer where reading should start.</param>
+        /// <param name="availableBytes">Number of bytes that are available.</param>
+        /// <returns>New offset.</returns>
+        private void ReadPartialMessageSize(ref int offset, int availableBytes)
+        {
+            Buffer.BlockCopy(receiveBuffer, offset, incompleteMessageSize, messageSizeCompletedBytes,
+                availableBytes);
+            messageSizeCompletedBytes += availableBytes;
+            offset += availableBytes;
+        }
+
+        /// <summary>
+        /// Reads completed message size from the buffer.
+        /// </summary>
+        /// <param name="offset">Position at the buffer where reading should start.</param>
+        /// <returns>New offset.</returns>
+        private void ReadCompleteMessageSize(ref int offset)
+        {
+            Buffer.BlockCopy(receiveBuffer, offset, incompleteMessageSize, messageSizeCompletedBytes,
+                incompleteMessageSize.Length - messageSizeCompletedBytes);
+            offset += incompleteMessageSize.Length - messageSizeCompletedBytes;
+            int messageSize = BitConverter.ToInt32(incompleteMessageSize, 0);
+            incompleteMessageSize = null;
+            incompleteMessage = new byte[messageSize];
+            messageCompletedBytes = 0;
+        }
+
+        private void InitializeMessageSize()
+        {
+            incompleteMessageSize = new byte[sizeof(int)];
+            messageSizeCompletedBytes = 0;
         }
 
         private byte[] receiveBuffer;
