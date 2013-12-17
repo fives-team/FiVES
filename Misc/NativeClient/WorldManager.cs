@@ -125,13 +125,13 @@ namespace NativeClient
 
         private void HandleUpdate(CallRequest request)
         {
-//            List<UpdateInfo> receivedUpdates = request.Args[0].ToObject<List<UpdateInfo>>();
-//            foreach(UpdateInfo update in receivedUpdates) {
-//                string entityGuid = update.entityGuid;
-//                string attribute = update.attributeName;
-//                string component = update.componentName;
-//                logger.Info("{0} updated attribute {1} of component {2}", entityGuid, attribute, component);
-//            }
+            List<UpdateInfo> receivedUpdates = request.Args[0].ToObject<List<UpdateInfo>>();
+            foreach(UpdateInfo update in receivedUpdates) {
+                string entityGuid = update.entityGuid;
+                string attribute = update.attributeName;
+                string component = update.componentName;
+                logger.Info("{0} updated attribute {1} of component {2}", entityGuid, attribute, component);
+            }
         }
 
         private void RequestAllObjects()
