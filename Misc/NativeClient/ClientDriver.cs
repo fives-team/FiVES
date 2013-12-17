@@ -74,6 +74,17 @@ namespace NativeClient
 
         void HandleConnected(object sender, EventArgs e)
         {
+            logger.Info("Estimating time delay");
+
+            TimeDelayEstimator estimator = new TimeDelayEstimator(communicator);
+            estimator.TimeDelayEstimated += HandleTimeDelayEstimated;
+            estimator.StartEstimating(100);
+        }
+
+        void HandleTimeDelayEstimated (object sender, TimeDelayEventArgs e)
+        {
+            logger.Info("Delay to server is " + e.TimeDelayMs);
+
             logger.Info("Authenticating as a client");
 
             Authenticator authenticator = new Authenticator(communicator);

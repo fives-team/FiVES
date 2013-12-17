@@ -62,6 +62,8 @@
     <Compile Include="WorldManager.cs" />
     <Compile Include="UpdateInfo.cs" />
     <Compile Include="Timestamps.cs" />
+    <Compile Include="TimeDelayEstimator.cs" />
+    <Compile Include="TimeDelayEventArgs.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
