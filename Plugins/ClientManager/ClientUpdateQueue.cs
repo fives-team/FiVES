@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using FIVES;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Collections.Concurrent;
 
 namespace ClientManagerPlugin
 {
@@ -26,8 +27,7 @@ namespace ClientManagerPlugin
         /// <param name="clientGuid">GUID (session token) of client for which the queue is created</param>
         /// <param name="callback">Callback provided by the client to be called in each update step</param>
         internal ClientUpdateQueue()
-        {
-            ClientCallback = callback;
+        {            
             StartUpdateThread();
             RegisterToEntityUpdates();
         }
@@ -38,18 +38,25 @@ namespace ClientManagerPlugin
         private void flushUpdateQueue() {
             while (true)
             {
-                lock (QueueLock)
+                bool gotLock = false;
+                try
                 {
-                    while (UpdateQueue.Count == 0)
-                    {
-                        Monitor.Wait(QueueLock);
-                    }
+                    QueueLock.Enter(ref gotLock);
 
-                    ClientCallback(UpdateQueue);
-                    UpdateQueue.Clear();
-                    Monitor.PulseAll(QueueLock);
+                    if (UpdateQueue.Count > 0)
+                    {
+                        ClientCallback(UpdateQueue);
+                        UpdateQueue.Clear();
+                    }
                 }
-                Thread.Sleep(10); // Wait shortly to collect a number of atomic attribute updates before sending them for performance reasons
+                finally
+                {
+                    if (gotLock)
+                        QueueLock.Exit();
+                }
+
+                // Wait for updates to accumulate (to send them in batches)
+                Thread.Sleep(10);
             }
         }
 
@@ -113,15 +120,16 @@ namespace ClientManagerPlugin
         /// <param name="sender">Entity that invoked the attribute change event</param>
         /// <param name="e">Event Arguments</param>
         private void AddEntityUpdateToQueue(Object sender, ChangedAttributeEventArgs e) {
-
-            lock (QueueLock)
+            bool gotLock = false;
+            try
             {
-                while (UpdateQueue.Count > UpdateQueue.Capacity)
-                {
-                    Monitor.Wait(QueueLock);
-                }
+                QueueLock.Enter(ref gotLock);
                 UpdateQueue.Add(CreateUpdateInfoFromEventArgs((Entity)sender, e));
-                Monitor.PulseAll(QueueLock);
+            }
+            finally
+            {
+                if (gotLock)
+                    QueueLock.Exit();
             }
         }
 
@@ -145,15 +153,19 @@ namespace ClientManagerPlugin
         /// </summary>
         /// <param name="entityGuid">Guid of the removed entity/param>
         private void RemoveEntityFromQueue(Entity entity) {
-            lock (QueueLock)
+            bool gotLock = false;
+            try
             {
+                QueueLock.Enter(ref gotLock);
+
                 foreach (UpdateInfo entityUpdate in UpdateQueue)
-                {
                     if (entityUpdate.entityGuid.Equals(entity.Guid))
-                    {
                         UpdateQueue.Remove(entityUpdate);
-                    }
-                }
+            }
+            finally
+            {
+                if (gotLock)
+                    QueueLock.Exit();
             }
         }
 
@@ -165,7 +177,7 @@ namespace ClientManagerPlugin
         /// <summary>
         /// Mutex Object for the update queue
         /// </summary>
-        private object QueueLock = new object();
+        private SpinLock QueueLock = new SpinLock();
 
         /// <summary>
         /// Mutex Object for client callback registry
