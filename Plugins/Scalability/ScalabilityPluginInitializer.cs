@@ -34,13 +34,15 @@ namespace ScalabilityPlugin
 
         public void Initialize()
         {
-            var scalability = Scalability.Instance;
+            var scalability = new Scalability();
 
             if (scalability.IsSyncRelay)
                 scalability.StartSyncServer();
 
             scalability.ConnectToSyncServer();
             scalability.StartSync();
+
+            Scalability.Instance = scalability;
         }
     }
 }
