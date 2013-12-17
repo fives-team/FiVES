@@ -12,6 +12,8 @@ namespace WebSocketJSON
         event EventHandler<ErrorEventArgs> Error;
         event EventHandler<MessageEventArgs> Message;
 
+        bool IsConnected { get; }
+
         void Open();
         void Close();
         void Send(string message);

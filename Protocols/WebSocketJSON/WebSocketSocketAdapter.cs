@@ -29,5 +29,10 @@ namespace WebSocketJSON
 
         public event EventHandler<MessageEventArgs> Message;
         public new event EventHandler<ErrorEventArgs> Error;
+
+        public bool IsConnected
+        {
+            get { return base.State == WebSocketState.Open; }
+        }
     }
 }

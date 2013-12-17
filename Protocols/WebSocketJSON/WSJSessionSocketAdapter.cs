@@ -30,6 +30,11 @@ namespace WebSocketJSON
 
         public event EventHandler<MessageEventArgs> Message;
 
+        public bool IsConnected
+        {
+            get { return session.Connected; }
+        }
+
         public void Close()
         {
             session.Close();
