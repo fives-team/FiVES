@@ -26,6 +26,8 @@ namespace ClientManagerPlugin
                 {"login", (Func<Connection, string, string, string>)Authenticate}
             });
 
+            RegisterClientMethod("getTime", false, (Func<DateTime>)GetTime);
+
             RegisterClientService("objectsync", true, new Dictionary<string, Delegate> {
                 {"listObjects", (Func<List<Dictionary<string, object>>>) ListObjects},
                 {"notifyAboutNewObjects", (Action<string, Action<Dictionary<string, object>>>) NotifyAboutNewObjects},
@@ -42,6 +44,11 @@ namespace ClientManagerPlugin
             //                var getAnswer = connection.generateFuncWrapper("getAnswer");
             //                getAnswer((Action<int>) delegate(int answer) { Console.WriteLine("The answer is {0}", answer); });
             //            };
+        }
+
+        private DateTime GetTime()
+        {
+            return DateTime.Now;
         }
 
         private void RegisterTerminalCommands()
