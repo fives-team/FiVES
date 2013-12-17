@@ -21,7 +21,9 @@ namespace ScalabilityPlugin
     /// relevant changes in the domain model. Also use the same connection to send mock messages from other nodes.
     class Scalability
     {
-        public static Scalability Instance = new Scalability();
+        // We must not initialize this here, because otherwise we cannot use "logger" in the constructor. Instead we set
+        // global instance in the plugin initializer.
+        public static Scalability Instance;
 
         /// <summary>
         /// True if this instance of FiVES listens to clients and distributes updates.
@@ -43,6 +45,7 @@ namespace ScalabilityPlugin
         {
             var syncServer = ServiceFactory.Create(ConvertFileNameToURI("scalabilitySyncServer.json"));
             syncServer["clientHandshake"] = (Action<Connection, Guid>)HandleHandshakeFromClient;
+            syncServer["getTime"] = (Func<DateTime>)GetTime;
         }
 
         /// <summary>
@@ -111,6 +114,9 @@ namespace ScalabilityPlugin
             Configuration config = ConfigurationManager.OpenExeConfiguration(scalabilityConfigPath);
 
             IsSyncRelay = Boolean.Parse(config.AppSettings.Settings["IsSyncRelay"].Value);
+
+            logger.Debug("IsSyncRelay = " + IsSyncRelay);
+            logger.Debug("LocalSyncID = " + LocalSyncID);
         }
 
         /// <summary>
@@ -269,6 +275,7 @@ namespace ScalabilityPlugin
         {
             if (clientSyncID == LocalSyncID)
             {
+                timeDelayToServerMs = 0;
                 logger.Info("The server is local. Ignoring own handshake.");
                 return;
             }
@@ -287,10 +294,12 @@ namespace ScalabilityPlugin
         /// <param name="connection">Connection to the server.</param>
         private void HandleConnectedToServer(Connection connection)
         {
-            connection.RegisterFuncImplementation("serverHandshake",
-                (Action<Connection, Guid>)HandleHandshakeFromServer);
-            RegisterSyncMethodHandlers(connection);
-            connection["clientHandshake"](LocalSyncID);
+            Task.Factory.StartNew(() => EstimateTimeDelay(connection)).ContinueWith(delegate {
+                connection.RegisterFuncImplementation("serverHandshake",
+                    (Action<Connection, Guid>)HandleHandshakeFromServer);
+                RegisterSyncMethodHandlers(connection);
+                connection["clientHandshake"](LocalSyncID);
+            });
         }
 
         private void SyncExistingEntitiesToRemoteNode(Connection connection)
@@ -316,6 +325,34 @@ namespace ScalabilityPlugin
             AddNewSyncNode(connection, serverSyncID);
             SyncExistingEntitiesToRemoteNode(connection);
             SyncExistingComponentDefinitionsToRemoteNode(connection);
+        }
+
+        /// <summary>
+        /// Estimates time delay from the remote node taking into account round-trip time and averaging the value over
+        /// multiple requests.
+        /// </summary>
+        /// <param name="connection"></param>
+        private void EstimateTimeDelay(Connection connection)
+        {
+            // Heat-up the message sending pipeline and ignore first 100 biased samples.
+            for (int i = 0; i < 100; i++)
+                connection["getTime"]().Wait();
+
+            // Average over the next 100 samples.
+            double accumulatedDelayMs = 0;
+            int numSyncsToAverage = 100;
+            for (int i = 0; i < numSyncsToAverage; i++)
+            {
+                DateTime localTimeStart = DateTime.Now;
+                DateTime remoteTime = connection["getTime"]().Wait<DateTime>();
+                DateTime localTimeEnd = DateTime.Now;
+                TimeSpan roundTripTime = localTimeStart - localTimeEnd;
+                TimeSpan timeDifference = remoteTime - localTimeStart;
+                accumulatedDelayMs += timeDifference.TotalMilliseconds - (roundTripTime.TotalMilliseconds / 2);
+            }
+
+            timeDelayToServerMs = Convert.ToInt32(Math.Round(accumulatedDelayMs / numSyncsToAverage));
+            logger.Debug("Estimated time delay is " + timeDelayToServerMs);
         }
 
         /// <summary>
@@ -351,6 +388,11 @@ namespace ScalabilityPlugin
                 (Action<Connection, Guid, EntitySyncInfo>)HandleRemoteChangedAttributes);
             connection.RegisterFuncImplementation("registerComponentDefinition",
                 (Action<Connection, ComponentDef>)HandleRemoteRegisteredComponentDefinition);
+        }
+
+        private DateTime GetTime()
+        {
+            return DateTime.Now;
         }
 
         /// <summary>
@@ -569,6 +611,10 @@ namespace ScalabilityPlugin
         // to ignored component registrations that were caused by the scalability plugin itself in response to an
         // update from the remote node.
         private List<Guid> remoteComponentRegistrations = new List<Guid>();
+
+        // Time difference to the server node. The value -1 means that it has not been estimated yet, however, most of
+        // the code doesn't need to take care of this, because time estimation happens even before handshake exchange.
+        private int timeDelayToServerMs = -1;
 
         // SyncID of this node.
         private Guid LocalSyncID = Guid.NewGuid();
