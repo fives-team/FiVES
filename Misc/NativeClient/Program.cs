@@ -31,7 +31,10 @@ namespace NativeClient
 
             Logger.Info("Initiailizing client");
 
-            new ClientDriver(uri, host, ip, enableMovement, enableRotation);
+            if (uri != null)
+                new ClientDriver(uri, enableMovement, enableRotation);
+            else
+                new ClientDriver(host, ip, enableMovement, enableRotation);
 
             Console.WriteLine("Client is running. Please any key to quit...");
             Console.ReadKey();
