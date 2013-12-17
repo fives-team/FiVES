@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using NLog;
 using Newtonsoft.Json.Linq;
-using System.Collections.ObjectModel;
 using System.Threading;
 
 namespace NativeClient
@@ -25,8 +24,8 @@ namespace NativeClient
             if (!communicator.IsConnected)
                 throw new ArgumentException("Communicator must be connected when passed to WorldManager constructor.");
 
-            Communicator = communicator;
-            SessionKey = sessionKey;
+            this.communicator = communicator;
+            this.SessionKey = sessionKey;
 
             QueryClientServices();
         }
@@ -36,87 +35,50 @@ namespace NativeClient
         /// </summary>
         public event EventHandler Loaded;
 
-        public void StartMovingAllEntities()
+        public void CreateEntity()
         {
-            new Thread(MoveAllEntities).Start();
-        }
-
-        public void StartRotatingAllEntities()
-        {
-            new Thread(RotateAllEntities).Start();
-        }
-
-        void MoveEntity(EntityInfo info)
-        {
-            if (info.MovingBackward)
+            EntityInfo newEntity = new EntityInfo
             {
-                info.Position.x -= 0.1;
-                if (info.Position.x < -10)
-                    info.MovingBackward = false;
-            }
-            else
+                Position = new Vector
+                {
+                    x = random.NextDouble() * 20 - 10,
+                    y = random.NextDouble() * 20 - 10,
+                    z = random.NextDouble() * 20 - 10
+                },
+                Orientation = new Quat { x = 0, y = 0, z = 0, w = 1 },
+                IsLocallyCreated = true
+            };
+
+            int createCall = communicator.Call("editing.createEntityAt", newEntity.Position);
+            communicator.AddReplyHandler(createCall, delegate(CallReply reply)
             {
-                info.Position.x += 0.1;
-                if (info.Position.x > 10)
-                    info.MovingBackward = true;
-            }
-
-            Communicator.Call("location.updatePosition", SessionKey, info.Guid, info.Position, UnixTimestamp.Now);
+                newEntity.Guid = reply.RetValue.ToString();
+                lock (Entities)
+                    Entities.Add(newEntity);
+                logger.Info("Created entity: {0}", newEntity.Guid);
+            });
         }
 
-        void MoveAllEntities()
-        {
-            while (true) {
-                lock (Entities) {
-                    foreach (var info in Entities)
-                        MoveEntity(info);
-                }
+        /// <summary>
+        /// Returns the list of Entities known to the client. Please use locks when accessing this field.
+        /// </summary>
+        public List<EntityInfo> Entities = new List<EntityInfo>();
 
-                Thread.Sleep(100);
-            }
-        }
-
-        void RotateEntity(EntityInfo info)
-        {
-            AxisAngle aa = new AxisAngle();
-            aa.FromQuaternion(info.Orientation);
-            aa.Angle += 0.1;
-
-            if (aa.Angle > 2 * Math.PI)
-                aa.Angle = 0;
-
-            info.Orientation = aa.ToQuaternion();
-
-            Communicator.Call("location.updateOrientation", SessionKey, info.Guid, info.Orientation, UnixTimestamp.Now);
-        }
-
-        void RotateAllEntities()
-        {
-            while (true) {
-                lock (Entities) {
-                    foreach (var info in Entities)
-                        RotateEntity(info);
-                }
-
-                Thread.Sleep(100);
-            }
-        }
-
-        void QueryClientServices()
+        private void QueryClientServices()
         {
             List<string> requiredServices = new List<string> { "objectsync", "avatar", "editing", "location" };
-            int callID = Communicator.Call("kiara.implements", requiredServices);
-            Communicator.AddReplyHandler(callID, HandleQueryClientServicesReply);
+            int callID = communicator.Call("kiara.implements", requiredServices);
+            communicator.AddReplyHandler(callID, HandleQueryClientServicesReply);
         }
 
-        void HandleQueryClientServicesReply(CallReply reply)
+        private void HandleQueryClientServicesReply(CallReply reply)
         {
             if (!reply.Success)
-                Logger.Fatal("Failed to request client services: {0}", reply.Message);
+                logger.Fatal("Failed to request client services: {0}", reply.Message);
 
             List<bool> retValue = reply.RetValue.ToObject<List<bool>>();
             if (!retValue.TrueForAll(s => s)) {
-                Logger.Fatal("Required client services are not supported: {0}",
+                logger.Fatal("Required client services are not supported: {0}",
                              String.Join(", ", retValue.FindAll(s => !s)));
             }
 
@@ -124,16 +86,16 @@ namespace NativeClient
             RequestAllObjects();
         }
 
-        void RegisterHandlers()
+        private void RegisterHandlers()
         {
-            string handleNewObject = Communicator.RegisterFunc(HandleNewObject);
-            Communicator.Call("objectsync.notifyAboutNewObjects", new List<int>{1}, SessionKey, handleNewObject);
+            string handleNewObject = communicator.RegisterFunc(HandleNewObject);
+            communicator.Call("objectsync.notifyAboutNewObjects", new List<int>{1}, SessionKey, handleNewObject);
 
-            string handleUpdate = Communicator.RegisterFunc(HandleUpdate);
-            Communicator.Call("objectsync.notifyAboutObjectUpdates", new List<int> { 1 }, SessionKey, handleUpdate);
+            string handleUpdate = communicator.RegisterFunc(HandleUpdate);
+            communicator.Call("objectsync.notifyAboutObjectUpdates", new List<int> { 1 }, SessionKey, handleUpdate);
         }
 
-        void HandleNewObject(JToken entityInfo)
+        private void HandleNewObject(JToken entityInfo)
         {
             EntityInfo info = new EntityInfo {
                 Guid = entityInfo["guid"].ToString()
@@ -149,39 +111,39 @@ namespace NativeClient
             else
                 info.Orientation = new Quat { x = 0, y = 0, z = 0, w = 1 };
 
-            Logger.Info("New entity: {0}", info.Guid);
+            logger.Info("New entity: {0}", info.Guid);
 
             lock (Entities)
                 Entities.Add(info);
         }
 
-        void HandleNewObject(CallRequest request)
+        private void HandleNewObject(CallRequest request)
         {
             JToken entityInfo = request.Args[0];
             HandleNewObject(entityInfo);
         }
 
-        void HandleUpdate(CallRequest request)
+        private void HandleUpdate(CallRequest request)
         {
-            List<UpdateInfo> receivedUpdates = request.Args[0].ToObject<List<UpdateInfo>>();
-            foreach(UpdateInfo update in receivedUpdates) {
-                string entityGuid = update.entityGuid;
-                string attribute = update.attributeName;
-                string component = update.componentName;
-                Logger.Info("{0} updated attribute {1} of component {2}", entityGuid, attribute, component);
-            }
+//            List<UpdateInfo> receivedUpdates = request.Args[0].ToObject<List<UpdateInfo>>();
+//            foreach(UpdateInfo update in receivedUpdates) {
+//                string entityGuid = update.entityGuid;
+//                string attribute = update.attributeName;
+//                string component = update.componentName;
+//                logger.Info("{0} updated attribute {1} of component {2}", entityGuid, attribute, component);
+//            }
         }
 
-        void RequestAllObjects()
+        private void RequestAllObjects()
         {
-            int callID = Communicator.Call("objectsync.listObjects");
-            Communicator.AddReplyHandler(callID, HandleRequestAllObjectReply);
+            int callID = communicator.Call("objectsync.listObjects");
+            communicator.AddReplyHandler(callID, HandleRequestAllObjectReply);
         }
 
-        void HandleRequestAllObjectReply(CallReply reply)
+        private void HandleRequestAllObjectReply(CallReply reply)
         {
             if (!reply.Success)
-                Logger.Fatal("Failed to list objects: {0}", reply.Message);
+                logger.Fatal("Failed to list objects: {0}", reply.Message);
 
             List<JToken> retValue = reply.RetValue.ToObject<List<JToken>>();
             retValue.ForEach(HandleNewObject);
@@ -190,11 +152,10 @@ namespace NativeClient
                 Loaded(this, new EventArgs());
         }
 
-        Communicator Communicator;
+        private Communicator communicator;
 
-        List<EntityInfo> Entities = new List<EntityInfo>();
-
-        static Logger Logger = LogManager.GetCurrentClassLogger();
+        static Random random = new Random();
+        static Logger logger = LogManager.GetCurrentClassLogger();
     }
 }
 

@@ -81,7 +81,7 @@ namespace KIARAPlugin
                 Type interfaceType = typeof(IConnectionFactory);
                 Type connectionFactoryType = types.Find(t => interfaceType.IsAssignableFrom(t));
                 if (connectionFactoryType == null || connectionFactoryType.Equals(interfaceType)) {
-                    Logger.Info("Assembly in file " + filename +
+                    logger.Info("Assembly in file " + filename +
                                 " doesn't contain any class implementing IConnectionFactory.");
                     return;
                 }
@@ -91,23 +91,23 @@ namespace KIARAPlugin
                 try {
                     connectionFactory = (IConnectionFactory)Activator.CreateInstance(connectionFactoryType);
                 } catch (Exception ex) {
-                    Logger.WarnException("Exception occured during construction of protocol factory for " + filename + ".", ex);
+                    logger.WarnException("Exception occured during construction of protocol factory for " + filename + ".", ex);
                     return;
                 }
                 RegisterConnectionFactory(connectionFactory.Name, connectionFactory);
-                Logger.Debug("Registered protocol {0}", connectionFactory.Name);
+                logger.Info("Registered protocol {0}", connectionFactory.Name);
             } catch (BadImageFormatException e) {
-                Logger.InfoException(filename + " is not a valid assembly and thus cannot be loaded as a protocol.", e);
+                logger.InfoException(filename + " is not a valid assembly and thus cannot be loaded as a protocol.", e);
                 return;
             } catch (Exception e) {
-                Logger.WarnException("Failed to load file " + filename + " as a protocol", e);
+                logger.WarnException("Failed to load file " + filename + " as a protocol", e);
                 return;
             }
         }
 
         Dictionary<string, IConnectionFactory> registeredProtocols = new Dictionary<string, IConnectionFactory>();
 
-        static Logger Logger = LogManager.GetCurrentClassLogger();
+        private static Logger logger = LogManager.GetCurrentClassLogger();
     }
 }
 

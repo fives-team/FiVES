@@ -7,7 +7,7 @@ namespace NativeClient
         public string Guid;
         public Vector Position;
         public Quat Orientation;
-        public bool MovingBackward = false;
+        public bool IsLocallyCreated = false;
     }
 }
 

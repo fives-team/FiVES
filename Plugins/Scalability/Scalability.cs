@@ -269,7 +269,7 @@ namespace ScalabilityPlugin
         {
             if (clientSyncID == LocalSyncID)
             {
-                logger.Debug("The server is local. Ignoring own handshake.");
+                logger.Info("The server is local. Ignoring own handshake.");
                 return;
             }
 
@@ -333,7 +333,7 @@ namespace ScalabilityPlugin
 
             lock (remoteSyncNodes)
                 remoteSyncNodes.Add(connection);
-            logger.Debug("Connected to remote sync node with SyncID = " + remoteSyncID);
+            logger.Info("Connected to remote sync node with SyncID = " + remoteSyncID);
 
             // TODO: Sync all existing entities to the remote node.
         }
@@ -371,11 +371,10 @@ namespace ScalabilityPlugin
                     lock (remoteEntityAdditions)
                         remoteEntityAdditions.Add(guid);
                     World.Instance.Add(new Entity(guid));
-                    logger.Debug("Added an entity in response to sync message. Guid: " + guid);
                 }
                 else
                 {
-                    logger.Debug("Processing addition of already existing entity. Guid: " + guid);
+                    logger.Warn("Processing addition of already existing entity. Guid: " + guid);
                 }
 
                 ProcessChangedAttributes(guid, initialSyncInfo);
@@ -395,7 +394,7 @@ namespace ScalabilityPlugin
 
                 if (!localSyncInfo.ContainsKey(guid))
                 {
-                    logger.Debug("Ignoring removal of entity that does not exist. Guid: " + guid);
+                    logger.Warn("Ignoring removal of entity that does not exist. Guid: " + guid);
                     return;
                 }
 
@@ -403,7 +402,6 @@ namespace ScalabilityPlugin
                 lock (remoteEntityRemovals)
                     remoteEntityRemovals.Add(guid);
                 World.Instance.Remove(World.Instance.FindEntity(guid));
-                logger.Debug("Removed an entity in response to sync message. Guid: " + guid);
             }
         }
 
@@ -489,17 +487,11 @@ namespace ScalabilityPlugin
         {
             EntitySyncInfo localEntitySyncInfo = localSyncInfo[localEntity.Guid];
 
-            logger.Debug("Received an update to an attribute. Entity guid: " + localEntity.Guid + ". " +
-                    "Attribute path: " + componentName + "." + attributeName + ". New value: " +
-                    remoteAttributeSyncInfo.LastValue + ". Timestamp: " + remoteAttributeSyncInfo.LastTimestamp +
-                    ". SyncID: " + remoteAttributeSyncInfo.LastSyncID);
-
             bool shouldUpdateLocalAttribute = false;
             if (!localEntitySyncInfo.Components.ContainsKey(componentName) ||
                 !localEntitySyncInfo[componentName].Attributes.ContainsKey(attributeName))
             {
                 shouldUpdateLocalAttribute = true;
-                logger.Debug("Creating new attribute sync info.");
                 localEntitySyncInfo[componentName][attributeName] = remoteAttributeSyncInfo;
             }
             else
@@ -510,12 +502,7 @@ namespace ScalabilityPlugin
                     (localAttributeSyncInfo.LastValue != null &&
                      !localAttributeSyncInfo.LastValue.Equals(remoteAttributeSyncInfo.LastValue));
                 if (!localAttributeSyncInfo.Sync(remoteAttributeSyncInfo))
-                {
-                    logger.Debug("Sync discarded the update. Local value: " + localAttributeSyncInfo.LastValue +
-                        ". Local timestamp: " + localAttributeSyncInfo.LastTimestamp + ". Local SyncID: " +
-                        localAttributeSyncInfo.LastSyncID);
                     return false;  // ignore this update because sync discarded it
-                }
             }
 
             if (shouldUpdateLocalAttribute)
@@ -545,10 +532,9 @@ namespace ScalabilityPlugin
                     localEntity[componentName][attributeName] = attributeValue;
                     return true;
                 }
-                catch (ComponentAccessException e)
+                catch (ComponentAccessException)
                 {
                     // This is fine, because we may have some plugins not loaded on this node.
-                    logger.DebugException("Update is not applied to the World. Component is not defined.", e);
                 }
             }
 

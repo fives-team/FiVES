@@ -54,15 +54,29 @@ namespace NativeClient
     /// </summary>
     class Communicator
     {
-        public Communicator(string host, int port)
+        public Communicator()
+        {
+            settings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
+        }
+
+        /// <summary>
+        /// Opens a binary protocol connection.
+        /// </summary>
+        /// <param name="host">Server host.</param>
+        /// <param name="port">Server port.</param>
+        public void OpenConnection(string host, int port)
         {
             socket = new BPSocketAdapter(host, port);
             Initialize();
         }
 
-        public Communicator(string uri)
+        /// <summary>
+        /// Opens a WebSocket-JSON protocol connection.
+        /// </summary>
+        /// <param name="serverURI">Server URI.</param>
+        public void OpenConnection(string serverURI)
         {
-            socket = new WebSocketSocketAdapter(uri);
+            socket = new WebSocketSocketAdapter(serverURI);
             Initialize();
         }
 
@@ -101,7 +115,7 @@ namespace NativeClient
         /// <param name="callbacks">Callbacks.</param>
         /// <param name="args">Arguments.</param>
         public int Call(string funcName, List<int> callbacks, params object[] args) {
-            int callID = NextCallID++;
+            int callID = GetNextCallID();
             List<object> message = new List<object>();
             message.Add("call");
             message.Add(callID);
@@ -110,10 +124,15 @@ namespace NativeClient
             message.AddRange(args);
 
             var serializedMessage = JsonConvert.SerializeObject(message, settings);
-            Logger.Debug("Sending: {0}", serializedMessage);
             socket.Send(serializedMessage);
-            return callID;
 
+            return callID;
+        }
+
+        private int GetNextCallID()
+        {
+            lock (nextCallIDLock)
+                return nextCallID++;
         }
 
         /// <summary>
@@ -133,8 +152,8 @@ namespace NativeClient
         /// <param name="funcName">Function name.</param>
         /// <param name="callback">Callback.</param>
         public void RegisterFunc(string funcName, Action<CallRequest> callback) {
-            lock (RegisteredFuncs)
-                RegisteredFuncs.Add(funcName, callback);
+            lock (registeredFuncs)
+                registeredFuncs.Add(funcName, callback);
         }
 
         /// <summary>
@@ -143,16 +162,15 @@ namespace NativeClient
         /// <param name="callID">Call reply ID.</param>
         /// <param name="callback">Callback.</param>
         public void AddReplyHandler(int callID, Action<CallReply> callback) {
-            lock (ExpectedReplies)
-                ExpectedReplies.Add(callID, callback);
+            lock (expectedReplies)
+                expectedReplies.Add(callID, callback);
         }
 
         void Initialize()
         {
-            socket.Opened += (sender, e) => Logger.Info("Connected to the server");
-            socket.Error += (sender, e) => Logger.ErrorException("Connection error", e.Exception);
-            socket.Closed += (sender, e) => Logger.Info("Connection closed");
-            socket.Message += (sender, e) => Logger.Debug("Received: {0}", e.Message);
+            socket.Opened += (sender, e) => logger.Info("Connected to the server");
+            socket.Error += (sender, e) => logger.ErrorException("Connection error", e.Exception);
+            socket.Closed += (sender, e) => logger.Info("Connection closed");
             socket.Message += HandleMessage;
             socket.Opened += HandleOpened;
             socket.Closed += HandleClosed;
@@ -178,11 +196,11 @@ namespace NativeClient
             string funcName = parsedMessage[2].ToObject<string>();
             Action<CallRequest> callback;
 
-            lock (RegisteredFuncs)
+            lock (registeredFuncs)
             {
-                if (!RegisteredFuncs.ContainsKey(funcName))
-                    Logger.Fatal("Unexpected func call: {0}", message);
-                callback = RegisteredFuncs[funcName];
+                if (!registeredFuncs.ContainsKey(funcName))
+                    logger.Fatal("Unexpected func call: {0}", message);
+                callback = registeredFuncs[funcName];
             }
 
             callback(new CallRequest(message, parsedMessage));
@@ -191,13 +209,13 @@ namespace NativeClient
         void HandleCallReplyMessage(string message, List<JToken> parsedMessage)
         {
             int callID = parsedMessage[1].ToObject<int>();
-            Action<CallReply> callback;
 
-            lock (ExpectedReplies)
+            Action<CallReply> callback;
+            lock (expectedReplies)
             {
-                if (!ExpectedReplies.ContainsKey(callID))
+                if (!expectedReplies.ContainsKey(callID))
                     return;
-                callback = ExpectedReplies[callID];
+                callback = expectedReplies[callID];
             }
 
             callback(new CallReply(message, parsedMessage));
@@ -208,12 +226,19 @@ namespace NativeClient
             List<JToken> parsedMessage = JsonConvert.DeserializeObject<List<JToken>>(e.Message);
             string messageType = parsedMessage[0].ToObject<string>();
 
-            if (messageType == "call-error")
-                Logger.Error("Received error message: {0}", e.Message);
-            else if (messageType == "call")
-                HandleCallMessage(e.Message, parsedMessage);
-            else if (messageType == "call-reply")
-                HandleCallReplyMessage(e.Message, parsedMessage);
+            try
+            {
+                if (messageType == "call-error")
+                    logger.Error("Received error message: {0}", e.Message);
+                else if (messageType == "call")
+                    HandleCallMessage(e.Message, parsedMessage);
+                else if (messageType == "call-reply")
+                    HandleCallReplyMessage(e.Message, parsedMessage);
+            }
+            catch (Exception ex)
+            {
+                logger.ErrorException("Failed to parse incoming message: " + e.Message, ex);
+            }
         }
 
         /// <summary>
@@ -224,24 +249,25 @@ namespace NativeClient
         /// <summary>
         /// Registered functions to be invoked on call from another side.
         /// </summary>
-        Dictionary<string, Action<CallRequest>> RegisteredFuncs = new Dictionary<string, Action<CallRequest>>();
+        Dictionary<string, Action<CallRequest>> registeredFuncs = new Dictionary<string, Action<CallRequest>>();
 
         /// <summary>
         /// Handlers for expected replies.
         /// </summary>
-        Dictionary<int, Action<CallReply>> ExpectedReplies = new Dictionary<int, Action<CallReply>>();
+        Dictionary<int, Action<CallReply>> expectedReplies = new Dictionary<int, Action<CallReply>>();
 
         /// <summary>
         /// Next call ID. Used to generate unique call IDs.
         /// </summary>
-        static int NextCallID = 0;
+        object nextCallIDLock = new object();
+        int nextCallID = 0;
 
         /// <summary>
         /// Settings for the JSON.NET.
         /// </summary>
         JsonSerializerSettings settings = new JsonSerializerSettings();
 
-        static Logger Logger = LogManager.GetCurrentClassLogger();
+        static Logger logger = LogManager.GetCurrentClassLogger();
     }
 }
 
