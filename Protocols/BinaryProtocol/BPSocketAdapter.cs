@@ -10,14 +10,28 @@ using WebSocketJSON;
 
 namespace BinaryProtocol
 {
+    /// <summary>
+    /// This is a basic implementation of the ISocket used by the WSJConnection as a raw socket. Internally it uses
+    /// TcpSocket for communication.
+    /// </summary>
     public class BPSocketAdapter : ISocket
     {
+        /// <summary>
+        /// Creates a socket by establishing a connection to the remote server.
+        /// </summary>
+        /// <param name="aHost">Remote host name.</param>
+        /// <param name="aPort">Remote port.</param>
         public BPSocketAdapter(string aHost, int aPort)
         {
             host = aHost;
             port = aPort;
         }
 
+        /// <summary>
+        /// Creates a socket based on the existing TcpClient. When this constructor is used, Opened event will not be
+        /// fired and provided client is expected to be already connected. Calling Open will result in an error.
+        /// </summary>
+        /// <param name="connectedClient"></param>
         public BPSocketAdapter(TcpClient connectedClient)
         {
             client = connectedClient;
@@ -82,6 +96,11 @@ namespace BinaryProtocol
             }
         }
 
+        /// <summary>
+        /// Thread-safe method for raising Closed event when the connection is closed. If the connection was closed
+        /// before this method was called, the Closed event is not raised and false is returned.
+        /// </summary>
+        /// <returns>True if the connection has been closed before this method was called.</returns>
         private bool HandleNotConnected()
         {
             int wasOpened = Interlocked.CompareExchange(ref isOpened, 0, 1);
@@ -95,12 +114,20 @@ namespace BinaryProtocol
             return false;
         }
 
+        /// <summary>
+        /// Raises Error event with a given exception.
+        /// </summary>
+        /// <param name="exception">An exception that is passed with event arguments.</param>
         private void HandleError(Exception exception)
         {
             if (Error != null)
                 Error(this, new WebSocketJSON.ErrorEventArgs(exception));
         }
 
+        /// <summary>
+        /// Handles opened connection, starts listening for messages and raises Opened event.
+        /// </summary>
+        /// <param name="ar"></param>
         private void HandleConnected(IAsyncResult ar)
         {
             client.EndConnect(ar);
@@ -111,6 +138,9 @@ namespace BinaryProtocol
                 Opened(this, new EventArgs());
         }
 
+        /// <summary>
+        /// Creates necessary buffers and starts listening for the first message.
+        /// </summary>
         private void SetUpBufferAndStartReading()
         {
             receiveBuffer = new byte[client.ReceiveBufferSize];
@@ -118,6 +148,11 @@ namespace BinaryProtocol
             stream.BeginRead(receiveBuffer, 0, receiveBuffer.Length, HandleFinishedRead, null);
         }
 
+        /// <summary>
+        /// Asynchronous handler for the new data arriving from the socket. Processes the new data, extracts all
+        /// completed messages and raises Message event for each of them.
+        /// </summary>
+        /// <param name="ar">Asynchronous result.</param>
         private void HandleFinishedRead(IAsyncResult ar)
         {
             if (!IsConnected)

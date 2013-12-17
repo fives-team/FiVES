@@ -9,6 +9,10 @@ using WebSocketJSON;
 
 namespace BinaryProtocol
 {
+    /// <summary>
+    /// Connection factory to create connections based on raw TCP sockets but using same JSON protocol as in
+    /// WebSocketJSON project.
+    /// </summary>
     public class BPConnectionFactory : IConnectionFactory
     {
         public void OpenConnection(Server serverConfig, Context context, Action<Connection> onConnected)
@@ -64,6 +68,11 @@ namespace BinaryProtocol
             }
         }
 
+        /// <summary>
+        /// This is used as a callback to the BeginAcceptTcpClient on the TcpListener. It creates a new connection,
+        /// invokes the user callback and continues to listen for new connections.
+        /// </summary>
+        /// <param name="ar"></param>
         private void CreateBPConnection(IAsyncResult ar)
         {
             AsyncServerState serverState = ar.AsyncState as AsyncServerState;
