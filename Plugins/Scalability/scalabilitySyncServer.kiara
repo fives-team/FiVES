@@ -26,7 +26,7 @@ struct ComponentDef {
     array<AttributeDef> AttributeDefs;
 }
 
-service sync {
+service scalability {
     // Called by client on the server to initiate communication. Transmits the client's SyncID to server and signals
     // that all other methods of the interface have been registered and ready to be called.
     void clientHandshake(string clientSyncID);
@@ -58,8 +58,8 @@ service sync {
     // The receving side should register the component locally and remove this component from the deferred plugins'
     // dependencies.
     // @param definition Component definition.
-    void registerComponentDefinition(ComponentDefinition definition);
+    void registerComponentDefinition(ComponentDef definition);
 
-    // Returns immediately with no action. Used to estimate the round trip time of a message.
-    void ping();
+    // Returns the current time on the remote server. Used to estimate time different between servers.
+    DateTime getTime();
 }
