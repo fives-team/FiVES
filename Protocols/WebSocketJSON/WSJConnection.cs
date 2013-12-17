@@ -38,8 +38,6 @@ namespace WebSocketJSON
         /// <param name="message">The incoming message.</param>
         public void HandleMessage(object sender, MessageEventArgs e)
         {
-            logger.Debug("Received: " + e.Message);
-
             List<JToken> data = null;
             // FIXME: Occasionally we receive JSON with some random bytes appended. The reason is
             // unclear, but to be safe we ignore messages that have parsing errors.
@@ -77,8 +75,6 @@ namespace WebSocketJSON
             List<object> convertedArgs = convertCallbackArguments(args, out callbacks);
             List<object> callMessage = createCallMessage(callID, funcName, callbacks, convertedArgs);
 
-            string serializedMessage = JsonConvert.SerializeObject(callMessage, settings);
-
             IWSJFuncCall callObj = null;
             if (!IsOneWay(funcName))
             {
@@ -91,7 +87,7 @@ namespace WebSocketJSON
                     activeCalls.Add(callID, callObj);
             }
 
-            Send(serializedMessage);
+            SendMessage(callMessage);
 
             return callObj;
         }
@@ -124,10 +120,15 @@ namespace WebSocketJSON
                 Closed(this, e);
         }
 
-        internal virtual void Send(string message)
+        internal virtual void SendSerializedMessage(string serializedMessage)
         {
-            logger.Debug("Sending: " + message);
-            socket.Send(message);
+            socket.Send(serializedMessage);
+        }
+
+        internal void SendMessage(List<object> message)
+        {
+            string serializedMessage = JsonConvert.SerializeObject(message, settings);
+            SendSerializedMessage(serializedMessage);
         }
 
         private void HandleCall(List<JToken> data)
@@ -167,7 +168,6 @@ namespace WebSocketJSON
                 }
                 catch (Exception e)
                 {
-                    logger.DebugException("Exception in method handler", e);
                     exception = e;
                     success = false;
                 }
@@ -276,7 +276,7 @@ namespace WebSocketJSON
                 callReplyMessage.Add(exception);
             else if (nativeMethod.Method.ReturnType != typeof(void))
                 callReplyMessage.Add(retValue);
-            Send(JsonConvert.SerializeObject(callReplyMessage, settings));
+            SendMessage(callReplyMessage);
         }
 
         private void SendCallError(int callID, string reason)
@@ -285,7 +285,7 @@ namespace WebSocketJSON
             errorReplyMessage.Add("call-error");
             errorReplyMessage.Add(callID);
             errorReplyMessage.Add(reason);
-            Send(JsonConvert.SerializeObject(errorReplyMessage, settings));
+            SendMessage(errorReplyMessage);
         }
 
         private void HandleCallError(List<JToken> data)
