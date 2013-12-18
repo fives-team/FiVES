@@ -25,7 +25,7 @@ namespace WebSocketJSON
             if (port == -1 || host == null)
                 throw new Error(ErrorCode.CONNECTION_ERROR, "No port and/or IP address is present in configuration.");
 
-            IWebSocket socket = webSocketFactory.Construct("ws://" + host + ":" + port + "/");
+            ISocket socket = webSocketFactory.Construct("ws://" + host + ":" + port + "/");
             socket.Opened += (sender, e) => onConnected(new WSJConnection(socket));
             socket.Error += (sender, e) => {
                 logger.WarnException("Error in connection to " + host + ":" + port, e.Exception);
@@ -59,9 +59,12 @@ namespace WebSocketJSON
             server.Start();
         }
 
-        public string GetName()
+        public string Name
         {
-            return "websocket-json";
+            get
+            {
+                return "websocket-json";
+            }
         }
 
         private void ValidateProtocolName(Server serverConfig)

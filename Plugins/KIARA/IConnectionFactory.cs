@@ -28,7 +28,7 @@ namespace KIARAPlugin
         /// Returns the name of the protocol.
         /// </summary>
         /// <returns>The name of the protocol.</returns>
-        string GetName();
+        string Name { get; }
     }
 }
 
