@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using EventLoopPlugin;
+using FIVES;
 
 namespace AnimationPlugin
 {
@@ -11,13 +12,47 @@ namespace AnimationPlugin
         public AnimationManager()
         {
             EventLoop.Instance.TickFired += new EventHandler<TickEventArgs>(handleEventTick);
+            LastTick = new TimeSpan(DateTime.Now.Ticks);
         }
 
         private void handleEventTick(Object sender, TickEventArgs e)
         {
-            Console.WriteLine("Handling EventTick for Animation at {0}", e.TimeStamp);
+            double frameDuration = e.TimeStamp.Subtract(LastTick).TotalMilliseconds;
+            LastTick = e.TimeStamp;
+
+            lock (SubscribedEntities)
+            {
+                foreach (KeyValuePair<String, Animation> registeredAnimation in SubscribedEntities)
+                {
+                    float newKey = registeredAnimation.Value.Tick(frameDuration);
+                    Entity entity = World.Instance.FindEntity(registeredAnimation.Key);
+                    entity["animation"]["keyframe"] = newKey;
+                }
+            }
         }
 
-        private Dictionary<Guid, Animation> subscribedEntities = new Dictionary<Guid, Animation>();
+        internal void StartAnimation(String entityGuid, Animation animation)
+        {
+            lock(SubscribedEntities)
+                SubscribedEntities[entityGuid] = animation;
+        }
+
+        internal void StopAnimation(String entityGuid)
+        {
+            lock (SubscribedEntities)
+            {
+                if (SubscribedEntities.ContainsKey(entityGuid))
+                    SubscribedEntities.Remove(entityGuid);
+            }
+        }
+
+        public bool IsPlaying(String entityGuid)
+        {
+            lock(SubscribedEntities)
+                return SubscribedEntities.ContainsKey(entityGuid);
+        }
+
+        private Dictionary<String, Animation> SubscribedEntities = new Dictionary<String, Animation>();
+        private TimeSpan LastTick;
     }
 }
