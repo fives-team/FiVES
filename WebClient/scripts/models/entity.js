@@ -54,6 +54,15 @@ FIVES.Models = FIVES.Models || {};
             FIVES.Resources.SceneManager.updateOrientation(this);
         else if (componentName == "meshResource")
             FIVES.Resources.SceneManager.updateMesh(this);
+        else if (componentName == "animation")
+            this.updateAnimationKey();
+    };
+
+    e.updateAnimationKey = function() {
+        // TODO: Means to provide different names for animations (questionable if necessary, though)
+        var animationKeyName = this.xml3dView.xflowAnimations.walk.key;
+        var animationKey =  this.xml3dView.xflowAnimations.xflowKeys[animationKeyName];
+        animationKey.text(this["animation"]["keyframe"]);
     };
 
     e.updateAttribute = function(componentName, attributeName, value) {
