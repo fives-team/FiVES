@@ -40,6 +40,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Animation.cs" />
     <Compile Include="AnimationManager.cs" />
     <Compile Include="AnimationPluginInitializer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -52,6 +53,10 @@
     <ProjectReference Include="..\..\Core\PluginManager\PluginManager.csproj">
       <Project>{db1099a1-b7fe-474f-a03a-41687d6c5c76}</Project>
       <Name>PluginManager</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\ClientManager\ClientManager.csproj">
+      <Project>{e1955ff2-6109-4c71-9f13-486a48de6c17}</Project>
+      <Name>ClientManager</Name>
     </ProjectReference>
     <ProjectReference Include="..\Eventloop\EventLoop.csproj">
       <Project>{6cd0fe0e-7d56-4e24-8568-625a13c37130}</Project>
