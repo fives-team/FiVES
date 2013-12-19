@@ -50,7 +50,10 @@ FIVES.Resources = FIVES.Resources || {};
         var entity = FIVES.Models.EntityRegistry.getEntity(idSuffix);
         var transformGroup = this._createTransformForEntityGroup(entity);
         var entityGroup = this._createParentGroupForEntity(entity);
+        var animationDefiniton = this._createAnimationForEntity(meshGroup, idSuffix);
+        entity.xml3dView.transformElement = transformGroup;
         entity.xml3dView.groupElement = entityGroup;
+        entity.xml3dView.xflowAnimations = animationDefiniton;
         _xml3dElement.appendChild(entityGroup);
         entityGroup.appendChild(meshGroup);
     };
@@ -69,7 +72,7 @@ FIVES.Resources = FIVES.Resources || {};
         transformTag.rotation.set(this._createRotationFromOrientation(entity));
         transformTag.scale.set(this._createScaleForEntityGroup(entity));
         _mainDefs.appendChild(transformTag);
-        entity.xml3dView.transformElement = transformTag;
+        return transformTag;
     };
 
     scm._createTranslationForEntityGroup = function(entity) {
@@ -89,6 +92,28 @@ FIVES.Resources = FIVES.Resources || {};
         var scale = entity.scale;
         var xml3dScale = new XML3DVec3(scale.x, scale.y, scale.z);
         return xml3dScale;
+    };
+
+    scm._createAnimationForEntity = function(meshGroup, entityId) {
+        var animationDefinitions = {};
+        animationDefinitions.xflowKeys = {};
+        var meshAnimations = $(meshGroup).find("anim");
+        meshAnimations.each(function(index, element)
+            {
+                var animationDefinition = scm._parseAnimationEntry(element);
+                animationDefinitions[element.getAttribute("name")] = animationDefinition;
+                animationDefinitions.xflowKeys[animationDefinition.key] = $(meshGroup).find(animationDefinition.key +"-"+entityId);
+            });
+        return animationDefinitions;
+    };
+
+    scm._parseAnimationEntry = function(animationDefinition) {
+        var animation = {};
+        animation.startKey = animationDefinition.getAttribute("startKey");
+        animation.endKey = animationDefinition.getAttribute("endKey");
+        animation.speed = animationDefinition.getAttribute("speed");
+        animation.key = animationDefinition.getAttribute("key");
+        return animation;
     };
 
     scm.updateOrientation = function(entity) {
