@@ -37,6 +37,8 @@ FIVES.Input = FIVES.Input || {};
               /* D */  case 68:  FIVES.Communication.FivesCommunicator.setAvatarSpinAroundAxis(FIVES.Communication.FivesCommunicator.sessionKey, UP_AXIS,  -SPIN_SPEED); break;
                 default: break;
             }
+            var e = FIVES.Models.EntityRegistry.getEntity(FIVES.AvatarEntityGuid);
+            FIVES.Communication.FivesCommunicator.startEntityAnimation(FIVES.AvatarEntityGuid, e.xml3dView.xflowAnimations.walk.startKey, e.xml3dView.xflowAnimations.walk.endKey);
             _pressedKeys[e.keyCode] = true;
         }
     };
@@ -52,6 +54,7 @@ FIVES.Input = FIVES.Input || {};
             case 65:
             case 68:  FIVES.Communication.FivesCommunicator.setAvatarSpinAroundAxis(FIVES.Communication.FivesCommunicator.sessionKey,  UP_AXIS , 0); break;
         }
+        FIVES.Communication.FivesCommunicator.stopEntityAnimation(FIVES.AvatarEntityGuid);
         _pressedKeys[e.keyCode] = false;
     };
 
