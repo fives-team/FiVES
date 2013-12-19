@@ -8,6 +8,10 @@ using FIVES;
 
 namespace StaticSceneryPlugin
 {
+    /// <summary>
+    /// Adds an Entity as static scenery to the world on startup. The URL to the scenery file as well as the y-offset to define the height
+    /// of the ground plane are provided in a config file
+    /// </summary>
     public class StaticSceneryPluginInitializer : IPluginInitializer
     {
         public string Name
@@ -31,6 +35,9 @@ namespace StaticSceneryPlugin
             CreateSceneryEntity();
         }
 
+        /// <summary>
+        /// Reads scenery-model-uri and y-offset from app-config
+        /// </summary>
         private void ReadConfig()
         {
             string sceneryConfigPath = this.GetType().Assembly.Location;
@@ -41,6 +48,9 @@ namespace StaticSceneryPlugin
             float.TryParse(offsetYConfigValue, out OffsetY);
         }
 
+        /// <summary>
+        /// Creates the scenery entity and adds it to the world
+        /// </summary>
         private void CreateSceneryEntity()
         {
             Entity sceneryEntity = new Entity();
