@@ -191,7 +191,7 @@ namespace ClientManagerPlugin
         /// <summary>
         /// Callback to be called on updates, provided by the client
         /// </summary>
-        private Dictionary<string, Action<List<UpdateInfo>>> ClientCallbacks;
+        private Dictionary<Guid, Action<List<UpdateInfo>>> ClientCallbacks = new Dictionary<Guid,Action<List<UpdateInfo>>>();
 
         /// <summary>
         /// Mutex Object for the update queue
