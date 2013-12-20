@@ -24,7 +24,7 @@ namespace ClientManagerPlugin
         /// </summary>
         /// <param name="clientGuid">GUID (session token) of client for which the queue is created</param>
         /// <param name="callback">Callback provided by the client to be called in each update step</param>
-        internal ClientUpdateQueue(string clientGuid, Action<List <UpdateInfo>> callback)
+        internal ClientUpdateQueue()
         {
             ClientCallback = callback;
             StartUpdateThread();
@@ -35,7 +35,7 @@ namespace ClientManagerPlugin
         /// Flushs the update queue. Takes the list of all updates queued for the client and calls the client's callback, passing this list as parameter
         /// </summary>
         private void flushUpdateQueue() {
-            while (!ClientDisconnected)
+            while (true)
             {
                 lock (QueueLock)
                 {
@@ -153,19 +153,19 @@ namespace ClientManagerPlugin
         }
 
         /// <summary>
-        /// Indicates whether the client for which the queue was created has already disconnected
-        /// </summary>
-        private volatile bool ClientDisconnected = false;
-
-        /// <summary>
         /// Callback to be called on updates, provided by the client
         /// </summary>
-        private Action<List<UpdateInfo>> ClientCallback;
+        private Dictionary<string, Action<List<UpdateInfo>>> ClientCallbacks;
 
         /// <summary>
         /// Mutex Object for the update queue
         /// </summary>
         private object QueueLock = new object();
+
+        /// <summary>
+        /// Mutex Object for client callback registry
+        /// </summary>
+        private object CallbackRegistryLock = new object();
 
         /// <summary>
         /// The update queue.
