@@ -61,7 +61,7 @@ namespace ClientManagerPlugin
         }
 
         /// <summary>
-        /// Stops the client updates.
+        /// Loops over all registered client callbacks and invokes them to inform clients about updates
         /// </summary>
         private void InvokeClientCallbacks()
         {
@@ -72,6 +72,11 @@ namespace ClientManagerPlugin
             }
         }
 
+        /// <summary>
+        /// Registers a new client for updates by adding its update callback to the list of callbacks
+        /// </summary>
+        /// <param name="sessionKey">Session Key which the client got from the server</param>
+        /// <param name="clientCallback">Callback to be invoked on client to process updates</param>
         internal void RegisterToClientUpdates(Guid sessionKey, Action<List<UpdateInfo>> clientCallback)
         {
             lock (CallbackRegistryLock)
@@ -81,6 +86,10 @@ namespace ClientManagerPlugin
             }
         }
 
+        /// <summary>
+        /// Stops sending updates to a client by removing its callback from the callback registry.
+        /// <param name="sessionKey">Session Key of the client that disconnected</param>
+        /// </summary>
         internal void StopClientUpdates(Guid sessionKey)
         {
             lock (CallbackRegistryLock)
