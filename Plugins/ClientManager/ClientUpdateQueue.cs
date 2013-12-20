@@ -45,7 +45,7 @@ namespace ClientManagerPlugin
 
                     if (UpdateQueue.Count > 0)
                     {
-                        ClientCallback(UpdateQueue);
+                        InvokeClientCallbacks();
                         UpdateQueue.Clear();
                     }
                 }
@@ -63,7 +63,26 @@ namespace ClientManagerPlugin
         /// <summary>
         /// Stops the client updates.
         /// </summary>
-        internal void StopClientUpdates(string sessionKey) {
+        private void InvokeClientCallbacks()
+        {
+            lock (CallbackRegistryLock)
+            {
+                foreach (Action<List<UpdateInfo>> callback in ClientCallbacks.Values)
+                    callback(UpdateQueue);
+            }
+        }
+
+        internal void RegisterToClientUpdates(Guid sessionKey, Action<List<UpdateInfo>> clientCallback)
+        {
+            lock (CallbackRegistryLock)
+            {
+                if(!ClientCallbacks.ContainsKey(sessionKey))
+                    ClientCallbacks.Add(sessionKey, clientCallback);
+            }
+        }
+
+        internal void StopClientUpdates(Guid sessionKey)
+        {
             lock (CallbackRegistryLock)
             {
                 if (ClientCallbacks.ContainsKey(sessionKey))
