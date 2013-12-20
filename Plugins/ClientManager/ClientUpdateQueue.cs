@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using FIVES;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace ClientManagerPlugin
 {
@@ -67,7 +68,7 @@ namespace ClientManagerPlugin
         /// Starts the update thread that performs the update loop.
         /// </summary>
         private void StartUpdateThread () {
-            ThreadPool.QueueUserWorkItem(_ => flushUpdateQueue());
+            Task.Factory.StartNew(flushUpdateQueue);
         }
 
         /// <summary>
