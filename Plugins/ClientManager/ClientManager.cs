@@ -115,8 +115,7 @@ namespace ClientManagerPlugin
 
         void NotifyAboutObjectUpdates(string sessionKey, Action<List<ClientUpdateQueue.UpdateInfo>> callback)
         {
-            ClientUpdateQueue queueForClient = new ClientUpdateQueue(sessionKey, callback);
-            clientUpdateHandlers.Add(new Guid(sessionKey), queueForClient);
+            UpdateQueue.RegisterToClientUpdates(Guid.Parse(sessionKey), callback);
         }
 
         List<string> basicClientServices = new List<string>();
@@ -227,12 +226,8 @@ namespace ClientManagerPlugin
                     foreach (var handler in onRemovedEntityHandlers[secToken])
                         World.Instance.RemovedEntity -= handler;
                 }
+                UpdateQueue.StopClientUpdates(secToken);
 
-                if (clientUpdateHandlers.ContainsKey(secToken))
-                {
-                    clientUpdateHandlers[secToken].StopClientUpdates();
-                    clientUpdateHandlers.Remove(secToken);
-                }
                 callback(secToken);
                 authenticatedClients.Remove(secToken);
             });
@@ -243,7 +238,7 @@ namespace ClientManagerPlugin
             OnAuthenticated += callback;
         }
 
-        private ClientUpdateQueue updateQueue = new ClientUpdateQueue();
+        private ClientUpdateQueue UpdateQueue = new ClientUpdateQueue();
         #endregion
 
         /// <summary>
