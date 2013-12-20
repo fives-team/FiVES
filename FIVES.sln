@@ -63,8 +63,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BinaryProtocol", "Protocols
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StaticScenery", "Plugins\StaticScenery\StaticScenery.csproj", "{08853670-E21A-479B-AB44-266FAE85536A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MegaCity", "Plugins\ClassLibrary1\MegaCity.csproj", "{EC194505-B72F-482B-A94D-84EC4B65C6A9}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Animation", "Plugins\Animation\Animation.csproj", "{B80D5D38-4967-49A7-8C76-024B287536C1}"
 EndProject
 Global
