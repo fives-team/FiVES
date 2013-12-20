@@ -55,8 +55,12 @@ namespace ClientManagerPlugin
         /// <summary>
         /// Stops the client updates.
         /// </summary>
-        internal void StopClientUpdates() {
-            ClientDisconnected = true;
+        internal void StopClientUpdates(string sessionKey) {
+            lock (CallbackRegistryLock)
+            {
+                if (ClientCallbacks.ContainsKey(sessionKey))
+                    ClientCallbacks.Remove(sessionKey);
+            }
         }
 
         /// <summary>
