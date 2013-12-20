@@ -243,6 +243,7 @@ namespace ClientManagerPlugin
             OnAuthenticated += callback;
         }
 
+        private ClientUpdateQueue updateQueue = new ClientUpdateQueue();
         #endregion
 
         /// <summary>
