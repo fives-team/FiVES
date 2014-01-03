@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Configuration;
 
 namespace BotEntitiesPlugin
 {
@@ -11,22 +12,40 @@ namespace BotEntitiesPlugin
     {
         public string Name
         {
-            get { throw new NotImplementedException(); }
+            get { return "BotEntities"; }
         }
 
         public List<string> PluginDependencies
         {
-            get { throw new NotImplementedException(); }
+            get { return new List<string> { "Renderable", "Motion", "EventLoop"}; }
         }
 
         public List<string> ComponentDependencies
         {
-            get { throw new NotImplementedException(); }
+            get { return new List<string> { "meshResource", "velocity", "rotationalVelocity" };  }
         }
 
         public void Initialize()
         {
-            throw new NotImplementedException();
+           CreateBotEntities();
         }
+
+        private void RetrieveConfigurationValues()
+        {
+            string configPath = this.GetType().Assembly.Location;
+            Configuration config = ConfigurationManager.OpenExeConfiguration(configPath);
+
+            // TODO: Parse values
+        }
+
+        private void CreateBotEntities()
+        {
+        }
+
+
+        private int numBots = 10;
+        private string botMesh = "models/natalieFives/xml3d/natalie.xml";
+        private float botWalkSpeed = 0.05f;
+        private float botRotateSpeed = 0.05f;
     }
 }
