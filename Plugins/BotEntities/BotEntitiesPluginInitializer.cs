@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Configuration;
+using EventLoopPlugin;
 
 namespace BotEntitiesPlugin
 {
@@ -28,6 +29,7 @@ namespace BotEntitiesPlugin
         public void Initialize()
         {
            CreateBotEntities();
+           EventLoop.Instance.TickFired += new EventHandler<TickEventArgs>(HandleEventTick);
         }
 
         private void RetrieveConfigurationValues()
@@ -42,6 +44,9 @@ namespace BotEntitiesPlugin
         {
         }
 
+        private void HandleEventTick(Object sender, TickEventArgs e)
+        {
+        }
 
         private int numBots = 10;
         private string botMesh = "models/natalieFives/xml3d/natalie.xml";
