@@ -21,12 +21,12 @@ namespace StaticSceneryPlugin
 
         public List<string> PluginDependencies
         {
-            get { return new List<string> {"Renderable", "Location"}; }
+            get { return new List<string> (); }
         }
 
         public List<string> ComponentDependencies
         {
-            get { return new List<string>(); }
+            get { return new List<string> {"position", "meshResource"}; }
         }
 
         public void Initialize()
