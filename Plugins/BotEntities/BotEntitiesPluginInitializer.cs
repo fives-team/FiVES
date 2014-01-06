@@ -49,6 +49,7 @@ namespace BotEntitiesPlugin
         }
 
         private int numBots = 10;
+        private HashSet<Entity> bots = new HashSet<Entity>();
         private string botMesh = "models/natalieFives/xml3d/natalie.xml";
         private float botWalkSpeed = 0.05f;
         private float botRotateSpeed = 0.05f;
