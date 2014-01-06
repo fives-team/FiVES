@@ -36,7 +36,7 @@ namespace StaticSceneryPlugin
         }
 
         /// <summary>
-        /// Reads scenery-model-uri and y-offset from app-config
+        /// Reads scenery-model-uri and offsets from app-config
         /// </summary>
         private void ReadConfig()
         {
