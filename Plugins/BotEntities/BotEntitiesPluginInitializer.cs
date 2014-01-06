@@ -42,6 +42,16 @@ namespace BotEntitiesPlugin
 
         private void CreateBotEntities()
         {
+            for (var i = 0; i < numBots; i++)
+            {
+                Entity botEntity = new Entity();
+                botEntity["position"]["x"] = 0.0f;
+                botEntity["position"]["y"] = 0.0f;
+                botEntity["position"]["z"] = 0.0f;
+                botEntity["meshResource"]["uri"] = botMesh;
+                FIVES.World.Instance.Add(botEntity);
+                bots.Add(botEntity);
+            }
         }
 
         private void HandleEventTick(Object sender, TickEventArgs e)
