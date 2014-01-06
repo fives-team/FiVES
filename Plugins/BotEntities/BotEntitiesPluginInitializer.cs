@@ -56,6 +56,20 @@ namespace BotEntitiesPlugin
 
         private void HandleEventTick(Object sender, TickEventArgs e)
         {
+            foreach (Entity botEntity in bots)
+            {
+                int roll = random.Next(10);
+                if (roll > 8)
+                    ChangeMoveSpeed(botEntity);
+            }
+        }
+
+        private void ChangeMoveSpeed(Entity botEntity)
+        {
+            if ((float)botEntity["velocity"]["x"] == botWalkSpeed)
+                botEntity["velocity"]["x"] = 0.0f;
+            else
+                botEntity["velocity"]["x"] = botWalkSpeed;
         }
 
         private int numBots = 10;
@@ -63,5 +77,6 @@ namespace BotEntitiesPlugin
         private string botMesh = "models/natalieFives/xml3d/natalie.xml";
         private float botWalkSpeed = 0.05f;
         private float botRotateSpeed = 0.05f;
+        private Random random = new Random();
     }
 }
