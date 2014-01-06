@@ -35,7 +35,7 @@ namespace ClientManagerPlugin
         /// <summary>
         /// Flushs the update queue. Takes the list of all updates queued for the client and calls the client's callback, passing this list as parameter
         /// </summary>
-        private void flushUpdateQueue() {
+        private void FlushUpdateQueue() {
             while (true)
             {
                 bool gotLock = false;
@@ -103,7 +103,7 @@ namespace ClientManagerPlugin
         /// Starts the update thread that performs the update loop.
         /// </summary>
         private void StartUpdateThread () {
-            Task.Factory.StartNew(flushUpdateQueue);
+            Task.Factory.StartNew(FlushUpdateQueue);
         }
 
         /// <summary>
