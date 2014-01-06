@@ -17,6 +17,8 @@ namespace EventLoopPlugin
     {
         public static EventLoop Instance;
 
+        public int TickInterval { get { return tickInterval; } }
+
         /// <summary>
         /// Event Handler to which other plugins can register
         /// </summary>

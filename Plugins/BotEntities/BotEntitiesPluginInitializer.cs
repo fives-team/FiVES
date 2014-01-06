@@ -48,6 +48,12 @@ namespace BotEntitiesPlugin
                 botEntity["position"]["x"] = 0.0f;
                 botEntity["position"]["y"] = 0.0f;
                 botEntity["position"]["z"] = 0.0f;
+
+                botEntity["rotVelocity"]["x"] = 0f;
+                botEntity["rotVelocity"]["y"] = 1f;
+                botEntity["rotVelocity"]["z"] = 0f;
+                botEntity["rotVelocity"]["r"] = 0f;
+
                 botEntity["meshResource"]["uri"] = botMesh;
                 FIVES.World.Instance.Add(botEntity);
                 bots.Add(botEntity);
@@ -56,11 +62,17 @@ namespace BotEntitiesPlugin
 
         private void HandleEventTick(Object sender, TickEventArgs e)
         {
-            foreach (Entity botEntity in bots)
+            millisecondsSinceLastTick += EventLoop.Instance.TickInterval;
+            if (millisecondsSinceLastTick > 1000)
             {
-                int roll = random.Next(10);
-                if (roll > 8)
-                    ChangeMoveSpeed(botEntity);
+                foreach (Entity botEntity in bots)
+                {
+                    int moveRoll = random.Next(10);
+                    if (moveRoll > 8)
+                        ChangeMoveSpeed(botEntity);
+                    if (moveRoll < 2)
+                        ChangeRotateSpeed(botEntity);
+                }
             }
         }
 
@@ -72,11 +84,23 @@ namespace BotEntitiesPlugin
                 botEntity["velocity"]["x"] = botWalkSpeed;
         }
 
+        private void ChangeRotateSpeed(Entity botEntity)
+        {
+            int rotateRoll = random.Next(10);
+            if (rotateRoll == 8)
+                botEntity["rotVelocity"]["r"] = botRotateSpeed;
+            else if (rotateRoll == 9)
+                botEntity["rotVelocity"]["r"] = -botRotateSpeed;
+            else
+                botEntity["rotVelocity"]["r"] = 0f;
+        }
+
         private int numBots = 10;
         private HashSet<Entity> bots = new HashSet<Entity>();
-        private string botMesh = "models/natalieFives/xml3d/natalie.xml";
+        private string botMesh = "/models/natalieFives/xml3d/natalie.xml";
         private float botWalkSpeed = 0.05f;
         private float botRotateSpeed = 0.05f;
+        private int millisecondsSinceLastTick = 0;
         private Random random = new Random();
     }
 }
