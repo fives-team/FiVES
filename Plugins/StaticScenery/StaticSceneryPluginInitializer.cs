@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using FIVES;
+using NLog;
 
 namespace StaticSceneryPlugin
 {
@@ -31,8 +32,18 @@ namespace StaticSceneryPlugin
 
         public void Initialize()
         {
-            ReadConfig();
-            CreateSceneryEntity();
+            try
+            {
+                ReadConfig();
+            }
+            catch (Exception e)
+            {
+                logger.Warn("Could not read Config for StaticScenery. Using default values instead.");
+            }
+            finally
+            {
+                CreateSceneryEntity();
+            }
         }
 
         /// <summary>
@@ -71,5 +82,6 @@ namespace StaticSceneryPlugin
         private float OffsetX = 0f;
         private float OffsetY = 0f;
         private float OffsetZ = 0f;
+        private static Logger logger = LogManager.GetCurrentClassLogger();
     }
 }
