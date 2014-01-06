@@ -11,10 +11,22 @@ namespace FIVES
         private PluginManager pm;
         private string pathToPlugins = "TestPlugins/";
 
+        private ComponentRegistry globalComponentRegistry = ComponentRegistry.Instance;
+        private World globalWorld = World.Instance;
+
         [SetUp()]
         public void Init()
         {
+            ComponentRegistry.Instance = new ComponentRegistry();
+            World.Instance = new World();
             pm = new PluginManager();
+        }
+
+        [TearDown()]
+        public void ShutDown()
+        {
+            ComponentRegistry.Instance = globalComponentRegistry;
+            World.Instance = globalWorld;
         }
 
         [Test()]
@@ -105,7 +117,6 @@ namespace FIVES
             pm.LoadPlugin(pathToPlugins + "ValidPlugin3.dll");
             Assert.IsFalse(pm.IsPathLoaded(pathToPlugins + "ValidPlugin3.dll"));
             Assert.IsFalse(pm.IsPluginLoaded("ValidPlugin3"));
-            // TODO: mock
             ComponentRegistry.Instance.Register(new ComponentDefinition("testComponentForValidPlugin3"));
             Assert.IsTrue(pm.IsPathLoaded(pathToPlugins + "ValidPlugin3.dll"));
             Assert.IsTrue(pm.IsPluginLoaded("ValidPlugin3"));
