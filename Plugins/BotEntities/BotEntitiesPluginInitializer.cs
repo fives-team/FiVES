@@ -18,12 +18,12 @@ namespace BotEntitiesPlugin
 
         public List<string> PluginDependencies
         {
-            get { return new List<string> { "Renderable", "Motion", "EventLoop"}; }
+            get { return new List<string> { "EventLoop"}; }
         }
 
         public List<string> ComponentDependencies
         {
-            get { return new List<string> { "meshResource", "velocity", "rotationalVelocity" };  }
+            get { return new List<string> { "meshResource", "velocity", "rotVelocity" };  }
         }
 
         public void Initialize()
