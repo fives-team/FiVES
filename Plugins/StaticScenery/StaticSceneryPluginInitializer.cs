@@ -44,8 +44,14 @@ namespace StaticSceneryPlugin
             Configuration config = ConfigurationManager.OpenExeConfiguration(sceneryConfigPath);
 
             SceneryURL = config.AppSettings.Settings["sceneryUrl"].Value;
+
+            string offsetXConfigValue = config.AppSettings.Settings["offsetX"].Value;
             string offsetYConfigValue = config.AppSettings.Settings["offsetY"].Value;
+            string offsetZConfigValue = config.AppSettings.Settings["offsetZ"].Value;
+
+            float.TryParse(offsetXConfigValue, out OffsetX);
             float.TryParse(offsetYConfigValue, out OffsetY);
+            float.TryParse(offsetZConfigValue, out OffsetZ);
         }
 
         /// <summary>
@@ -55,11 +61,15 @@ namespace StaticSceneryPlugin
         {
             Entity sceneryEntity = new Entity();
             sceneryEntity["meshResource"]["uri"] = SceneryURL;
+            sceneryEntity["position"]["x"] = OffsetX;
             sceneryEntity["position"]["y"] = OffsetY;
+            sceneryEntity["position"]["z"] = OffsetZ;
             World.Instance.Add(sceneryEntity);
         }
 
         private string SceneryURL = "";
+        private float OffsetX = 0f;
         private float OffsetY = 0f;
+        private float OffsetZ = 0f;
     }
 }
