@@ -44,7 +44,7 @@ namespace AnimationPlugin
             ClientManager.Instance.RegisterClientService("animation", false, new Dictionary<string, Delegate>
             {
                 {"startAnimation", (Action<String, float, float>)HandleStartAnimation},
-                {"stopAnimation", (Action<String>)handleStopAnimation}
+                {"stopAnimation", (Action<String>)HandleStopAnimation}
             });
         }
 
@@ -57,7 +57,7 @@ namespace AnimationPlugin
             }
         }
 
-        private void handleStopAnimation(String entityGuid)
+        private void HandleStopAnimation(String entityGuid)
         {
             manager.StopAnimation(entityGuid);
         }
