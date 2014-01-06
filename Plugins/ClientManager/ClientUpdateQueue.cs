@@ -103,7 +103,7 @@ namespace ClientManagerPlugin
         /// Starts the update thread that performs the update loop.
         /// </summary>
         private void StartUpdateThread () {
-            Task.Factory.StartNew(FlushUpdateQueue);
+            Task.Factory.StartNew(FlushUpdateQueue, TaskCreationOptions.LongRunning);
         }
 
         /// <summary>
