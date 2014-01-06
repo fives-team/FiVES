@@ -13,6 +13,10 @@ namespace StaticSceneryPlugin
     {
         StaticSceneryPluginInitializer plugin = new StaticSceneryPluginInitializer();
 
+        // Global instances of FIVES Domain Model
+        private ComponentRegistry globalComponentRegistry = ComponentRegistry.Instance;
+        private World globalWorld = World.Instance;
+
         // values to mock configfile
         string SceneryURL = "/static/scenery/url.xml";
         float OffsetX = 1.0f;
@@ -21,11 +25,24 @@ namespace StaticSceneryPlugin
 
         // the initializer of the test corresponds to the intializier of the plugin. Reading Config is mocked by method, as config file is not
         // read by NUnit
-        public StaticSceneryPluginInitializerTest()
+        [SetUp()]
+        public void Init()
         {
+            World.Instance = new World();
+            ComponentRegistry.Instance = new ComponentRegistry();
             MockReadConfig();
             MockComponentRegistry();
             plugin.Initialize();
+        }
+
+        /// <summary>
+        /// After each test, original World objects of FiVES are restored
+        /// </summary>
+        [TearDown()]
+        public void ShutDown()
+        {
+            World.Instance = globalWorld;
+            ComponentRegistry.Instance = globalComponentRegistry;
         }
 
         /// <summary>
