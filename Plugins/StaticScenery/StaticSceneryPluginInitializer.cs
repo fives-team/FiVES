@@ -78,10 +78,11 @@ namespace StaticSceneryPlugin
             World.Instance.Add(sceneryEntity);
         }
 
-        private string SceneryURL = "";
-        private float OffsetX = 0f;
-        private float OffsetY = 0f;
-        private float OffsetZ = 0f;
+        internal string SceneryURL = "";
+        internal float OffsetX = 0f;
+        internal float OffsetY = 0f;
+        internal float OffsetZ = 0f;
+
         private static Logger logger = LogManager.GetCurrentClassLogger();
     }
 }
