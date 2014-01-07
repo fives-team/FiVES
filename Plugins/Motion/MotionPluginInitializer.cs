@@ -123,15 +123,60 @@ namespace MotionPlugin
         private void HandleOnAttributeChanged(Object sender, ChangedAttributeEventArgs e)
         {
             Entity entity = (Entity)sender;
-            if (IsMoving(entity) && !ongoingMotion.Contains(entity.Guid))
+            CheckForEntityMoving(entity);
+            CheckForEntitySpinning(entity);
+        }
+
+        /// <summary>
+        /// Checks if an attribute update of an entity initiated or ended a movement by checking its new velocity values. Adds or removes the entity
+        /// to the list of ongoing motions depending on the values.
+        /// </summary>
+        /// <param name="entity">Entity that fired attribute changed event</param>
+        private void CheckForEntityMoving(Entity entity)
+        {
+            if (IsMoving(entity))
             {
-                ongoingMotion.Add(entity.Guid);
-                ThreadPool.QueueUserWorkItem(_ => UpdateMotion(entity));
+                lock (ongoingMotion)
+                {
+                    if (!ongoingMotion.Contains(entity))
+                        ongoingMotion.Add(entity);
+                }
             }
-            if (IsSpinning(entity) && !ongoingSpin.Contains(entity.Guid))
+            else
             {
-                ongoingSpin.Add(entity.Guid);
-                ThreadPool.QueueUserWorkItem(_ => UpdateSpin(entity));
+                lock (ongoingMotion)
+                {
+                    if(ongoingMotion.Contains(entity))
+                        ongoingMotion.Remove(entity);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Checks if an attribute update of an entity initiated or ended a spin by checking its new rotational velocity values. Adds or removes the entity
+        /// to the list of ongoing spins depending on the values.
+        /// </summary>
+        /// <param name="entity">Entity that fired attribute changed event</param>
+        private void CheckForEntitySpinning(Entity entity)
+        {
+            if (IsSpinning(entity))
+            {
+                lock (ongoingSpin)
+                {
+                    if (!ongoingSpin.Contains(entity))
+                        ongoingSpin.Add(entity);
+                }
+            }
+            else
+            {
+                lock (ongoingSpin)
+                {
+                    if (ongoingSpin.Contains(entity))
+                        ongoingSpin.Add(entity);
+                }
+            }
+        }
+
             }
         }
 
