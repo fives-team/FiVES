@@ -22,6 +22,11 @@ namespace EventLoopPlugin
         /// </summary>
         public event EventHandler<TickEventArgs> TickFired;
 
+        /// <summary>
+        /// Interval at which TickEvent is fired
+        /// </summary>
+        public int TickInterval { get { return tickInterval; } }
+
         public EventLoop()
         {
             ReadIntervalFromConfig();
