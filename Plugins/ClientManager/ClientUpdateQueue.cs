@@ -2,6 +2,8 @@ using System;
 using System.Collections.Generic;
 using FIVES;
 using System.Threading;
+using System.Threading.Tasks;
+using System.Collections.Concurrent;
 
 namespace ClientManagerPlugin
 {
@@ -24,9 +26,8 @@ namespace ClientManagerPlugin
         /// </summary>
         /// <param name="clientGuid">GUID (session token) of client for which the queue is created</param>
         /// <param name="callback">Callback provided by the client to be called in each update step</param>
-        internal ClientUpdateQueue(string clientGuid, Action<List <UpdateInfo>> callback)
-        {
-            ClientCallback = callback;
+        internal ClientUpdateQueue()
+        {            
             StartUpdateThread();
             RegisterToEntityUpdates();
         }
@@ -34,36 +35,75 @@ namespace ClientManagerPlugin
         /// <summary>
         /// Flushs the update queue. Takes the list of all updates queued for the client and calls the client's callback, passing this list as parameter
         /// </summary>
-        private void flushUpdateQueue() {
-            while (!ClientDisconnected)
+        private void FlushUpdateQueue() {
+            while (true)
             {
-                lock (QueueLock)
+                bool gotLock = false;
+                try
                 {
-                    while (UpdateQueue.Count == 0)
-                    {
-                        Monitor.Wait(QueueLock);
-                    }
+                    QueueLock.Enter(ref gotLock);
 
-                    ClientCallback(UpdateQueue);
-                    UpdateQueue.Clear();
-                    Monitor.PulseAll(QueueLock);
+                    if (UpdateQueue.Count > 0)
+                    {
+                        InvokeClientCallbacks();
+                        UpdateQueue.Clear();
+                    }
                 }
-                Thread.Sleep(10); // Wait shortly to collect a number of atomic attribute updates before sending them for performance reasons
+                finally
+                {
+                    if (gotLock)
+                        QueueLock.Exit();
+                }
+
+                // Wait for updates to accumulate (to send them in batches)
+                Thread.Sleep(10);
             }
         }
 
         /// <summary>
-        /// Stops the client updates.
+        /// Loops over all registered client callbacks and invokes them to inform clients about updates
         /// </summary>
-        internal void StopClientUpdates() {
-            ClientDisconnected = true;
+        private void InvokeClientCallbacks()
+        {
+            lock (CallbackRegistryLock)
+            {
+                foreach (Action<List<UpdateInfo>> callback in ClientCallbacks.Values)
+                    callback(UpdateQueue);
+            }
+        }
+
+        /// <summary>
+        /// Registers a new client for updates by adding its update callback to the list of callbacks
+        /// </summary>
+        /// <param name="sessionKey">Session Key which the client got from the server</param>
+        /// <param name="clientCallback">Callback to be invoked on client to process updates</param>
+        internal void RegisterToClientUpdates(Guid sessionKey, Action<List<UpdateInfo>> clientCallback)
+        {
+            lock (CallbackRegistryLock)
+            {
+                if(!ClientCallbacks.ContainsKey(sessionKey))
+                    ClientCallbacks.Add(sessionKey, clientCallback);
+            }
+        }
+
+        /// <summary>
+        /// Stops sending updates to a client by removing its callback from the callback registry.
+        /// <param name="sessionKey">Session Key of the client that disconnected</param>
+        /// </summary>
+        internal void StopClientUpdates(Guid sessionKey)
+        {
+            lock (CallbackRegistryLock)
+            {
+                if (ClientCallbacks.ContainsKey(sessionKey))
+                    ClientCallbacks.Remove(sessionKey);
+            }
         }
 
         /// <summary>
         /// Starts the update thread that performs the update loop.
         /// </summary>
         private void StartUpdateThread () {
-            ThreadPool.QueueUserWorkItem(_ => flushUpdateQueue());
+            Task.Factory.StartNew(FlushUpdateQueue, TaskCreationOptions.LongRunning);
         }
 
         /// <summary>
@@ -108,15 +148,16 @@ namespace ClientManagerPlugin
         /// <param name="sender">Entity that invoked the attribute change event</param>
         /// <param name="e">Event Arguments</param>
         private void AddEntityUpdateToQueue(Object sender, ChangedAttributeEventArgs e) {
-
-            lock (QueueLock)
+            bool gotLock = false;
+            try
             {
-                while (UpdateQueue.Count > UpdateQueue.Capacity)
-                {
-                    Monitor.Wait(QueueLock);
-                }
+                QueueLock.Enter(ref gotLock);
                 UpdateQueue.Add(CreateUpdateInfoFromEventArgs((Entity)sender, e));
-                Monitor.PulseAll(QueueLock);
+            }
+            finally
+            {
+                if (gotLock)
+                    QueueLock.Exit();
             }
         }
 
@@ -140,32 +181,36 @@ namespace ClientManagerPlugin
         /// </summary>
         /// <param name="entityGuid">Guid of the removed entity/param>
         private void RemoveEntityFromQueue(Entity entity) {
-            lock (QueueLock)
+            bool gotLock = false;
+            try
             {
+                QueueLock.Enter(ref gotLock);
+
                 foreach (UpdateInfo entityUpdate in UpdateQueue)
-                {
                     if (entityUpdate.entityGuid.Equals(entity.Guid))
-                    {
                         UpdateQueue.Remove(entityUpdate);
-                    }
-                }
+            }
+            finally
+            {
+                if (gotLock)
+                    QueueLock.Exit();
             }
         }
 
         /// <summary>
-        /// Indicates whether the client for which the queue was created has already disconnected
-        /// </summary>
-        private volatile bool ClientDisconnected = false;
-
-        /// <summary>
         /// Callback to be called on updates, provided by the client
         /// </summary>
-        private Action<List<UpdateInfo>> ClientCallback;
+        private Dictionary<Guid, Action<List<UpdateInfo>>> ClientCallbacks = new Dictionary<Guid,Action<List<UpdateInfo>>>();
 
         /// <summary>
         /// Mutex Object for the update queue
         /// </summary>
-        private object QueueLock = new object();
+        private SpinLock QueueLock = new SpinLock();
+
+        /// <summary>
+        /// Mutex Object for client callback registry
+        /// </summary>
+        private object CallbackRegistryLock = new object();
 
         /// <summary>
         /// The update queue.
