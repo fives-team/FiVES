@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using FIVES;
 using ClientManagerPlugin;
 using System.Threading;
+using EventLoopPlugin;
 
 namespace MotionPlugin
 {
@@ -38,7 +39,7 @@ namespace MotionPlugin
         {
             DefineComponents();
             RegisterEntityEvents();
-
+            EventLoop.Instance.TickFired += new EventHandler<TickEventArgs>(HandleEventTick);
             PluginManager.Instance.AddPluginLoadedHandler("ClientManager", RegisterClientServices);
         }
 
@@ -122,15 +123,79 @@ namespace MotionPlugin
         private void HandleOnAttributeChanged(Object sender, ChangedAttributeEventArgs e)
         {
             Entity entity = (Entity)sender;
-            if (IsMoving(entity) && !ongoingMotion.Contains(entity.Guid))
+            CheckForEntityMoving(entity);
+            CheckForEntitySpinning(entity);
+        }
+
+        /// <summary>
+        /// Checks if an attribute update of an entity initiated or ended a movement by checking its new velocity values. Adds or removes the entity
+        /// to the list of ongoing motions depending on the values.
+        /// </summary>
+        /// <param name="entity">Entity that fired attribute changed event</param>
+        private void CheckForEntityMoving(Entity entity)
+        {
+            if (IsMoving(entity))
             {
-                ongoingMotion.Add(entity.Guid);
-                ThreadPool.QueueUserWorkItem(_ => UpdateMotion(entity));
+                lock (ongoingMotion)
+                {
+                    if (!ongoingMotion.Contains(entity))
+                        ongoingMotion.Add(entity);
+                }
             }
-            if (IsSpinning(entity) && !ongoingSpin.Contains(entity.Guid))
+            else
             {
-                ongoingSpin.Add(entity.Guid);
-                ThreadPool.QueueUserWorkItem(_ => UpdateSpin(entity));
+                lock (ongoingMotion)
+                {
+                    if(ongoingMotion.Contains(entity))
+                        ongoingMotion.Remove(entity);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Checks if an attribute update of an entity initiated or ended a spin by checking its new rotational velocity values. Adds or removes the entity
+        /// to the list of ongoing spins depending on the values.
+        /// </summary>
+        /// <param name="entity">Entity that fired attribute changed event</param>
+        private void CheckForEntitySpinning(Entity entity)
+        {
+            if (IsSpinning(entity))
+            {
+                lock (ongoingSpin)
+                {
+                    if (!ongoingSpin.Contains(entity))
+                        ongoingSpin.Add(entity);
+                }
+            }
+            else
+            {
+                lock (ongoingSpin)
+                {
+                    if (ongoingSpin.Contains(entity))
+                        ongoingSpin.Add(entity);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Handles a TickFired Evenet of EventLoop. Performs position and orientation updates for all ongoing motions and rotations
+        /// </summary>
+        /// <param name="sender">Sender of tick event args (EventLoop)</param>
+        /// <param name="e">TickEventArgs</param>
+        private void HandleEventTick(Object sender, TickEventArgs e)
+        {
+            lock (ongoingMotion)
+            {
+                foreach (Entity entity in ongoingMotion)
+                {
+                    UpdateMotion(entity);
+                }
+            }
+
+            lock (ongoingSpin)
+            {
+                foreach (Entity entity in ongoingSpin)
+                    UpdateSpin(entity);
             }
         }
 
@@ -139,43 +204,33 @@ namespace MotionPlugin
         /// </summary>
         /// <param name="updatedEntity">Entity for which motion is updated</param>
         private void UpdateMotion(Entity updatedEntity) {
-            while (IsMoving(updatedEntity))
-            {
-                Vector localVelocity = GetVelocityInWorldSpace(updatedEntity);
-                updatedEntity["position"]["x"] = (float)updatedEntity["position"]["x"] + localVelocity.x;
-                updatedEntity["position"]["y"] = (float)updatedEntity["position"]["y"] + localVelocity.y;
-                updatedEntity["position"]["z"] = (float)updatedEntity["position"]["z"] + localVelocity.z;
-                Thread.Sleep(30);
-            }
-            ongoingMotion.Remove(updatedEntity.Guid);
+            Vector localVelocity = GetVelocityInWorldSpace(updatedEntity);
+            updatedEntity["position"]["x"] = (float)updatedEntity["position"]["x"] + localVelocity.x;
+            updatedEntity["position"]["y"] = (float)updatedEntity["position"]["y"] + localVelocity.y;
+            updatedEntity["position"]["z"] = (float)updatedEntity["position"]["z"] + localVelocity.z;
         }
 
         /// <summary>
         /// Worker thread that periodically performs the spin. Ends, when either angular velocity or spin axis are 0.
         /// </summary>
         /// <param name="updatedEntity">Entity for which spin is updated</param>
-        private void UpdateSpin(Entity updatedEntity) {
-            while (IsSpinning(updatedEntity))
-            {
-                Quat entityRotation = EntityRotationAsQuaternion(updatedEntity);
+        private void UpdateSpin(Entity updatedEntity)
+        {
+            Quat entityRotation = EntityRotationAsQuaternion(updatedEntity);
 
-                Vector spinAxis = new Vector();
-                spinAxis.x = (float)updatedEntity["rotVelocity"]["x"];
-                spinAxis.y = (float)updatedEntity["rotVelocity"]["y"];
-                spinAxis.z = (float)updatedEntity["rotVelocity"]["z"];
-                float spinAngle = (float)updatedEntity["rotVelocity"]["r"];
+            Vector spinAxis = new Vector();
+            spinAxis.x = (float)updatedEntity["rotVelocity"]["x"];
+            spinAxis.y = (float)updatedEntity["rotVelocity"]["y"];
+            spinAxis.z = (float)updatedEntity["rotVelocity"]["z"];
+            float spinAngle = (float)updatedEntity["rotVelocity"]["r"];
 
-                Quat spinAsQuaternion = FIVES.Math.QuaternionFromAxisAngle(spinAxis, spinAngle);
+            Quat spinAsQuaternion = FIVES.Math.QuaternionFromAxisAngle(spinAxis, spinAngle);
 
-                Quat newRotationAsQuaternion = FIVES.Math.MultiplyQuaternions(spinAsQuaternion, entityRotation);
-                updatedEntity["orientation"]["x"] = newRotationAsQuaternion.x;
-                updatedEntity["orientation"]["y"] = newRotationAsQuaternion.y;
-                updatedEntity["orientation"]["z"] = newRotationAsQuaternion.z;
-                updatedEntity["orientation"]["w"] = newRotationAsQuaternion.w;
-
-                Thread.Sleep(30);
-            }
-            ongoingSpin.Remove(updatedEntity.Guid);
+            Quat newRotationAsQuaternion = FIVES.Math.MultiplyQuaternions(spinAsQuaternion, entityRotation);
+            updatedEntity["orientation"]["x"] = newRotationAsQuaternion.x;
+            updatedEntity["orientation"]["y"] = newRotationAsQuaternion.y;
+            updatedEntity["orientation"]["z"] = newRotationAsQuaternion.z;
+            updatedEntity["orientation"]["w"] = newRotationAsQuaternion.w;
         }
 
         /// <summary>
@@ -240,8 +295,8 @@ namespace MotionPlugin
                     && (float)entity["rotVelocity"]["z"] ==0);
         }
 
-        private ISet<Guid> ongoingMotion = new HashSet<Guid>();
-        private ISet<Guid> ongoingSpin = new HashSet<Guid>();
+        private ISet<Entity> ongoingMotion = new HashSet<Entity>();
+        private ISet<Entity> ongoingSpin = new HashSet<Entity>();
     }
 }
 

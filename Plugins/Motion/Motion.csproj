@@ -69,5 +69,9 @@
       <Project>{E1955FF2-6109-4C71-9F13-486A48DE6C17}</Project>
       <Name>ClientManager</Name>
     </ProjectReference>
+    <ProjectReference Include="..\EventLoop\EventLoop.csproj">
+      <Project>{6cd0fe0e-7d56-4e24-8568-625a13c37130}</Project>
+      <Name>EventLoop</Name>
+    </ProjectReference>
   </ItemGroup>
 </Project>
