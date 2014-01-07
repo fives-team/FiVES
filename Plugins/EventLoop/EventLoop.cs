@@ -48,13 +48,17 @@ namespace EventLoopPlugin
         {
             while (true)
             {
+                TimeSpan totalTimeElapsed = stopwatch.Elapsed;
+                TimeSpan tickDuration = totalTimeElapsed - lastTick;
+                lastTick = totalTimeElapsed;
                 if (TickFired != null)
-                    TickFired(this, new TickEventArgs(stopwatch.Elapsed));
+                    TickFired(this, new TickEventArgs(tickDuration, totalTimeElapsed));
                 Thread.Sleep(tickInterval);
             }
         }
 
         private int tickInterval = 30;
+        private TimeSpan lastTick = new TimeSpan(DateTime.Now.Ticks);
         private Stopwatch stopwatch = new Stopwatch();
     }
 }
