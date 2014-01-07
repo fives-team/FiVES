@@ -185,43 +185,33 @@ namespace MotionPlugin
         /// </summary>
         /// <param name="updatedEntity">Entity for which motion is updated</param>
         private void UpdateMotion(Entity updatedEntity) {
-            while (IsMoving(updatedEntity))
-            {
-                Vector localVelocity = GetVelocityInWorldSpace(updatedEntity);
-                updatedEntity["position"]["x"] = (float)updatedEntity["position"]["x"] + localVelocity.x;
-                updatedEntity["position"]["y"] = (float)updatedEntity["position"]["y"] + localVelocity.y;
-                updatedEntity["position"]["z"] = (float)updatedEntity["position"]["z"] + localVelocity.z;
-                Thread.Sleep(30);
-            }
-            ongoingMotion.Remove(updatedEntity.Guid);
+            Vector localVelocity = GetVelocityInWorldSpace(updatedEntity);
+            updatedEntity["position"]["x"] = (float)updatedEntity["position"]["x"] + localVelocity.x;
+            updatedEntity["position"]["y"] = (float)updatedEntity["position"]["y"] + localVelocity.y;
+            updatedEntity["position"]["z"] = (float)updatedEntity["position"]["z"] + localVelocity.z;
         }
 
         /// <summary>
         /// Worker thread that periodically performs the spin. Ends, when either angular velocity or spin axis are 0.
         /// </summary>
         /// <param name="updatedEntity">Entity for which spin is updated</param>
-        private void UpdateSpin(Entity updatedEntity) {
-            while (IsSpinning(updatedEntity))
-            {
-                Quat entityRotation = EntityRotationAsQuaternion(updatedEntity);
+        private void UpdateSpin(Entity updatedEntity)
+        {
+            Quat entityRotation = EntityRotationAsQuaternion(updatedEntity);
 
-                Vector spinAxis = new Vector();
-                spinAxis.x = (float)updatedEntity["rotVelocity"]["x"];
-                spinAxis.y = (float)updatedEntity["rotVelocity"]["y"];
-                spinAxis.z = (float)updatedEntity["rotVelocity"]["z"];
-                float spinAngle = (float)updatedEntity["rotVelocity"]["r"];
+            Vector spinAxis = new Vector();
+            spinAxis.x = (float)updatedEntity["rotVelocity"]["x"];
+            spinAxis.y = (float)updatedEntity["rotVelocity"]["y"];
+            spinAxis.z = (float)updatedEntity["rotVelocity"]["z"];
+            float spinAngle = (float)updatedEntity["rotVelocity"]["r"];
 
-                Quat spinAsQuaternion = FIVES.Math.QuaternionFromAxisAngle(spinAxis, spinAngle);
+            Quat spinAsQuaternion = FIVES.Math.QuaternionFromAxisAngle(spinAxis, spinAngle);
 
-                Quat newRotationAsQuaternion = FIVES.Math.MultiplyQuaternions(spinAsQuaternion, entityRotation);
-                updatedEntity["orientation"]["x"] = newRotationAsQuaternion.x;
-                updatedEntity["orientation"]["y"] = newRotationAsQuaternion.y;
-                updatedEntity["orientation"]["z"] = newRotationAsQuaternion.z;
-                updatedEntity["orientation"]["w"] = newRotationAsQuaternion.w;
-
-                Thread.Sleep(30);
-            }
-            ongoingSpin.Remove(updatedEntity.Guid);
+            Quat newRotationAsQuaternion = FIVES.Math.MultiplyQuaternions(spinAsQuaternion, entityRotation);
+            updatedEntity["orientation"]["x"] = newRotationAsQuaternion.x;
+            updatedEntity["orientation"]["y"] = newRotationAsQuaternion.y;
+            updatedEntity["orientation"]["z"] = newRotationAsQuaternion.z;
+            updatedEntity["orientation"]["w"] = newRotationAsQuaternion.w;
         }
 
         /// <summary>
