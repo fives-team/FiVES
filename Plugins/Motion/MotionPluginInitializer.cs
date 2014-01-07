@@ -39,7 +39,7 @@ namespace MotionPlugin
         {
             DefineComponents();
             RegisterEntityEvents();
-
+            EventLoop.Instance.TickFired += new EventHandler<TickEventArgs>(HandleEventTick);
             PluginManager.Instance.AddPluginLoadedHandler("ClientManager", RegisterClientServices);
         }
 
@@ -177,6 +177,25 @@ namespace MotionPlugin
             }
         }
 
+        /// <summary>
+        /// Handles a TickFired Evenet of EventLoop. Performs position and orientation updates for all ongoing motions and rotations
+        /// </summary>
+        /// <param name="sender">Sender of tick event args (EventLoop)</param>
+        /// <param name="e">TickEventArgs</param>
+        private void HandleEventTick(Object sender, TickEventArgs e)
+        {
+            lock (ongoingMotion)
+            {
+                foreach (Entity entity in ongoingMotion)
+                {
+                    UpdateMotion(entity);
+                }
+            }
+
+            lock (ongoingSpin)
+            {
+                foreach (Entity entity in ongoingSpin)
+                    UpdateSpin(entity);
             }
         }
 
