@@ -241,8 +241,8 @@ namespace MotionPlugin
                     && (float)entity["rotVelocity"]["z"] ==0);
         }
 
-        private ISet<Guid> ongoingMotion = new HashSet<Guid>();
-        private ISet<Guid> ongoingSpin = new HashSet<Guid>();
+        private ISet<Entity> ongoingMotion = new HashSet<Entity>();
+        private ISet<Entity> ongoingSpin = new HashSet<Entity>();
     }
 }
 
