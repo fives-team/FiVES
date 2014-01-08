@@ -23,7 +23,7 @@ namespace MotionPlugin
         {
             get
             {
-                return new List<string>();
+                return new List<string> {"EventLoop"};
             }
         }
 
