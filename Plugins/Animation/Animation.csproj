@@ -62,6 +62,10 @@
       <Project>{6cd0fe0e-7d56-4e24-8568-625a13c37130}</Project>
       <Name>EventLoop</Name>
     </ProjectReference>
+    <ProjectReference Include="..\KIARA\KIARA.csproj">
+      <Project>{eefddd48-1795-4d62-a255-29167b0a3bc3}</Project>
+      <Name>KIARA</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
