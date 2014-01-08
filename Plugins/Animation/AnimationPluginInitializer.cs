@@ -46,6 +46,8 @@ namespace AnimationPlugin
             {
                 {"startServersideAnimation", (Action<string, float, float>)HandleStartAnimation},
                 {"stopServersideAnimation", (Action<string>)HandleStopAnimation},
+                {"notifyAboutClientsideAnimationStart", (Action<Connection, Action<string, string>>)ReceiveAnimationStartTrigger},
+                {"notifyAboutClientsideAnimationStop", (Action<Connection, Action<string, string>>)ReceiveAnimationStopTrigger}
             });
         }
 
@@ -61,6 +63,25 @@ namespace AnimationPlugin
         private void HandleStopAnimation(string entityGuid)
         {
             manager.StopAnimation(entityGuid);
+        }
+
+
+        private void ReceiveAnimationStartTrigger(Connection clientConnection, Action<string, string> callback)
+        {
+            lock (animationStartCallbacks)
+            {
+                if (!animationStartCallbacks.ContainsKey(clientConnection))
+                    animationStartCallbacks.Add(clientConnection, callback);
+            }
+        }
+
+        private void ReceiveAnimationStopTrigger(Connection clientConnection, Action<string, string> callback)
+        {
+            lock (animationStopCallbacks)
+            {
+                if (!animationStopCallbacks.ContainsKey(clientConnection))
+                    animationStopCallbacks.Add(clientConnection, callback);
+            }
         }
 
         Dictionary<Connection, Action<string, string>> animationStartCallbacks = new Dictionary<Connection, Action<string, string>>();
