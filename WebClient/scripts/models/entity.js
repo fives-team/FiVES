@@ -55,10 +55,10 @@ FIVES.Models = FIVES.Models || {};
         else if (componentName == "meshResource")
             FIVES.Resources.SceneManager.updateMesh(this);
         else if (componentName == "animation")
-            this.updateAnimationKey();
+            this.setAnimationKey();
     };
 
-    e.updateAnimationKey = function() {
+    e.setAnimationKey = function() {
         // TODO: Means to provide different names for animations (questionable if necessary, though)
         var animationKey = this.xml3dView.xflowAnimations.walk.key;
         animationKey.text(this["animation"]["keyframe"]);
