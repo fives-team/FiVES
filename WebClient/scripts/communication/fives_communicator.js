@@ -156,8 +156,8 @@ FIVES.Communication = FIVES.Communication || {};
         this.setAvatarLeftRightMotion = this.connection.generateFuncWrapper("avatar.setAvatarLeftRightMotion");
         this.setAvatarSpinAroundAxis = this.connection.generateFuncWrapper("avatar.setAvatarSpinAroundAxis");
 
-        this.startEntityAnimation = this.connection.generateFuncWrapper("animation.startAnimation");
-        this.stopEntityAnimation = this.connection.generateFuncWrapper("animation.stopAnimation");
+        this.startServersideAnimation = this.connection.generateFuncWrapper("animation.startServersideAnimation");
+        this.stopServersideAnimation = this.connection.generateFuncWrapper("animation.stopServersideAnimation");
 
         this.listObjects().on("result", _listObjectsCallback.bind(this));
         var getEntityGuidCall = this.getAvatarEntityGuid(this.sessionKey);

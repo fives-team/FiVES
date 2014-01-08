@@ -43,8 +43,8 @@ namespace AnimationPlugin
         {
             ClientManager.Instance.RegisterClientService("animation", false, new Dictionary<string, Delegate>
             {
-                {"startAnimation", (Action<String, float, float>)HandleStartAnimation},
-                {"stopAnimation", (Action<String>)HandleStopAnimation}
+                {"startServersideAnimation", (Action<String, float, float>)HandleStartAnimation},
+                {"stopServersideAnimation", (Action<String>)HandleStopAnimation},
             });
         }
 
