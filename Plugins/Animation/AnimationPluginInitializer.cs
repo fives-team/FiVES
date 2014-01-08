@@ -63,6 +63,8 @@ namespace AnimationPlugin
             manager.StopAnimation(entityGuid);
         }
 
+        Dictionary<Connection, Action<string, string>> animationStartCallbacks = new Dictionary<Connection, Action<string, string>>();
+        Dictionary<Connection, Action<string, string>> animationStopCallbacks = new Dictionary<Connection, Action<string, string>>();
         AnimationManager manager;
     }
 }
