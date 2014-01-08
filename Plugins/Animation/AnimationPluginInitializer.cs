@@ -46,6 +46,8 @@ namespace AnimationPlugin
             {
                 {"startServersideAnimation", (Action<string, float, float>)HandleStartAnimation},
                 {"stopServersideAnimation", (Action<string>)HandleStopAnimation},
+                {"startClientsideAnimation", (Action<string, string>)StartClientsideAnimation},
+                {"stopClientsideAnimation",(Action<string, string>)StopClientsideAnimation},
                 {"notifyAboutClientsideAnimationStart", (Action<Connection, Action<string, string>>)ReceiveAnimationStartTrigger},
                 {"notifyAboutClientsideAnimationStop", (Action<Connection, Action<string, string>>)ReceiveAnimationStopTrigger}
             });
@@ -65,6 +67,29 @@ namespace AnimationPlugin
             manager.StopAnimation(entityGuid);
         }
 
+        private void StartClientsideAnimation(string entityGuid, string animationName)
+        {
+            lock (animationStartCallbacks)
+            {
+                foreach (KeyValuePair<Connection, Action<string, string>> registeredCallback in animationStartCallbacks)
+                {
+                    var callback = registeredCallback.Value;
+                    callback(entityGuid, animationName);
+                }
+            }
+        }
+
+        private void StopClientsideAnimation(string entityGuid, string animationName)
+        {
+            lock (animationStopCallbacks)
+            {
+                foreach (KeyValuePair<Connection, Action<string, string>> registeredCallback in animationStopCallbacks)
+                {
+                    var callback = registeredCallback.Value;
+                    callback(entityGuid, animationName);
+                }
+            }
+        }
 
         private void ReceiveAnimationStartTrigger(Connection clientConnection, Action<string, string> callback)
         {
