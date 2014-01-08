@@ -38,7 +38,8 @@ FIVES.Input = FIVES.Input || {};
                 default: break;
             }
             var e = FIVES.Models.EntityRegistry.getEntity(FIVES.AvatarEntityGuid);
-            FIVES.Communication.FivesCommunicator.startServersideAnimation(FIVES.AvatarEntityGuid, e.xml3dView.xflowAnimations.walk.startKey, e.xml3dView.xflowAnimations.walk.endKey);
+            //FIVES.Communication.FivesCommunicator.startServersideAnimation(FIVES.AvatarEntityGuid, e.xml3dView.xflowAnimations.walk.startKey, e.xml3dView.xflowAnimations.walk.endKey);
+            FIVES.Communication.FivesCommunicator.startClientsideAnimation(FIVES.AvatarEntityGuid, "walk");
             _pressedKeys[e.keyCode] = true;
         }
     };
@@ -54,7 +55,8 @@ FIVES.Input = FIVES.Input || {};
             case 65:
             case 68:  FIVES.Communication.FivesCommunicator.setAvatarSpinAroundAxis(FIVES.Communication.FivesCommunicator.sessionKey,  UP_AXIS , 0); break;
         }
-        FIVES.Communication.FivesCommunicator.stopServersideAnimation(FIVES.AvatarEntityGuid);
+        //FIVES.Communication.FivesCommunicator.stopServersideAnimation(FIVES.AvatarEntityGuid);
+        FIVES.Communication.FivesCommunicator.stopClientsideAnimation(FIVES.AvatarEntityGuid, "walk");
         _pressedKeys[e.keyCode] = false;
     };
 
