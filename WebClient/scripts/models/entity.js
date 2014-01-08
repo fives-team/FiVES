@@ -60,8 +60,7 @@ FIVES.Models = FIVES.Models || {};
 
     e.updateAnimationKey = function() {
         // TODO: Means to provide different names for animations (questionable if necessary, though)
-        var animationKeyName = this.xml3dView.xflowAnimations.walk.key;
-        var animationKey =  this.xml3dView.xflowAnimations.xflowKeys[animationKeyName];
+        var animationKey = this.xml3dView.xflowAnimations.walk.key;
         animationKey.text(this["animation"]["keyframe"]);
     };
 

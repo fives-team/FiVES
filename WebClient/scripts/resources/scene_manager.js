@@ -96,18 +96,17 @@ FIVES.Resources = FIVES.Resources || {};
 
     scm._createAnimationForEntity = function(meshGroup, entityId) {
         var animationDefinitions = {};
-        animationDefinitions.xflowKeys = {};
         var meshAnimations = $(meshGroup).find("anim");
         meshAnimations.each(function(index, element)
             {
-                var animationDefinition = scm._parseAnimationEntry(element);
+                var animationDefinition = scm._parseAnimationEntry(element, entityId);
+                animationDefinition.key = $(meshGroup).find(animationDefinition.key +"-"+entityId);
                 animationDefinitions[element.getAttribute("name")] = animationDefinition;
-                animationDefinitions.xflowKeys[animationDefinition.key] = $(meshGroup).find(animationDefinition.key +"-"+entityId);
             });
         return animationDefinitions;
     };
 
-    scm._parseAnimationEntry = function(animationDefinition) {
+    scm._parseAnimationEntry = function(animationDefinition,entityId) {
         var animation = {};
         animation.startKey = animationDefinition.getAttribute("startKey");
         animation.endKey = animationDefinition.getAttribute("endKey");
