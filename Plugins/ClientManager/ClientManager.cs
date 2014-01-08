@@ -160,8 +160,6 @@ namespace ClientManagerPlugin
             new Dictionary<Guid, List<EventHandler<EntityEventArgs>>>();
         Dictionary<Guid, List<EventHandler<EntityEventArgs>>> onRemovedEntityHandlers =
             new Dictionary<Guid, List<EventHandler<EntityEventArgs>>>();
-        Dictionary<Guid, ClientUpdateQueue> clientUpdateHandlers =
-            new Dictionary<Guid, ClientUpdateQueue>();
 
         event Action<Guid> OnAuthenticated;
 
