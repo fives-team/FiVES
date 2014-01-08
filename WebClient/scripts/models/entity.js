@@ -64,6 +64,16 @@ FIVES.Models = FIVES.Models || {};
         animationKey.text(this["animation"]["keyframe"]);
     };
 
+    e.increaseAnimationKey = function(animationName, fps) {
+        var animation = this.xml3dView.xflowAnimations[animationName];
+        var oldValue = parseFloat(animation.key.text());
+        var newValue = oldValue + animation.speed * fps / 1000.0;
+        if (newValue > animation.endKey)
+            newValue = animation.startKey + (newValue - animation.endKey);
+
+        animation.key.text(newValue);
+    };
+
     e.updateAttribute = function(componentName, attributeName, value) {
         this._cachedComponentUpdates[componentName] = this._cachedComponentUpdates[componentName] || {};
         this._cachedComponentUpdates[componentName][attributeName] = value;
