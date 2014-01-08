@@ -159,6 +159,14 @@ FIVES.Communication = FIVES.Communication || {};
         this.startServersideAnimation = this.connection.generateFuncWrapper("animation.startServersideAnimation");
         this.stopServersideAnimation = this.connection.generateFuncWrapper("animation.stopServersideAnimation");
 
+        this.startClientsideAnimation = this.connection.generateFuncWrapper("animation.startClientsideAnimation");
+        this.stopClientsideAnimation = this.connection.generateFuncWrapper("animation.stopClientsideAnimation");
+
+        this.notifyAboutClientsideAnimationStart = this.connection.generateFuncWrapper("animation.notifyAboutClientsideAnimationStart");
+        this.notifyAboutClientsideAnimationStop = this.connection.generateFuncWrapper("animation.notifyAboutClientsideAnimationStop");
+        this.notifyAboutClientsideAnimationStart(FIVES.Plugins.Animation.registerToAnimationUpdates);
+        this.notifyAboutClientsideAnimationStop(FIVES.Plugins.Animation.unregisterFromAnimationUpdates);
+
         this.listObjects().on("result", _listObjectsCallback.bind(this));
         var getEntityGuidCall = this.getAvatarEntityGuid(this.sessionKey);
         getEntityGuidCall.on("success", function(avatarEntityGuid) {
