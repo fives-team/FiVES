@@ -28,7 +28,6 @@ namespace AnimationPlugin
         {
             double frameDuration = e.TimeStamp.Subtract(LastTick).TotalMilliseconds;
             LastTick = e.TimeStamp;
-
             lock (SubscribedEntities)
             {
                 foreach (KeyValuePair<String, Dictionary<string, KeyframeAnimation>> animatedEntities in SubscribedEntities)
@@ -39,7 +38,12 @@ namespace AnimationPlugin
                         float newKey = 0f;
 
                         if (!runningAnimation.Value.Tick(frameDuration, out newKey)) // Perform next keyframe computation and stop animation if number of cycles reached the end
-                            StopAnimation(animatedEntities.Key, runningAnimation.Key);
+                        {
+                            if(!FinishedAnimations.ContainsKey(animatedEntities.Key))
+                                FinishedAnimations.Add(animatedEntities.Key, new HashSet<string>());
+
+                            FinishedAnimations[animatedEntities.Key].Add(runningAnimation.Key);
+                        }
 
                         animationKeyframes += runningAnimation.Key + ":" + newKey + ";";
                     }
@@ -47,6 +51,10 @@ namespace AnimationPlugin
                     entity["animation"]["animationKeyframes"] = animationKeyframes;
                 }
             }
+
+            FinalizeFinishedAnimations();
+        }
+
         /// <summary>
         /// Stops all animations that exceeded their frame range and maximum number of cycles in the last frame
         /// </summary>
