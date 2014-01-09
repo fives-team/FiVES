@@ -22,6 +22,7 @@ namespace AnimationPlugin
             CurrentFrame = startFrame;
             EndFrame = endFrame;
             Cycles = cycles;
+            CurrentCycle = 1;
             Speed = speed;
         }
 
@@ -30,20 +31,32 @@ namespace AnimationPlugin
         /// </summary>
         /// <param name="frameDuration">Duration of the last frame in milliseconds</param>
         /// <returns>The new keyframe for the animation</returns>
-        internal float Tick(double frameDuration)
+        internal bool Tick(double frameDuration, out float newFrame)
         {
-            CurrentFrame += (float)frameDuration / 1000f;
+            CurrentFrame += Speed * (float)frameDuration / 1000f;
             if (CurrentFrame > EndFrame)
             {
+                if(Cycles != -1)
+                {
+                    CurrentCycle ++;
+                    if (CurrentCycle > Cycles)
+                    {
+                        newFrame = 0;
+                        return false;
+                    }
+                }
                 CurrentFrame = StartFrame + (CurrentFrame - EndFrame); // If CurrentFrame Exceeds endframe of current animation, resume it from start
             }
-            return CurrentFrame;
+            newFrame = CurrentFrame;
+            return true;
         }
 
         private float StartFrame;
         private float EndFrame;
         private float CurrentFrame;
-        private float Cycles;
+
+        private int Cycles;
+        private int CurrentCycle;
         private float Speed;
     }
 }

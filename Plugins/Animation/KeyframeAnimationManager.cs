@@ -36,7 +36,11 @@ namespace AnimationPlugin
                     string animationKeyframes = "";
                     foreach (KeyValuePair<string, KeyframeAnimation> runningAnimation in animatedEntities.Value)
                     {
-                        float newKey = runningAnimation.Value.Tick(frameDuration);
+                        float newKey = 0f;
+
+                        if (!runningAnimation.Value.Tick(frameDuration, out newKey)) // Perform next keyframe computation and stop animation if number of cycles reached the end
+                            StopAnimation(animatedEntities.Key, runningAnimation.Key);
+
                         animationKeyframes += runningAnimation.Key + ":" + newKey + ";";
                     }
                     Entity entity = World.Instance.FindEntity(animatedEntities.Key);
@@ -93,7 +97,7 @@ namespace AnimationPlugin
                 return SubscribedEntities.ContainsKey(entityGuid) && SubscribedEntities[entityGuid].ContainsKey(animationName);
         }
 
-        private Dictionary<String, Dictionary<string, KeyframeAnimation>> SubscribedEntities = new Dictionary<String, Dictionary<string, KeyframeAnimation>>();
+        private Dictionary<String, Dictionary<string, KeyframeAnimation>> SubscribedEntities = new Dictionary<String, Dictionary<string, KeyframeAnimation>>();        
         private TimeSpan LastTick;
     }
 }
