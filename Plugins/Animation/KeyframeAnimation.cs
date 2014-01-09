@@ -15,12 +15,14 @@ namespace AnimationPlugin
         /// </summary>
         public string Name;
 
-        internal KeyframeAnimation(string name, float startFrame, float endFrame)
+        internal KeyframeAnimation(string name, float startFrame, float endFrame, int cycles, float speed)
         {
             Name = name;
             StartFrame = startFrame;
             CurrentFrame = startFrame;
             EndFrame = endFrame;
+            Cycles = cycles;
+            Speed = speed;
         }
 
         /// <summary>
@@ -41,5 +43,7 @@ namespace AnimationPlugin
         private float StartFrame;
         private float EndFrame;
         private float CurrentFrame;
+        private float Cycles;
+        private float Speed;
     }
 }

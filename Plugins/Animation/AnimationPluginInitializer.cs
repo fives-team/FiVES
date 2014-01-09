@@ -44,7 +44,7 @@ namespace AnimationPlugin
         {
             ClientManager.Instance.RegisterClientService("animation", false, new Dictionary<string, Delegate>
             {
-                {"startServersideAnimation", (Action<string, string, float, float>)StartServersideAnimation},
+                {"startServersideAnimation", (Action<string, string, float, float, int, float>)StartServersideAnimation},
                 {"stopServersideAnimation", (Action<string, string>)StopServersideAnimation},
                 {"startClientsideAnimation", (Action<string, string>)StartClientsideAnimation},
                 {"stopClientsideAnimation",(Action<string, string>)StopClientsideAnimation},
@@ -60,11 +60,13 @@ namespace AnimationPlugin
         /// <param name="name">Name of animation that should be played</param>
         /// <param name="startFrame">Keyframe at which animation playback should start</param>
         /// <param name="endFrame">Keyframe at which animation playback should end</param>
-        private void StartServersideAnimation(string entityGuid, string name, float startFrame, float endFrame)
+        /// <param name="cycles">Number of cycles the animation should be played (-1 for infinite playback)</param>
+        /// <param param name="speed">Speed in which animation should be played</param>
+        private void StartServersideAnimation(string entityGuid, string name, float startFrame, float endFrame, int cycles, float speed)
         {
             if (!manager.IsPlaying(entityGuid, name))
             {
-                KeyframeAnimation newAnimation = new KeyframeAnimation(name, startFrame, endFrame);
+                KeyframeAnimation newAnimation = new KeyframeAnimation(name, startFrame, endFrame, cycles, speed);
                 manager.StartAnimation(entityGuid, newAnimation);
             }
         }
