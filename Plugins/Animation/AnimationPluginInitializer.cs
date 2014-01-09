@@ -30,7 +30,7 @@ namespace AnimationPlugin
         {
             RegisterComponents();
             RegisterClientServices();
-            manager = new AnimationManager();
+            manager = new KeyframeAnimationManager();
         }
 
         private void RegisterComponents()
@@ -53,20 +53,37 @@ namespace AnimationPlugin
             });
         }
 
+        /// <summary>
+        /// KIARA Service method handler that initiates a server side animation playback for an entity
+        /// </summary>
+        /// <param name="entityGuid">Guid of entity for which animation should be played</param>
+        /// <param name="name">Name of animation that should be played</param>
+        /// <param name="startFrame">Keyframe at which animation playback should start</param>
+        /// <param name="endFrame">Keyframe at which animation playback should end</param>
         private void StartServersideAnimation(string entityGuid, string name, float startFrame, float endFrame)
         {
             if (!manager.IsPlaying(entityGuid, name))
             {
-                Animation newAnimation = new Animation(name, startFrame, endFrame);
+                KeyframeAnimation newAnimation = new KeyframeAnimation(name, startFrame, endFrame);
                 manager.StartAnimation(entityGuid, newAnimation);
             }
         }
 
+        /// <summary>
+        /// Handler that stops a server side animation playback for an entity
+        /// </summary>
+        /// <param name="entityGuid">Guid for which playback should be stopped</param>
+        /// <param name="name">Name of animation for which playback should be stopped</param>
         private void StopServersideAnimation(string entityGuid, string name)
         {
             manager.StopAnimation(entityGuid, name);
         }
 
+        /// <summary>
+        /// Invokes a message to start animations on clients' sides
+        /// </summary>
+        /// <param name="entityGuid">Guid of entity for which animation should be played</param>
+        /// <param name="name">Name of animation that should be played</param>
         private void StartClientsideAnimation(string entityGuid, string animationName)
         {
             lock (animationStartCallbacks)
@@ -79,6 +96,11 @@ namespace AnimationPlugin
             }
         }
 
+        /// <summary>
+        /// Invokes a message to stop animations on clients' sides
+        /// </summary>
+        /// <param name="entityGuid">Guid of entity for which animation should be played</param>
+        /// <param name="name">Name of animation that should be played</param>
         private void StopClientsideAnimation(string entityGuid, string animationName)
         {
             lock (animationStopCallbacks)
@@ -91,6 +113,11 @@ namespace AnimationPlugin
             }
         }
 
+        /// <summary>
+        /// Handler of KIARA methods for clients to subscribe to animation start messages
+        /// </summary>
+        /// <param name="clientConnection">Connection that client uses to communicate with the server</param>
+        /// <param name="callback">Client callback that is invoked when the message is sent</param>
         private void ReceiveAnimationStartTrigger(Connection clientConnection, Action<string, string> callback)
         {
             lock (animationStartCallbacks)
@@ -100,6 +127,11 @@ namespace AnimationPlugin
             }
         }
 
+        /// <summary>
+        /// Handler of KIARA methods for clients to subscribe to animation start messages
+        /// </summary>
+        /// <param name="clientConnection">Connection that client uses to communicate with the server</param>
+        /// <param name="callback">Client callback that is invoked when the message is sent</param>
         private void ReceiveAnimationStopTrigger(Connection clientConnection, Action<string, string> callback)
         {
             lock (animationStopCallbacks)
@@ -111,6 +143,6 @@ namespace AnimationPlugin
 
         Dictionary<Connection, Action<string, string>> animationStartCallbacks = new Dictionary<Connection, Action<string, string>>();
         Dictionary<Connection, Action<string, string>> animationStopCallbacks = new Dictionary<Connection, Action<string, string>>();
-        AnimationManager manager;
+        KeyframeAnimationManager manager;
     }
 }

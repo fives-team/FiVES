@@ -7,14 +7,23 @@ using FIVES;
 
 namespace AnimationPlugin
 {
-    internal class AnimationManager
+    /// <summary>
+    /// KeyframeAnimationManager maintains keyframe animations of entities for server side animation computation. KeyframeManager subscribes to EventLoop
+    /// Plugin for recurring computation of animation keyframes
+    /// </summary>
+    internal class KeyframeAnimationManager
     {
-        public AnimationManager()
+        public KeyframeAnimationManager()
         {
             EventLoop.Instance.TickFired += new EventHandler<TickEventArgs>(HandleEventTick);
             LastTick = new TimeSpan(DateTime.Now.Ticks);
         }
 
+        /// <summary>
+        /// Handler for TickEvent of EventLoop. Will update keyframes of any animation and synchronize it with clients by setting the respective entity attribute
+        /// </summary>
+        /// <param name="sender">Sender of the event (EventLoop)</param>
+        /// <param name="e">TickEvent args</param>
         private void HandleEventTick(Object sender, TickEventArgs e)
         {
             double frameDuration = e.TimeStamp.Subtract(LastTick).TotalMilliseconds;
@@ -22,10 +31,10 @@ namespace AnimationPlugin
 
             lock (SubscribedEntities)
             {
-                foreach (KeyValuePair<String, Dictionary<string, Animation>> animatedEntities in SubscribedEntities)
+                foreach (KeyValuePair<String, Dictionary<string, KeyframeAnimation>> animatedEntities in SubscribedEntities)
                 {
                     string animationKeyframes = "";
-                    foreach (KeyValuePair<string, Animation> runningAnimation in animatedEntities.Value)
+                    foreach (KeyValuePair<string, KeyframeAnimation> runningAnimation in animatedEntities.Value)
                     {
                         float newKey = runningAnimation.Value.Tick(frameDuration);
                         animationKeyframes += runningAnimation.Key + ":" + newKey + ";";
@@ -36,18 +45,28 @@ namespace AnimationPlugin
             }
         }
 
-        internal void StartAnimation(string entityGuid, Animation animation)
+        /// <summary>
+        /// Starts an animation for a given entity
+        /// </summary>
+        /// <param name="entityGuid">Guid of entity for which animation should be played</param>
+        /// <param name="animation">Keyframe animation that should be played for the entity</param>
+        internal void StartAnimation(string entityGuid, KeyframeAnimation animation)
         {
             lock (SubscribedEntities)
             {
                 if (!SubscribedEntities.ContainsKey(entityGuid))
-                    SubscribedEntities[entityGuid] = new Dictionary<string, Animation>();
+                    SubscribedEntities[entityGuid] = new Dictionary<string, KeyframeAnimation>();
 
                 if(!SubscribedEntities[entityGuid].ContainsKey(animation.Name))
                     SubscribedEntities[entityGuid].Add(animation.Name, animation);
             }
         }
 
+        /// <summary>
+        /// Stops an animation of an entity, if playing
+        /// </summary>
+        /// <param name="entityGuid">Guid of the entity for which animation playback should be stopped</param>
+        /// <param name="animationName">Name of the animation of which playback should be stopped</param>
         internal void StopAnimation(string entityGuid, string animationName)
         {
             lock (SubscribedEntities)
@@ -62,13 +81,19 @@ namespace AnimationPlugin
             }
         }
 
+        /// <summary>
+        /// Checks if a certain animation is currently playing for an entity
+        /// </summary>
+        /// <param name="entityGuid">Guid of entity to be checked</param>
+        /// <param name="animationName">Name of animation for which playback should be checked</param>
+        /// <returns></returns>
         public bool IsPlaying(string entityGuid, string animationName)
         {
             lock(SubscribedEntities)
                 return SubscribedEntities.ContainsKey(entityGuid) && SubscribedEntities[entityGuid].ContainsKey(animationName);
         }
 
-        private Dictionary<String, Dictionary<string, Animation>> SubscribedEntities = new Dictionary<String, Dictionary<string, Animation>>();
+        private Dictionary<String, Dictionary<string, KeyframeAnimation>> SubscribedEntities = new Dictionary<String, Dictionary<string, KeyframeAnimation>>();
         private TimeSpan LastTick;
     }
 }
