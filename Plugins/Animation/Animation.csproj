@@ -40,8 +40,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Animation.cs" />
-    <Compile Include="AnimationManager.cs" />
+    <Compile Include="KeyframeAnimation.cs" />
+    <Compile Include="KeyframeAnimationManager.cs" />
     <Compile Include="AnimationPluginInitializer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
