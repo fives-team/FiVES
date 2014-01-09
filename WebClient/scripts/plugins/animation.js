@@ -21,34 +21,41 @@ FIVES.Plugins = FIVES.Plugins || {};
 
     var a = animation.prototype;
 
-    var registeredEntities = {};
+    var registeredEntities = [];
 
     function updateLoop() {
-        for (var entityGuid in registeredEntities) {
-            var entity = FIVES.Models.EntityRegistry._entities[entityGuid];
-            for(var animation in registeredEntities[entityGuid])
-            {
-                entity.increaseAnimationKey(registeredEntities[entityGuid][animation], fps);
-            }
+        for (var i in registeredEntities) {
+            var entity = registeredEntities[i];
+            if(entity)
+                entity.increaseAnimationKeys(fps);
         }
     }
 
     a.startAnimationPlayback = function(entityGuid, animationName, startFrame, endFrame, cycles, speed)
     {
-        registeredEntities[entityGuid] = registeredEntities[entityGuid] || [];
-        var registeredEntityAnimations = registeredEntities[entityGuid];
-        if(registeredEntityAnimations.indexOf(animationName) < 0 )
-            registeredEntityAnimations.push(animationName);
+        var entity = FIVES.Models.EntityRegistry._entities[entityGuid];
+        if(entity)
+        {
+            entity.animationsPlaying = entity.animationsPlaying || {};
+            entity.animationsPlaying[animationName] = {name: animationName, startFrame: startFrame, endFrame: endFrame, cycles: cycles, currentCycle: 1, speed: speed};
+
+            if(registeredEntities.indexOf(entity) < 0 )
+                registeredEntities.push(entity);
+        }
     };
 
     a.stopAnimationPlayback = function(entityGuid, animationName) {
-        registeredEntities[entityGuid] = registeredEntities[entityGuid] || [];
-        var registeredEntityAnimations = registeredEntities[entityGuid];
-        var indexInRunningAnimations = registeredEntityAnimations.indexOf(animationName);
-        if(indexInRunningAnimations != -1)
-            registeredEntityAnimations.splice(indexInRunningAnimations, 1);
-    };
+        var entity = FIVES.Models.EntityRegistry._entities[entityGuid];
 
+        if(!entity || registeredEntities.indexOf(entity) < 0)
+            return;
+
+        if(entity.animationsPlaying && entity.animationsPlaying[animationName])
+            delete entity.animationsPlaying[animationName];
+
+        if(Object.keys(entity.animationsPlaying).length == 0)
+            registeredEntities.splice(registeredEntities.indexOf(entityGuid), 1);
+    };
 
     FIVES.Plugins.Animation = new animation();
 }());
