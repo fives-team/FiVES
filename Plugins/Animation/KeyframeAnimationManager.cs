@@ -37,24 +37,35 @@ namespace AnimationPlugin
                     string animationKeyframes = "";
                     foreach (KeyValuePair<string, KeyframeAnimation> runningAnimation in animatedEntities.Value)
                     {
-                        float newKey = 0f;
-
-                        if (!runningAnimation.Value.Tick(frameDuration, out newKey)) // Perform next keyframe computation and stop animation if number of cycles reached the end
-                        {
-                            if(!FinishedAnimations.ContainsKey(animatedEntities.Key))
-                                FinishedAnimations.Add(animatedEntities.Key, new HashSet<string>());
-
-                            FinishedAnimations[animatedEntities.Key].Add(runningAnimation.Key);
-                        }
-
+                        float newKey = PerformTickForEntityAnimation(animatedEntities.Key, runningAnimation.Value, frameDuration);
                         animationKeyframes += runningAnimation.Key + ":" + newKey + ";";
                     }
                     Entity entity = World.Instance.FindEntity(animatedEntities.Key);
                     entity["animation"]["animationKeyframes"] = animationKeyframes;
                 }
             }
-
             FinalizeFinishedAnimations();
+        }
+
+        /// <summary>
+        /// Computes the next frame for an animation of an entity. Stops the animation or increases cycle if frame range of animation is exceeded
+        /// </summary>
+        /// <param name="entityGuid">Guid of the entity for which the animation is computed</param>
+        /// <param name="animation">Animation that is currently playing</param>
+        /// <param name="frameDuration">Duration of the last frame in milliseconds</param>
+        /// <returns>New Keyframe of the animation</returns>
+        internal float PerformTickForEntityAnimation(string entityGuid, KeyframeAnimation animation, double frameDuration)
+        {
+            float newKey = 0f;
+
+            if (!animation.Tick(frameDuration, out newKey)) // Perform next keyframe computation and stop animation if number of cycles reached the end
+            {
+                if (!FinishedAnimations.ContainsKey(entityGuid))
+                    FinishedAnimations.Add(entityGuid, new HashSet<string>());
+
+                FinishedAnimations[entityGuid].Add(animation.Name);
+            }
+            return newKey;
         }
 
         /// <summary>
