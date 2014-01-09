@@ -36,7 +36,7 @@ namespace AnimationPlugin
         private void RegisterComponents()
         {
             ComponentDefinition animationComponent = new ComponentDefinition("animation");
-            animationComponent.AddAttribute<float>("keyframe", 0f);
+            animationComponent.AddAttribute<string>("animationKeyframes");
             ComponentRegistry.Instance.Register(animationComponent);
         }
 

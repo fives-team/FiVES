@@ -31,6 +31,7 @@ namespace AnimationPlugin
                         animationKeyframes += runningAnimation.Key + ":" + newKey + ";";
                     }
                     Entity entity = World.Instance.FindEntity(animatedEntities.Key);
+                    entity["animation"]["animationKeyframes"] = animationKeyframes;
                 }
             }
         }
@@ -57,6 +58,7 @@ namespace AnimationPlugin
                         SubscribedEntities[entityGuid].Remove(animationName);
                     if (SubscribedEntities[entityGuid].Count == 0)
                         SubscribedEntities.Remove(entityGuid);
+                }
             }
         }
 
