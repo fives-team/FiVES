@@ -81,8 +81,10 @@ namespace AnimationPlugin
                 if (!SubscribedEntities.ContainsKey(entityGuid))
                     SubscribedEntities[entityGuid] = new Dictionary<string, KeyframeAnimation>();
 
-                if(!SubscribedEntities[entityGuid].ContainsKey(animation.Name))
+                if (!SubscribedEntities[entityGuid].ContainsKey(animation.Name))
                     SubscribedEntities[entityGuid].Add(animation.Name, animation);
+                else
+                    SubscribedEntities[entityGuid][animation.Name] = animation;
             }
         }
 

@@ -64,11 +64,8 @@ namespace AnimationPlugin
         /// <param param name="speed">Speed in which animation should be played</param>
         private void StartServersideAnimation(string entityGuid, string name, float startFrame, float endFrame, int cycles, float speed)
         {
-            if (!manager.IsPlaying(entityGuid, name))
-            {
-                KeyframeAnimation newAnimation = new KeyframeAnimation(name, startFrame, endFrame, cycles, speed);
-                manager.StartAnimation(entityGuid, newAnimation);
-            }
+            KeyframeAnimation newAnimation = new KeyframeAnimation(name, startFrame, endFrame, cycles, speed);
+            manager.StartAnimation(entityGuid, newAnimation);
         }
 
         /// <summary>
