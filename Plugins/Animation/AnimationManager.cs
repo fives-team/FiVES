@@ -31,13 +31,13 @@ namespace AnimationPlugin
             }
         }
 
-        internal void StartAnimation(String entityGuid, Animation animation)
+        internal void StartAnimation(string entityGuid, Animation animation)
         {
             lock(SubscribedEntities)
                 SubscribedEntities[entityGuid] = animation;
         }
 
-        internal void StopAnimation(String entityGuid)
+        internal void StopAnimation(string entityGuid, string animationName)
         {
             lock (SubscribedEntities)
             {
@@ -46,7 +46,7 @@ namespace AnimationPlugin
             }
         }
 
-        public bool IsPlaying(String entityGuid)
+        public bool IsPlaying(string entityGuid, string animationName)
         {
             lock(SubscribedEntities)
                 return SubscribedEntities.ContainsKey(entityGuid);

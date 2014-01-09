@@ -55,16 +55,16 @@ namespace AnimationPlugin
 
         private void StartServersideAnimation(string entityGuid, string name, float startFrame, float endFrame)
         {
-            if (!manager.IsPlaying(entityGuid))
+            if (!manager.IsPlaying(entityGuid, name))
             {
-                Animation newAnimation = new Animation(startFrame, endFrame);
+                Animation newAnimation = new Animation(name, startFrame, endFrame);
                 manager.StartAnimation(entityGuid, newAnimation);
             }
         }
 
         private void StopServersideAnimation(string entityGuid, string name)
         {
-            manager.StopAnimation(entityGuid);
+            manager.StopAnimation(entityGuid, name);
         }
 
         private void StartClientsideAnimation(string entityGuid, string animationName)
