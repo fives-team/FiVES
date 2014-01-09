@@ -63,7 +63,7 @@ namespace AnimationPlugin
         public bool IsPlaying(string entityGuid, string animationName)
         {
             lock(SubscribedEntities)
-                return SubscribedEntities.ContainsKey(entityGuid);
+                return SubscribedEntities.ContainsKey(entityGuid) && SubscribedEntities[entityGuid].ContainsKey(animationName);
         }
 
         private Dictionary<String, Dictionary<string, Animation>> SubscribedEntities = new Dictionary<String, Dictionary<string, Animation>>();
