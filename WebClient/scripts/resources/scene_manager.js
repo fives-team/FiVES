@@ -138,11 +138,14 @@ FIVES.Resources = FIVES.Resources || {};
     scm.updateCameraView = function(entity) {
         var view = $(_xml3dElement.activeView)[0];
         var entityTransform = entity.xml3dView.transformElement;
-        view.setDirection(entityTransform.rotation.rotateVec3(new XML3DVec3(1,0,0)));
-        var viewDirection = view.getDirection();
-        var cameraTranslation = entityTransform.translation.subtract(viewDirection.scale(6));
-        cameraTranslation.y = 1.2;
-        view.position.set(cameraTranslation);
+        if(entityTransform)
+        {
+            view.setDirection(entityTransform.rotation.rotateVec3(new XML3DVec3(1,0,0)));
+            var viewDirection = view.getDirection();
+            var cameraTranslation = entityTransform.translation.subtract(viewDirection.scale(6));
+            cameraTranslation.y = 1.2;
+            view.position.set(cameraTranslation);
+        }
 
     };
 
