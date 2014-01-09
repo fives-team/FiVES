@@ -13,7 +13,9 @@ namespace AnimationPlugin
     /// </summary>
     internal class KeyframeAnimationManager
     {
-        public KeyframeAnimationManager()
+        public KeyframeAnimationManager() {}
+
+        internal void Initialize()
         {
             EventLoop.Instance.TickFired += new EventHandler<TickEventArgs>(HandleEventTick);
             LastTick = new TimeSpan(DateTime.Now.Ticks);

@@ -30,7 +30,7 @@ namespace AnimationPlugin
         {
             RegisterComponents();
             RegisterClientServices();
-            manager = new KeyframeAnimationManager();
+            manager.Initialize();
         }
 
         private void RegisterComponents()
