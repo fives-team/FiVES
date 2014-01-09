@@ -59,9 +59,19 @@ FIVES.Models = FIVES.Models || {};
     };
 
     e.setAnimationKey = function() {
-        // TODO: Means to provide different names for animations (questionable if necessary, though)
-        var animationKey = this.xml3dView.xflowAnimations.walk.key;
-        animationKey.text(this["animation"]["keyframe"]);
+        var animationKeyframes = this["animation"]["animationKeyframes"].split(';');
+        for(var k in animationKeyframes) {
+            var animationFrame = animationKeyframes[k];
+            if(animationFrame.indexOf(':') != -1)
+            {
+                var animationWithFrame = animationFrame.split(':');
+                var xflowAnimation = this.xml3dView.xflowAnimations[animationWithFrame[0]];
+                if(xflowAnimation)
+                {
+                    xflowAnimation.key.text(parseFloat(animationWithFrame[1]));
+                }
+            }
+        }
     };
 
     e.increaseAnimationKey = function(animationName, fps) {
