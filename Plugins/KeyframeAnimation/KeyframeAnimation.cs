@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace AnimationPlugin
+namespace KeyframeAnimationPlugin
 {
     /// <summary>
     /// KeyAnimation class provides data and methods to manage server side animation processing. Animations are created when a server side animation is started.

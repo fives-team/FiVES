@@ -7,13 +7,13 @@ using ClientManagerPlugin;
 using FIVES;
 using KIARAPlugin;
 
-namespace AnimationPlugin
+namespace KeyframeAnimationPlugin
 {
-    public class AnimationPluginInitializer : IPluginInitializer
+    public class KeyframeAnimationPluginInitializer : IPluginInitializer
     {
         public string Name
         {
-            get { return "Animation"; }
+            get { return "KeyframeAnimation"; }
         }
 
         public List<string> PluginDependencies

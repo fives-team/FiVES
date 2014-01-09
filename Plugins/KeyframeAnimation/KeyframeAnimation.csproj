@@ -44,10 +44,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AnimationPluginTest.cs" />
+    <Compile Include="KeyframeAnimationPluginTest.cs" />
     <Compile Include="KeyframeAnimation.cs" />
     <Compile Include="KeyframeAnimationManager.cs" />
-    <Compile Include="AnimationPluginInitializer.cs" />
+    <Compile Include="KeyframeAnimationPluginInitializer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

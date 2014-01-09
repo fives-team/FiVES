@@ -5,13 +5,13 @@ using System.Text;
 using FIVES;
 using NUnit.Framework;
 
-namespace AnimationPlugin
+namespace KeyframeAnimationPlugin
 {
     [TestFixture()]
     class AnimationPluginTest
     {
 
-        private AnimationPluginInitializer plugin;
+        private KeyframeAnimationPluginInitializer plugin;
         private string createdEntityGuid;
 
         /// <summary>
@@ -21,7 +21,7 @@ namespace AnimationPlugin
         /// </summary>
         public AnimationPluginTest()
         {
-            plugin = new AnimationPluginInitializer();
+            plugin = new KeyframeAnimationPluginInitializer();
             plugin.RegisterComponents();
             Entity entity = new Entity();
             createdEntityGuid = entity.Guid.ToString();

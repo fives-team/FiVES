@@ -5,7 +5,7 @@ using System.Text;
 using EventLoopPlugin;
 using FIVES;
 
-namespace AnimationPlugin
+namespace KeyframeAnimationPlugin
 {
     /// <summary>
     /// KeyframeAnimationManager maintains keyframe animations of entities for server side animation computation. KeyframeManager subscribes to EventLoop
