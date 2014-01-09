@@ -74,14 +74,43 @@ FIVES.Models = FIVES.Models || {};
         }
     };
 
-    e.increaseAnimationKey = function(animationName, fps) {
-        var animation = this.xml3dView.xflowAnimations[animationName];
-        var oldValue = parseFloat(animation.key.text());
-        var newValue = oldValue + animation.speed * fps / 1000.0;
-        if (newValue > animation.endKey)
-            newValue = animation.startKey + (newValue - animation.endKey);
+    e.increaseAnimationKeys = function(fps) {
+        if(this.animationsPlaying)
+        {
+            for(var animationName in this.animationsPlaying)
+            {
+                var playingAnimation = this.animationsPlaying[animationName];
+                var xflowKey = this.xml3dView.xflowAnimations[animationName].key;
 
-        animation.key.text(newValue);
+                var oldValue = parseFloat(xflowKey.text());
+                var newValue = this._computeNewKeyframeValue(playingAnimation, oldValue, fps);
+                xflowKey.text(newValue);
+            }
+        }
+    };
+
+    e._computeNewKeyframeValue = function(playingAnimation, oldValue, fps) {
+        var newValue = oldValue + playingAnimation.speed * fps / 1000.0;
+        if (newValue > playingAnimation.endFrame)
+        {
+            newValue = this._increaseAnimationCycles(playingAnimation, newValue);
+        }
+        return newValue;
+    };
+
+    e._increaseAnimationCycles = function(playingAnimation, newValue) {
+        playingAnimation.currentCycle ++;
+        var valueInNewCycle = newValue;
+        if(playingAnimation.currentCycle > playingAnimation.cycles && playingAnimation.cycles != -1)
+        {
+            valueInNewCycle = 0
+            FIVES.Plugins.Animation.stopAnimationPlayback(this.guid, playingAnimation.name);
+        }
+        else
+        {
+            valueInNewCycle = playingAnimation.startFrame + (newValue - playingAnimation.endFrame);
+        }
+        return valueInNewCycle;
     };
 
     e.updateAttribute = function(componentName, attributeName, value) {
