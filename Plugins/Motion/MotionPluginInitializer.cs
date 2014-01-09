@@ -172,7 +172,7 @@ namespace MotionPlugin
                 lock (ongoingSpin)
                 {
                     if (ongoingSpin.Contains(entity))
-                        ongoingSpin.Add(entity);
+                        ongoingSpin.Remove(entity);
                 }
             }
         }
