@@ -44,8 +44,8 @@ namespace AnimationPlugin
         {
             ClientManager.Instance.RegisterClientService("animation", false, new Dictionary<string, Delegate>
             {
-                {"startServersideAnimation", (Action<string, float, float>)HandleStartAnimation},
-                {"stopServersideAnimation", (Action<string>)HandleStopAnimation},
+                {"startServersideAnimation", (Action<string, string, float, float>)StartServersideAnimation},
+                {"stopServersideAnimation", (Action<string, string>)StopServersideAnimation},
                 {"startClientsideAnimation", (Action<string, string>)StartClientsideAnimation},
                 {"stopClientsideAnimation",(Action<string, string>)StopClientsideAnimation},
                 {"notifyAboutClientsideAnimationStart", (Action<Connection, Action<string, string>>)ReceiveAnimationStartTrigger},
@@ -53,7 +53,7 @@ namespace AnimationPlugin
             });
         }
 
-        private void HandleStartAnimation(string entityGuid, float startFrame, float endFrame)
+        private void StartServersideAnimation(string entityGuid, string name, float startFrame, float endFrame)
         {
             if (!manager.IsPlaying(entityGuid))
             {
@@ -62,7 +62,7 @@ namespace AnimationPlugin
             }
         }
 
-        private void HandleStopAnimation(string entityGuid)
+        private void StopServersideAnimation(string entityGuid, string name)
         {
             manager.StopAnimation(entityGuid);
         }

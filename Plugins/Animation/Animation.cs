@@ -7,8 +7,10 @@ namespace AnimationPlugin
 {
     internal class Animation
     {
-        internal Animation(float startFrame, float endFrame)
+        public string Name;
+        internal Animation(string name, float startFrame, float endFrame)
         {
+            Name = name;
             StartFrame = startFrame;
             CurrentFrame = startFrame;
             EndFrame = endFrame;
