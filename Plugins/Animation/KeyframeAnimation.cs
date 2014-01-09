@@ -51,12 +51,12 @@ namespace AnimationPlugin
             return true;
         }
 
-        private float StartFrame;
-        private float EndFrame;
-        private float CurrentFrame;
+        internal float StartFrame;
+        internal float EndFrame;
+        internal float CurrentFrame;
 
-        private int Cycles;
-        private int CurrentCycle;
-        private float Speed;
+        internal int Cycles;
+        internal int CurrentCycle;
+        internal float Speed;
     }
 }

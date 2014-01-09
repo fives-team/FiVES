@@ -33,7 +33,7 @@ namespace AnimationPlugin
             manager.Initialize();
         }
 
-        private void RegisterComponents()
+        internal void RegisterComponents()
         {
             ComponentDefinition animationComponent = new ComponentDefinition("animation");
             animationComponent.AddAttribute<string>("animationKeyframes");
@@ -62,7 +62,7 @@ namespace AnimationPlugin
         /// <param name="endFrame">Keyframe at which animation playback should end</param>
         /// <param name="cycles">Number of cycles the animation should be played (-1 for infinite playback)</param>
         /// <param param name="speed">Speed in which animation should be played</param>
-        private void StartServersideAnimation(string entityGuid, string name, float startFrame, float endFrame, int cycles, float speed)
+        internal void StartServersideAnimation(string entityGuid, string name, float startFrame, float endFrame, int cycles, float speed)
         {
             KeyframeAnimation newAnimation = new KeyframeAnimation(name, startFrame, endFrame, cycles, speed);
             manager.StartAnimation(entityGuid, newAnimation);
@@ -73,7 +73,7 @@ namespace AnimationPlugin
         /// </summary>
         /// <param name="entityGuid">Guid for which playback should be stopped</param>
         /// <param name="name">Name of animation for which playback should be stopped</param>
-        private void StopServersideAnimation(string entityGuid, string name)
+        internal void StopServersideAnimation(string entityGuid, string name)
         {
             manager.StopAnimation(entityGuid, name);
         }
@@ -146,6 +146,6 @@ namespace AnimationPlugin
 
         Dictionary<Connection, Action<string, string, float, float, int, float>> animationStartCallbacks = new Dictionary<Connection, Action<string, string, float, float, int, float>>();
         Dictionary<Connection, Action<string, string>> animationStopCallbacks = new Dictionary<Connection, Action<string, string>>();
-        KeyframeAnimationManager manager;
+        internal KeyframeAnimationManager manager = new KeyframeAnimationManager();
     }
 }

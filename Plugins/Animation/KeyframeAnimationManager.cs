@@ -60,7 +60,7 @@ namespace AnimationPlugin
         /// <summary>
         /// Stops all animations that exceeded their frame range and maximum number of cycles in the last frame
         /// </summary>
-        private void FinalizeFinishedAnimations()
+        internal void FinalizeFinishedAnimations()
         {
             foreach (KeyValuePair<string, HashSet<string>> finishedAnimationsForEntity in FinishedAnimations)
             {
@@ -121,8 +121,8 @@ namespace AnimationPlugin
                 return SubscribedEntities.ContainsKey(entityGuid) && SubscribedEntities[entityGuid].ContainsKey(animationName);
         }
 
-        private Dictionary<string, Dictionary<string, KeyframeAnimation>> SubscribedEntities = new Dictionary<String, Dictionary<string, KeyframeAnimation>>();
-        private Dictionary<string, HashSet<string>> FinishedAnimations = new Dictionary<string, HashSet<string>>();
+        internal Dictionary<string, Dictionary<string, KeyframeAnimation>> SubscribedEntities = new Dictionary<String, Dictionary<string, KeyframeAnimation>>();
+        internal Dictionary<string, HashSet<string>> FinishedAnimations = new Dictionary<string, HashSet<string>>();
         private TimeSpan LastTick;
     }
 }
