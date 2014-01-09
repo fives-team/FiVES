@@ -42,7 +42,7 @@ FIVES.Input = FIVES.Input || {};
             if(avatarEntity)
             {
                 //FIVES.Communication.FivesCommunicator.startServersideAnimation(FIVES.AvatarEntityGuid, "walk", e.xml3dView.xflowAnimations.walk.startKey, e.xml3dView.xflowAnimations.walk.endKey);
-                FIVES.Communication.FivesCommunicator.startClientsideAnimation(FIVES.AvatarEntityGuid, "walk");
+                FIVES.Communication.FivesCommunicator.startClientsideAnimation(FIVES.AvatarEntityGuid, "walk", avatarEntity.xml3dView.xflowAnimations.walk.startKey, avatarEntity.xml3dView.xflowAnimations.walk.endKey, -1, 1.0);
                 _pressedKeys[e.keyCode] = true;
             }
         }
