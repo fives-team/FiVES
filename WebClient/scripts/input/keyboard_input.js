@@ -59,11 +59,13 @@ FIVES.Input = FIVES.Input || {};
             case 65:
             case 68:  FIVES.Communication.FivesCommunicator.setAvatarSpinAroundAxis(FIVES.Communication.FivesCommunicator.sessionKey,  UP_AXIS , 0); break;
         }
-
-        if(FIVES.Models.EntityRegistry.getEntity(FIVES.AvatarEntityGuid))
-        // FIVES.Communication.FivesCommunicator.stopServersideAnimation(FIVES.AvatarEntityGuid, "walk");
-            FIVES.Communication.FivesCommunicator.stopClientsideAnimation(FIVES.AvatarEntityGuid, "walk");
         _pressedKeys[e.keyCode] = false;
+        if(FIVES.Models.EntityRegistry.getEntity(FIVES.AvatarEntityGuid))
+        {
+            if(!(_pressedKeys[87] || _pressedKeys[83] || _pressedKeys[65] || _pressedKeys[68]))
+                // FIVES.Communication.FivesCommunicator.stopServersideAnimation(FIVES.AvatarEntityGuid, "walk");
+                FIVES.Communication.FivesCommunicator.stopClientsideAnimation(FIVES.AvatarEntityGuid, "walk");
+        }
     };
 
     k._initializeEventListeners = function() {
