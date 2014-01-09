@@ -46,9 +46,9 @@ namespace AnimationPlugin
             {
                 {"startServersideAnimation", (Action<string, string, float, float, int, float>)StartServersideAnimation},
                 {"stopServersideAnimation", (Action<string, string>)StopServersideAnimation},
-                {"startClientsideAnimation", (Action<string, string>)StartClientsideAnimation},
+                {"startClientsideAnimation", (Action<string, string, float, float, int, float>)StartClientsideAnimation},
                 {"stopClientsideAnimation",(Action<string, string>)StopClientsideAnimation},
-                {"notifyAboutClientsideAnimationStart", (Action<Connection, Action<string, string>>)ReceiveAnimationStartTrigger},
+                {"notifyAboutClientsideAnimationStart", (Action<Connection, Action<string, string, float, float, int, float>>)ReceiveAnimationStartTrigger},
                 {"notifyAboutClientsideAnimationStop", (Action<Connection, Action<string, string>>)ReceiveAnimationStopTrigger}
             });
         }
@@ -86,14 +86,18 @@ namespace AnimationPlugin
         /// </summary>
         /// <param name="entityGuid">Guid of entity for which animation should be played</param>
         /// <param name="name">Name of animation that should be played</param>
-        private void StartClientsideAnimation(string entityGuid, string animationName)
+        /// <param name="startFrame">Keyframe at which animation playback should start</param>
+        /// <param name="endFrame">Keyframe at which animation playback should end</param>
+        /// <param name="cycles">Number of cycles the animation should be played (-1 for infinite playback)</param>
+        /// <param param name="speed">Speed in which animation should be played</param>
+        private void StartClientsideAnimation(string entityGuid, string animationName, float startFrame, float endFrame, int cycles, float speed)
         {
             lock (animationStartCallbacks)
             {
-                foreach (KeyValuePair<Connection, Action<string, string>> registeredCallback in animationStartCallbacks)
+                foreach (KeyValuePair<Connection, Action<string, string, float, float, int, float>> registeredCallback in animationStartCallbacks)
                 {
                     var callback = registeredCallback.Value;
-                    callback(entityGuid, animationName);
+                    callback(entityGuid, animationName, startFrame, endFrame, cycles, speed);
                 }
             }
         }
@@ -120,7 +124,7 @@ namespace AnimationPlugin
         /// </summary>
         /// <param name="clientConnection">Connection that client uses to communicate with the server</param>
         /// <param name="callback">Client callback that is invoked when the message is sent</param>
-        private void ReceiveAnimationStartTrigger(Connection clientConnection, Action<string, string> callback)
+        private void ReceiveAnimationStartTrigger(Connection clientConnection, Action<string, string, float, float, int, float> callback)
         {
             lock (animationStartCallbacks)
             {
@@ -143,7 +147,7 @@ namespace AnimationPlugin
             }
         }
 
-        Dictionary<Connection, Action<string, string>> animationStartCallbacks = new Dictionary<Connection, Action<string, string>>();
+        Dictionary<Connection, Action<string, string, float, float, int, float>> animationStartCallbacks = new Dictionary<Connection, Action<string, string, float, float, int, float>>();
         Dictionary<Connection, Action<string, string>> animationStopCallbacks = new Dictionary<Connection, Action<string, string>>();
         KeyframeAnimationManager manager;
     }

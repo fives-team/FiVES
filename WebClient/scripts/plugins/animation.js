@@ -33,7 +33,7 @@ FIVES.Plugins = FIVES.Plugins || {};
         }
     }
 
-    a.registerToAnimationUpdates = function(entityGuid, animationName)
+    a.startAnimationPlayback = function(entityGuid, animationName, startFrame, endFrame, cycles, speed)
     {
         registeredEntities[entityGuid] = registeredEntities[entityGuid] || [];
         var registeredEntityAnimations = registeredEntities[entityGuid];
@@ -41,7 +41,7 @@ FIVES.Plugins = FIVES.Plugins || {};
             registeredEntityAnimations.push(animationName);
     };
 
-    a.unregisterFromAnimationUpdates = function(entityGuid, animationName) {
+    a.stopAnimationPlayback = function(entityGuid, animationName) {
         registeredEntities[entityGuid] = registeredEntities[entityGuid] || [];
         var registeredEntityAnimations = registeredEntities[entityGuid];
         var indexInRunningAnimations = registeredEntityAnimations.indexOf(animationName);
