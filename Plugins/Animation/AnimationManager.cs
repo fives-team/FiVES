@@ -11,11 +11,11 @@ namespace AnimationPlugin
     {
         public AnimationManager()
         {
-            EventLoop.Instance.TickFired += new EventHandler<TickEventArgs>(handleEventTick);
+            EventLoop.Instance.TickFired += new EventHandler<TickEventArgs>(HandleEventTick);
             LastTick = new TimeSpan(DateTime.Now.Ticks);
         }
 
-        private void handleEventTick(Object sender, TickEventArgs e)
+        private void HandleEventTick(Object sender, TickEventArgs e)
         {
             double frameDuration = e.TimeStamp.Subtract(LastTick).TotalMilliseconds;
             LastTick = e.TimeStamp;
