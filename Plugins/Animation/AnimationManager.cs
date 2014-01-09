@@ -22,19 +22,29 @@ namespace AnimationPlugin
 
             lock (SubscribedEntities)
             {
-                foreach (KeyValuePair<String, Animation> registeredAnimation in SubscribedEntities)
+                foreach (KeyValuePair<String, Dictionary<string, Animation>> animatedEntities in SubscribedEntities)
                 {
-                    float newKey = registeredAnimation.Value.Tick(frameDuration);
-                    Entity entity = World.Instance.FindEntity(registeredAnimation.Key);
-                    entity["animation"]["keyframe"] = newKey;
+                    string animationKeyframes = "";
+                    foreach (KeyValuePair<string, Animation> runningAnimation in animatedEntities.Value)
+                    {
+                        float newKey = runningAnimation.Value.Tick(frameDuration);
+                        animationKeyframes += runningAnimation.Key + ":" + newKey + ";";
+                    }
+                    Entity entity = World.Instance.FindEntity(animatedEntities.Key);
                 }
             }
         }
 
         internal void StartAnimation(string entityGuid, Animation animation)
         {
-            lock(SubscribedEntities)
-                SubscribedEntities[entityGuid] = animation;
+            lock (SubscribedEntities)
+            {
+                if (!SubscribedEntities.ContainsKey(entityGuid))
+                    SubscribedEntities[entityGuid] = new Dictionary<string, Animation>();
+
+                if(!SubscribedEntities[entityGuid].ContainsKey(animation.Name))
+                    SubscribedEntities[entityGuid].Add(animation.Name, animation);
+            }
         }
 
         internal void StopAnimation(string entityGuid, string animationName)
@@ -42,7 +52,11 @@ namespace AnimationPlugin
             lock (SubscribedEntities)
             {
                 if (SubscribedEntities.ContainsKey(entityGuid))
-                    SubscribedEntities.Remove(entityGuid);
+                {
+                    if(SubscribedEntities[entityGuid].ContainsKey(animationName))
+                        SubscribedEntities[entityGuid].Remove(animationName);
+                    if (SubscribedEntities[entityGuid].Count == 0)
+                        SubscribedEntities.Remove(entityGuid);
             }
         }
 
@@ -52,7 +66,7 @@ namespace AnimationPlugin
                 return SubscribedEntities.ContainsKey(entityGuid);
         }
 
-        private Dictionary<String, Animation> SubscribedEntities = new Dictionary<String, Animation>();
+        private Dictionary<String, Dictionary<string, Animation>> SubscribedEntities = new Dictionary<String, Dictionary<string, Animation>>();
         private TimeSpan LastTick;
     }
 }
