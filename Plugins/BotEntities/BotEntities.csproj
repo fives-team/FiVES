@@ -57,6 +57,10 @@
       <Project>{6cd0fe0e-7d56-4e24-8568-625a13c37130}</Project>
       <Name>EventLoop</Name>
     </ProjectReference>
+    <ProjectReference Include="..\KeyframeAnimation\KeyframeAnimation.csproj">
+      <Project>{b80d5d38-4967-49a7-8c76-024b287536c1}</Project>
+      <Name>KeyframeAnimation</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Content Include="App.config">
