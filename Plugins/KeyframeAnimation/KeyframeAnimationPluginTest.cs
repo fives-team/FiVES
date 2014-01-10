@@ -120,6 +120,18 @@ namespace KeyframeAnimationPlugin
             animation.Tick(4500, out newFrame);
             Assert.AreEqual(animation.CurrentFrame, 0.5f);
             Assert.AreEqual(newFrame, animation.CurrentFrame);
+        }
+
+        /// <summary>
+        /// When cropping the new frame to the correct frame range as tested above, the animation should still continue in its next cycle,
+        /// even though the new keyframe may lay several cycles ahead
+        /// </summary>
+        [Test()]
+        public void AnimationShouldIncreaseCyclesOnlyOnceForMultipleSkippedCycles()
+        {
+            float newFrame;
+            KeyframeAnimation animation = new KeyframeAnimation("testAnimation", 0f, 1f, 5, 1f);
+            animation.Tick(4500, out newFrame);
             Assert.AreEqual(animation.CurrentCycle, 2);
         }
 
