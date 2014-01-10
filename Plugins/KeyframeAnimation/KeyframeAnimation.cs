@@ -6,7 +6,8 @@ using System.Text;
 namespace KeyframeAnimationPlugin
 {
     /// <summary>
-    /// KeyAnimation class provides data and methods to manage server side animation processing. Animations are created when a server side animation is started.
+    /// KeyAnimation class provides data and methods to manage server side animation processing.
+    /// Animations are created when a server side animation is started.
     /// </summary>
     internal class KeyframeAnimation
     {
