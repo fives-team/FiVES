@@ -39,9 +39,13 @@ namespace KeyframeAnimationPlugin
             CurrentFrame += Speed * (float)frameDuration / 1000f;
             if (CurrentFrame > EndFrame)
             {
-                if(Cycles != -1)
+                float frameRange = EndFrame - StartFrame;
+
+                if(Cycles != -1) // For non-looping animation, check if animation has finished
                 {
-                    CurrentCycle ++;
+                    int numberOfSkippedCycles = (int)Math.Floor(CurrentFrame / frameRange);
+
+                    CurrentCycle += numberOfSkippedCycles;
                     if (CurrentCycle > Cycles)
                     {
                         newFrame = EndFrame;
@@ -49,7 +53,6 @@ namespace KeyframeAnimationPlugin
                         return false;
                     }
                 }
-                float frameRange = EndFrame - StartFrame;
 
                 // If CurrentFrame Exceeds endframe of current animation, resume it from start
                 CurrentFrame = (StartFrame + (CurrentFrame - EndFrame)) % frameRange;
