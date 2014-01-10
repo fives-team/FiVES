@@ -149,7 +149,25 @@ namespace KeyframeAnimationPlugin
         }
 
         /// <summary>
-        /// Tests if the entry for a finished animation is correctly removed from the list of registered animations without interferring with other registered
+        /// Tests whether animations that exceeded their frame ranges and their maximum number of cycles are correctly marked to be
+        /// stopped in the next frame if a slow frame rate - resulting in long frame durations - leads to a skip of cycles larger than
+        /// the total number of cycles
+        /// </summary>
+        [Test()]
+        public void ManagerShouldStopAnimationsAfterHavingSkippedTotalNumberOfCycles()
+        {
+            float newFrame;
+            KeyframeAnimation animation = new KeyframeAnimation("testAnimation", 0f, 1f, 3, 1f);
+            plugin.Manager.PerformTickForEntityAnimation(entityGuidAsGuid, animation, 4500);
+
+            Assert.AreEqual(animation.CurrentFrame, animation.EndFrame);
+            Assert.True(plugin.Manager.FinishedAnimations.ContainsKey(entityGuidAsGuid));
+            Assert.True(plugin.Manager.FinishedAnimations[entityGuidAsGuid].Contains("testAnimation"));
+        }
+
+        /// <summary>
+        /// Tests if the entry for a finished animation is correctly removed from the list of registered animations without interferring
+        /// with other registered
         /// animations
         /// </summary>
         [Test()]
