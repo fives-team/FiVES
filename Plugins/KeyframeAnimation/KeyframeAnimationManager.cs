@@ -96,7 +96,7 @@ namespace KeyframeAnimationPlugin
         /// </summary>
         /// <param name="entityGuid">Guid of entity for which animation should be played</param>
         /// <param name="animation">Keyframe animation that should be played for the entity</param>
-        public void StartAnimation(string entityGuid, KeyframeAnimation animation)
+        public void StartAnimation(Guid entityGuid, KeyframeAnimation animation)
         {
             lock (RunningAnimationsForEntities)
             {
@@ -115,7 +115,7 @@ namespace KeyframeAnimationPlugin
         /// </summary>
         /// <param name="entityGuid">Guid of the entity for which animation playback should be stopped</param>
         /// <param name="animationName">Name of the animation of which playback should be stopped</param>
-        public void StopAnimation(string entityGuid, string animationName)
+        public void StopAnimation(Guid entityGuid, string animationName)
         {
             lock (RunningAnimationsForEntities)
             {

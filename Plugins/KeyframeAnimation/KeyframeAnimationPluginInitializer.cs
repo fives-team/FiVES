@@ -30,7 +30,9 @@ namespace KeyframeAnimationPlugin
         {
             RegisterComponents();
             RegisterClientServices();
-            Manager.Initialize();
+
+            KeyframeAnimationManager.Instance = new KeyframeAnimationManager();
+            KeyframeAnimationManager.Instance.Initialize();
         }
 
         public void Shutdown()
@@ -78,7 +80,7 @@ namespace KeyframeAnimationPlugin
                                                int cycles, float speed)
         {
             KeyframeAnimation newAnimation = new KeyframeAnimation(animationName, startFrame, endFrame, cycles, speed);
-            Manager.StartAnimation(Guid.Parse(entityGuid), newAnimation);
+            KeyframeAnimationManager.Instance.StartAnimation(entityGuid, newAnimation);
         }
 
         /// <summary>
@@ -88,7 +90,7 @@ namespace KeyframeAnimationPlugin
         /// <param name="name">Name of animation for which playback should be stopped</param>
         internal void StopServersideAnimation(string entityGuid, string name)
         {
-            Manager.StopAnimation(Guid.Parse(entityGuid), name);
+            KeyframeAnimationManager.Instance.StopAnimation(entityGuid, name);
         }
 
         /// <summary>
@@ -167,7 +169,5 @@ namespace KeyframeAnimationPlugin
 
         Dictionary<Connection, Action<string, string>> animationStopCallbacks
             = new Dictionary<Connection, Action<string, string>>();
-
-        internal KeyframeAnimationManager Manager = new KeyframeAnimationManager();
     }
 }
