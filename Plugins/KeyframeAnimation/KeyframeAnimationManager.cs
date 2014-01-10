@@ -32,7 +32,7 @@ namespace KeyframeAnimationPlugin
             LastTick = e.TimeStamp;
             lock (RunningAnimationsForEntities)
             {
-                foreach (KeyValuePair<String, Dictionary<string, KeyframeAnimation>> animatedEntity in RunningAnimationsForEntities)
+                foreach (KeyValuePair<Guid, Dictionary<string, KeyframeAnimation>> animatedEntity in RunningAnimationsForEntities)
                 {
                     string animationKeyframes = "";
                     foreach (KeyValuePair<string, KeyframeAnimation> runningAnimation in animatedEntity.Value)
@@ -54,7 +54,7 @@ namespace KeyframeAnimationPlugin
         /// <param name="animation">Animation that is currently playing</param>
         /// <param name="frameDuration">Duration of the last frame in milliseconds</param>
         /// <returns>New Keyframe of the animation</returns>
-        internal float PerformTickForEntityAnimation(string entityGuid, KeyframeAnimation animation, double frameDuration)
+        internal float PerformTickForEntityAnimation(Guid entityGuid, KeyframeAnimation animation, double frameDuration)
         {
             float newKey = 0f;
 
@@ -73,10 +73,10 @@ namespace KeyframeAnimationPlugin
         /// </summary>
         internal void FinalizeFinishedAnimations()
         {
-            foreach (KeyValuePair<string, HashSet<string>> finishedAnimationsForEntity in FinishedAnimations)
+            foreach (KeyValuePair<Guid, HashSet<string>> finishedAnimationsForEntity in FinishedAnimations)
             {
-                foreach (string animationGuid in finishedAnimationsForEntity.Value)
-                    StopAnimation(finishedAnimationsForEntity.Key, animationGuid);
+                foreach (string animationName in finishedAnimationsForEntity.Value)
+                    StopAnimation(finishedAnimationsForEntity.Key, animationName);
             }
 
             FinishedAnimations.Clear();
@@ -87,7 +87,7 @@ namespace KeyframeAnimationPlugin
         /// </summary>
         /// <param name="entityGuid">Guid of entity for which animation should be played</param>
         /// <param name="animation">Keyframe animation that should be played for the entity</param>
-        internal void StartAnimation(string entityGuid, KeyframeAnimation animation)
+        internal void StartAnimation(Guid entityGuid, KeyframeAnimation animation)
         {
             lock (RunningAnimationsForEntities)
             {
@@ -106,13 +106,13 @@ namespace KeyframeAnimationPlugin
         /// </summary>
         /// <param name="entityGuid">Guid of the entity for which animation playback should be stopped</param>
         /// <param name="animationName">Name of the animation of which playback should be stopped</param>
-        internal void StopAnimation(string entityGuid, string animationName)
+        internal void StopAnimation(Guid entityGuid, string animationName)
         {
             lock (RunningAnimationsForEntities)
             {
                 if (RunningAnimationsForEntities.ContainsKey(entityGuid))
                 {
-                    if(RunningAnimationsForEntities[entityGuid].ContainsKey(animationName))
+                    if (RunningAnimationsForEntities[entityGuid].ContainsKey(animationName))
                         RunningAnimationsForEntities[entityGuid].Remove(animationName);
                     if (RunningAnimationsForEntities[entityGuid].Count == 0)
                         RunningAnimationsForEntities.Remove(entityGuid);
@@ -126,7 +126,7 @@ namespace KeyframeAnimationPlugin
         /// <param name="entityGuid">Guid of entity to be checked</param>
         /// <param name="animationName">Name of animation for which playback should be checked</param>
         /// <returns></returns>
-        public bool IsPlaying(string entityGuid, string animationName)
+        public bool IsPlaying(Guid entityGuid, string animationName)
         {
             lock(RunningAnimationsForEntities)
                 return RunningAnimationsForEntities.ContainsKey(entityGuid) && RunningAnimationsForEntities[entityGuid].ContainsKey(animationName);
@@ -137,14 +137,14 @@ namespace KeyframeAnimationPlugin
         /// Dictionary has stucture Dictionary<EntityGuid,Dictionary<AnimationName, AnimationObject>,
         /// e.g. Dict[1]["walk"] = animation object for walk animation of entity 1
         /// </summary>
-        internal Dictionary<string, Dictionary<string, KeyframeAnimation>> RunningAnimationsForEntities = new Dictionary<String, Dictionary<string, KeyframeAnimation>>();
+        internal Dictionary<Guid, Dictionary<string, KeyframeAnimation>> RunningAnimationsForEntities = new Dictionary<Guid, Dictionary<string, KeyframeAnimation>>();
 
         /// <summary>
         /// Registry of all animations that finished playback in last frame. After frame tick has finished, i.e. all running animations have computed their
         /// new frame, finished animations are removed from the registry of running animations. If an entity has finished playback of all its animations,
         /// it is removed from the registry completely
         /// </summary>
-        internal Dictionary<string, HashSet<string>> FinishedAnimations = new Dictionary<string, HashSet<string>>();
+        internal Dictionary<Guid, HashSet<string>> FinishedAnimations = new Dictionary<Guid, HashSet<string>>();
         private TimeSpan LastTick;
     }
 }
