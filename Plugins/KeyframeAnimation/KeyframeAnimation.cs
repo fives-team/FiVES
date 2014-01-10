@@ -43,7 +43,8 @@ namespace KeyframeAnimationPlugin
                     CurrentCycle ++;
                     if (CurrentCycle > Cycles)
                     {
-                        newFrame = 0;
+                        newFrame = EndFrame;
+                        this.CurrentFrame = EndFrame;
                         return false;
                     }
                 }
