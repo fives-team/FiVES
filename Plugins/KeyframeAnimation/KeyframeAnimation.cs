@@ -48,7 +48,8 @@ namespace KeyframeAnimationPlugin
                         return false;
                     }
                 }
-                CurrentFrame = StartFrame + (CurrentFrame - EndFrame); // If CurrentFrame Exceeds endframe of current animation, resume it from start
+                float frameRange = EndFrame - StartFrame;
+                CurrentFrame = (StartFrame + (CurrentFrame - EndFrame)) % frameRange; // If CurrentFrame Exceeds endframe of current animation, resume it from start
             }
             newFrame = CurrentFrame;
             return true;
