@@ -36,8 +36,8 @@ FIVES.Plugins = FIVES.Plugins || {};
         var entity = FIVES.Models.EntityRegistry._entities[entityGuid];
         if(entity)
         {
-            entity.animationsPlaying = entity.animationsPlaying || {};
-            entity.animationsPlaying[animationName] = {name: animationName, startFrame: startFrame, endFrame: endFrame, cycles: cycles, currentCycle: 1, speed: speed};
+            entity.playingAnimationsCollection = entity.playingAnimationsCollection || {};
+            entity.playingAnimationsCollection[animationName] = {name: animationName, startFrame: startFrame, endFrame: endFrame, cycles: cycles, currentCycle: 1, speed: speed};
 
             if(registeredEntities.indexOf(entity) < 0 )
                 registeredEntities.push(entity);
@@ -50,10 +50,10 @@ FIVES.Plugins = FIVES.Plugins || {};
         if(!entity || registeredEntities.indexOf(entity) < 0)
             return;
 
-        if(entity.animationsPlaying && entity.animationsPlaying[animationName])
-            delete entity.animationsPlaying[animationName];
+        if(entity.playingAnimationsCollection && entity.playingAnimationsCollection[animationName])
+            delete entity.playingAnimationsCollection[animationName];
 
-        if(Object.keys(entity.animationsPlaying).length == 0)
+        if(Object.keys(entity.playingAnimationsCollection).length == 0)
             registeredEntities.splice(registeredEntities.indexOf(entityGuid), 1);
     };
 

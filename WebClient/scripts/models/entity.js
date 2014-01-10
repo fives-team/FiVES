@@ -75,11 +75,11 @@ FIVES.Models = FIVES.Models || {};
     };
 
     e.increaseAnimationKeys = function(fps) {
-        if(this.animationsPlaying)
+        if(this.playingAnimationsCollection)
         {
-            for(var animationName in this.animationsPlaying)
+            for(var animationName in this.playingAnimationsCollection)
             {
-                var playingAnimation = this.animationsPlaying[animationName];
+                var playingAnimation = this.playingAnimationsCollection[animationName];
                 var xflowKey = this.xml3dView.xflowAnimations[animationName].key;
 
                 var oldValue = parseFloat(xflowKey.text());
