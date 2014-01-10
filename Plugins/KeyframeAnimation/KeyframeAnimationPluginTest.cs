@@ -136,7 +136,8 @@ namespace KeyframeAnimationPlugin
         }
 
         /// <summary>
-        /// Tests whether animations that exceeded their frame ranges and their maximum number of cycles are correctly marked to be stopped in the next frame
+        /// Tests whether animations that exceeded their frame ranges and their maximum number of cycles are correctly marked to be
+        /// stopped in the next frame
         /// </summary>
         [Test()]
         public void ManagerShouldRegisterFinishedAnimationAsFinished()

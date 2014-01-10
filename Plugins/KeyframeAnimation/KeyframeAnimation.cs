@@ -28,7 +28,8 @@ namespace KeyframeAnimationPlugin
         }
 
         /// <summary>
-        /// Called cycle to increase keyframe of the animation depending on the duration of the last render frame in milliseconds
+        /// Called cycle to increase keyframe of the animation depending on the duration of the last render frame
+        /// in milliseconds
         /// </summary>
         /// <param name="frameDuration">Duration of the last frame in milliseconds</param>
         /// <param name="newFrame">Out parameter; contains the new keyframe of the animation after this tick</param>
@@ -49,7 +50,9 @@ namespace KeyframeAnimationPlugin
                     }
                 }
                 float frameRange = EndFrame - StartFrame;
-                CurrentFrame = (StartFrame + (CurrentFrame - EndFrame)) % frameRange; // If CurrentFrame Exceeds endframe of current animation, resume it from start
+
+                // If CurrentFrame Exceeds endframe of current animation, resume it from start
+                CurrentFrame = (StartFrame + (CurrentFrame - EndFrame)) % frameRange;
             }
             newFrame = CurrentFrame;
             return true;
