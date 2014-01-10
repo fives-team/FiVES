@@ -105,6 +105,20 @@ namespace KeyframeAnimationPlugin
         }
 
         /// <summary>
+        /// Very low frame rates and thus high frame durations may occur in situations when the adapted keyframe in the new cycle
+        /// still lies outside the frame range. This test checks whether this case is handled correctly.
+        /// </summary>
+        [Test()]
+        public void AnimationShouldNotSkipCycles()
+        {
+            float newFrame;
+            KeyframeAnimation animation = new KeyframeAnimation("testAnimation", 0f, 1f, 2, 1f);
+            animation.Tick(4500, out newFrame);
+            Assert.AreEqual(animation.CurrentFrame, 0.5f);
+            Assert.AreEqual(animation.CurrentCycle, 2);
+        }
+
+        /// <summary>
         /// Tests whether animations that exceeded their frame ranges and their maximum number of cycles are correctly marked to be stopped in the next frame
         /// </summary>
         [Test()]
