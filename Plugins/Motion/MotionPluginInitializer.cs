@@ -165,6 +165,8 @@ namespace MotionPlugin
                 {
                     if (!ongoingMotion.Contains(entity))
                         ongoingMotion.Add(entity);
+
+                    RecalculateVelocityInWorldspace(entity);
                 }
             }
             else
@@ -173,6 +175,8 @@ namespace MotionPlugin
                 {
                     if(ongoingMotion.Contains(entity))
                         ongoingMotion.Remove(entity);
+                    if(velocitiesInWorldspace.ContainsKey(entity.Guid))
+                        velocitiesInWorldspace.Remove(entity.Guid);
                 }
             }
         }
@@ -203,6 +207,16 @@ namespace MotionPlugin
         }
 
         /// <summary>
+        /// Recomputes the value for the world space velocity of an entity and stores it as respective dictionary entry
+        /// </summary>
+        /// <param name="entity">Entity for which Velocity is recomputed</param>
+        private void RecalculateVelocityInWorldspace(Entity entity)
+        {
+            Vector velocityInWorldSpace = GetVelocityInWorldSpace(entity);
+            velocitiesInWorldspace[entity.Guid] = velocityInWorldSpace;
+        }
+
+        /// <summary>
         /// Handles a TickFired Evenet of EventLoop. Performs position and orientation updates for all ongoing motions and rotations
         /// </summary>
         /// <param name="sender">Sender of tick event args (EventLoop)</param>
@@ -228,11 +242,11 @@ namespace MotionPlugin
         /// Worker Thread function that periodically performs the motion. Ends, when velocity of entity is 0
         /// </summary>
         /// <param name="updatedEntity">Entity for which motion is updated</param>
-        internal void UpdateMotion(Entity updatedEntity) {
-            Vector localVelocity = GetVelocityInWorldSpace(updatedEntity);
-            updatedEntity["position"]["x"] = (float)updatedEntity["position"]["x"] + localVelocity.x;
-            updatedEntity["position"]["y"] = (float)updatedEntity["position"]["y"] + localVelocity.y;
-            updatedEntity["position"]["z"] = (float)updatedEntity["position"]["z"] + localVelocity.z;
+        private void UpdateMotion(Entity updatedEntity) {
+            Vector velocityInWorldSpace = velocitiesInWorldspace[updatedEntity.Guid];
+            updatedEntity["position"]["x"] = (float)updatedEntity["position"]["x"] + velocityInWorldSpace.x;
+            updatedEntity["position"]["y"] = (float)updatedEntity["position"]["y"] + velocityInWorldSpace.y;
+            updatedEntity["position"]["z"] = (float)updatedEntity["position"]["z"] + velocityInWorldSpace.z;
         }
 
         /// <summary>
@@ -256,6 +270,8 @@ namespace MotionPlugin
             updatedEntity["orientation"]["y"] = newRotationAsQuaternion.y;
             updatedEntity["orientation"]["z"] = newRotationAsQuaternion.z;
             updatedEntity["orientation"]["w"] = newRotationAsQuaternion.w;
+
+            RecalculateVelocityInWorldspace(updatedEntity);
         }
 
         /// <summary>
@@ -322,6 +338,11 @@ namespace MotionPlugin
 
         private ISet<Entity> ongoingMotion = new HashSet<Entity>();
         private ISet<Entity> ongoingSpin = new HashSet<Entity>();
+
+        // FIXME: Velocities in world space for each entity can be considered like a private attribute that is only necessary for internal
+        // computations. This is a good example of where transient attributes could be very helpful. Then, the world space values could just be
+        // stored within the entity
+        private Dictionary<Guid, Vector> velocitiesInWorldspace = new Dictionary<Guid, Vector>();
     }
 }
 
