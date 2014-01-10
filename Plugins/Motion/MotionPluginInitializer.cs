@@ -146,8 +146,10 @@ namespace MotionPlugin
         private void HandleOnAttributeChanged(Object sender, ChangedAttributeEventArgs e)
         {
             Entity entity = (Entity)sender;
-            CheckForEntityMoving(entity);
-            CheckForEntitySpinning(entity);
+            if(e.Component.Name == "velocity")
+                CheckForEntityMoving(entity);
+            if(e.Component.Name == "rotVelocity")
+                CheckForEntitySpinning(entity);
         }
 
         /// <summary>
