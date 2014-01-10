@@ -103,7 +103,7 @@ FIVES.Models = FIVES.Models || {};
         var valueInNewCycle = newValue;
         if(playingAnimation.currentCycle > playingAnimation.cycles && playingAnimation.cycles != -1)
         {
-            valueInNewCycle = 0
+            valueInNewCycle = playingAnimation.endFrame;
             FIVES.Plugins.Animation.stopAnimationPlayback(this.guid, playingAnimation.name);
         }
         else
