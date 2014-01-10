@@ -94,7 +94,11 @@ FIVES.Resources = FIVES.Resources || {};
         return xml3dScale;
     };
 
-    scm._createAnimationForEntity = function(meshGroup, entityId) {
+    // Parses the XML3D model file for <anim> tags that define xflow keyframe animations.
+    // Within the definition, the id value of the respective xflow key is stated as appearing
+    // in the model file, i.e. ignoring adaptions made to id attributes when adding the entity to the scene.
+    // We therefore need to take this adaption into account here separately
+    scm._createAnimationsForEntity = function(meshGroup, entityId) {
         var animationDefinitions = {};
         var meshAnimations = $(meshGroup).find("anim");
         meshAnimations.each(function(index, element)
