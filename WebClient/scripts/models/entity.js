@@ -99,7 +99,9 @@ FIVES.Models = FIVES.Models || {};
     };
 
     e._increaseAnimationCycles = function(playingAnimation, newValue) {
-        playingAnimation.currentCycle ++;
+        var frameRange = playingAnimation.endFrame - playingAnimation.startFrame;
+        playingAnimation.currentCycle += Math.floor(newValue / frameRange);
+
         var valueInNewCycle = newValue;
         if(playingAnimation.currentCycle > playingAnimation.cycles && playingAnimation.cycles != -1)
         {
@@ -108,7 +110,6 @@ FIVES.Models = FIVES.Models || {};
         }
         else
         {
-            var frameRange = playingAnimation.endFrame - playingAnimation.startFrame;
             valueInNewCycle = playingAnimation.startFrame + (newValue - playingAnimation.endFrame) % frameRange;
         }
         return valueInNewCycle;
