@@ -116,7 +116,7 @@ namespace KeyframeAnimationPlugin
         public void AnimationShouldStayInFrameRangeForMultipleSkippedCycles()
         {
             float newFrame;
-            KeyframeAnimation animation = new KeyframeAnimation("testAnimation", 0f, 1f, 2, 1f);
+            KeyframeAnimation animation = new KeyframeAnimation("testAnimation", 0f, 1f, 5, 1f);
             animation.Tick(4500, out newFrame);
             Assert.AreEqual(animation.CurrentFrame, 0.5f);
             Assert.AreEqual(newFrame, animation.CurrentFrame);
@@ -127,12 +127,12 @@ namespace KeyframeAnimationPlugin
         /// even though the new keyframe may lay several cycles ahead
         /// </summary>
         [Test()]
-        public void AnimationShouldIncreaseCyclesOnlyOnceForMultipleSkippedCycles()
+        public void AnimationShouldIncreaseByNumberOfSkippedCycles()
         {
             float newFrame;
             KeyframeAnimation animation = new KeyframeAnimation("testAnimation", 0f, 1f, 5, 1f);
             animation.Tick(4500, out newFrame);
-            Assert.AreEqual(animation.CurrentCycle, 2);
+            Assert.AreEqual(animation.CurrentCycle, 5);
         }
 
         /// <summary>
