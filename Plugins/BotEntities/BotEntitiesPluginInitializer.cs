@@ -37,7 +37,11 @@ namespace BotEntitiesPlugin
             string configPath = this.GetType().Assembly.Location;
             Configuration config = ConfigurationManager.OpenExeConfiguration(configPath);
 
-            // TODO: Parse values
+            int.TryParse(ConfigurationManager.AppSettings["numBots"], out numBots);
+            botMesh = ConfigurationManager.AppSettings["botMesh"];
+            float.TryParse(ConfigurationManager.AppSettings["walkSpeed"], out botWalkSpeed);
+            float.TryParse(ConfigurationManager.AppSettings["rotateSpeed"], out botRotateSpeed);
+            int.TryParse(ConfigurationManager.AppSettings["updateInterval"], out botUpdateInterval);
         }
 
         private void CreateBotEntities()
