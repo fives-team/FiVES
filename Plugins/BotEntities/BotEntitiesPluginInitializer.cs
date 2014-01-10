@@ -67,7 +67,7 @@ namespace BotEntitiesPlugin
         private void HandleEventTick(Object sender, TickEventArgs e)
         {
             millisecondsSinceLastTick += EventLoop.Instance.TickInterval;
-            if (millisecondsSinceLastTick > 1000)
+            if (millisecondsSinceLastTick > botUpdateInterval)
             {
                 foreach (Entity botEntity in bots)
                 {
@@ -105,6 +105,7 @@ namespace BotEntitiesPlugin
         private float botWalkSpeed = 0.05f;
         private float botRotateSpeed = 0.05f;
         private int millisecondsSinceLastTick = 0;
+        private int botUpdateInterval = 5000;
         private Random random = new Random();
     }
 }
