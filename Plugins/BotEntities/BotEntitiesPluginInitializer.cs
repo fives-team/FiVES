@@ -28,6 +28,7 @@ namespace BotEntitiesPlugin
 
         public void Initialize()
         {
+           //RetrieveConfigurationValues();
            CreateBotEntities();
            EventLoop.Instance.TickFired += new EventHandler<TickEventArgs>(HandleEventTick);
         }
