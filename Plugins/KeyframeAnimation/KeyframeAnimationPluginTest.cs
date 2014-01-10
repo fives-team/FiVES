@@ -113,7 +113,7 @@ namespace KeyframeAnimationPlugin
         /// still lies outside the frame range. This test checks whether this case is handled correctly.
         /// </summary>
         [Test()]
-        public void AnimationShouldNotSkipCycles()
+        public void AnimationShouldStayInFrameRangeForMultipleSkippedCycles()
         {
             float newFrame;
             KeyframeAnimation animation = new KeyframeAnimation("testAnimation", 0f, 1f, 2, 1f);
