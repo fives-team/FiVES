@@ -31,7 +31,8 @@ namespace KeyframeAnimationPlugin
         /// Called cycle to increase keyframe of the animation depending on the duration of the last render frame in milliseconds
         /// </summary>
         /// <param name="frameDuration">Duration of the last frame in milliseconds</param>
-        /// <returns>The new keyframe for the animation</returns>
+        /// <param name="newFrame">Out parameter; contains the new keyframe of the animation after this tick</param>
+        /// <returns>True, if animation is still playing, false, if animation stopped playing after this tick</returns>
         internal bool Tick(double frameDuration, out float newFrame)
         {
             CurrentFrame += Speed * (float)frameDuration / 1000f;
