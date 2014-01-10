@@ -9,14 +9,14 @@ namespace KeyframeAnimationPlugin
     /// KeyAnimation class provides data and methods to manage server side animation processing.
     /// Animations are created when a server side animation is started.
     /// </summary>
-    internal class KeyframeAnimation
+    public class KeyframeAnimation
     {
         /// <summary>
         /// Name of the animation for identification
         /// </summary>
         public string Name;
 
-        internal KeyframeAnimation(string name, float startFrame, float endFrame, int cycles, float speed)
+        public KeyframeAnimation(string name, float startFrame, float endFrame, int cycles, float speed)
         {
             Name = name;
             StartFrame = startFrame;

@@ -11,9 +11,11 @@ namespace KeyframeAnimationPlugin
     /// KeyframeAnimationManager maintains keyframe animations of entities for server side animation computation.
     /// KeyframeManager subscribes to EventLoopPlugin for recurring computation of animation keyframes
     /// </summary>
-    internal class KeyframeAnimationManager
+    public class KeyframeAnimationManager
     {
-        public KeyframeAnimationManager() {}
+        public static KeyframeAnimationManager Instance;
+
+        internal KeyframeAnimationManager() {}
 
         internal void Initialize()
         {
@@ -94,7 +96,7 @@ namespace KeyframeAnimationPlugin
         /// </summary>
         /// <param name="entityGuid">Guid of entity for which animation should be played</param>
         /// <param name="animation">Keyframe animation that should be played for the entity</param>
-        internal void StartAnimation(Guid entityGuid, KeyframeAnimation animation)
+        public void StartAnimation(string entityGuid, KeyframeAnimation animation)
         {
             lock (RunningAnimationsForEntities)
             {
@@ -113,7 +115,7 @@ namespace KeyframeAnimationPlugin
         /// </summary>
         /// <param name="entityGuid">Guid of the entity for which animation playback should be stopped</param>
         /// <param name="animationName">Name of the animation of which playback should be stopped</param>
-        internal void StopAnimation(Guid entityGuid, string animationName)
+        public void StopAnimation(string entityGuid, string animationName)
         {
             lock (RunningAnimationsForEntities)
             {
