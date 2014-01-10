@@ -13,3 +13,5 @@ Binaries/
 TestResults
 Core/PluginManager/TestPlugins
 *~
+*.vsp
+*.psess
