@@ -132,8 +132,18 @@ namespace KeyframeAnimationPlugin
                 return RunningAnimationsForEntities.ContainsKey(entityGuid) && RunningAnimationsForEntities[entityGuid].ContainsKey(animationName);
         }
 
+        /// <summary>
+        /// Registry of all entities that subscribed to receive tick events from event loop for animation key frame computation.
+        /// Dictionary has stucture Dictionary<EntityGuid,Dictionary<AnimationName, AnimationObject>,
+        /// e.g. Dict[1]["walk"] = animation object for walk animation of entity 1
+        /// </summary>
         internal Dictionary<string, Dictionary<string, KeyframeAnimation>> RunningAnimationsForEntities = new Dictionary<String, Dictionary<string, KeyframeAnimation>>();
 
+        /// <summary>
+        /// Registry of all animations that finished playback in last frame. After frame tick has finished, i.e. all running animations have computed their
+        /// new frame, finished animations are removed from the registry of running animations. If an entity has finished playback of all its animations,
+        /// it is removed from the registry completely
+        /// </summary>
         internal Dictionary<string, HashSet<string>> FinishedAnimations = new Dictionary<string, HashSet<string>>();
         private TimeSpan LastTick;
     }
