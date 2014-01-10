@@ -33,7 +33,7 @@ FIVES.Plugins = FIVES.Plugins || {};
 
     a.startAnimationPlayback = function(entityGuid, animationName, startFrame, endFrame, cycles, speed)
     {
-        var entity = FIVES.Models.EntityRegistry.getEntity[entityGuid];
+        var entity = FIVES.Models.EntityRegistry.getEntity(entityGuid);
         if(entity)
         {
             entity.playingAnimationsCollection = entity.playingAnimationsCollection || {};
@@ -45,7 +45,7 @@ FIVES.Plugins = FIVES.Plugins || {};
     };
 
     a.stopAnimationPlayback = function(entityGuid, animationName) {
-        var entity = FIVES.Models.EntityRegistry.getEntity[entityGuid];
+        var entity = FIVES.Models.EntityRegistry.getEntity(entityGuid);
 
         if(!entity || registeredEntities.indexOf(entity) < 0)
             return;
