@@ -108,7 +108,8 @@ FIVES.Models = FIVES.Models || {};
         }
         else
         {
-            valueInNewCycle = playingAnimation.startFrame + (newValue - playingAnimation.endFrame);
+            var frameRange = playingAnimation.endFrame - playingAnimation.startFrame;
+            valueInNewCycle = playingAnimation.startFrame + (newValue - playingAnimation.endFrame) % frameRange;
         }
         return valueInNewCycle;
     };
