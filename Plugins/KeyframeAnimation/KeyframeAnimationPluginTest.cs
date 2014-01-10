@@ -16,9 +16,8 @@ namespace KeyframeAnimationPlugin
         private Guid entityGuidAsGuid;
 
         /// <summary>
-        /// Creates a plugin and registers its components. This skips initialization of the KeyframeAnimationManager and
-        /// registering to the EventLoop.
-        /// Creates one single entity to test animations on
+        /// Creates a plugin and registers its components. This skips initialization of the KeyframeAnimationManager
+        /// and registering to the EventLoop. Creates one single entity to test animations on
         /// </summary>
         public AnimationPluginTest()
         {
@@ -68,7 +67,8 @@ namespace KeyframeAnimationPlugin
         }
 
         /// <summary>
-        /// Tests whether an "AnimationStop" command from the plugin removes an animation from the registry of running animation
+        /// Tests whether an "AnimationStop" command from the plugin removes an animation from the registry of running
+        /// animation
         /// </summary>
         [Test()]
         public void ManagerShouldRemoveAnimationOnStop()
@@ -109,8 +109,9 @@ namespace KeyframeAnimationPlugin
         }
 
         /// <summary>
-        /// Very low frame rates and thus high frame durations may occur in situations when the adapted keyframe in the new cycle
-        /// still lies outside the frame range. This test checks whether this case is handled correctly.
+        /// Very low frame rates and thus high frame durations may occur in situations when the adapted keyframe
+        /// in the new cycle still lies outside the frame range. This test checks whether this case is handled
+        /// correctly.
         /// </summary>
         [Test()]
         public void AnimationShouldStayInFrameRangeForMultipleSkippedCycles()
@@ -123,8 +124,8 @@ namespace KeyframeAnimationPlugin
         }
 
         /// <summary>
-        /// When cropping the new frame to the correct frame range as tested above, the animation should still continue in its next cycle,
-        /// even though the new keyframe may lay several cycles ahead
+        /// When cropping the new frame to the correct frame range as tested above, the animation should still continue
+        /// in its next cycle, even though the new keyframe may lay several cycles ahead
         /// </summary>
         [Test()]
         public void AnimationShouldIncreaseByNumberOfSkippedCycles()
@@ -136,8 +137,8 @@ namespace KeyframeAnimationPlugin
         }
 
         /// <summary>
-        /// Tests whether animations that exceeded their frame ranges and their maximum number of cycles are correctly marked to be
-        /// stopped in the next frame
+        /// Tests whether animations that exceeded their frame ranges and their maximum number of cycles are correctly
+        /// marked to be stopped in the next frame
         /// </summary>
         [Test()]
         public void ManagerShouldRegisterFinishedAnimationAsFinished()
@@ -149,9 +150,9 @@ namespace KeyframeAnimationPlugin
         }
 
         /// <summary>
-        /// Tests whether animations that exceeded their frame ranges and their maximum number of cycles are correctly marked to be
-        /// stopped in the next frame if a slow frame rate - resulting in long frame durations - leads to a skip of cycles larger than
-        /// the total number of cycles
+        /// Tests whether animations that exceeded their frame ranges and their maximum number of cycles are correctly
+        /// marked to be stopped in the next frame if a slow frame rate - resulting in long frame durations -
+        /// leads to a skip of cycles larger than the total number of cycles
         /// </summary>
         [Test()]
         public void ManagerShouldStopAnimationsAfterHavingSkippedTotalNumberOfCycles()
@@ -166,9 +167,8 @@ namespace KeyframeAnimationPlugin
         }
 
         /// <summary>
-        /// Tests if the entry for a finished animation is correctly removed from the list of registered animations without interferring
-        /// with other registered
-        /// animations
+        /// Tests if the entry for a finished animation is correctly removed from the list of registered
+        /// animations without interferring with other registered animations
         /// </summary>
         [Test()]
         public void ManagerShouldRemoveFinishedAnimations()
@@ -184,7 +184,8 @@ namespace KeyframeAnimationPlugin
         }
 
         /// <summary>
-        /// Tests if an entity is removed from the registry for animated entities if the last animation of the entity did stop
+        /// Tests if an entity is removed from the registry for animated entities if the last animation of
+        /// the entity did stop
         /// </summary>
         [Test()]
         public void ManagerShouldRemoveFinishedAnimatedEntities()
@@ -197,7 +198,8 @@ namespace KeyframeAnimationPlugin
         }
 
         /// <summary>
-        /// Tests if starting an animation for same entity with same name but new paraemeters again replaces the old parameterlist
+        /// Tests if starting an animation for same entity with same name but new paraemeters again replaces
+        /// the old parameterlist
         /// </summary>
         [Test()]
         public void ManagerShouldReplaceValuesOnNewAnimationStart()

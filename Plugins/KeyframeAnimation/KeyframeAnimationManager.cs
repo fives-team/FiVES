@@ -8,8 +8,8 @@ using FIVES;
 namespace KeyframeAnimationPlugin
 {
     /// <summary>
-    /// KeyframeAnimationManager maintains keyframe animations of entities for server side animation computation. KeyframeManager subscribes to EventLoop
-    /// Plugin for recurring computation of animation keyframes
+    /// KeyframeAnimationManager maintains keyframe animations of entities for server side animation computation.
+    /// KeyframeManager subscribes to EventLoopPlugin for recurring computation of animation keyframes
     /// </summary>
     internal class KeyframeAnimationManager
     {
@@ -22,7 +22,8 @@ namespace KeyframeAnimationPlugin
         }
 
         /// <summary>
-        /// Handler for TickEvent of EventLoop. Will update keyframes of any animation and synchronize it with clients by setting the respective entity attribute
+        /// Handler for TickEvent of EventLoop. Will update keyframes of any animation and synchronize it with
+        /// clients by setting the respective entity attribute
         /// </summary>
         /// <param name="sender">Sender of the event (EventLoop)</param>
         /// <param name="e">TickEvent args</param>
@@ -32,7 +33,8 @@ namespace KeyframeAnimationPlugin
             LastTick = e.TimeStamp;
             lock (RunningAnimationsForEntities)
             {
-                foreach (KeyValuePair<Guid, Dictionary<string, KeyframeAnimation>> animatedEntity in RunningAnimationsForEntities)
+                foreach (KeyValuePair<Guid, Dictionary<string, KeyframeAnimation>>
+                    animatedEntity in RunningAnimationsForEntities)
                 {
                     string animationKeyframes = "";
                     foreach (KeyValuePair<string, KeyframeAnimation> runningAnimation in animatedEntity.Value)
@@ -48,7 +50,8 @@ namespace KeyframeAnimationPlugin
         }
 
         /// <summary>
-        /// Computes the next frame for an animation of an entity. Stops the animation or increases cycle if frame range of animation is exceeded
+        /// Computes the next frame for an animation of an entity. Stops the animation or increases cycle if
+        /// frame range of animation is exceeded
         /// </summary>
         /// <param name="entityGuid">Guid of the entity for which the animation is computed</param>
         /// <param name="animation">Animation that is currently playing</param>
@@ -58,7 +61,8 @@ namespace KeyframeAnimationPlugin
         {
             float newKey = 0f;
 
-            if (!animation.Tick(frameDuration, out newKey)) // Perform next keyframe computation and stop animation if number of cycles reached the end
+            // Perform next keyframe computation and stop animation if number of cycles reached the end
+            if (!animation.Tick(frameDuration, out newKey))
             {
                 if (!FinishedAnimations.ContainsKey(entityGuid))
                     FinishedAnimations.Add(entityGuid, new HashSet<string>());
@@ -129,19 +133,23 @@ namespace KeyframeAnimationPlugin
         public bool IsPlaying(Guid entityGuid, string animationName)
         {
             lock(RunningAnimationsForEntities)
-                return RunningAnimationsForEntities.ContainsKey(entityGuid) && RunningAnimationsForEntities[entityGuid].ContainsKey(animationName);
+                return RunningAnimationsForEntities.ContainsKey(entityGuid)
+                    && RunningAnimationsForEntities[entityGuid].ContainsKey(animationName);
         }
 
         /// <summary>
-        /// Registry of all entities that subscribed to receive tick events from event loop for animation key frame computation.
+        /// Registry of all entities that subscribed to receive tick events from event loop for animation
+        /// key frame computation.
         /// Dictionary has stucture Dictionary<EntityGuid,Dictionary<AnimationName, AnimationObject>,
         /// e.g. Dict[1]["walk"] = animation object for walk animation of entity 1
         /// </summary>
-        internal Dictionary<Guid, Dictionary<string, KeyframeAnimation>> RunningAnimationsForEntities = new Dictionary<Guid, Dictionary<string, KeyframeAnimation>>();
+        internal Dictionary<Guid, Dictionary<string, KeyframeAnimation>> RunningAnimationsForEntities =
+            new Dictionary<Guid, Dictionary<string, KeyframeAnimation>>();
 
         /// <summary>
-        /// Registry of all animations that finished playback in last frame. After frame tick has finished, i.e. all running animations have computed their
-        /// new frame, finished animations are removed from the registry of running animations. If an entity has finished playback of all its animations,
+        /// Registry of all animations that finished playback in last frame. After frame tick has finished,
+        /// i.e. all running animations have computed their new frame, finished animations are removed from
+        /// the registry of running animations. If an entity has finished playback of all its animations,
         /// it is removed from the registry completely
         /// </summary>
         internal Dictionary<Guid, HashSet<string>> FinishedAnimations = new Dictionary<Guid, HashSet<string>>();

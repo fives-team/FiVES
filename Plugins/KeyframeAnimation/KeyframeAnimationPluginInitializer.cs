@@ -91,7 +91,8 @@ namespace KeyframeAnimationPlugin
         {
             lock (animationStartCallbacks)
             {
-                foreach (KeyValuePair<Connection, Action<string, string, float, float, int, float>> registeredCallback in animationStartCallbacks)
+                foreach (KeyValuePair<Connection, Action<string, string, float, float, int, float>> registeredCallback
+                    in animationStartCallbacks)
                 {
                     var callback = registeredCallback.Value;
                     callback(entityGuid, animationName, startFrame, endFrame, cycles, speed);
@@ -144,8 +145,12 @@ namespace KeyframeAnimationPlugin
             }
         }
 
-        Dictionary<Connection, Action<string, string, float, float, int, float>> animationStartCallbacks = new Dictionary<Connection, Action<string, string, float, float, int, float>>();
-        Dictionary<Connection, Action<string, string>> animationStopCallbacks = new Dictionary<Connection, Action<string, string>>();
+        Dictionary<Connection, Action<string, string, float, float, int, float>> animationStartCallbacks
+            = new Dictionary<Connection, Action<string, string, float, float, int, float>>();
+
+        Dictionary<Connection, Action<string, string>> animationStopCallbacks
+            = new Dictionary<Connection, Action<string, string>>();
+
         internal KeyframeAnimationManager Manager = new KeyframeAnimationManager();
     }
 }
