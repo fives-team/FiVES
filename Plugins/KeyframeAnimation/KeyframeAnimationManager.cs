@@ -30,9 +30,9 @@ namespace KeyframeAnimationPlugin
         {
             double frameDuration = e.TimeStamp.Subtract(LastTick).TotalMilliseconds;
             LastTick = e.TimeStamp;
-            lock (SubscribedEntities)
+            lock (RunningAnimationsForEntities)
             {
-                foreach (KeyValuePair<String, Dictionary<string, KeyframeAnimation>> animatedEntities in SubscribedEntities)
+                foreach (KeyValuePair<String, Dictionary<string, KeyframeAnimation>> animatedEntities in RunningAnimationsForEntities)
                 {
                     string animationKeyframes = "";
                     foreach (KeyValuePair<string, KeyframeAnimation> runningAnimation in animatedEntities.Value)
@@ -89,15 +89,15 @@ namespace KeyframeAnimationPlugin
         /// <param name="animation">Keyframe animation that should be played for the entity</param>
         internal void StartAnimation(string entityGuid, KeyframeAnimation animation)
         {
-            lock (SubscribedEntities)
+            lock (RunningAnimationsForEntities)
             {
-                if (!SubscribedEntities.ContainsKey(entityGuid))
-                    SubscribedEntities[entityGuid] = new Dictionary<string, KeyframeAnimation>();
+                if (!RunningAnimationsForEntities.ContainsKey(entityGuid))
+                    RunningAnimationsForEntities[entityGuid] = new Dictionary<string, KeyframeAnimation>();
 
-                if (!SubscribedEntities[entityGuid].ContainsKey(animation.Name))
-                    SubscribedEntities[entityGuid].Add(animation.Name, animation);
+                if (!RunningAnimationsForEntities[entityGuid].ContainsKey(animation.Name))
+                    RunningAnimationsForEntities[entityGuid].Add(animation.Name, animation);
                 else
-                    SubscribedEntities[entityGuid][animation.Name] = animation;
+                    RunningAnimationsForEntities[entityGuid][animation.Name] = animation;
             }
         }
 
@@ -108,14 +108,14 @@ namespace KeyframeAnimationPlugin
         /// <param name="animationName">Name of the animation of which playback should be stopped</param>
         internal void StopAnimation(string entityGuid, string animationName)
         {
-            lock (SubscribedEntities)
+            lock (RunningAnimationsForEntities)
             {
-                if (SubscribedEntities.ContainsKey(entityGuid))
+                if (RunningAnimationsForEntities.ContainsKey(entityGuid))
                 {
-                    if(SubscribedEntities[entityGuid].ContainsKey(animationName))
-                        SubscribedEntities[entityGuid].Remove(animationName);
-                    if (SubscribedEntities[entityGuid].Count == 0)
-                        SubscribedEntities.Remove(entityGuid);
+                    if(RunningAnimationsForEntities[entityGuid].ContainsKey(animationName))
+                        RunningAnimationsForEntities[entityGuid].Remove(animationName);
+                    if (RunningAnimationsForEntities[entityGuid].Count == 0)
+                        RunningAnimationsForEntities.Remove(entityGuid);
                 }
             }
         }
@@ -128,11 +128,12 @@ namespace KeyframeAnimationPlugin
         /// <returns></returns>
         public bool IsPlaying(string entityGuid, string animationName)
         {
-            lock(SubscribedEntities)
-                return SubscribedEntities.ContainsKey(entityGuid) && SubscribedEntities[entityGuid].ContainsKey(animationName);
+            lock(RunningAnimationsForEntities)
+                return RunningAnimationsForEntities.ContainsKey(entityGuid) && RunningAnimationsForEntities[entityGuid].ContainsKey(animationName);
         }
 
-        internal Dictionary<string, Dictionary<string, KeyframeAnimation>> SubscribedEntities = new Dictionary<String, Dictionary<string, KeyframeAnimation>>();
+        internal Dictionary<string, Dictionary<string, KeyframeAnimation>> RunningAnimationsForEntities = new Dictionary<String, Dictionary<string, KeyframeAnimation>>();
+
         internal Dictionary<string, HashSet<string>> FinishedAnimations = new Dictionary<string, HashSet<string>>();
         private TimeSpan LastTick;
     }
