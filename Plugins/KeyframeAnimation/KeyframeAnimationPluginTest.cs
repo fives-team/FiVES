@@ -90,6 +90,7 @@ namespace KeyframeAnimationPlugin
             animation.Tick(500, out newFrame);
 
             Assert.AreEqual(animation.CurrentFrame, 0.5f);
+            Assert.AreEqual(newFrame, animation.CurrentFrame);
         }
 
         /// <summary>
@@ -103,6 +104,7 @@ namespace KeyframeAnimationPlugin
             animation.Tick(1500, out newFrame);
 
             Assert.AreEqual(animation.CurrentFrame, 0.5f);
+            Assert.AreEqual(newFrame, animation.CurrentFrame);
             Assert.AreEqual(animation.CurrentCycle, 2);
         }
 
@@ -117,6 +119,7 @@ namespace KeyframeAnimationPlugin
             KeyframeAnimation animation = new KeyframeAnimation("testAnimation", 0f, 1f, 2, 1f);
             animation.Tick(4500, out newFrame);
             Assert.AreEqual(animation.CurrentFrame, 0.5f);
+            Assert.AreEqual(newFrame, animation.CurrentFrame);
             Assert.AreEqual(animation.CurrentCycle, 2);
         }
 
