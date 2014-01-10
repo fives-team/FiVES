@@ -37,6 +37,7 @@ namespace KeyframeAnimationPlugin
         {
             plugin = new KeyframeAnimationPluginInitializer();
             plugin.RegisterComponents();
+            KeyframeAnimationManager.Instance = new KeyframeAnimationManager();
             Entity entity = new Entity();
             createdEntityGuid = entity.Guid.ToString();
             entityGuidAsGuid = entity.Guid;
@@ -49,7 +50,7 @@ namespace KeyframeAnimationPlugin
         [SetUp()]
         public void InitializeTest()
         {
-            plugin.Manager.RunningAnimationsForEntities.Clear();
+            KeyframeAnimationManager.Instance.RunningAnimationsForEntities.Clear();
         }
 
         /// <summary>
@@ -59,7 +60,7 @@ namespace KeyframeAnimationPlugin
         public void ManagerShouldRegisterEntityForServersideAnimation()
         {
             plugin.StartServersideAnimation(createdEntityGuid, "testAnimation", 0f, 1f, 1, 1f);
-            Assert.Contains(entityGuidAsGuid, plugin.Manager.RunningAnimationsForEntities.Keys);
+            Assert.Contains(createdEntityGuid, KeyframeAnimationManager.Instance.RunningAnimationsForEntities.Keys);
         }
 
         /// <summary>
@@ -69,8 +70,11 @@ namespace KeyframeAnimationPlugin
         public void ManagerShouldRegisterAnimationForServersideAnimation()
         {
             plugin.StartServersideAnimation(createdEntityGuid, "testAnimation", 0f, 1f, 1, 1f);
-            Dictionary<string, KeyframeAnimation> animations = plugin.Manager
-                                                                     .RunningAnimationsForEntities[entityGuidAsGuid];
+
+
+            Dictionary<string, KeyframeAnimation> animations = KeyframeAnimationManager
+                                                                .Instance
+                                                                .RunningAnimationsForEntities[entityGuidAsGuid];
 
             Assert.Contains("testAnimation", animations.Keys);
 
@@ -91,8 +95,10 @@ namespace KeyframeAnimationPlugin
             plugin.StartServersideAnimation(createdEntityGuid, "testAnimation", 0f, 1f, 1, 1f);
             plugin.StartServersideAnimation(createdEntityGuid, "testAnimation2", 0f, 1f, 1, 1f);
             plugin.StopServersideAnimation(createdEntityGuid, "testAnimation");
-            Assert.False(plugin.Manager.RunningAnimationsForEntities[entityGuidAsGuid].Keys.Contains("testAnimation"));
-            Assert.AreEqual(plugin.Manager.RunningAnimationsForEntities[entityGuidAsGuid].Keys.Count, 1);
+
+            Assert.False(KeyframeAnimationManager.Instance.RunningAnimationsForEntities[entityGuidAsGuid].Keys.Contains("testAnimation"));
+            Assert.AreEqual(KeyframeAnimationManager.Instance.RunningAnimationsForEntities[entityGuidAsGuid].Keys.Count, 1);
+
         }
         /// <summary>
         /// Tests whether the tick function increases the current frame by the correct value
@@ -159,9 +165,10 @@ namespace KeyframeAnimationPlugin
         public void ManagerShouldRegisterFinishedAnimationAsFinished()
         {
             KeyframeAnimation animation = new KeyframeAnimation("testAnimation", 0f, 1f, 1, 1f);
-            plugin.Manager.PerformTickForEntityAnimation(entityGuidAsGuid, animation, 1500);
-            Assert.True(plugin.Manager.FinishedAnimations.ContainsKey(entityGuidAsGuid));
-            Assert.True(plugin.Manager.FinishedAnimations[entityGuidAsGuid].Contains("testAnimation"));
+
+            KeyframeAnimationManager.Instance.PerformTickForEntityAnimation(entityGuidAsGuid, animation, 1500);
+            Assert.Contains(createdEntityGuid, KeyframeAnimationManager.Instance.FinishedAnimations.Keys);
+            Assert.True(KeyframeAnimationManager.Instance.FinishedAnimations[entityGuidAsGuid].Contains("testAnimation"));
         }
 
         /// <summary>
@@ -173,11 +180,11 @@ namespace KeyframeAnimationPlugin
         public void ManagerShouldStopAnimationsAfterHavingSkippedTotalNumberOfCycles()
         {
             KeyframeAnimation animation = new KeyframeAnimation("testAnimation", 0f, 1f, 3, 1f);
-            plugin.Manager.PerformTickForEntityAnimation(entityGuidAsGuid, animation, 4500);
+            KeyframeAnimationManager.Instance.PerformTickForEntityAnimation(entityGuidAsGuid, animation, 4500);
 
             Assert.AreEqual(animation.CurrentFrame, animation.EndFrame);
-            Assert.True(plugin.Manager.FinishedAnimations.ContainsKey(entityGuidAsGuid));
-            Assert.True(plugin.Manager.FinishedAnimations[entityGuidAsGuid].Contains("testAnimation"));
+            Assert.True(KeyframeAnimationManager.Instance.FinishedAnimations.ContainsKey(entityGuidAsGuid));
+            Assert.True(KeyframeAnimationManager.Instance.FinishedAnimations[entityGuidAsGuid].Contains("testAnimation"));
         }
 
         /// <summary>
@@ -189,12 +196,13 @@ namespace KeyframeAnimationPlugin
         {
             KeyframeAnimation animation1 = new KeyframeAnimation("testAnimation1", 0f, 1f, 1, 1f);
             KeyframeAnimation animation2 = new KeyframeAnimation("testAnimation2", 0f, 1f, 1, 1f);
-            plugin.Manager.StartAnimation(entityGuidAsGuid, animation1);
-            plugin.Manager.StartAnimation(entityGuidAsGuid, animation2);
-            plugin.Manager.PerformTickForEntityAnimation(entityGuidAsGuid, animation1, 1500);
-            plugin.Manager.FinalizeFinishedAnimations();
-            Assert.Contains("testAnimation2", plugin.Manager.RunningAnimationsForEntities[entityGuidAsGuid].Keys);
-            Assert.False(plugin.Manager.RunningAnimationsForEntities[entityGuidAsGuid].Keys.Contains("testAnimation1"));
+
+            KeyframeAnimationManager.Instance.StartAnimation(entityGuidAsGuid, animation1);
+            KeyframeAnimationManager.Instance.StartAnimation(entityGuidAsGuid, animation2);
+            KeyframeAnimationManager.Instance.PerformTickForEntityAnimation(entityGuidAsGuid, animation1, 1500);
+            KeyframeAnimationManager.Instance.FinalizeFinishedAnimations();
+            Assert.Contains("testAnimation2", KeyframeAnimationManager.Instance.RunningAnimationsForEntities[entityGuidAsGuid].Keys);
+            Assert.False(KeyframeAnimationManager.Instance.RunningAnimationsForEntities[entityGuidAsGuid].Keys.Contains("testAnimation1"));
         }
 
         /// <summary>
@@ -205,10 +213,10 @@ namespace KeyframeAnimationPlugin
         public void ManagerShouldRemoveFinishedAnimatedEntities()
         {
             KeyframeAnimation animation = new KeyframeAnimation("testAnimation", 0f, 1f, 1, 1f);
-            plugin.Manager.StartAnimation(entityGuidAsGuid, animation);
-            plugin.Manager.PerformTickForEntityAnimation(entityGuidAsGuid, animation, 1500);
-            plugin.Manager.FinalizeFinishedAnimations();
-            Assert.IsEmpty(plugin.Manager.RunningAnimationsForEntities);
+            KeyframeAnimationManager.Instance.StartAnimation(entityGuidAsGuid, animation);
+            KeyframeAnimationManager.Instance.PerformTickForEntityAnimation(entityGuidAsGuid, animation, 1500);
+            KeyframeAnimationManager.Instance.FinalizeFinishedAnimations();
+            Assert.IsEmpty(KeyframeAnimationManager.Instance.RunningAnimationsForEntities);
         }
 
         /// <summary>
@@ -221,10 +229,9 @@ namespace KeyframeAnimationPlugin
             plugin.StartServersideAnimation(createdEntityGuid, "testAnimation", 0f, 1f, 1, 1f);
             plugin.StartServersideAnimation(createdEntityGuid, "testAnimation", 0.5f, 1.5f, 2, 2f);
 
-            Assert.True(plugin.Manager.RunningAnimationsForEntities.ContainsKey(entityGuidAsGuid));
-            KeyframeAnimation testAnimation = plugin.Manager
-                                                    .RunningAnimationsForEntities[entityGuidAsGuid]["testAnimation"];
-            Assert.AreEqual(1, plugin.Manager.RunningAnimationsForEntities[entityGuidAsGuid].Keys.Count);
+            KeyframeAnimation testAnimation = KeyframeAnimationManager.Instance.RunningAnimationsForEntities[entityGuidAsGuid]["testAnimation"];
+            Assert.AreEqual(1, KeyframeAnimationManager.Instance.RunningAnimationsForEntities[entityGuidAsGuid].Keys.Count);
+
             Assert.AreEqual(testAnimation.StartFrame, 0.5f);
             Assert.AreEqual(testAnimation.EndFrame, 1.5f);
             Assert.AreEqual(testAnimation.Cycles, 2);

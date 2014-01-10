@@ -1,18 +1,4 @@
-﻿// This file is part of FiVES.
-//
-// FiVES is free software: you can redistribute it and/or modify
-// it under the terms of the GNU General Public License as published by
-// the Free Software Foundation, either version 3 of the License, or
-// (at your option) any later version.
-//
-// FiVES is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-// GNU General Public License for more details.
-//
-// You should have received a copy of the GNU General Public License
-// along with FiVES.  If not, see <http://www.gnu.org/licenses/>.
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -25,9 +11,11 @@ namespace KeyframeAnimationPlugin
     /// KeyframeAnimationManager maintains keyframe animations of entities for server side animation computation.
     /// KeyframeManager subscribes to EventLoopPlugin for recurring computation of animation keyframes
     /// </summary>
-    internal class KeyframeAnimationManager
+    public class KeyframeAnimationManager
     {
-        public KeyframeAnimationManager() {}
+        public static KeyframeAnimationManager Instance;
+
+        internal KeyframeAnimationManager() {}
 
         internal void Initialize()
         {
@@ -108,7 +96,7 @@ namespace KeyframeAnimationPlugin
         /// </summary>
         /// <param name="entityGuid">Guid of entity for which animation should be played</param>
         /// <param name="animation">Keyframe animation that should be played for the entity</param>
-        internal void StartAnimation(Guid entityGuid, KeyframeAnimation animation)
+        public void StartAnimation(Guid entityGuid, KeyframeAnimation animation)
         {
             lock (RunningAnimationsForEntities)
             {
@@ -127,7 +115,7 @@ namespace KeyframeAnimationPlugin
         /// </summary>
         /// <param name="entityGuid">Guid of the entity for which animation playback should be stopped</param>
         /// <param name="animationName">Name of the animation of which playback should be stopped</param>
-        internal void StopAnimation(Guid entityGuid, string animationName)
+        public void StopAnimation(Guid entityGuid, string animationName)
         {
             lock (RunningAnimationsForEntities)
             {
