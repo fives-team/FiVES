@@ -32,15 +32,15 @@ namespace KeyframeAnimationPlugin
             LastTick = e.TimeStamp;
             lock (RunningAnimationsForEntities)
             {
-                foreach (KeyValuePair<String, Dictionary<string, KeyframeAnimation>> animatedEntities in RunningAnimationsForEntities)
+                foreach (KeyValuePair<String, Dictionary<string, KeyframeAnimation>> animatedEntity in RunningAnimationsForEntities)
                 {
                     string animationKeyframes = "";
-                    foreach (KeyValuePair<string, KeyframeAnimation> runningAnimation in animatedEntities.Value)
+                    foreach (KeyValuePair<string, KeyframeAnimation> runningAnimation in animatedEntity.Value)
                     {
-                        float newKey = PerformTickForEntityAnimation(animatedEntities.Key, runningAnimation.Value, frameDuration);
+                        float newKey = PerformTickForEntityAnimation(animatedEntity.Key, runningAnimation.Value, frameDuration);
                         animationKeyframes += runningAnimation.Key + ":" + newKey + ";";
                     }
-                    Entity entity = World.Instance.FindEntity(animatedEntities.Key);
+                    Entity entity = World.Instance.FindEntity(animatedEntity.Key);
                     entity["animation"]["animationKeyframes"] = animationKeyframes;
                 }
             }
