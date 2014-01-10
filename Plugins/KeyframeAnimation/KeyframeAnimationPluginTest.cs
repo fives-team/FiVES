@@ -128,7 +128,7 @@ namespace KeyframeAnimationPlugin
         {
             KeyframeAnimation animation = new KeyframeAnimation("testAnimation", 0f, 1f, 1, 1f);
             plugin.manager.PerformTickForEntityAnimation(entityGuidAsGuid, animation, 1500);
-            Assert.Contains(entityGuidAsGuid, plugin.manager.FinishedAnimations.Keys);
+            Assert.True(plugin.manager.FinishedAnimations.ContainsKey(entityGuidAsGuid));
             Assert.True(plugin.manager.FinishedAnimations[entityGuidAsGuid].Contains("testAnimation"));
         }
 
