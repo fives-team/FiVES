@@ -50,7 +50,10 @@ FIVES.Resources = FIVES.Resources || {};
         var entity = FIVES.Models.EntityRegistry.getEntity(idSuffix);
         var transformGroup = this._createTransformForEntityGroup(entity);
         var entityGroup = this._createParentGroupForEntity(entity);
+        var animationDefinitons = this._createAnimationsForEntity(meshGroup, idSuffix);
+        entity.xml3dView.transformElement = transformGroup;
         entity.xml3dView.groupElement = entityGroup;
+        entity.xml3dView.xflowAnimations = animationDefinitons;
         _xml3dElement.appendChild(entityGroup);
         entityGroup.appendChild(meshGroup);
     };
@@ -69,7 +72,7 @@ FIVES.Resources = FIVES.Resources || {};
         transformTag.rotation.set(this._createRotationFromOrientation(entity));
         transformTag.scale.set(this._createScaleForEntityGroup(entity));
         _mainDefs.appendChild(transformTag);
-        entity.xml3dView.transformElement = transformTag;
+        return transformTag;
     };
 
     scm._createTranslationForEntityGroup = function(entity) {
@@ -89,6 +92,31 @@ FIVES.Resources = FIVES.Resources || {};
         var scale = entity.scale;
         var xml3dScale = new XML3DVec3(scale.x, scale.y, scale.z);
         return xml3dScale;
+    };
+
+    // Parses the XML3D model file for <anim> tags that define xflow keyframe animations.
+    // Within the definition, the id value of the respective xflow key is stated as appearing
+    // in the model file, i.e. ignoring adaptions made to id attributes when adding the entity to the scene.
+    // We therefore need to take this adaption into account here separately
+    scm._createAnimationsForEntity = function(meshGroup, entityId) {
+        var animationDefinitions = {};
+        var meshAnimations = $(meshGroup).find("anim");
+        meshAnimations.each(function(index, element)
+            {
+                var animationDefinition = scm._parseAnimationEntry(element, entityId);
+                animationDefinition.key = $(meshGroup).find(animationDefinition.key +"-"+entityId);
+                animationDefinitions[element.getAttribute("name")] = animationDefinition;
+            });
+        return animationDefinitions;
+    };
+
+    scm._parseAnimationEntry = function(animationDefinition,entityId) {
+        var animation = {};
+        animation.startKey = animationDefinition.getAttribute("startKey");
+        animation.endKey = animationDefinition.getAttribute("endKey");
+        animation.speed = animationDefinition.getAttribute("speed");
+        animation.key = animationDefinition.getAttribute("key");
+        return animation;
     };
 
     scm.updateOrientation = function(entity) {
@@ -114,11 +142,14 @@ FIVES.Resources = FIVES.Resources || {};
     scm.updateCameraView = function(entity) {
         var view = $(_xml3dElement.activeView)[0];
         var entityTransform = entity.xml3dView.transformElement;
-        view.setDirection(entityTransform.rotation.rotateVec3(new XML3DVec3(1,0,0)));
-        var viewDirection = view.getDirection();
-        var cameraTranslation = entityTransform.translation.subtract(viewDirection);
-        cameraTranslation.y = 0.6;
-        view.position.set(cameraTranslation);
+        if(entityTransform)
+        {
+            view.setDirection(entityTransform.rotation.rotateVec3(new XML3DVec3(1,0,0)));
+            var viewDirection = view.getDirection();
+            var cameraTranslation = entityTransform.translation.subtract(viewDirection.scale(6));
+            cameraTranslation.y = 1.2;
+            view.position.set(cameraTranslation);
+        }
 
     };
 

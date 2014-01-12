@@ -54,6 +54,65 @@ FIVES.Models = FIVES.Models || {};
             FIVES.Resources.SceneManager.updateOrientation(this);
         else if (componentName == "meshResource")
             FIVES.Resources.SceneManager.updateMesh(this);
+        else if (componentName == "animation")
+            this.setAnimationKey();
+    };
+
+    e.setAnimationKey = function() {
+        var animationKeyframes = this["animation"]["animationKeyframes"].split(';');
+        for(var k in animationKeyframes) {
+            var animationFrame = animationKeyframes[k];
+            if(animationFrame.indexOf(':') != -1)
+            {
+                var animationWithFrame = animationFrame.split(':');
+                var xflowAnimation = this.xml3dView.xflowAnimations[animationWithFrame[0]];
+                if(xflowAnimation)
+                {
+                    xflowAnimation.key.text(parseFloat(animationWithFrame[1]));
+                }
+            }
+        }
+    };
+
+    e.increaseAnimationKeys = function(fps) {
+        if(this.playingAnimationsCollection)
+        {
+            for(var animationName in this.playingAnimationsCollection)
+            {
+                var playingAnimation = this.playingAnimationsCollection[animationName];
+                var xflowKey = this.xml3dView.xflowAnimations[animationName].key;
+
+                var oldValue = parseFloat(xflowKey.text());
+                var newValue = this._computeNewKeyframeValue(playingAnimation, oldValue, fps);
+                xflowKey.text(newValue);
+            }
+        }
+    };
+
+    e._computeNewKeyframeValue = function(playingAnimation, oldValue, fps) {
+        var newValue = oldValue + playingAnimation.speed * fps / 1000.0;
+        if (newValue > playingAnimation.endFrame)
+        {
+            newValue = this._increaseAnimationCycles(playingAnimation, newValue);
+        }
+        return newValue;
+    };
+
+    e._increaseAnimationCycles = function(playingAnimation, newValue) {
+        var frameRange = playingAnimation.endFrame - playingAnimation.startFrame;
+        playingAnimation.currentCycle += Math.floor(newValue / frameRange);
+
+        var valueInNewCycle = newValue;
+        if(playingAnimation.currentCycle > playingAnimation.cycles && playingAnimation.cycles != -1)
+        {
+            valueInNewCycle = playingAnimation.endFrame;
+            FIVES.Plugins.Animation.stopAnimationPlayback(this.guid, playingAnimation.name);
+        }
+        else
+        {
+            valueInNewCycle = playingAnimation.startFrame + (newValue - playingAnimation.endFrame) % frameRange;
+        }
+        return valueInNewCycle;
     };
 
     e.updateAttribute = function(componentName, attributeName, value) {
