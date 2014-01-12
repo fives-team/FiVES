@@ -44,12 +44,18 @@ namespace KeyframeAnimationPlugin
         {
             ClientManager.Instance.RegisterClientService("animation", false, new Dictionary<string, Delegate>
             {
-                {"startServersideAnimation", (Action<string, string, float, float, int, float>)StartServersideAnimation},
-                {"stopServersideAnimation", (Action<string, string>)StopServersideAnimation},
-                {"startClientsideAnimation", (Action<string, string, float, float, int, float>)StartClientsideAnimation},
-                {"stopClientsideAnimation",(Action<string, string>)StopClientsideAnimation},
-                {"notifyAboutClientsideAnimationStart", (Action<Connection, Action<string, string, float, float, int, float>>)ReceiveAnimationStartTrigger},
-                {"notifyAboutClientsideAnimationStop", (Action<Connection, Action<string, string>>)ReceiveAnimationStopTrigger}
+                {"startServersideAnimation",
+                    (Action<string, string, float, float, int, float>)StartServersideAnimation},
+                {"stopServersideAnimation",
+                    (Action<string, string>)StopServersideAnimation},
+                {"startClientsideAnimation",
+                    (Action<string, string, float, float, int, float>)StartClientsideAnimation},
+                {"stopClientsideAnimation",
+                    (Action<string, string>)StopClientsideAnimation},
+                {"notifyAboutClientsideAnimationStart",
+                    (Action<Connection, Action<string, string, float, float, int, float>>)ReceiveAnimationStartTrigger},
+                {"notifyAboutClientsideAnimationStop",
+                    (Action<Connection, Action<string, string>>)ReceiveAnimationStopTrigger}
             });
         }
 
@@ -62,9 +68,12 @@ namespace KeyframeAnimationPlugin
         /// <param name="endFrame">Keyframe at which animation playback should end</param>
         /// <param name="cycles">Number of cycles the animation should be played (-1 for infinite playback)</param>
         /// <param param name="speed">Speed in which animation should be played</param>
-        internal void StartServersideAnimation(string entityGuid, string name, float startFrame, float endFrame, int cycles, float speed)
+        internal void StartServersideAnimation(string entityGuid,
+                                               string animationName,
+                                               float startFrame, float endFrame,
+                                               int cycles, float speed)
         {
-            KeyframeAnimation newAnimation = new KeyframeAnimation(name, startFrame, endFrame, cycles, speed);
+            KeyframeAnimation newAnimation = new KeyframeAnimation(animationName, startFrame, endFrame, cycles, speed);
             Manager.StartAnimation(Guid.Parse(entityGuid), newAnimation);
         }
 
@@ -87,7 +96,10 @@ namespace KeyframeAnimationPlugin
         /// <param name="endFrame">Keyframe at which animation playback should end</param>
         /// <param name="cycles">Number of cycles the animation should be played (-1 for infinite playback)</param>
         /// <param param name="speed">Speed in which animation should be played</param>
-        private void StartClientsideAnimation(string entityGuid, string animationName, float startFrame, float endFrame, int cycles, float speed)
+        private void StartClientsideAnimation(string entityGuid,
+                                              string animationName,
+                                              float startFrame, float endFrame,
+                                              int cycles, float speed)
         {
             lock (animationStartCallbacks)
             {
@@ -122,7 +134,8 @@ namespace KeyframeAnimationPlugin
         /// </summary>
         /// <param name="clientConnection">Connection that client uses to communicate with the server</param>
         /// <param name="callback">Client callback that is invoked when the message is sent</param>
-        private void ReceiveAnimationStartTrigger(Connection clientConnection, Action<string, string, float, float, int, float> callback)
+        private void ReceiveAnimationStartTrigger(Connection clientConnection,
+                                                  Action<string, string, float, float, int, float> callback)
         {
             lock (animationStartCallbacks)
             {

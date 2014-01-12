@@ -39,7 +39,10 @@ namespace KeyframeAnimationPlugin
                     string animationKeyframes = "";
                     foreach (KeyValuePair<string, KeyframeAnimation> runningAnimation in animatedEntity.Value)
                     {
-                        float newKey = PerformTickForEntityAnimation(animatedEntity.Key, runningAnimation.Value, frameDuration);
+                        float newKey = PerformTickForEntityAnimation(animatedEntity.Key,
+                                                                     runningAnimation.Value,
+                                                                     frameDuration);
+
                         animationKeyframes += runningAnimation.Key + ":" + newKey + ";";
                     }
                     Entity entity = World.Instance.FindEntity(animatedEntity.Key);

@@ -55,7 +55,8 @@ namespace KeyframeAnimationPlugin
         public void ManagerShouldRegisterAnimationForServersideAnimation()
         {
             plugin.StartServersideAnimation(createdEntityGuid, "testAnimation", 0f, 1f, 1, 1f);
-            Dictionary<string, KeyframeAnimation> animations = plugin.Manager.RunningAnimationsForEntities[entityGuidAsGuid];
+            Dictionary<string, KeyframeAnimation> animations = plugin.Manager
+                                                                     .RunningAnimationsForEntities[entityGuidAsGuid];
 
             Assert.Contains("testAnimation", animations.Keys);
 
@@ -208,7 +209,8 @@ namespace KeyframeAnimationPlugin
             plugin.StartServersideAnimation(createdEntityGuid, "testAnimation", 0.5f, 1.5f, 2, 2f);
 
             Assert.True(plugin.Manager.RunningAnimationsForEntities.ContainsKey(entityGuidAsGuid));
-            KeyframeAnimation testAnimation = plugin.Manager.RunningAnimationsForEntities[entityGuidAsGuid]["testAnimation"];
+            KeyframeAnimation testAnimation = plugin.Manager
+                                                    .RunningAnimationsForEntities[entityGuidAsGuid]["testAnimation"];
             Assert.AreEqual(1, plugin.Manager.RunningAnimationsForEntities[entityGuidAsGuid].Keys.Count);
             Assert.AreEqual(testAnimation.StartFrame, 0.5f);
             Assert.AreEqual(testAnimation.EndFrame, 1.5f);
