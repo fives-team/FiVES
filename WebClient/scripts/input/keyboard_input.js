@@ -13,7 +13,7 @@ FIVES.Input = FIVES.Input || {};
 (function() {
      "use strict";
 
-    var MOVE_SPEED = 0.1;
+    var MOVE_SPEED = 0.2;
     var SPIN_SPEED = 0.05;
 
     var UP_AXIS = {x: 0, y:1, z: 0};
@@ -37,7 +37,14 @@ FIVES.Input = FIVES.Input || {};
               /* D */  case 68:  FIVES.Communication.FivesCommunicator.setAvatarSpinAroundAxis(FIVES.Communication.FivesCommunicator.sessionKey, UP_AXIS,  -SPIN_SPEED); break;
                 default: break;
             }
-            _pressedKeys[e.keyCode] = true;
+            var avatarEntity  = FIVES.Models.EntityRegistry.getEntity(FIVES.AvatarEntityGuid);
+
+            if(avatarEntity)
+            {
+                //FIVES.Communication.FivesCommunicator.startServersideAnimation(FIVES.AvatarEntityGuid, "walk", e.xml3dView.xflowAnimations.walk.startKey, e.xml3dView.xflowAnimations.walk.endKey);
+                FIVES.Communication.FivesCommunicator.startClientsideAnimation(FIVES.AvatarEntityGuid, "walk", avatarEntity.xml3dView.xflowAnimations.walk.startKey, avatarEntity.xml3dView.xflowAnimations.walk.endKey, -1, 1.0);
+                _pressedKeys[e.keyCode] = true;
+            }
         }
     };
 
@@ -53,6 +60,12 @@ FIVES.Input = FIVES.Input || {};
             case 68:  FIVES.Communication.FivesCommunicator.setAvatarSpinAroundAxis(FIVES.Communication.FivesCommunicator.sessionKey,  UP_AXIS , 0); break;
         }
         _pressedKeys[e.keyCode] = false;
+        if(FIVES.Models.EntityRegistry.getEntity(FIVES.AvatarEntityGuid))
+        {
+            if(!(_pressedKeys[87] || _pressedKeys[83] || _pressedKeys[65] || _pressedKeys[68]))
+                // FIVES.Communication.FivesCommunicator.stopServersideAnimation(FIVES.AvatarEntityGuid, "walk");
+                FIVES.Communication.FivesCommunicator.stopClientsideAnimation(FIVES.AvatarEntityGuid, "walk");
+        }
     };
 
     k._initializeEventListeners = function() {
