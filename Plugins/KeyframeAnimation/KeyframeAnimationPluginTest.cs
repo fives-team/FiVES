@@ -46,7 +46,7 @@ namespace KeyframeAnimationPlugin
         public void ManagerShouldRegisterEntityForServersideAnimation()
         {
             plugin.StartServersideAnimation(createdEntityGuid, "testAnimation", 0f, 1f, 1, 1f);
-            Assert.Contains(createdEntityGuid, KeyframeAnimationManager.Instance.RunningAnimationsForEntities.Keys);
+            Assert.Contains(entityGuidAsGuid, KeyframeAnimationManager.Instance.RunningAnimationsForEntities.Keys);
         }
 
         /// <summary>
@@ -153,7 +153,7 @@ namespace KeyframeAnimationPlugin
             KeyframeAnimation animation = new KeyframeAnimation("testAnimation", 0f, 1f, 1, 1f);
 
             KeyframeAnimationManager.Instance.PerformTickForEntityAnimation(entityGuidAsGuid, animation, 1500);
-            Assert.Contains(createdEntityGuid, KeyframeAnimationManager.Instance.FinishedAnimations.Keys);
+            Assert.Contains(entityGuidAsGuid, KeyframeAnimationManager.Instance.FinishedAnimations.Keys);
             Assert.True(KeyframeAnimationManager.Instance.FinishedAnimations[entityGuidAsGuid].Contains("testAnimation"));
         }
 
