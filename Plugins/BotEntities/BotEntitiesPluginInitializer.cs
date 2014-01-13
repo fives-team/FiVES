@@ -92,7 +92,7 @@ namespace BotEntitiesPlugin
             else
             {
                 botEntity["velocity"]["x"] = botWalkSpeed;
-                PlayWalkAnimation(botEntity.Guid.ToString());
+                PlayWalkAnimation(botEntity);
             }
         }
 
@@ -102,13 +102,13 @@ namespace BotEntitiesPlugin
             if (rotateRoll == 8)
             {
                 botEntity["rotVelocity"]["r"] = botRotateSpeed;
-                PlayWalkAnimation(botEntity.Guid.ToString());
+                PlayWalkAnimation(botEntity);
             }
 
             else if (rotateRoll == 9)
             {
                 botEntity["rotVelocity"]["r"] = -botRotateSpeed;
-                PlayWalkAnimation(botEntity.Guid.ToString());
+                PlayWalkAnimation(botEntity);
             }
             else
             {
@@ -117,19 +117,19 @@ namespace BotEntitiesPlugin
             }
         }
 
-        private void PlayWalkAnimation(string botGuid)
+        private void PlayWalkAnimation(Entity botEntity)
         {
-            if (!KeyframeAnimationManager.Instance.IsPlaying(botGuid, "walk"))
+            if (!KeyframeAnimationManager.Instance.IsPlaying(botEntity.Guid, "walk"))
             {
                 KeyframeAnimation walkAnimation = new KeyframeAnimation("walk", 0f, 7.1f, -1, 1);
-                KeyframeAnimationManager.Instance.StartAnimation(botGuid, walkAnimation);
+                KeyframeAnimationManager.Instance.StartAnimation(botEntity.Guid, walkAnimation);
             }
         }
 
         private void StopWalkAnimation(Entity botEntity)
         {
             if ((float)botEntity["velocity"]["x"] == 0f && (float)botEntity["rotVelocity"]["r"] == 0f)
-                KeyframeAnimationManager.Instance.StopAnimation(botEntity.Guid.ToString(), "walk");
+                KeyframeAnimationManager.Instance.StopAnimation(botEntity.Guid, "walk");
         }
 
         private int numBots = 40;
