@@ -80,7 +80,7 @@ namespace KeyframeAnimationPlugin
                                                int cycles, float speed)
         {
             KeyframeAnimation newAnimation = new KeyframeAnimation(animationName, startFrame, endFrame, cycles, speed);
-            KeyframeAnimationManager.Instance.StartAnimation(entityGuid, newAnimation);
+            KeyframeAnimationManager.Instance.StartAnimation(Guid.Parse(entityGuid), newAnimation);
         }
 
         /// <summary>
@@ -90,7 +90,7 @@ namespace KeyframeAnimationPlugin
         /// <param name="name">Name of animation for which playback should be stopped</param>
         internal void StopServersideAnimation(string entityGuid, string name)
         {
-            KeyframeAnimationManager.Instance.StopAnimation(entityGuid, name);
+            KeyframeAnimationManager.Instance.StopAnimation(Guid.Parse(entityGuid), name);
         }
 
         /// <summary>
