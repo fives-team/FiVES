@@ -49,6 +49,8 @@ namespace FIVES
                 Controller.WaitForTerminate();
             }
 
+            PluginManager.Instance.ShutdownAllPlugins();
+
             return 0;
         }
 

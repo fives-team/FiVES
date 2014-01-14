@@ -46,6 +46,10 @@ namespace StaticSceneryPlugin
             }
         }
 
+        public void Shutdown()
+        {
+        }
+
         /// <summary>
         /// Reads scenery-model-uri and offsets from app-config
         /// </summary>

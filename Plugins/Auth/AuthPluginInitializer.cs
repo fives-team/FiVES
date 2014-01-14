@@ -37,6 +37,10 @@ namespace AuthPlugin
             Authentication.Instance = new Authentication();
         }
 
+        public void Shutdown()
+        {
+        }
+
         #endregion
     }
 }

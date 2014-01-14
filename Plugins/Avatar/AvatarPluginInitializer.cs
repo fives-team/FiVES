@@ -60,6 +60,10 @@ namespace AvatarPlugin
                 CheckAndRegisterAvatarEntity(entity);
         }
 
+        public void Shutdown()
+        {
+        }
+
         void HandleAddedEntity (object sender, EntityEventArgs e)
         {
             if (!CheckAndRegisterAvatarEntity(e.Entity))

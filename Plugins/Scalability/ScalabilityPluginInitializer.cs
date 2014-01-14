@@ -44,5 +44,9 @@ namespace ScalabilityPlugin
 
             Scalability.Instance = scalability;
         }
+
+        public void Shutdown()
+        {
+        }
     }
 }
