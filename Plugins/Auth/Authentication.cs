@@ -1,4 +1,5 @@
-﻿using System;
+﻿using KIARAPlugin;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -16,26 +17,25 @@ namespace AuthPlugin
         /// <param name="login">Login.</param>
         /// <param name="password">Password.</param>
         /// <returns>The associated security token.</returns>
-        public Guid Authenticate(string login, string password)
+        public bool Authenticate(Connection connection, string login, string password)
         {
             // Currently we just accept any login/password combinations.
-            var securityToken = Guid.NewGuid();
-            guidToLogin[securityToken] = login;
-            return securityToken;
+            connectionToLogin[connection] = login;
+            return true;
         }
 
         /// <summary>
-        /// Returns login name for a given <paramref name="securityToken"/>.
+        /// Returns login name for a given connection.
         /// </summary>
         /// <returns>The login name or null if such a token is not defined.</returns>
         /// <param name="securityToken">The security token.</param>
-        public string GetLoginName(Guid securityToken)
+        public string GetLoginName(Connection connection)
         {
-            if (guidToLogin.ContainsKey(securityToken))
-                return guidToLogin[securityToken];
+            if (connectionToLogin.ContainsKey(connection))
+                return connectionToLogin[connection];
             return null;
         }
 
-        private Dictionary<Guid, string> guidToLogin = new Dictionary<Guid, string>();
+        private Dictionary<Connection, string> connectionToLogin = new Dictionary<Connection, string>();
     }
 }

@@ -69,12 +69,12 @@ namespace LocationPlugin
         void RegisterClientServices()
         {
             ClientManager.Instance.RegisterClientService("location", true, new Dictionary<string, Delegate> {
-                {"updatePosition", (Action<string, string, Vector, int>) UpdatePosition},
-                {"updateOrientation", (Action<string, string, Quat, int>) UpdateOrientation}
+                {"updatePosition", (Action<string, Vector, int>) UpdatePosition},
+                {"updateOrientation", (Action<string, Quat, int>) UpdateOrientation}
             });
         }
 
-        private void UpdatePosition(string sessionKey, string guid, Vector position, int timestamp)
+        private void UpdatePosition(string guid, Vector position, int timestamp)
         {
             var entity = World.Instance.FindEntity(guid);
             entity["position"]["x"] = position.x;
@@ -84,7 +84,7 @@ namespace LocationPlugin
             // We currently ignore timestamp, but may it in the future to implement dead reckoning.
         }
 
-        private void UpdateOrientation(string sessionKey, string guid, Quat orientation, int timestamp)
+        private void UpdateOrientation(string guid, Quat orientation, int timestamp)
         {
             var entity = World.Instance.FindEntity(guid);
             entity["orientation"]["x"] = orientation.x;
