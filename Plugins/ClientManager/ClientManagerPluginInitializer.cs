@@ -41,6 +41,10 @@ namespace ClientManagerPlugin {
             ClientManager.Instance = new ClientManager();
         }
 
+        public void Shutdown()
+        {
+        }
+
         #endregion
     }
 

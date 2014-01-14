@@ -51,6 +51,10 @@ namespace ScriptingPlugin
             Scripting.Instance = new Scripting();
         }
 
+        public void Shutdown()
+        {
+        }
+
         #endregion
     }
 }

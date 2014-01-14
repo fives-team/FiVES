@@ -41,6 +41,10 @@ namespace KIARAPlugin
             LoadProtocols(protocolDir);
         }
 
+        public void Shutdown()
+        {
+        }
+
         #endregion
 
         static void LoadProtocols(string protocolDir)

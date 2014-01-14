@@ -42,6 +42,12 @@ namespace FIVES
         /// been satisfied.
         /// </summary>
         void Initialize();
+
+        /// <summary>
+        /// This method may be executed when the server is shutting down. Plugins should not use this method to persist
+        /// critical data as server may also crash unexpectely and such data will be lost.
+        /// </summary>
+        void Shutdown();
     }
 }
 

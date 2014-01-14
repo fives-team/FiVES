@@ -52,6 +52,10 @@ namespace TerminalPlugin
                 ReplaceNLogConsoleLogger(consoleTarget);
         }
 
+        public void Shutdown()
+        {
+        }
+
         private void ReplaceNLogConsoleLogger(ConsoleTarget consoleTarget)
         {
             // Construct new methodCall target.
