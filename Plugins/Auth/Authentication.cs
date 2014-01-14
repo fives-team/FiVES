@@ -27,8 +27,8 @@ namespace AuthPlugin
         /// <summary>
         /// Returns login name for a given connection.
         /// </summary>
-        /// <returns>The login name or null if such a token is not defined.</returns>
-        /// <param name="securityToken">The security token.</param>
+        /// <returns>The login name or null if such a connection is not registered.</returns>
+        /// <param name="connection">Client connection.</param>
         public string GetLoginName(Connection connection)
         {
             if (connectionToLogin.ContainsKey(connection))
