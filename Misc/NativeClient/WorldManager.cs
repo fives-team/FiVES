@@ -9,23 +9,15 @@ namespace NativeClient
     class WorldManager
     {
         /// <summary>
-        /// Session key used to associated the world with authenticated client.
-        /// </summary>
-        /// <value>The session key.</value>
-        public string SessionKey { get; private set; }
-
-        /// <summary>
         /// Initializes a new instance of the <see cref="NativeClient.WorldManager"/> class.
         /// </summary>
         /// <param name="communicator">Connected communicator.</param>
-        /// <param name="sessionKey">Client session key.</param>
-        public WorldManager(Communicator communicator, string sessionKey)
+        public WorldManager(Communicator communicator)
         {
             if (!communicator.IsConnected)
                 throw new ArgumentException("Communicator must be connected when passed to WorldManager constructor.");
 
             this.communicator = communicator;
-            this.SessionKey = sessionKey;
 
             QueryClientServices();
         }
@@ -89,10 +81,10 @@ namespace NativeClient
         private void RegisterHandlers()
         {
             string handleNewObject = communicator.RegisterFunc(HandleNewObject);
-            communicator.Call("objectsync.notifyAboutNewObjects", new List<int>{1}, SessionKey, handleNewObject);
+            communicator.Call("objectsync.notifyAboutNewObjects", new List<int>{0}, handleNewObject);
 
             string handleUpdate = communicator.RegisterFunc(HandleUpdate);
-            communicator.Call("objectsync.notifyAboutObjectUpdates", new List<int> { 1 }, SessionKey, handleUpdate);
+            communicator.Call("objectsync.notifyAboutObjectUpdates", new List<int> {0}, handleUpdate);
         }
 
         private void HandleNewObject(JToken entityInfo)
