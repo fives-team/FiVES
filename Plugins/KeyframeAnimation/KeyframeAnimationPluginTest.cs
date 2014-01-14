@@ -158,7 +158,6 @@ namespace KeyframeAnimationPlugin
         [Test()]
         public void ManagerShouldStopAnimationsAfterHavingSkippedTotalNumberOfCycles()
         {
-            float newFrame;
             KeyframeAnimation animation = new KeyframeAnimation("testAnimation", 0f, 1f, 3, 1f);
             plugin.Manager.PerformTickForEntityAnimation(entityGuidAsGuid, animation, 4500);
 
