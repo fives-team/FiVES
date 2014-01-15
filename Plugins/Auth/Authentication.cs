@@ -14,6 +14,7 @@ namespace AuthPlugin
         /// Authenticate the user with a specified <paramref name="login"/> and <paramref name="password"/>. Returns
         /// the associated security token as GUID. If authentification fails, Guid.Empty is returned.
         /// </summary>
+        /// <param name="connection">Client connection.</param>
         /// <param name="login">Login.</param>
         /// <param name="password">Password.</param>
         /// <returns>True on successful authentication, false otherwise.</returns>
