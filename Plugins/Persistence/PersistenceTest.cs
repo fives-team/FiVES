@@ -30,6 +30,7 @@ namespace PersistencePlugin
         }
 
         [Test()]
+        [Ignore()]
         public void FirstShouldSetupDatabase()
         {
             cfg = new Configuration ();

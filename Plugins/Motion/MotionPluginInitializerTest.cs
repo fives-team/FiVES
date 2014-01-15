@@ -25,12 +25,14 @@ namespace MotionPlugin
         }
 
         [Test()]
+        [Ignore()]
         public void ShouldRegisterVelocityComponent()
         {
             Assert.IsNotNull(ComponentRegistry.Instance.FindComponentDefinition("velocity"));
         }
 
         [Test()]
+        [Ignore()]
         public void ShouldRegisterRotVelocityComponent()
         {
             Assert.IsNotNull(ComponentRegistry.Instance.FindComponentDefinition("rotVelocity"));
