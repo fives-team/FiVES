@@ -71,5 +71,9 @@
       <Project>{E1955FF2-6109-4C71-9F13-486A48DE6C17}</Project>
       <Name>ClientManager</Name>
     </ProjectReference>
+    <ProjectReference Include="..\KIARA\KIARA.csproj">
+      <Project>{eefddd48-1795-4d62-a255-29167b0a3bc3}</Project>
+      <Name>KIARA</Name>
+    </ProjectReference>
   </ItemGroup>
 </Project>

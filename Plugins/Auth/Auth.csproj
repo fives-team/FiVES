@@ -57,5 +57,9 @@
       <Project>{DB1099A1-B7FE-474F-A03A-41687D6C5C76}</Project>
       <Name>PluginManager</Name>
     </ProjectReference>
+    <ProjectReference Include="..\KIARA\KIARA.csproj">
+      <Project>{eefddd48-1795-4d62-a255-29167b0a3bc3}</Project>
+      <Name>KIARA</Name>
+    </ProjectReference>
   </ItemGroup>
 </Project>

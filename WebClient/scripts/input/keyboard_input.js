@@ -31,10 +31,10 @@ FIVES.Input = FIVES.Input || {};
         {
             switch (e.keyCode)
             {
-              /* W */  case 87:  FIVES.Communication.FivesCommunicator.setAvatarForwardBackwardMotion(FIVES.Communication.FivesCommunicator.sessionKey,  MOVE_SPEED); break;
-              /* S */  case 83:  FIVES.Communication.FivesCommunicator.setAvatarForwardBackwardMotion(FIVES.Communication.FivesCommunicator.sessionKey,  -MOVE_SPEED); break;
-              /* A */  case 65:  FIVES.Communication.FivesCommunicator.setAvatarSpinAroundAxis(FIVES.Communication.FivesCommunicator.sessionKey, UP_AXIS,  SPIN_SPEED); break;
-              /* D */  case 68:  FIVES.Communication.FivesCommunicator.setAvatarSpinAroundAxis(FIVES.Communication.FivesCommunicator.sessionKey, UP_AXIS,  -SPIN_SPEED); break;
+              /* W */  case 87:  FIVES.Communication.FivesCommunicator.setAvatarForwardBackwardMotion(MOVE_SPEED); break;
+              /* S */  case 83:  FIVES.Communication.FivesCommunicator.setAvatarForwardBackwardMotion(-MOVE_SPEED); break;
+              /* A */  case 65:  FIVES.Communication.FivesCommunicator.setAvatarSpinAroundAxis(UP_AXIS, SPIN_SPEED); break;
+              /* D */  case 68:  FIVES.Communication.FivesCommunicator.setAvatarSpinAroundAxis(UP_AXIS, -SPIN_SPEED); break;
                 default: break;
             }
             var avatarEntity  = FIVES.Models.EntityRegistry.getEntity(FIVES.AvatarEntityGuid);
@@ -54,10 +54,10 @@ FIVES.Input = FIVES.Input || {};
         {
             /* W, S */
             case 87:
-            case 83:  FIVES.Communication.FivesCommunicator.setAvatarForwardBackwardMotion(FIVES.Communication.FivesCommunicator.sessionKey,  0); break;
+            case 83:  FIVES.Communication.FivesCommunicator.setAvatarForwardBackwardMotion(0); break;
             /* A, D */
             case 65:
-            case 68:  FIVES.Communication.FivesCommunicator.setAvatarSpinAroundAxis(FIVES.Communication.FivesCommunicator.sessionKey,  UP_AXIS , 0); break;
+            case 68:  FIVES.Communication.FivesCommunicator.setAvatarSpinAroundAxis(UP_AXIS , 0); break;
         }
         _pressedKeys[e.keyCode] = false;
         if(FIVES.Models.EntityRegistry.getEntity(FIVES.AvatarEntityGuid))
