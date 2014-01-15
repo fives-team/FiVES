@@ -16,7 +16,7 @@ namespace AuthPlugin
         /// </summary>
         /// <param name="login">Login.</param>
         /// <param name="password">Password.</param>
-        /// <returns>The associated security token.</returns>
+        /// <returns>True on successful authentication, false otherwise.</returns>
         public bool Authenticate(Connection connection, string login, string password)
         {
             // Currently we just accept any login/password combinations.
