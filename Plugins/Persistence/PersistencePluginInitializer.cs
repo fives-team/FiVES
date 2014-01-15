@@ -57,6 +57,10 @@ namespace PersistencePlugin
             ThreadPool.QueueUserWorkItem(_ => PersistChangedEntities());
         }
 
+        public void Shutdown()
+        {
+        }
+
         /// <summary>
         /// Initializes NHibernate. Adds the mappings based on the assembly, initializes the session factory and opens
         /// a long-running global session
