@@ -306,6 +306,23 @@ namespace FIVES
             }
         }
 
+        /// <summary>
+        /// Invokes the shutdown of all plug-ins in the order of their plugin dependencies, which means that plugins
+        /// may  expect their dependencies to be still loaded when they are being shut down. This method should only be
+        /// used upon server shutdown.
+        /// </summary>
+        public void ShutdownAllPlugins()
+        {
+            List<PluginInfo> pluginsToShutdown = new List<PluginInfo>(loadedPlugins.Values);
+            while (pluginsToShutdown.Count > 0)
+            {
+                PluginInfo pluginOnWhichNothingDepends = pluginsToShutdown.Find(
+                    p => pluginsToShutdown.All(p2 => !p2.Initializer.PluginDependencies.Contains(p.Name)));
+
+                pluginOnWhichNothingDepends.Initializer.Shutdown();
+                pluginsToShutdown.Remove(pluginOnWhichNothingDepends);
+            }
+        }
     }
 }
 

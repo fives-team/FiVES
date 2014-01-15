@@ -28,5 +28,9 @@ namespace EventLoopPlugin
         {
             EventLoop.Instance = new EventLoop();
         }
+
+        public void Shutdown()
+        {
+        }
     }
 }

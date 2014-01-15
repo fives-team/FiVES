@@ -33,6 +33,10 @@ namespace KeyframeAnimationPlugin
             Manager.Initialize();
         }
 
+        public void Shutdown()
+        {
+        }
+
         internal void RegisterComponents()
         {
             ComponentDefinition animationComponent = new ComponentDefinition("animation");

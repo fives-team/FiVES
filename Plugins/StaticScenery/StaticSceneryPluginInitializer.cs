@@ -36,7 +36,7 @@ namespace StaticSceneryPlugin
             {
                 ReadConfig();
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 logger.Warn("Could not read Config for StaticScenery. Using default values instead.");
             }
@@ -44,6 +44,10 @@ namespace StaticSceneryPlugin
             {
                 CreateSceneryEntity();
             }
+        }
+
+        public void Shutdown()
+        {
         }
 
         /// <summary>

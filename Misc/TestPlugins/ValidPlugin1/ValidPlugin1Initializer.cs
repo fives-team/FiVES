@@ -35,5 +35,9 @@ namespace ValidPlugin1
         public void Initialize()
         {
         }
+
+        public void Shutdown()
+        {
+        }
     }
 }

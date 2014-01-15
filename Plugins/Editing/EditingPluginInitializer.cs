@@ -42,6 +42,10 @@ namespace EditingNamespace
             PluginManager.Instance.AddPluginLoadedHandler("ClientManager", RegisterEditingAPI);
         }
 
+        public void Shutdown()
+        {
+        }
+
         #endregion
 
         /// <summary>

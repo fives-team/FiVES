@@ -42,6 +42,15 @@ namespace FIVES
         /// been satisfied.
         /// </summary>
         void Initialize();
+
+        /// <summary>
+        /// This method will be executed when the server is shutting down. Plug-ins may expect to have all plug-ins
+        /// which they depend upon to be still loaded while this method is invoked, but such plug-ins may be unloaded
+        /// immediately after this function returns. As we can not completely illiminate the possibility of the server
+        /// crashes, it is also recommended for the developers to introduce other mechanisms that continuously persist
+        /// critical data to reduce the data lost in such an event.
+        /// </summary>
+        void Shutdown();
     }
 }
 

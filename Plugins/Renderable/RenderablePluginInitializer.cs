@@ -38,6 +38,10 @@ namespace RenderablePlugin
             DefineComponents();
         }
 
+        public void Shutdown()
+        {
+        }
+
         private void DefineComponents()
         {
             ComponentDefinition renderable = new ComponentDefinition("meshResource");

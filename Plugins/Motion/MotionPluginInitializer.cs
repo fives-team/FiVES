@@ -43,6 +43,10 @@ namespace MotionPlugin
             PluginManager.Instance.AddPluginLoadedHandler("ClientManager", RegisterClientServices);
         }
 
+        public void Shutdown()
+        {
+        }
+
         #endregion
 
         void DefineComponents()
