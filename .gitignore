@@ -15,3 +15,4 @@ Core/PluginManager/TestPlugins
 *~
 *.vsp
 *.psess
+WebClient/resources/proprietary
