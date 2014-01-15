@@ -4,6 +4,7 @@ using FIVES;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Collections.Concurrent;
+using KIARAPlugin;
 
 namespace ClientManagerPlugin
 {
@@ -75,27 +76,27 @@ namespace ClientManagerPlugin
         /// <summary>
         /// Registers a new client for updates by adding its update callback to the list of callbacks
         /// </summary>
-        /// <param name="sessionKey">Session Key which the client got from the server</param>
+        /// <param name="connection">Client connection</param>
         /// <param name="clientCallback">Callback to be invoked on client to process updates</param>
-        internal void RegisterToClientUpdates(Guid sessionKey, Action<List<UpdateInfo>> clientCallback)
+        internal void RegisterToClientUpdates(Connection connection, Action<List<UpdateInfo>> clientCallback)
         {
             lock (CallbackRegistryLock)
             {
-                if(!ClientCallbacks.ContainsKey(sessionKey))
-                    ClientCallbacks.Add(sessionKey, clientCallback);
+                if(!ClientCallbacks.ContainsKey(connection))
+                    ClientCallbacks.Add(connection, clientCallback);
             }
         }
 
         /// <summary>
         /// Stops sending updates to a client by removing its callback from the callback registry.
-        /// <param name="sessionKey">Session Key of the client that disconnected</param>
+        /// <param name="connection">Client connection</param>
         /// </summary>
-        internal void StopClientUpdates(Guid sessionKey)
+        internal void StopClientUpdates(Connection connection)
         {
             lock (CallbackRegistryLock)
             {
-                if (ClientCallbacks.ContainsKey(sessionKey))
-                    ClientCallbacks.Remove(sessionKey);
+                if (ClientCallbacks.ContainsKey(connection))
+                    ClientCallbacks.Remove(connection);
             }
         }
 
@@ -200,7 +201,8 @@ namespace ClientManagerPlugin
         /// <summary>
         /// Callback to be called on updates, provided by the client
         /// </summary>
-        private Dictionary<Guid, Action<List<UpdateInfo>>> ClientCallbacks = new Dictionary<Guid,Action<List<UpdateInfo>>>();
+        private Dictionary<Connection, Action<List<UpdateInfo>>> ClientCallbacks =
+            new Dictionary<Connection, Action<List<UpdateInfo>>>();
 
         /// <summary>
         /// Mutex Object for the update queue

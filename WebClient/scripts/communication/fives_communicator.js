@@ -49,10 +49,9 @@ FIVES.Communication = FIVES.Communication || {};
         };
 
         var loginCallback = function(result) {
-            if (result == "") {
+            if (result == false) {
                 reportFailure("Invalid user name or password.");
             } else {
-                self.sessionKey = result;
                 callback(true);
             }
         };
@@ -140,10 +139,10 @@ FIVES.Communication = FIVES.Communication || {};
         this.createServerScriptFor = this.connection.generateFuncWrapper("scripting.createServerScriptFor");
 
         this.notifyAboutNewObjects = this.connection.generateFuncWrapper("objectsync.notifyAboutNewObjects");
-        this.notifyAboutNewObjects(this.sessionKey, FIVES.Models.EntityRegistry.addEntityFromServer.bind(FIVES.Models.EntityRegistry));
+        this.notifyAboutNewObjects(FIVES.Models.EntityRegistry.addEntityFromServer.bind(FIVES.Models.EntityRegistry));
 
         this.notifyAboutObjectUpdates = this.connection.generateFuncWrapper("objectsync.notifyAboutObjectUpdates");
-        this.notifyAboutObjectUpdates(this.sessionKey, _objectUpdate);
+        this.notifyAboutObjectUpdates(_objectUpdate);
 
         this.updateEntityPosition = this.connection.generateFuncWrapper("location.updatePosition");
         this.updateEntityOrientation = this.connection.generateFuncWrapper("location.updateOrientation");
@@ -168,18 +167,18 @@ FIVES.Communication = FIVES.Communication || {};
         this.notifyAboutClientsideAnimationStop(FIVES.Plugins.Animation.stopAnimationPlayback);
 
         this.listObjects().on("result", _listObjectsCallback.bind(this));
-        var getEntityGuidCall = this.getAvatarEntityGuid(this.sessionKey);
+        var getEntityGuidCall = this.getAvatarEntityGuid();
         getEntityGuidCall.on("success", function(avatarEntityGuid) {
            FIVES.AvatarEntityGuid = avatarEntityGuid;
         });
     };
 
     c.sendEntityPositionUpdate = function(guid, position) {
-        this.updateEntityPosition(this.sessionKey, guid, position, this._generateTimestamp());
+        this.updateEntityPosition(guid, position, this._generateTimestamp());
     };
 
     c.sendEntityOrientationUpdate = function(guid, orientation) {
-        this.updateEntityOrientation(this.sessionKey, guid, orientation, this._generateTimestamp());
+        this.updateEntityOrientation(guid, orientation, this._generateTimestamp());
     };
 
     // Expose Communicator to namespace

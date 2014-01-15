@@ -23,17 +23,17 @@ namespace ClientManagerPlugin
             RegisterClientMethod("kiara.implements", true, (Func<List<string>, List<bool>>)AuthenticatedImplements);
 
             RegisterClientService("auth", false, new Dictionary<string, Delegate> {
-                {"login", (Func<Connection, string, string, string>)Authenticate}
+                {"login", (Func<Connection, string, string, bool>)Authenticate}
             });
 
             RegisterClientMethod("getTime", false, (Func<DateTime>)GetTime);
 
             RegisterClientService("objectsync", true, new Dictionary<string, Delegate> {
                 {"listObjects", (Func<List<Dictionary<string, object>>>) ListObjects},
-                {"notifyAboutNewObjects", (Action<string, Action<Dictionary<string, object>>>) NotifyAboutNewObjects},
-                {"notifyAboutRemovedObjects", (Action<string, Action<string>>) NotifyAboutRemovedObjects},
+                {"notifyAboutNewObjects", (Action<Connection, Action<Dictionary<string, object>>>) NotifyAboutNewObjects},
+                {"notifyAboutRemovedObjects", (Action<Connection, Action<string>>) NotifyAboutRemovedObjects},
                 {"notifyAboutObjectUpdates",
-                    (Action<string, Action<List<ClientUpdateQueue.UpdateInfo>>>) NotifyAboutObjectUpdates},
+                    (Action<Connection, Action<List<ClientUpdateQueue.UpdateInfo>>>) NotifyAboutObjectUpdates},
             });
 
             PluginManager.Instance.AddPluginLoadedHandler("Terminal", RegisterTerminalCommands);
@@ -80,42 +80,65 @@ namespace ClientManagerPlugin
             return entityInfo;
         }
 
-        string Authenticate(Connection connection, string login, string password)
+        bool Authenticate(Connection connection, string login, string password)
         {
-            Guid sessionKey = Authentication.Instance.Authenticate(login, password);
-            if (sessionKey == Guid.Empty)
-                return "";
-            authenticatedClients[sessionKey] = connection;
+            if (!Authentication.Instance.Authenticate(connection, login, password))
+                return false;
+
+            authenticatedClients.Add(connection);
+            connection.Closed += HandleAuthenticatedClientDisconnected;
+
             if (OnAuthenticated != null)
-                OnAuthenticated(sessionKey);
+                OnAuthenticated(connection);
+
             foreach (var entry in authenticatedMethods)
                 connection.RegisterFuncImplementation(entry.Key, entry.Value);
-            return sessionKey.ToString();
+
+            return true;
         }
 
-        void NotifyAboutNewObjects(string sessionKey, Action<Dictionary<string, object>> callback)
+        private void HandleAuthenticatedClientDisconnected(object sender, EventArgs e)
+        {
+            Connection connection = sender as Connection;
+
+            if (onNewEntityHandlers.ContainsKey(connection))
+            {
+                foreach (var handler in onNewEntityHandlers[connection])
+                    World.Instance.AddedEntity -= handler;
+            }
+
+            if (onRemovedEntityHandlers.ContainsKey(connection))
+            {
+                foreach (var handler in onRemovedEntityHandlers[connection])
+                    World.Instance.RemovedEntity -= handler;
+            }
+
+            UpdateQueue.StopClientUpdates(connection);
+
+            authenticatedClients.Remove(connection);
+        }
+
+        void NotifyAboutNewObjects(Connection connection, Action<Dictionary<string, object>> callback)
         {
             var handler = new EventHandler<EntityEventArgs>((sender, e) => callback(ConstructEntityInfo(e.Entity)));
-            var guid = Guid.Parse(sessionKey);
-            if (!onNewEntityHandlers.ContainsKey(guid))
-                onNewEntityHandlers[guid] = new List<EventHandler<EntityEventArgs>>();
-            onNewEntityHandlers[guid].Add(handler);
+            if (!onNewEntityHandlers.ContainsKey(connection))
+                onNewEntityHandlers[connection] = new List<EventHandler<EntityEventArgs>>();
+            onNewEntityHandlers[connection].Add(handler);
             World.Instance.AddedEntity += handler;
         }
 
-        void NotifyAboutRemovedObjects(string sessionKey, Action<string> callback)
+        void NotifyAboutRemovedObjects(Connection connection, Action<string> callback)
         {
             var handler = new EventHandler<EntityEventArgs>((sender, e) => callback(e.Entity.Guid.ToString()));
-            var guid = Guid.Parse(sessionKey);
-            if (!onRemovedEntityHandlers.ContainsKey(guid))
-                onRemovedEntityHandlers[guid] = new List<EventHandler<EntityEventArgs>>();
-            onRemovedEntityHandlers[guid].Add(handler);
+            if (!onRemovedEntityHandlers.ContainsKey(connection))
+                onRemovedEntityHandlers[connection] = new List<EventHandler<EntityEventArgs>>();
+            onRemovedEntityHandlers[connection].Add(handler);
             World.Instance.RemovedEntity += handler;
         }
 
-        void NotifyAboutObjectUpdates(string sessionKey, Action<List<ClientUpdateQueue.UpdateInfo>> callback)
+        void NotifyAboutObjectUpdates(Connection connection, Action<List<ClientUpdateQueue.UpdateInfo>> callback)
         {
-            UpdateQueue.RegisterToClientUpdates(Guid.Parse(sessionKey), callback);
+            UpdateQueue.RegisterToClientUpdates(connection, callback);
         }
 
         List<string> basicClientServices = new List<string>();
@@ -146,7 +169,7 @@ namespace ClientManagerPlugin
         /// <summary>
         /// List of authenticated clients.
         /// </summary>
-        Dictionary<Guid, Connection> authenticatedClients = new Dictionary<Guid, Connection>();
+        HashSet<Connection> authenticatedClients = new HashSet<Connection>();
 
         /// <summary>
         /// Methods that required user to authenticate before they become available.
@@ -156,12 +179,12 @@ namespace ClientManagerPlugin
         /// <summary>
         /// List of handlers that need to be removed when client disconnects.
         /// </summary>
-        Dictionary<Guid, List<EventHandler<EntityEventArgs>>> onNewEntityHandlers =
-            new Dictionary<Guid, List<EventHandler<EntityEventArgs>>>();
-        Dictionary<Guid, List<EventHandler<EntityEventArgs>>> onRemovedEntityHandlers =
-            new Dictionary<Guid, List<EventHandler<EntityEventArgs>>>();
+        Dictionary<Connection, List<EventHandler<EntityEventArgs>>> onNewEntityHandlers =
+            new Dictionary<Connection, List<EventHandler<EntityEventArgs>>>();
+        Dictionary<Connection, List<EventHandler<EntityEventArgs>>> onRemovedEntityHandlers =
+            new Dictionary<Connection, List<EventHandler<EntityEventArgs>>>();
 
-        event Action<Guid> OnAuthenticated;
+        event Action<Connection> OnAuthenticated;
 
         #endregion
 
@@ -206,32 +229,7 @@ namespace ClientManagerPlugin
                 clientService[methodName] = handler;
         }
 
-        public void NotifyWhenClientDisconnected(Guid secToken, Action<Guid> callback)
-        {
-            if (!authenticatedClients.ContainsKey(secToken))
-                throw new Exception("Client with with given session key {0} is not authenticated.");
-
-            authenticatedClients[secToken].Closed += new EventHandler((sender, e) =>
-            {
-                if (onNewEntityHandlers.ContainsKey(secToken))
-                {
-                    foreach (var handler in onNewEntityHandlers[secToken])
-                        World.Instance.AddedEntity -= handler;
-                }
-
-                if (onRemovedEntityHandlers.ContainsKey(secToken))
-                {
-                    foreach (var handler in onRemovedEntityHandlers[secToken])
-                        World.Instance.RemovedEntity -= handler;
-                }
-                UpdateQueue.StopClientUpdates(secToken);
-
-                callback(secToken);
-                authenticatedClients.Remove(secToken);
-            });
-        }
-
-        public void NotifyWhenAnyClientAuthenticated(Action<Guid> callback)
+        public void NotifyWhenAnyClientAuthenticated(Action<Connection> callback)
         {
             OnAuthenticated += callback;
         }

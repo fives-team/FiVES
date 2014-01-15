@@ -91,11 +91,11 @@ namespace NativeClient
             authenticator.Authenticated += HandleAuthenticated;
         }
 
-        void HandleAuthenticated(object sender, AuthenticatedEventArgs e)
+        void HandleAuthenticated(object sender, EventArgs e)
         {
             logger.Info("Loading world");
 
-            worldManager = new WorldManager(communicator, e.SessionKey);
+            worldManager = new WorldManager(communicator);
             worldManager.Loaded += HandleWorldLoaded;
 
             StartCreatingEntities();
@@ -135,8 +135,7 @@ namespace NativeClient
         void MoveEntity(EntityInfo info)
         {
             info.Position.x = Timestamps.FloatMilliseconds;
-            communicator.Call("location.updatePosition", worldManager.SessionKey, info.Guid, info.Position,
-                              Timestamps.UnixTimestamp);
+            communicator.Call("location.updatePosition", info.Guid, info.Position, Timestamps.UnixTimestamp);
         }
 
         void MoveLocallyCreatedEntities()
@@ -160,8 +159,7 @@ namespace NativeClient
 
             info.Orientation = aa.ToQuaternion();
 
-            communicator.Call("location.updateOrientation", worldManager.SessionKey, info.Guid, info.Orientation,
-                              Timestamps.UnixTimestamp);
+            communicator.Call("location.updateOrientation", info.Guid, info.Orientation, Timestamps.UnixTimestamp);
         }
 
         void RotateLocallyCreatedEntities()

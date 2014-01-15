@@ -20,7 +20,7 @@ namespace AuthPlugin
         {
             get
             {
-                return new List<string>();
+                return new List<string> { "KIARA" };
             }
         }
 

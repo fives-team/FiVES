@@ -5,23 +5,6 @@ using System.Collections.Generic;
 namespace NativeClient
 {
     /// <summary>
-    /// Authenticated event arguments.
-    /// </summary>
-    class AuthenticatedEventArgs : EventArgs
-    {
-        public AuthenticatedEventArgs(string sessionKey)
-        {
-            SessionKey = sessionKey;
-        }
-
-        /// <summary>
-        /// Session key associated with the authenticated client.
-        /// </summary>
-        /// <value>The session key.</value>
-        public string SessionKey { get; private set; }
-    }
-
-    /// <summary>
     /// Handles client authentication.
     /// </summary>
     class Authenticator
@@ -43,7 +26,7 @@ namespace NativeClient
         /// <summary>
         /// Occurs when the client is authenticated.
         /// </summary>
-        public event EventHandler<AuthenticatedEventArgs> Authenticated;
+        public event EventHandler Authenticated;
 
         void QueryAuthInterface()
         {
@@ -69,12 +52,12 @@ namespace NativeClient
             if (!reply.Success)
                 Logger.Fatal("Failed on authentication: {0}", reply.Message);
 
-            var sessionKey = reply.RetValue.ToObject<string>();
-            if (new Guid(sessionKey) == Guid.Empty)
+            bool success = reply.RetValue.ToObject<bool>();
+            if (!success)
                 Logger.Fatal("Incorrect login/password", reply.Message);
 
             if (Authenticated != null)
-                Authenticated(this, new AuthenticatedEventArgs(sessionKey));
+                Authenticated(this, new EventArgs());
         }
 
         string GenerateRandomLogin()
