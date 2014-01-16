@@ -34,6 +34,11 @@ namespace BotEntitiesPlugin
            EventLoop.Instance.TickFired += new EventHandler<TickEventArgs>(HandleEventTick);
         }
 
+        public void Shutdown()
+        {
+            Console.WriteLine("Wheeeeeeeeeeeeeeeee ....");
+        }
+
         private void RetrieveConfigurationValues()
         {
             string configPath = this.GetType().Assembly.Location;
