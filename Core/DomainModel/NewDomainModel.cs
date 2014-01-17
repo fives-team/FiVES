@@ -102,18 +102,21 @@ namespace FIVES_NewDomainModel
         event EventHandler<EntityEventArgs> RemovedEntity;
     }
 
+    public interface IECAFactory
+    {
+        IComponentDefinition CreateComponentDefinition(string name,
+            IEnumerable<IAttributeDefinition> attributeDefinitions);
+
+        IAttributeDefinition CreateAttributeDefinition<T>(string name);
+        IAttributeDefinition CreateAttributeDefinition<T>(string name, T defaultValue);
+
+        IEntity CreateEntity();
+        IEntity CreateEntity(Guid guid);
+    }
+
     public static class ECA
     {
-        static public IComponentDefinition CreateComponentDefinition(
-            string name, IEnumerable<IAttributeDefinition> attributeDefinitions) { return null; }
-
-        static public IAttributeDefinition CreateAttributeDefinition<T>(string name) { return null; }
-        static public IAttributeDefinition CreateAttributeDefinition<T>(
-            string name, T defaultValue) { return null; }
-
-        static public IEntity CreateEntity() { return null; }
-        static public IEntity CreateEntity(Guid guid) { return null; }
-
+        static public IECAFactory Factory;
         static public IComponentRegistry ComponentRegistry;
         static public IEntityCollection World;
     }
@@ -123,11 +126,11 @@ namespace FIVES_NewDomainModel
         public void ExampleUsage()
         {
             // Register a new component.
-            ECA.ComponentRegistry.Register(ECA.CreateComponentDefinition("mixup",
+            ECA.ComponentRegistry.Register(ECA.Factory.CreateComponentDefinition("mixup",
                 new List<IAttributeDefinition> {
-                    ECA.CreateAttributeDefinition<float>("f", 3.14f),
-                    ECA.CreateAttributeDefinition<int>("y"),
-                    ECA.CreateAttributeDefinition<string>("s", null)
+                    ECA.Factory.CreateAttributeDefinition<float>("f", 3.14f),
+                    ECA.Factory.CreateAttributeDefinition<int>("y"),
+                    ECA.Factory.CreateAttributeDefinition<string>("s", null)
                 }
             ));
 
@@ -137,7 +140,7 @@ namespace FIVES_NewDomainModel
             float f = (float)ECA.World[myEntityGuid]["mixup"]["f"];
 
             // Create new entity and add it to the world.
-            var newEntity = ECA.CreateEntity();
+            var newEntity = ECA.Factory.CreateEntity();
             ECA.World.Add(newEntity);
 
             // Iterate over all attributes in all components in all entities in the world.
