@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using ClientManagerPlugin;
 using FIVES;
 
 namespace SimpleGravityPlugin
@@ -16,7 +17,7 @@ namespace SimpleGravityPlugin
 
         public List<string> PluginDependencies
         {
-            get { return new List<string>(); }
+            get { return new List<string> { "ClientManager","Motion"}; }
         }
 
         public List<string> ComponentDependencies
