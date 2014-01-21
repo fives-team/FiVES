@@ -22067,7 +22067,7 @@ XML3D.webgl.stopEvent = function(ev) {
                 far += expand;
                 near -= expand;
 
-                return {near: Math.max(near, expand, CLIPPLANE_NEAR_MIN), far: far};
+                return {near: 1, far: far};
             }
         })(),
 
