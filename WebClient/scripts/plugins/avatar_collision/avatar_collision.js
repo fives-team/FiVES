@@ -24,14 +24,14 @@ FIVES.Plugins = FIVES.Plugins || {};
     var a = avatarCollision.prototype;
 
     a._createFunctionWrappers = function() {
-        this.setAvatarGroundlevel = _fivesCommunicator.connection.generateFuncWrapper("")
+        this.setAvatarGroundlevel = _fivesCommunicator.connection.generateFuncWrapper("gravity.setGroundlevel");
     };
 
     a.putMeshOnGround = function(entity) {
         var hitpointWithGround = this.getHitpointWithGround(entity);
         if(hitpointWithGround && !isNaN(hitpointWithGround.y))
         {
-            this.seAvatarGroundlevel(FIVES.AvatarEntityGuid, hitpointWithGround.y);
+            this.setAvatarGroundlevel(FIVES.AvatarEntityGuid, hitpointWithGround.y);
         }
     };
 
