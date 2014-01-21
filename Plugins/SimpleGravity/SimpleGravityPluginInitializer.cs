@@ -38,7 +38,7 @@ namespace SimpleGravityPlugin
 
         private void RegisterComponents() {
             ComponentDefinition gravityDefinition = new ComponentDefinition("gravity");
-            gravityDefinition.AddAttribute<float>("drag");
+            gravityDefinition.AddAttribute<float>("groundLevel");
             ComponentRegistry.Instance.Register(gravityDefinition);
         }
 
@@ -46,7 +46,7 @@ namespace SimpleGravityPlugin
         {
             ClientManager.Instance.RegisterClientService("gravity", false, new Dictionary<string, Delegate>
             {
-                {"setDrag", (Action<string, float>)SetDrag}
+                {"setGroundlevel", (Action<string, float>)SetGroundlevel}
             });
         }
 
@@ -61,7 +61,7 @@ namespace SimpleGravityPlugin
 
         private void HandleEntityAdded(Object sender, EntityEventArgs e)
         {
-            e.Entity["gravity"]["drag"] = e.Entity["position"]["y"]; // Initialise entities without gravity
+            e.Entity["gravity"]["groundLevel"] = e.Entity["position"]["y"]; // Initialise entities without gravity
             e.Entity.ChangedAttribute += new EventHandler<ChangedAttributeEventArgs>(HandleAttributeChanged);
         }
 
@@ -70,15 +70,15 @@ namespace SimpleGravityPlugin
             if (e.Component.Name == "position")
             {
                 Entity entity = (Entity)sender;
-                if (entity["position"]["y"] != entity["gravity"]["drag"])
-                    entity["position"]["y"] = (float)entity["gravity"]["drag"];
+                if (entity["position"]["y"] != entity["gravity"]["groundLevel"])
+                    entity["position"]["y"] = (float)entity["gravity"]["groundLevel"];
             }
         }
 
-        private void SetDrag(string entityGuid, float dragValue)
+        private void SetGroundlevel(string entityGuid, float dragValue)
         {
             var entity = World.Instance.FindEntity(entityGuid);
-            entity["gravity"]["drag"] = dragValue;
+            entity["gravity"]["groundLevel"] = dragValue;
         }
     }
 }
