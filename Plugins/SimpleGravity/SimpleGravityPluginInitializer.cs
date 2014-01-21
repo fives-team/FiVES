@@ -42,8 +42,15 @@ namespace SimpleGravityPlugin
             ComponentRegistry.Instance.Register(gravityDefinition);
         }
 
+        private void RegisterToEvents()
+        {
+            World.Instance.AddedEntity += new EventHandler<EntityEventArgs>(HandleEntityAdded);
+            foreach (Entity entity in World.Instance)
+            {
+                entity.ChangedAttribute += new EventHandler<ChangedAttributeEventArgs>(HandleAttributeChanged);
+            }
+        }
 
-        private void RegisterToEvents() { }
         private void HandleEntityAdded(Object sender, EntityEventArgs e)
         {
             e.Entity["gravity"]["drag"] = e.Entity["position"]["y"]; // Initialise entities without gravity
