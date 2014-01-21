@@ -36,7 +36,12 @@ namespace SimpleGravityPlugin
             throw new NotImplementedException();
         }
 
-        private void RegisterComponents() { }
+        private void RegisterComponents() {
+            ComponentDefinition gravityDefinition = new ComponentDefinition("gravity");
+            gravityDefinition.AddAttribute<float>("drag");
+            ComponentRegistry.Instance.Register(gravityDefinition);
+        }
+
 
         private void RegisterToEvents() { }
     }
