@@ -44,5 +44,21 @@ namespace SimpleGravityPlugin
 
 
         private void RegisterToEvents() { }
+        private void HandleEntityAdded(Object sender, EntityEventArgs e)
+        {
+            e.Entity["gravity"]["drag"] = e.Entity["position"]["y"]; // Initialise entities without gravity
+            e.Entity.ChangedAttribute += new EventHandler<ChangedAttributeEventArgs>(HandleAttributeChanged);
+        }
+
+        private void HandleAttributeChanged(Object sender, ChangedAttributeEventArgs e)
+        {
+            if (e.Component.Name == "position")
+            {
+                Entity entity = (Entity)sender;
+                if (entity["position"]["y"] != entity["gravity"]["drag"])
+                    entity["position"]["y"] = (float)entity["gravity"]["drag"];
+            }
+        }
+
     }
 }
