@@ -30,7 +30,7 @@ FIVES.Resources = FIVES.Resources || {};
     };
 
     scm.addMeshForObject = function(fivesObject) {
-        if(fivesObject.meshResource.uri && fivesObject.meshResource.visible)
+        if(fivesObject.meshResource.uri)
             FIVES.Resources.ResourceManager.loadExternalResource(fivesObject, this._addMeshToScene.bind(this));
     };
 
@@ -68,6 +68,7 @@ FIVES.Resources = FIVES.Resources || {};
     scm._addXml3dGroupsForMesh = function(entity) {
         var entityGroup = this._createParentGroupForEntity(entity);
         entity.xml3dView.groupElement = entityGroup;
+        entity.xml3dView.groupElement.setAttribute("visible", entity["meshResource"]["visible"]);
     };
 
     scm._createParentGroupForEntity = function(entity) {
