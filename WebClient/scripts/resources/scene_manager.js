@@ -48,14 +48,26 @@ FIVES.Resources = FIVES.Resources || {};
 
     scm._addMeshToScene = function(meshGroup, idSuffix) {
         var entity = FIVES.Models.EntityRegistry.getEntity(idSuffix);
+        this._addXml3dTranformForMesh(entity);
+        this._addXflowAnimationsForMesh(meshGroup, entity);
+        this._addXml3dGroupsForMesh(entity);
+        _xml3dElement.appendChild(entity.xml3dView.groupElement);
+        entity.xml3dView.groupElement.appendChild(meshGroup);
+    };
+
+    scm._addXml3dTranformForMesh = function(entity) {
         var transformGroup = this._createTransformForEntityGroup(entity);
-        var entityGroup = this._createParentGroupForEntity(entity);
-        var animationDefinitons = this._createAnimationsForEntity(meshGroup, idSuffix);
         entity.xml3dView.transformElement = transformGroup;
-        entity.xml3dView.groupElement = entityGroup;
+    };
+
+    scm._addXflowAnimationsForMesh = function(meshGroup, entity) {
+        var animationDefinitons = this._createAnimationsForEntity(meshGroup, entity.guid);
         entity.xml3dView.xflowAnimations = animationDefinitons;
-        _xml3dElement.appendChild(entityGroup);
-        entityGroup.appendChild(meshGroup);
+    };
+
+    scm._addXml3dGroupsForMesh = function(entity) {
+        var entityGroup = this._createParentGroupForEntity(entity);
+        entity.xml3dView.groupElement = entityGroup;
     };
 
     scm._createParentGroupForEntity = function(entity) {
