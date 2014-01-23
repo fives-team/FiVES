@@ -132,11 +132,14 @@ FIVES.Resources = FIVES.Resources || {};
     };
 
     scm.updateMesh = function(entity) {
-        // When mesh URI is updated, we need to download new model and recreate the mesh in the scene again. Also, as
-        // visible attribute is not yet supported for <group> nodes in XML3D, we also need to remove/add the entity
-        // from/to the scene to correctly handle visible attribute in the meshResource component.
-        scm.removeEntity(entity);
-        scm.addMeshForObject(entity);
+        // TODO: This is currently a workaround that does not support a change of an entities mesh resource.
+        // The approach to remove the old mesh would be to remove the current view (group and transform elements) of
+        // the entity and recreate it with the new mesh resource.
+        // Depending on the XML3D graph, models that reference a datanode within their scenegraph will cause a
+        // crash upon removal, as on removing of the data node, the reference cannot be resolved anymore. updateMesh
+        // will be interrupted after the failed removal and no new mesh will be created, but the console will be flooded
+        // with errors
+        entity.xml3dView.groupElement.setAttribute("visible", entity["meshResource"]["visible"]);
     };
 
     scm.updateCameraView = function(entity) {
