@@ -237,7 +237,7 @@ namespace MotionPlugin
         /// Worker thread that periodically performs the spin. Ends, when either angular velocity or spin axis are 0.
         /// </summary>
         /// <param name="updatedEntity">Entity for which spin is updated</param>
-        private void UpdateSpin(Entity updatedEntity)
+        internal void UpdateSpin(Entity updatedEntity)
         {
             Quat entityRotation = EntityRotationAsQuaternion(updatedEntity);
 
