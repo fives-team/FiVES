@@ -163,13 +163,14 @@ FIVES.Resources = FIVES.Resources || {};
     };
 
     scm.updateMesh = function(entity) {
-        // TODO: This is currently a workaround that does not support a change of an entities mesh resource.
-        // The approach to remove the old mesh would be to remove the current view (group and transform elements) of
-        // the entity and recreate it with the new mesh resource.
-        // Depending on the XML3D graph, models that reference a datanode within their scenegraph will cause a
-        // crash upon removal, as on removing of the data node, the reference cannot be resolved anymore. updateMesh
-        // will be interrupted after the failed removal and no new mesh will be created, but the console will be flooded
-        // with errors
+        // FIXME: We do not support changes to mesh resource attribute. The correct approach would be to remove existing entity
+        // (group and transform elements) from the scene graph and re-create them with the new URI. However removing the group
+        // element, which has a reference to the data element within this group, causes crashes in current implement of xml3d.js
+        // ([put the url to respective issue on the xml3d issue tracker here]). Once this is fixed, we should use the following
+        // code instead:
+        //scm.removeEntity(entity);
+        //scm.addMeshForObject(entity).
+        // The issue is filed in the xml3d github repo (#50)
         entity.xml3dView.groupElement.setAttribute("visible", entity["meshResource"]["visible"]);
     };
 
