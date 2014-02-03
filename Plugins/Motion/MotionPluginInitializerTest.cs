@@ -53,6 +53,19 @@ namespace MotionPlugin
         {
             Assert.IsNotNull(ComponentRegistry.Instance.FindComponentDefinition("rotVelocity"));
         }
+
+        [Test()]
+        public void ShouldApplyVelocityToPosition()
+        {
+            var e = new Entity();
+            e["velocity"]["x"] = 1f;
+
+            plugin.UpdateMotion(e);
+            Assert.AreEqual((float)e["position"]["x"], 1f);
+            Assert.AreEqual((float)e["position"]["y"], 0f);
+            Assert.AreEqual((float)e["position"]["z"], 0f);
+        }
+
     }
 }
 

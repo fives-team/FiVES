@@ -226,7 +226,7 @@ namespace MotionPlugin
         /// Worker Thread function that periodically performs the motion. Ends, when velocity of entity is 0
         /// </summary>
         /// <param name="updatedEntity">Entity for which motion is updated</param>
-        private void UpdateMotion(Entity updatedEntity) {
+        internal void UpdateMotion(Entity updatedEntity) {
             Vector localVelocity = GetVelocityInWorldSpace(updatedEntity);
             updatedEntity["position"]["x"] = (float)updatedEntity["position"]["x"] + localVelocity.x;
             updatedEntity["position"]["y"] = (float)updatedEntity["position"]["y"] + localVelocity.y;
