@@ -18,6 +18,22 @@ namespace MotionPlugin
             plugin.RegisterToECA();
             RegisterLocationComponents();
         }
+
+        private void RegisterLocationComponents()
+        {
+            var positionComponent = new ComponentDefinition("position");
+            positionComponent.AddAttribute<float>("x", 0f);
+            positionComponent.AddAttribute<float>("y", 0f);
+            positionComponent.AddAttribute<float>("z", 0f);
+            ComponentRegistry.Instance.Register(positionComponent);
+
+            var orientationComponent = new ComponentDefinition("orientation");
+            orientationComponent.AddAttribute<float>("x", 0f);
+            orientationComponent.AddAttribute<float>("y", 0f);
+            orientationComponent.AddAttribute<float>("z", 0f);
+            orientationComponent.AddAttribute<float>("w", 1f);
+            ComponentRegistry.Instance.Register(orientationComponent);
+
         }
 
         [TearDown()]
