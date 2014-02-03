@@ -35,10 +35,29 @@ namespace MotionPlugin
             }
         }
 
+        /// <summary>
+        /// Initializes the plugin by registering Components, subscribing to events and accessing other plugins
+        /// </summary>
         public void Initialize()
+        {
+            RegisterToECA();
+            RegisterToPluginEvents();
+        }
+
+        /// <summary>
+        /// Registers Components to ECA and subscribes to Entity events
+        /// </summary>
+        internal void RegisterToECA()
         {
             DefineComponents();
             RegisterEntityEvents();
+        }
+
+        /// <summary>
+        /// Subscribes to EventLoop events and ClientManager PluginInLoaded handler to register client services
+        /// </summary>
+        private void RegisterToPluginEvents()
+        {
             EventLoop.Instance.TickFired += new EventHandler<TickEventArgs>(HandleEventTick);
             PluginManager.Instance.AddPluginLoadedHandler("ClientManager", RegisterClientServices);
         }

@@ -15,7 +15,9 @@ namespace MotionPlugin
         public void Init()
         {
             ComponentRegistry.Instance = new ComponentRegistry();
-            plugin.Initialize();
+            plugin.RegisterToECA();
+            RegisterLocationComponents();
+        }
         }
 
         [TearDown()]
