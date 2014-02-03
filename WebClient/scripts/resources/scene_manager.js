@@ -46,6 +46,9 @@ FIVES.Resources = FIVES.Resources || {};
             delete entity.xml3dView.transformElement;
         }
 
+        if(entity.xml3dView.defElement) {
+            _xml3dElement.removeChild(entity.xml3dView.defElement);
+            delete entity.xml3dView.defElement;
         }
     };
 
