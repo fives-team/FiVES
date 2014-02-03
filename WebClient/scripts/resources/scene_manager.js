@@ -53,8 +53,9 @@ FIVES.Resources = FIVES.Resources || {};
         var entity = FIVES.Models.EntityRegistry.getEntity(idSuffix);
 
         this._addMeshDefinitionsToScene(entity, meshDefinitions);
+
+        this._addXflowAnimationsForMesh(entity);
         this._addXml3dTranformForMesh(entity);
-        this._addXflowAnimationsForMesh(meshGroup, entity);
         this._addXml3dGroupsForMesh(entity);
         _xml3dElement.appendChild(entity.xml3dView.groupElement);
         $(entity.xml3dView.groupElement).append(meshGroup);
@@ -70,8 +71,8 @@ FIVES.Resources = FIVES.Resources || {};
         entity.xml3dView.transformElement = transformGroup;
     };
 
-    scm._addXflowAnimationsForMesh = function(meshGroup, entity) {
-        var animationDefinitons = this._createAnimationsForEntity(meshGroup, entity.guid);
+    scm._addXflowAnimationsForMesh = function(entity) {
+        var animationDefinitons = this._createAnimationsForEntity(entity);
         entity.xml3dView.xflowAnimations = animationDefinitons;
     };
 
@@ -121,13 +122,14 @@ FIVES.Resources = FIVES.Resources || {};
     // Within the definition, the id value of the respective xflow key is stated as appearing
     // in the model file, i.e. ignoring adaptions made to id attributes when adding the entity to the scene.
     // We therefore need to take this adaption into account here separately
-    scm._createAnimationsForEntity = function(meshGroup, entityId) {
+    scm._createAnimationsForEntity = function(entity) {
         var animationDefinitions = {};
-        var meshAnimations = $(meshGroup).find("anim");
+        var meshDefinitions = $(entity.xml3dView.defElement);
+        var meshAnimations = meshDefinitions.find("anim");
         meshAnimations.each(function(index, element)
             {
-                var animationDefinition = scm._parseAnimationEntry(element, entityId);
-                animationDefinition.key = $(meshGroup).find(animationDefinition.key +"-"+entityId);
+                var animationDefinition = scm._parseAnimationEntry(element, entity.guid);
+                animationDefinition.key = meshDefinitions.find(animationDefinition.key +"-"+entity.guid);
                 animationDefinitions[element.getAttribute("name")] = animationDefinition;
             });
         return animationDefinitions;
