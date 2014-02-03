@@ -46,13 +46,17 @@ FIVES.Resources = FIVES.Resources || {};
         }
     };
 
-    scm._addMeshToScene = function(meshGroup, idSuffix) {
+    scm._addMeshToScene = function(meshDocument, idSuffix) {
+
+        var meshGroup = $(meshDocument).children("group");
+        var meshDefinitions = $(meshDocument).children("defs");
         var entity = FIVES.Models.EntityRegistry.getEntity(idSuffix);
         this._addXml3dTranformForMesh(entity);
         this._addXflowAnimationsForMesh(meshGroup, entity);
         this._addXml3dGroupsForMesh(entity);
         _xml3dElement.appendChild(entity.xml3dView.groupElement);
-        entity.xml3dView.groupElement.appendChild(meshGroup);
+        $(entity.xml3dView.groupElement).append(meshGroup);
+    };
     };
 
     scm._addXml3dTranformForMesh = function(entity) {
