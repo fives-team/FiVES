@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace FIVES_NewDomainModel
+namespace FIVES_New
 {
     public class ComponentEventArgs : EventArgs
     {
