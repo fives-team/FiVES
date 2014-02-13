@@ -107,7 +107,7 @@ namespace AvatarPlugin
                 Entity newAvatar = new Entity();
                 newAvatar["avatar"]["userLogin"] = userLogin;
                 newAvatar["meshResource"]["uri"] = defaultAvatarMesh;
-                newAvatar["meshResource"]["visible"] = false;
+                newAvatar["meshResource"]["visible"] = true;
                 World.Instance.Add(newAvatar);
             }
 
