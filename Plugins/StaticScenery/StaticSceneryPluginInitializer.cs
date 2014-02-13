@@ -27,7 +27,7 @@ namespace StaticSceneryPlugin
 
         public List<string> ComponentDependencies
         {
-            get { return new List<string> {"position", "meshResource"}; }
+            get { return new List<string> { "location", "mesh" }; }
         }
 
         public void Initialize()
@@ -75,10 +75,8 @@ namespace StaticSceneryPlugin
         private void CreateSceneryEntity()
         {
             Entity sceneryEntity = new Entity();
-            sceneryEntity["meshResource"]["uri"] = SceneryURL;
-            sceneryEntity["position"]["x"] = OffsetX;
-            sceneryEntity["position"]["y"] = OffsetY;
-            sceneryEntity["position"]["z"] = OffsetZ;
+            sceneryEntity["mesh"]["uri"] = SceneryURL;
+            sceneryEntity["location"]["position"] = new Vector(OffsetX, OffsetY, OffsetZ);
             World.Instance.Add(sceneryEntity);
         }
 

@@ -63,16 +63,14 @@ namespace StaticSceneryPlugin
         /// </summary>
         void MockComponentRegistry()
         {
-            ComponentDefinition position = new ComponentDefinition("position");
-            position.AddAttribute<float>("x");
-            position.AddAttribute<float>("y");
-            position.AddAttribute<float>("z");
+            ComponentDefinition position = new ComponentDefinition("location");
+            position.AddAttribute<Vector>("position", new Vector(0, 0, 0));
 
-            ComponentDefinition meshResource = new ComponentDefinition("meshResource");
-            meshResource.AddAttribute<string>("uri");
+            ComponentDefinition mesh = new ComponentDefinition("mesh");
+            mesh.AddAttribute<string>("uri");
 
             FIVES.ComponentRegistry.Instance.Register(position);
-            FIVES.ComponentRegistry.Instance.Register(meshResource);
+            FIVES.ComponentRegistry.Instance.Register(mesh);
         }
         /// <summary>
         /// Checks if the entity for Static scenery is present in the World as specified in the Config file
@@ -82,10 +80,12 @@ namespace StaticSceneryPlugin
         {
             Assert.IsNotEmpty(FIVES.World.Instance);
             var entity = FIVES.World.Instance.ElementAt(0);
-            Assert.AreEqual(entity["position"]["x"], OffsetX);
-            Assert.AreEqual(entity["position"]["y"], OffsetY);
-            Assert.AreEqual(entity["position"]["z"], OffsetZ);
-            Assert.AreEqual(entity["meshResource"]["uri"], SceneryURL);
+
+            var pos = (Vector)entity["location"]["position"];
+            Assert.AreEqual(pos.x, OffsetX);
+            Assert.AreEqual(pos.y, OffsetY);
+            Assert.AreEqual(pos.z, OffsetZ);
+            Assert.AreEqual(entity["mesh"]["uri"], SceneryURL);
         }
     }
 }

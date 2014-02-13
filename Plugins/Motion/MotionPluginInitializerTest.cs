@@ -25,19 +25,10 @@ namespace MotionPlugin
         /// </summary>
         private void RegisterLocationComponents()
         {
-            var positionComponent = new ComponentDefinition("position");
-            positionComponent.AddAttribute<float>("x", 0f);
-            positionComponent.AddAttribute<float>("y", 0f);
-            positionComponent.AddAttribute<float>("z", 0f);
-            ComponentRegistry.Instance.Register(positionComponent);
-
-            var orientationComponent = new ComponentDefinition("orientation");
-            orientationComponent.AddAttribute<float>("x", 0f);
-            orientationComponent.AddAttribute<float>("y", 0f);
-            orientationComponent.AddAttribute<float>("z", 0f);
-            orientationComponent.AddAttribute<float>("w", 1f);
-            ComponentRegistry.Instance.Register(orientationComponent);
-
+            ComponentDefinition locationComponent = new ComponentDefinition("location");
+            locationComponent.AddAttribute<Vector>("position", new Vector(0, 0, 0));
+            locationComponent.AddAttribute<Quat>("orientation", new Quat(0, 0, 0, 1));
+            ComponentRegistry.Instance.Register(locationComponent);
         }
 
         [TearDown()]
@@ -47,15 +38,9 @@ namespace MotionPlugin
         }
 
         [Test()]
-        public void ShouldRegisterVelocityComponent()
+        public void ShouldRegisterMotionComponent()
         {
-            Assert.IsNotNull(ComponentRegistry.Instance.FindComponentDefinition("velocity"));
-        }
-
-        [Test()]
-        public void ShouldRegisterRotVelocityComponent()
-        {
-            Assert.IsNotNull(ComponentRegistry.Instance.FindComponentDefinition("rotVelocity"));
+            Assert.IsNotNull(ComponentRegistry.Instance.FindComponentDefinition("motion"));
         }
 
         /// <summary>
@@ -67,12 +52,15 @@ namespace MotionPlugin
         public void ShouldApplyVelocityToPosition()
         {
             var e = new Entity();
-            e["velocity"]["x"] = 1f;
+            e["motion"]["velocity"] = new Vector(1, 0, 0);
 
             plugin.UpdateMotion(e);
-            Assert.AreEqual((float)e["position"]["x"], 1f);
-            Assert.AreEqual((float)e["position"]["y"], 0f);
-            Assert.AreEqual((float)e["position"]["z"], 0f);
+
+            Vector newPosition = (Vector)e["location"]["position"];
+
+            Assert.AreEqual(newPosition.x, 1f);
+            Assert.AreEqual(newPosition.y, 0f);
+            Assert.AreEqual(newPosition.z, 0f);
         }
 
         /// <summary>
@@ -88,28 +76,17 @@ namespace MotionPlugin
         public void ShouldApplyRotVelocityToOrientation()
         {
             var e = new Entity();
-            Quat orientation = FIVES.Math.QuaternionFromAxisAngle(
-                new Vector { x = 1, y = 0, z = 0 }, 0.1f);
+            Quat orientation = FIVES.Math.QuaternionFromAxisAngle(new Vector(1, 0, 0), 0.1f);
 
-            e["orientation"]["x"] = orientation.x;
-            e["orientation"]["y"] = orientation.y;
-            e["orientation"]["z"] = orientation.z;
-            e["orientation"]["w"] = orientation.w;
-
-            e["rotVelocity"]["x"] = 1f;
-            e["rotVelocity"]["y"] = 0f;
-            e["rotVelocity"]["z"] = 0f;
-            e["rotVelocity"]["r"] = 0.1f;
+            e["location"]["orientation"] = orientation;
+            e["motion"]["rotVelocity"] = new AxisAngle(1f, 0f, 0f, 0.1f);
 
             plugin.UpdateSpin(e);
-            Quat entityOrientation =
-                new Quat{ x = (float) e["orientation"]["x"],
-                                               y = (float) e["orientation"]["y"],
-                                               z = (float) e["orientation"]["z"],
-                                               w = (float) e["orientation"]["w"]};
 
-            Vector axisAfterSpin = FIVES.Math.AxisFromQuaternion(entityOrientation);
-            float angleAfterSpin = FIVES.Math.AngleFromQuaternion(entityOrientation);
+            Quat newEntityOrientation = (Quat)e["location"]["orientation"];
+
+            Vector axisAfterSpin = FIVES.Math.AxisFromQuaternion(newEntityOrientation);
+            float angleAfterSpin = FIVES.Math.AngleFromQuaternion(newEntityOrientation);
 
             Assert.Less(System.Math.Abs(1f - axisAfterSpin.x), 0.00001f);
             Assert.Less(System.Math.Abs(axisAfterSpin.y), 0.00001f);

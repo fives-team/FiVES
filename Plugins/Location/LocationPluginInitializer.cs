@@ -51,23 +51,10 @@ namespace LocationPlugin
 
         void DefineComponents()
         {
-            // Position is represented as a vector (x,y,z) from the default position, which is at (0,0,0).
-            ComponentDefinition position = new ComponentDefinition("position");
-            position.AddAttribute<float> ("x", 0f);
-            position.AddAttribute<float> ("y", 0f);
-            position.AddAttribute<float> ("z", 0f);
-            ComponentRegistry.Instance.Register(position);
-
-            // Orientation is represented as a quaternion, where (x,y,z) is a vector part, and w is a scalar part. The 
-            // orientation of the object is relative to the default orientation. In the default position and 
-            // orientation, the viewer is on the Z-axis looking down the -Z-axis toward the origin with +X to the right 
-            // and +Y straight up.
-            ComponentDefinition orientation = new ComponentDefinition("orientation");
-            orientation.AddAttribute<float>("x", 0f);
-            orientation.AddAttribute<float>("y", 0f);
-            orientation.AddAttribute<float>("z", 0f);
-            orientation.AddAttribute<float>("w", 1f);
-            ComponentRegistry.Instance.Register(orientation);
+            ComponentDefinition location = new ComponentDefinition("location");
+            location.AddAttribute<Vector>("position", new Vector(0, 0, 0));
+            location.AddAttribute<Quat>("orientation", new Quat(0, 0, 0, 1));
+            ComponentRegistry.Instance.Register(location);
         }
 
         void RegisterClientServices()
@@ -81,9 +68,7 @@ namespace LocationPlugin
         private void UpdatePosition(string guid, Vector position, int timestamp)
         {
             var entity = World.Instance.FindEntity(guid);
-            entity["position"]["x"] = position.x;
-            entity["position"]["y"] = position.y;
-            entity["position"]["z"] = position.z;
+            entity["location"]["position"] = position;
 
             // We currently ignore timestamp, but may it in the future to implement dead reckoning.
         }
@@ -91,10 +76,7 @@ namespace LocationPlugin
         private void UpdateOrientation(string guid, Quat orientation, int timestamp)
         {
             var entity = World.Instance.FindEntity(guid);
-            entity["orientation"]["x"] = orientation.x;
-            entity["orientation"]["y"] = orientation.y;
-            entity["orientation"]["z"] = orientation.z;
-            entity["orientation"]["w"] = orientation.w;
+            entity["location"]["orientation"] = orientation;
 
             // We currently ignore timestamp, but may it in the future to implement dead reckoning.
         }
