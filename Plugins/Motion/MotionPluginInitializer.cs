@@ -35,10 +35,29 @@ namespace MotionPlugin
             }
         }
 
+        /// <summary>
+        /// Initializes the plugin by registering Components, subscribing to events and accessing other plugins
+        /// </summary>
         public void Initialize()
+        {
+            RegisterToECA();
+            RegisterToPluginEvents();
+        }
+
+        /// <summary>
+        /// Registers Components to ECA and subscribes to Entity events
+        /// </summary>
+        internal void RegisterToECA()
         {
             DefineComponents();
             RegisterEntityEvents();
+        }
+
+        /// <summary>
+        /// Subscribes to EventLoop events and ClientManager PluginInLoaded handler to register client services
+        /// </summary>
+        private void RegisterToPluginEvents()
+        {
             EventLoop.Instance.TickFired += new EventHandler<TickEventArgs>(HandleEventTick);
             PluginManager.Instance.AddPluginLoadedHandler("ClientManager", RegisterClientServices);
         }
@@ -207,7 +226,7 @@ namespace MotionPlugin
         /// Worker Thread function that periodically performs the motion. Ends, when velocity of entity is 0
         /// </summary>
         /// <param name="updatedEntity">Entity for which motion is updated</param>
-        private void UpdateMotion(Entity updatedEntity) {
+        internal void UpdateMotion(Entity updatedEntity) {
             Vector localVelocity = GetVelocityInWorldSpace(updatedEntity);
             updatedEntity["position"]["x"] = (float)updatedEntity["position"]["x"] + localVelocity.x;
             updatedEntity["position"]["y"] = (float)updatedEntity["position"]["y"] + localVelocity.y;
@@ -218,7 +237,7 @@ namespace MotionPlugin
         /// Worker thread that periodically performs the spin. Ends, when either angular velocity or spin axis are 0.
         /// </summary>
         /// <param name="updatedEntity">Entity for which spin is updated</param>
-        private void UpdateSpin(Entity updatedEntity)
+        internal void UpdateSpin(Entity updatedEntity)
         {
             Quat entityRotation = EntityRotationAsQuaternion(updatedEntity);
 
