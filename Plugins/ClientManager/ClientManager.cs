@@ -229,6 +229,11 @@ namespace ClientManagerPlugin
                 clientService[methodName] = handler;
         }
 
+        /// <summary>
+        /// Calls the provided callback when a new client is connected. The connection to the new client is passed as a
+        /// parameter for the callback.
+        /// </summary>
+        /// <param name="callback">The callback to be called.</param>
         public void NotifyWhenAnyClientAuthenticated(Action<Connection> callback)
         {
             OnAuthenticated += callback;

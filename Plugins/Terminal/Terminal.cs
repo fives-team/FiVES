@@ -22,11 +22,17 @@ namespace TerminalPlugin
             Task.Factory.StartNew(TerminalThreadFunc);
         }
 
+        /// <summary>
+        /// Prints an empty line to the screen.
+        /// </summary>
         public void WriteLine()
         {
             WriteLine("");
         }
 
+        /// <summary>
+        /// Prints a given line to the screen.
+        /// </summary>
         public void WriteLine(string line)
         {
             lock (consoleLock)
