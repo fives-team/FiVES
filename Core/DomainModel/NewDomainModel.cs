@@ -148,8 +148,8 @@ namespace FIVES_New
                 foreach (var component in entity.Components) {
                     foreach (var attributeDefinition in component.Definition.AttributeDefinitions) {
                         var attributeName = attributeDefinition.Name;
-                        Console.WriteLine(entity.Guid + "." + component.Name + "." +
-                                          attributeName + "=" + component[attributeName]);
+                        Console.Instance.WriteLine(entity.Guid + "." + component.Name + "." +
+                                                   attributeName + "=" + component[attributeName]);
                     }
                 }
             }
@@ -157,7 +157,7 @@ namespace FIVES_New
         // Iterate over all attributes in all component definitions.
         foreach (var componentDefinition in ECA.ComponentRegistry.RegisteredComponents)
             foreach(var attributeDefinition in componentDefinition.AttributeDefinitions)
-                Console.WriteLine(componentDefinition.Name + "." + attributeDefinition.Name);
+                Console.Instance.WriteLine(componentDefinition.Name + "." + attributeDefinition.Name);
         }
     }
 }

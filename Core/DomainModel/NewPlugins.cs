@@ -54,6 +54,55 @@ namespace FIVES_New
         event EventHandler Closed;
     }
 
+    public interface IContext
+    {
+        void Initialize(string hint);
+        void OpenConnection(string configURI, Action<IConnection> onConnected);
+        void StartServer(string configURI, Action<IConnection> onNewClient);
+    }
+
+    public interface IService
+    {
+        IContext context { get; }
+    }
+
+    public delegate void NewClient(IConnection connection);
+
+    public interface ILocalService : IService
+    {
+        event NewClient OnNewClient;
+        Delegate this[string name] { set; }
+    }
+
+    public delegate void Connected(IConnection connection);
+
+    public interface IRemoteService : IService
+    {
+        event Connected OnConnected;
+    }
+
+    public interface IKIARA
+    {
+        ILocalService Create(string configURI);
+        IRemoteService Discover(string configURI);
+    }
+
+    public static class KIARA
+    {
+        public static IKIARA Instance;
+        public static IContext DefaultContext;
+
+        public static ILocalService Create(string configURI)
+        {
+            return Instance.Create(configURI);
+        }
+
+        public static IRemoteService Discover(string configURI)
+        {
+            return Instance.Discover(configURI);
+        }
+    }
+
     #endregion
 
     #region ClientManager
@@ -462,125 +511,184 @@ namespace FIVES_New
     // Plug-in depedencies: KIARA.
     // Component dependencies: none.
 
-    public interface IAreaOrResponsibility : ISerializable
+    public interface IDomainOrResponsibility : ISerializable
     {
-        // Checks if this AoR includes a given entity.
+        // Checks if this DoR includes a given entity.
         bool IsResponsibleFor(IEntity entity);
     }
 
-    public class ChangedAoREventArgs : EventArgs
+    public interface IDomainOfInterest : ISerializable
     {
-        public ChangedAoREventArgs(string pluginName, IAreaOrResponsibility aor)
-        {
-            PluginName = pluginName;
-            AoR = aor;
-        }
-
-        public string PluginName { get; private set; }
-        public IAreaOrResponsibility AoR { get; private set; }
-    }
-
-    public interface IAoRCollection
-    {
-        // Provides interface to change the AoR of a plug-in.
-        IAreaOrResponsibility this[string pluginName] { get; set; }
-
-        // Event which is triggered when the AoR has changed.
-        event EventHandler<ChangedAoREventArgs> Changed;
-    }
-
-    public interface IAreaOfInterest : ISerializable
-    {
-        // Checks if this AoI includes a given entity added event.
+        // Checks if this DoI includes a given entity added event.
         bool IsInterestedInEntityAdded(EntityEventArgs args);
 
-        // Checks if this AoI includes a given entity removed event.
+        // Checks if this DoI includes a given entity removed event.
         bool IsInterestedInEntityRemoved(EntityEventArgs args);
 
-        // Checks if this AoI includes a given attribute changed
-        // event.
-        bool IsInterestedInAttributeChanged(
-            ChangedAttributeEventArgs args);
+        // Checks if this DoI includes a given attribute changed event.
+        bool IsInterestedInAttributeChanged(ChangedAttributeEventArgs args);
     }
 
-    public class ChangedAoIEventArgs : EventArgs
-    {
-        public ChangedAoIEventArgs(string pluginName, IAreaOfInterest aoi)
-        {
-            PluginName = pluginName;
-            AoI = aoi;
-        }
-
-        public string PluginName { get; private set; }
-        public IAreaOfInterest AoI { get; private set; }
-    }
-    
-    public interface IAoICollection
-    {
-        // Provides interface to change the AoI of a plug-in.
-        IAreaOfInterest this[string pluginName] { get; set; }
-
-        // Event which is triggered when the AoI has changed.
-        event EventHandler<ChangedAoIEventArgs> Changed;
-    }
-
-    public interface IServer
+    public interface IRemoteServer
     {
         // KIARA connection to the remote server.
         IConnection Connection { get; }
 
-        // Remote collection of the areas-or-reponsibility.
-        IAoRCollection AoR { get; }
+        // Remote domain-of-reponsibility.
+        IDomainOrResponsibility DoR { get; }
 
-        // Remote collection of the areas-or-interest.
-        IAoICollection AoI { get; }
+        // Remote domain-of-interest.
+        IDomainOfInterest DoI { get; }
+
+        // Events which are triggered when the remote DoI or DoR has changed.
+        event EventHandler DoIChanged;
+        event EventHandler DoRChanged;
+    }
+
+    public interface ILocalServer
+    {
+        // KIARA service on the local service.
+        ILocalService LocalService { get; }
+
+        // Local domain-of-reponsibility.
+        IDomainOrResponsibility DoR { get; set; }
+
+        // Local domain-of-interest.
+        IDomainOfInterest DoI { get; set; }
+
+        // Events which are triggered when the local DoI or DoR has changed.
+        event EventHandler DoIChanged;
+        event EventHandler DoRChanged;
+    }
+
+    public class ServerEventArgs : EventArgs
+    {
+        public ServerEventArgs(IRemoteServer server)
+        {
+            Server = server;
+        }
+
+        public IRemoteServer Server { get; private set; }
+    }
+
+    public interface IServerSync
+    {
+        // Collection of remote servers.
+        IEnumerable<IRemoteServer> RemoteServers { get; }
+
+        // Local server.
+        ILocalServer LocalServer { get; }
+
+        // Events when a server is added or removed from the RemoteServers collection.
+        event EventHandler<ServerEventArgs> AddedServer;
+        event EventHandler<ServerEventArgs> RemovedServer;
     }
 
     public static class ServerSync
     {
-        // Collection of remote servers.
-        public static IEnumerable<IServer> RemoteServers;
+        public static IServerSync Instance;
 
-        // Local server.
-        public static IServer LocalServer;
+        public static IEnumerable<IRemoteServer> RemoteServers
+        {
+            get
+            {
+                return Instance.RemoteServers;
+            }
+        }
+
+        public static ILocalServer LocalServer
+        {
+            get
+            {
+                return Instance.LocalServer;
+            }
+        }
+
+        public static event EventHandler<ServerEventArgs> AddedServer
+        {
+            add
+            {
+                Instance.AddedServer += value;
+            }
+            remove
+            {
+                Instance.AddedServer -= value;
+            }
+        }
+
+        public static event EventHandler<ServerEventArgs> RemovedServer
+        {
+            add
+            {
+                Instance.RemovedServer += value;
+            }
+            remove
+            {
+                Instance.RemovedServer -= value;
+            }
+        }
     }
 
     #endregion
 
-    #region Terminal
+    #region Console
 
     // Plug-in depedencies: none.
     // Component dependencies: none.
 
-    public interface ICommandInfo
+    public struct CommandInfo
     {
-        string ShortHelp { get; }
-        string LongHelp { get; }
-        bool Interactive { get; }
-        Action<string> Handler { get; }
-        IEnumerable<string> Aliases { get; }
+        public string ShortHelp;
+        public string LongHelp;
+        public bool Interactive;
+        public Action<string> Handler;
+        public IEnumerable<string> Aliases;
     }
 
-    public interface ITerminal
+    public interface IConsole
     {
-        // Use these methods instead of the Console.Write* to allow correct handling of the terminal command line.
+        // Use these methods instead of the Console.Write* to allow correct handling of the command line.
         void WriteLine();
         void WriteLine(string line);
 
-        // List of registered commands. Returned command infos are read only.
-        IEnumerable<ICommandInfo> RegisteredCommands { get; }
-
-        // Creates new command info.
-        ICommandInfo CreateCommandInfo(string shortHelp, string longHelp, bool interactive, Action<string> handler,
-            IEnumerable<string> aliases);
-
         // Registers a new command.
-        void RegisterCommand(string name, ICommandInfo commandInfo);
+        void RegisterCommand(string name, CommandInfo commandInfo);
     }
 
-    public static class Terminal
+    public static class Console
     {
-        public static ITerminal Instance;
+        public static IConsole Instance;
+
+        public static void WriteLine()
+        {
+            Instance.WriteLine();
+        }
+
+        public static void WriteLine(string line)
+        {
+            Instance.WriteLine(line);
+        }
+
+        public static void RegisterCommand(string name, CommandInfo commandInfo)
+        {
+            Instance.RegisterCommand(name, commandInfo);
+        }
+    }
+
+    public class ConsoleExample
+    {
+        public void Example()
+        {
+            Console.WriteLine("Hello, world!");
+
+            Console.RegisterCommand("print42", new CommandInfo {
+                ShortHelp = "prints 42",
+                LongHelp = "prints the answer to the question of life the universe and everything",
+                Interactive = false,
+                Handler = delegate(string commandLine) { Console.WriteLine("42"); },
+                Aliases = new List<string>()
+            });
+        }
     }
 
     #endregion
