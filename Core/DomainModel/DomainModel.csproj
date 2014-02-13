@@ -54,6 +54,7 @@
     <Compile Include="ComponentDefinitionTest.cs" />
     <Compile Include="ComponentRegistryTest.cs" />
     <Compile Include="ComponentTest.cs" />
+    <Compile Include="NewDomainModel.cs" />
     <Compile Include="EntityCollectionTest.cs" />
     <Compile Include="EntityTest.cs" />
     <Compile Include="Exceptions\EntityNotFoundException.cs" />
@@ -68,6 +69,7 @@
     <Compile Include="Entity.cs" />
     <Compile Include="EntityCollection.cs" />
     <Compile Include="Events\EntityEventArgs.cs" />
+    <Compile Include="NewPlugins.cs" />
     <Compile Include="ReadOnlyAttributeDefinition.cs" />
     <Compile Include="Component.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
