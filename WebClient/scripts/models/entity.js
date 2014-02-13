@@ -48,6 +48,11 @@ FIVES.Models = FIVES.Models || {};
             this[componentName][updatedAttribute] = updatedComponent[updatedAttribute];
         }
 
+        if(this.xml3dView.groupElement && this.xml3dView.transformElement)
+            this._applyComponentUpdatesTo3DView(componentName);
+    };
+
+    e._applyComponentUpdatesTo3DView = function(componentName) {
         if(componentName == "position")
             FIVES.Resources.SceneManager.updatePosition(this);
         else if(componentName == "orientation")
