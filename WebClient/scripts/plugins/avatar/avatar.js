@@ -13,5 +13,26 @@ FIVES.Plugins = FIVES.Plugins || {};
 (function () {
 
     "use strict";
+    var _fivesCommunicator = FIVES.Communication.FivesCommunicator;
 
+    var avatar = function() {
+        _fivesCommunicator.registerFunctionWrapper(this._createFunctionWrappers.bind(this));
+    };
+
+    var a = avatar.prototype;
+
+    a._createFunctionWrappers = function (){
+        this.getAvatarEntityGuid = _fivesCommunicator.connection.generateFuncWrapper("avatar.getAvatarEntityGuid");
+        this.startAvatarMotionInDirection = _fivesCommunicator.connection.generateFuncWrapper("avatar.startAvatarMotionInDirection");
+        this.setAvatarForwardBackwardMotion = _fivesCommunicator.connection.generateFuncWrapper("avatar.setAvatarForwardBackwardMotion");
+        this.setAvatarLeftRightMotion = _fivesCommunicator.connection.generateFuncWrapper("avatar.setAvatarLeftRightMotion");
+        this.setAvatarSpinAroundAxis = _fivesCommunicator.connection.generateFuncWrapper("avatar.setAvatarSpinAroundAxis");
+
+        var getEntityGuidCall = this.getAvatarEntityGuid();
+        getEntityGuidCall.on("success", function(avatarEntityGuid) {
+            FIVES.AvatarEntityGuid = avatarEntityGuid;
+        });
+    };
+
+    FIVES.Plugins.Avatar = new avatar();
 }());
