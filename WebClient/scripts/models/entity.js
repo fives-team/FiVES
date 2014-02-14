@@ -59,6 +59,7 @@ FIVES.Models = FIVES.Models || {};
             FIVES.Resources.SceneManager.updateOrientation(this);
         else if (componentName == "meshResource")
             FIVES.Resources.SceneManager.updateMesh(this);
+        FIVES.Events.ComponentUpdated(this, componentName);
     };
 
     e.updateAttribute = function(componentName, attributeName, value) {
