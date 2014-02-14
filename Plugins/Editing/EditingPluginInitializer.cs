@@ -58,7 +58,7 @@ namespace EditingNamespace
         /// Creates an entity at the given position.
         /// </summary>
         /// <param name="position">Given position.</param>
-        public string CreateEntityAt(Vector position)
+        string CreateEntityAt(Vector position)
         {
             Entity entity = new Entity();
             entity["location"]["position"] = position;
@@ -66,7 +66,7 @@ namespace EditingNamespace
             return entity.Guid.ToString ();
         }
 
-        public string CreateMeshEntity(Vector position, Quat orientation, Vector scale, MeshResource mesh)
+        string CreateMeshEntity(Vector position, Quat orientation, Vector scale, MeshResource mesh)
         {
             Entity entity = new Entity();
             entity["location"]["position"] = position;
@@ -84,7 +84,7 @@ namespace EditingNamespace
         private void RegisterEditingAPI() {
             ClientManager.Instance.RegisterClientService("editing", true, new Dictionary<string, Delegate> {
                 {"createEntityAt", (Func<Vector, string>)CreateEntityAt},
-                {"createMeshEntity", (Func<Vector, Quat, Vector, string, bool, string>)CreateMeshEntity}
+                {"createMeshEntity", (Func<Vector, Quat, Vector, MeshResource, string>)CreateMeshEntity}
             });
         }
     }
