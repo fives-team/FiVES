@@ -16,6 +16,7 @@ FIVES.Communication = FIVES.Communication || {};
     var FivesCommunicator = function() {};
     var c = FivesCommunicator.prototype;
 
+    c.registeredWrapperRegisterers = [];
 
     c.initialize = function(context, service) {
         this.context = context;
@@ -115,6 +116,10 @@ FIVES.Communication = FIVES.Communication || {};
         }
     }
 
+    c.registerFunctionWrapper = function(registerFunction) {
+            this.registeredWrapperRegisterers.push(registerFunction);
+    };
+
     c._generateTimestamp = function() {
         var updateTime = new Date().getTime();
         var timeStamp = this.connectedTime - updateTime;
@@ -122,6 +127,10 @@ FIVES.Communication = FIVES.Communication || {};
     };
 
     var _createFunctionWrappers = function(error, supported) {
+        for(var i in this.registeredWrapperRegisterers) {
+            this.registeredWrapperRegisterers[i]();
+        }
+
         this.listObjects = this.connection.generateFuncWrapper("objectsync.listObjects");
         this.createEntityAt = this.connection.generateFuncWrapper("editing.createEntityAt");
         this.createMeshEntity = this.connection.generateFuncWrapper("editing.createMeshEntity");
