@@ -15,7 +15,10 @@ FIVES.Plugins = FIVES.Plugins || {};
     "use strict";
 
     var fps = 30;
+    var _fivesCommunicator = FIVES.Communication.FivesCommunicator;
+
     var animation = function () {
+        _fivesCommunicator.registerFunctionWrapper(this.createFunctionWrappers.bind(this));
         window.setInterval(updateLoop, 1000.0 / fps);
     };
 
