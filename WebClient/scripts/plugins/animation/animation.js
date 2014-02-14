@@ -10,6 +10,12 @@
 var FIVES = FIVES || {};
 FIVES.Plugins = FIVES.Plugins || {};
 
+require.config({
+    paths: {
+        'keyframe_animator' : 'plugins/animation/keyframe_animator'
+    }
+});
+
 /**
  * ANIMATION PLUGIN
  *
@@ -19,7 +25,7 @@ FIVES.Plugins = FIVES.Plugins || {};
  * in their view element, and moreover hold references to the respective Xflow nodes for quick access to the
  * keyframe node without having to perform a DOM lookup.
  */
-(function () {
+requirejs(["keyframe_animator"], (function () {
 
     "use strict";
 
@@ -130,4 +136,5 @@ FIVES.Plugins = FIVES.Plugins || {};
     };
 
     FIVES.Plugins.Animation = new animation();
-}());
+}())
+);
