@@ -59,8 +59,6 @@ FIVES.Models = FIVES.Models || {};
             FIVES.Resources.SceneManager.updateOrientation(this);
         else if (componentName == "meshResource")
             FIVES.Resources.SceneManager.updateMesh(this);
-        else if (componentName == "animation")
-            this.setAnimationKey();
     };
 
     e.setAnimationKey = function() {

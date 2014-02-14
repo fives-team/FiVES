@@ -28,6 +28,8 @@ FIVES.Plugins = FIVES.Plugins || {};
 
     var animation = function () {
         _fivesCommunicator.registerFunctionWrapper(this._createFunctionWrappers.bind(this));
+        FIVES.Events.AddOnComponentUpdatedHandler(this._componentUpdatedHandler.bind(this));
+
         window.setInterval(updateLoop, 1000.0 / fps);
     };
 
@@ -53,6 +55,10 @@ FIVES.Plugins = FIVES.Plugins || {};
 
         this.registerToAnimationUpdates();
     }
+
+    a._componentUpdatedHandler = function(entity, componentName) {
+
+    };
 
     /**
      * Entities that are currently registered to have their animation keyframes updated during an update loop.
