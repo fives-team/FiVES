@@ -27,7 +27,7 @@ FIVES.Plugins = FIVES.Plugins || {};
     var _fivesCommunicator = FIVES.Communication.FivesCommunicator;
 
     var animation = function () {
-        _fivesCommunicator.registerFunctionWrapper(this.createFunctionWrappers.bind(this));
+        _fivesCommunicator.registerFunctionWrapper(this._createFunctionWrappers.bind(this));
         window.setInterval(updateLoop, 1000.0 / fps);
     };
 
@@ -38,7 +38,7 @@ FIVES.Plugins = FIVES.Plugins || {};
      * Creates function wrappers to start and stop animations and registers to animation update messages from the
      * server.
      */
-    a.createFunctionWrappers = function() {
+    a._createFunctionWrappers = function() {
         var conn = _fivesCommunicator.connection;
         this.startServersideAnimation = conn.generateFuncWrapper("animation.startServersideAnimation");
         this.stopServersideAnimation = conn.generateFuncWrapper("animation.stopServersideAnimation");
