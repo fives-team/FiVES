@@ -17,7 +17,7 @@ namespace SimpleGravityPlugin
 
         public List<string> PluginDependencies
         {
-            get { return new List<string> { "ClientManager","Motion"}; }
+            get { return new List<string> { "ClientManager"}; }
         }
 
         public List<string> ComponentDependencies
