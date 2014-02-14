@@ -21,6 +21,20 @@ FIVES.Plugins = FIVES.Plugins || {};
 
     var a = animation.prototype;
 
+    a.createFunctionWrappers = function() {
+        var conn = _fivesCommunicator.connection;
+        this.startServersideAnimation = conn.generateFuncWrapper("animation.startServersideAnimation");
+        this.stopServersideAnimation = conn.generateFuncWrapper("animation.stopServersideAnimation");
+
+        this.startClientsideAnimation = conn.generateFuncWrapper("animation.startClientsideAnimation");
+        this.stopClientsideAnimation = conn.generateFuncWrapper("animation.stopClientsideAnimation");
+
+        this.notifyAboutClientsideAnimationStart = conn.generateFuncWrapper("animation.notifyAboutClientsideAnimationStart");
+        this.notifyAboutClientsideAnimationStop = conn.generateFuncWrapper("animation.notifyAboutClientsideAnimationStop");
+
+        this.registerToAnimationUpdates();
+    }
+
     var registeredEntities = [];
 
     function updateLoop() {
@@ -30,6 +44,11 @@ FIVES.Plugins = FIVES.Plugins || {};
                 entity.increaseAnimationKeys(fps);
         }
     }
+
+    a.registerToAnimationUpdates = function() {
+        this.notifyAboutClientsideAnimationStart(this.startAnimationPlayback);
+        this.notifyAboutClientsideAnimationStop(this.stopAnimationPlayback);
+    };
 
     a.startAnimationPlayback = function(entityGuid, animationName, startFrame, endFrame, cycles, speed)
     {
