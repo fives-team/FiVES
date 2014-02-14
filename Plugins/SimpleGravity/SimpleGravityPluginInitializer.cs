@@ -75,10 +75,9 @@ namespace SimpleGravityPlugin
             }
         }
 
-        private void SetGroundlevel(string entityGuid, float dragValue)
         {
             var entity = World.Instance.FindEntity(entityGuid);
-            entity["gravity"]["groundLevel"] = dragValue;
+            entity["gravity"]["groundLevel"] = groundLevel;
         }
     }
 }
