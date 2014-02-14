@@ -33,10 +33,6 @@ FIVES.Models = FIVES.Models || {};
             this._applyAttributeUpdates(updatedComponent);
         };
 
-        if(this.guid == FIVES.AvatarEntityGuid)  {
-            FIVES.Resources.SceneManager.updateCameraView(this);
-        }
-
         this._cachedComponentUpdates = {};
     };
 
