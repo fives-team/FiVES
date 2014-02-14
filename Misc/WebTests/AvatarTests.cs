@@ -39,22 +39,22 @@ namespace WebTests
                 driver.Navigate().GoToUrl("http://localhost/projects/test-client/client.xhtml");
                 Tools.Login(driver, "1", "");
 
-                WebDriverWait wait = new WebDriverWait(driver, TimeSpan.FromSeconds(20));
+                WebDriverWait wait = new WebDriverWait(driver, TimeSpan.FromSeconds(10));
                 IJavaScriptExecutor jsExecutor = driver as IJavaScriptExecutor;
 
+                // Wait for the FIVES.AvatarEntityGuid to become available.
                 string avatarGuid = (string)wait.Until(d => jsExecutor.ExecuteScript("return FIVES.AvatarEntityGuid"));
-                IWebElement avatarTransform = driver.FindElement(By.Id("transform-" + avatarGuid));
 
-                string translationBefore = avatarTransform.GetAttribute("translation");
+                // Wait until avatar's transform element becomes available.
+                IWebElement avatarTransform = wait.Until(d => d.FindElement(By.Id("transform-" + avatarGuid)));
+
+                string startTranslation = avatarTransform.GetAttribute("translation");
 
                 IHasInputDevices input = driver as IHasInputDevices;
                 input.Keyboard.PressKey("w");
-                Thread.Sleep(500);
-                input.Keyboard.ReleaseKey("w");
 
-                string translationAfter = avatarTransform.GetAttribute("translation");
-
-                Assert.AreNotEqual(translationBefore, translationAfter);
+                // Wait until avatar starts to move.
+                wait.Until(d => avatarTransform.GetAttribute("translation") != startTranslation);
             }
             finally
             {
@@ -76,31 +76,30 @@ namespace WebTests
                 Tools.Login(driver1, "1", "");
                 Tools.Login(driver2, "2", "");
 
-                // TODO: Wait until both browsers have loaded the scene
-
-                WebDriverWait wait1 = new WebDriverWait(driver1, TimeSpan.FromSeconds(10));
+                WebDriverWait wait = new WebDriverWait(driver1, TimeSpan.FromSeconds(10));
                 IJavaScriptExecutor jsExecutor1 = driver1 as IJavaScriptExecutor;
-                string avatarGuid = (string)wait1.Until(
+
+                // Wait for the FIVES.AvatarEntityGuid to become available.
+                string avatarGuid = (string)wait.Until(
                     d => jsExecutor1.ExecuteScript("return FIVES.AvatarEntityGuid"));
 
-                IWebElement avatarTransform1 = driver1.FindElement(By.Id("transform-" + avatarGuid));
-                IWebElement avatarTransform2 = driver2.FindElement(By.Id("transform-" + avatarGuid));
+                // Wait until transform element for the same avatar becomes available in both browsers.
+                IWebElement avatarTransform1 = wait.Until(d => driver1.FindElement(By.Id("transform-" + avatarGuid)));
+                IWebElement avatarTransform2 = wait.Until(d => driver2.FindElement(By.Id("transform-" + avatarGuid)));
 
-                string translation1Before = avatarTransform1.GetAttribute("translation");
-                string translation2Before = avatarTransform2.GetAttribute("translation");
+                string startTranslation = avatarTransform1.GetAttribute("translation");
 
                 IHasInputDevices input1 = driver1 as IHasInputDevices;
                 input1.Keyboard.PressKey("w");
-                Thread.Sleep(500);
+
+                // Wait until avatar starts to move.
+                wait.Until(d => avatarTransform1.GetAttribute("translation") != startTranslation);
+
                 input1.Keyboard.ReleaseKey("w");
 
-                // TODO: wait until avatar stops moving in both driver1 and driver2
-
-                string translation1After = avatarTransform1.GetAttribute("translation");
-                string translation2After = avatarTransform2.GetAttribute("translation");
-
-                Assert.AreEqual(translation1Before, translation2Before);
-                Assert.AreEqual(translation1After, translation2After);
+                // Wait until avatars are synchronized.
+                wait.Until(d => avatarTransform1.GetAttribute("translation") ==
+                    avatarTransform2.GetAttribute("translation"));
             }
             finally
             {
