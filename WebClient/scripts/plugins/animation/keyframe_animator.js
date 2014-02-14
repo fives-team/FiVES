@@ -9,6 +9,7 @@
 
 var FIVES = FIVES || {};
 FIVES.Plugins = FIVES.Plugins || {};
+FIVES.Plugins.Animation = FIVES.Plugins.Animation || {};
 
 (function() {
     "using strict";
@@ -75,4 +76,5 @@ FIVES.Plugins = FIVES.Plugins || {};
         return valueInNewCycle;
     };
 
+    FIVES.Plugins.Animation._keyframeAnimator = new animator();
 }());

@@ -36,7 +36,7 @@ requirejs(["keyframe_animator"], (function () {
         _fivesCommunicator.registerFunctionWrapper(this._createFunctionWrappers.bind(this));
         FIVES.Events.AddOnComponentUpdatedHandler(this._componentUpdatedHandler.bind(this));
 
-        window.setInterval(updateLoop, 1000.0 / fps);
+        window.setInterval(updateLoop.bind(this), 1000.0 / fps);
     };
 
     var a = animation.prototype;
@@ -63,7 +63,8 @@ requirejs(["keyframe_animator"], (function () {
     }
 
     a._componentUpdatedHandler = function(entity, componentName) {
-
+        if(componentName == "animation")
+            this._keyframeAnimator.setAnimationKeys(entity);
     };
 
     /**
@@ -76,7 +77,7 @@ requirejs(["keyframe_animator"], (function () {
         for (var i in registeredEntities) {
             var entity = registeredEntities[i];
             if(entity)
-                entity.increaseAnimationKeys(fps);
+                this._keyframeAnimator.increaseAnimationKeys(entity, fps);
         }
     }
 
