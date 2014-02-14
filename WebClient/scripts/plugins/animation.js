@@ -10,6 +10,15 @@
 var FIVES = FIVES || {};
 FIVES.Plugins = FIVES.Plugins || {};
 
+/**
+ * ANIMATION PLUGIN
+ *
+ * Animation plugin is used to employ keyframe animations provided by KeyframeAnimation Plugin of the FiVES server.
+ * It registers FunctionWrappers to invoke and stop both server and client side functions.
+ * Animations are realized as XFlow-Keyframe animations. Entities will carry objects that encode these animations
+ * in their view element, and moreover hold references to the respective Xflow nodes for quick access to the
+ * keyframe node without having to perform a DOM lookup.
+ */
 (function () {
 
     "use strict";
@@ -24,6 +33,11 @@ FIVES.Plugins = FIVES.Plugins || {};
 
     var a = animation.prototype;
 
+    /**
+     * Callback function that is invoked by the FivesCommunicator after connection to the server was established.
+     * Creates function wrappers to start and stop animations and registers to animation update messages from the
+     * server.
+     */
     a.createFunctionWrappers = function() {
         var conn = _fivesCommunicator.connection;
         this.startServersideAnimation = conn.generateFuncWrapper("animation.startServersideAnimation");
@@ -32,12 +46,18 @@ FIVES.Plugins = FIVES.Plugins || {};
         this.startClientsideAnimation = conn.generateFuncWrapper("animation.startClientsideAnimation");
         this.stopClientsideAnimation = conn.generateFuncWrapper("animation.stopClientsideAnimation");
 
-        this.notifyAboutClientsideAnimationStart = conn.generateFuncWrapper("animation.notifyAboutClientsideAnimationStart");
-        this.notifyAboutClientsideAnimationStop = conn.generateFuncWrapper("animation.notifyAboutClientsideAnimationStop");
+        this.notifyAboutClientsideAnimationStart =
+            conn.generateFuncWrapper("animation.notifyAboutClientsideAnimationStart");
+        this.notifyAboutClientsideAnimationStop =
+            conn.generateFuncWrapper("animation.notifyAboutClientsideAnimationStop");
 
         this.registerToAnimationUpdates();
     }
 
+    /**
+     * Entities that are currently registered to have their animation keyframes updated during an update loop.
+     * @type {Array}
+     */
     var registeredEntities = [];
 
     function updateLoop() {
@@ -48,24 +68,48 @@ FIVES.Plugins = FIVES.Plugins || {};
         }
     }
 
+    /**
+     * Registers an enitity to have its keyframe updated during the update loop.
+     */
     a.registerToAnimationUpdates = function() {
         this.notifyAboutClientsideAnimationStart(this.startAnimationPlayback);
         this.notifyAboutClientsideAnimationStop(this.stopAnimationPlayback);
     };
 
+    /**
+     * Creates an animation object for an entity that represents the animation that is playing for this entity.
+     * Adds the entity to the entities that registered for keyframe updates
+     * @param entityGuid Guid of the entity that starts playing the animation
+     * @param animationName Name of the animation that shall be played
+     * @param startFrame Keyframe from which playback shall start
+     * @param endFrame Keyframe at which playback shall stop
+     * @param cycles Cycles of animations to be played. -1 denotes infinite playback
+     * @param speed Speed at which animation should be played
+     */
     a.startAnimationPlayback = function(entityGuid, animationName, startFrame, endFrame, cycles, speed)
     {
         var entity = FIVES.Models.EntityRegistry.getEntity(entityGuid);
         if(entity)
         {
             entity.playingAnimationsCollection = entity.playingAnimationsCollection || {};
-            entity.playingAnimationsCollection[animationName] = {name: animationName, startFrame: startFrame, endFrame: endFrame, cycles: cycles, currentCycle: 1, speed: speed};
+            entity.playingAnimationsCollection[animationName] = {
+                name: animationName,
+                startFrame: startFrame,
+                endFrame: endFrame,
+                cycles: cycles,
+                currentCycle: 1,
+                speed: speed};
 
             if(registeredEntities.indexOf(entity) < 0 )
                 registeredEntities.push(entity);
         }
     };
 
+    /**
+     * Stops Playback of an animation for an entity
+     * @param entityGuid Guid of the entity for which animation should be stopped
+     * @param animationName Name of the animation that should be stopped for the entity
+     */
     a.stopAnimationPlayback = function(entityGuid, animationName) {
         var entity = FIVES.Models.EntityRegistry.getEntity(entityGuid);
 
