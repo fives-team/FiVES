@@ -23,23 +23,34 @@ namespace FIVES
     public interface IPluginInitializer
     {
         /// <summary>
-        /// Returns the name of the plugin.
+        /// The name of the plugin.
         /// </summary>
-        /// <returns>The name of the plugin.</returns>
-        string GetName();
+        string Name { get; }
 
         /// <summary>
-        /// Returns the list of names of the plugins that this plugin depends on.
+        /// List of names of the plugins on whose functionality (classes) this plugin depends on.
         /// </summary>
-        /// <returns>The list of names of the plugins that this plugin depends on.</returns>
-        List<string> GetDependencies();
+        List<string> PluginDependencies { get; }
+
+        /// <summary>
+        /// List of names of the plugins on whose functionality (classes) this plugin depends on.
+        /// </summary>
+        List<string> ComponentDependencies { get; }
 
         /// <summary>
         /// Initializes the plugin. This method will be called by the plugin manager when all dependency plugins have
-        /// been loaded.
+        /// been satisfied.
         /// </summary>
         void Initialize();
 
+        /// <summary>
+        /// This method will be executed when the server is shutting down. Plug-ins may expect to have all plug-ins
+        /// which they depend upon to be still loaded while this method is invoked, but such plug-ins may be unloaded
+        /// immediately after this function returns. As we can not completely eliminate the possibility of the server
+        /// crashes, it is also recommended for the developers to introduce other mechanisms that continuously persist
+        /// critical data to reduce the data lost in such an event.
+        /// </summary>
+        void Shutdown();
     }
 }
 

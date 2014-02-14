@@ -2,7 +2,7 @@ using System;
 using System.Data;
 using NHibernate.Dialect;
 
-namespace Persistence
+namespace PersistencePlugin
 {
     public class MySQLGuid32 :MySQL5Dialect
     {

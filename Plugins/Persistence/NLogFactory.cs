@@ -4,7 +4,7 @@ using System.Configuration;
 using NLog;
 using NHibernate;
 
-namespace Persistence
+namespace PersistencePlugin
 {
     public class NLogFactory : ILoggerFactory
     {
@@ -26,8 +26,6 @@ namespace Persistence
     public class NLogLogger : IInternalLogger
     {
         private static readonly NLog.Logger log = LogManager.GetCurrentClassLogger();
-
-        private static readonly string ConfigSectionName = "nhibernate_nlog";
 
         private static readonly string DebugKey = "debug";
         private static readonly string ErrorKey = "error";
@@ -154,8 +152,9 @@ namespace Persistence
             IsFatalEnabled = true;
             IsWarnEnabled = true;
 
-            //System.Diagnostics.Debug.WriteLine("Finding section");
-            var section = ConfigurationManager.GetSection(ConfigSectionName) as NameValueCollection;
+            string persistenceConfigPath = this.GetType().Assembly.Location;
+            Configuration config = ConfigurationManager.OpenExeConfiguration(persistenceConfigPath);
+            var section = config.AppSettings.Settings;
 
             //System.Diagnostics.Debug.WriteLine(section != null ? "Section found" : "Section not found");
 
@@ -163,15 +162,15 @@ namespace Persistence
             {
                 bool flag = false;
 
-                if (section[DebugKey] != null && Boolean.TryParse(section[DebugKey], out flag))
+                if (section[DebugKey] != null && Boolean.TryParse(section[DebugKey].Value, out flag))
                     IsDebugEnabled = flag;
-                if (section[ErrorKey] != null && Boolean.TryParse(section[ErrorKey], out flag))
+                if (section[ErrorKey] != null && Boolean.TryParse(section[ErrorKey].Value, out flag))
                     IsErrorEnabled = flag;
-                if (section[FatalKey] != null && Boolean.TryParse(section[FatalKey], out flag))
+                if (section[FatalKey] != null && Boolean.TryParse(section[FatalKey].Value, out flag))
                     IsFatalEnabled = flag;
-                if (section[InfoKey] != null && Boolean.TryParse(section[InfoKey], out flag))
+                if (section[InfoKey] != null && Boolean.TryParse(section[InfoKey].Value, out flag))
                     IsInfoEnabled = flag;
-                if (section[WarnKey] != null && Boolean.TryParse(section[WarnKey], out flag))
+                if (section[WarnKey] != null && Boolean.TryParse(section[WarnKey].Value, out flag))
                     IsWarnEnabled = flag;
             }
         }

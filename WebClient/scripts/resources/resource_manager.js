@@ -49,7 +49,7 @@ FIVES.Resources = FIVES.Resources || {};
         elementsWithIdAttributes.each( function(position,element){
             that._applyReplacementToIdAttribute(element, rootElementWithReplacedReferences, idSuffix);
         } );
-        return rootElementWithReplacedReferences.children("group");
+        return rootElementWithReplacedReferences;
     };
 
     rm._applyReplacementToExternalSources = function(element, attribute) {

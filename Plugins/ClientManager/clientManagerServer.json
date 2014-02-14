@@ -1,0 +1,11 @@
+{
+  "info": "ClientManagerServer",
+  "idlURL": "../../WebClient/kiara/fives.kiara",
+  "servers": [{
+    "services": "*",
+    "protocol": {
+      "name": "websocket-json",
+      "port": 34837,
+    }
+  }]
+}

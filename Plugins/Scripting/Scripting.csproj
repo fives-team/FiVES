@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -7,38 +7,28 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{B9853261-AFD6-48BE-928E-1D2E04C287EC}</ProjectGuid>
     <OutputType>Library</OutputType>
-    <RootNamespace>Scripting</RootNamespace>
+    <RootNamespace>ScriptingPlugin</RootNamespace>
     <AssemblyName>Scripting</AssemblyName>
+    <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\..\</SolutionDir>
+    <RestorePackages>true</RestorePackages>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>bin\Debug</OutputPath>
+    <OutputPath>..\..\Binaries\Debug</OutputPath>
     <DefineConstants>DEBUG;</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <ConsolePause>false</ConsolePause>
-    <CustomCommands>
-      <CustomCommands>
-        <Command type="AfterBuild" command="xcopy /y &quot;${TargetDir}&quot; &quot;${SolutionDir}\BuiltLibs\&quot; &amp;&amp; xcopy /y /s &quot;${SolutionDir}\ThirdParty\V8.NET\Net40\Release&quot; &quot;${SolutionDir}\FIVES\bin\${ProjectConfigName}\&quot;|| echo &quot;Ignoring error&quot;" externalConsole="True" />
-        <Command type="AfterBuild" command="mkdir -p &quot;${SolutionDir}/BuiltLibs/&quot; &amp;&amp; cp &quot;${TargetDir}/&quot;* &quot;${SolutionDir}/BuiltLibs/&quot;  &amp;&amp; cp -a &quot;${SolutionDir}/ThirdParty/V8.NET/Net40/Release&quot;/* &quot;${SolutionDir}/FIVES/bin/${ProjectConfigName}/&quot; || echo &quot;Ignoring error&quot;" externalConsole="True" />
-      </CustomCommands>
-    </CustomCommands>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>full</DebugType>
     <Optimize>true</Optimize>
-    <OutputPath>bin\Release</OutputPath>
+    <OutputPath>..\..\Binaries\Release</OutputPath>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <ConsolePause>false</ConsolePause>
-    <CustomCommands>
-      <CustomCommands>
-        <Command type="AfterBuild" command="xcopy /y &quot;${TargetDir}&quot; &quot;${SolutionDir}\BuiltLibs\&quot; &amp;&amp; xcopy /y /s &quot;${SolutionDir}\ThirdParty\V8.NET\Net40\Release&quot; &quot;${SolutionDir}\FIVES\bin\${ProjectConfigName}\&quot;|| echo &quot;Ignoring error&quot;" externalConsole="True" />
-        <Command type="AfterBuild" command="mkdir -p &quot;${SolutionDir}/BuiltLibs/&quot; &amp;&amp; cp &quot;${TargetDir}/&quot;* &quot;${SolutionDir}/BuiltLibs/&quot;  &amp;&amp; cp -a &quot;${SolutionDir}/ThirdParty/V8.NET/Net40/Release&quot;/* &quot;${SolutionDir}/FIVES/bin/${ProjectConfigName}/&quot; || echo &quot;Ignoring error&quot;" externalConsole="True" />
-      </CustomCommands>
-    </CustomCommands>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -60,20 +50,29 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="ScriptingPlugin.cs" />
+    <Compile Include="Scripting.cs" />
+    <Compile Include="ScriptingPluginInitializer.cs" />
     <Compile Include="IJSContext.cs" />
     <Compile Include="V8NetContext.cs" />
     <Compile Include="CLRConsole.cs" />
-    <Compile Include="ScriptingPluginTest.cs" />
+    <Compile Include="ScriptingPluginInitializerTest.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
-    <ProjectReference Include="..\..\Core\Core.csproj">
-      <Project>{627CCFC6-4071-4119-92C6-8BC96E4310C8}</Project>
-      <Name>Core</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\Core\DomainModel\DomainModel.csproj">
+      <Project>{79EF699D-6A88-4054-AF04-F22486DB47FA}</Project>
+      <Name>DomainModel</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Core\PluginManager\PluginManager.csproj">
+      <Project>{DB1099A1-B7FE-474F-A03A-41687D6C5C76}</Project>
+      <Name>PluginManager</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <PropertyGroup>
+    <PostBuildEvent Condition=" '$(OS)' == 'Windows_NT' ">xcopy /y /s "$(ProjectDir)..\..\ThirdParty\V8.NET\Net40\Release" "$(ProjectDir)..\..\Binaries\$(ConfigurationName)\"</PostBuildEvent>
+    <PostBuildEvent Condition=" '$(OS)' != 'Windows_NT' ">mkdir -p "$(ProjectDir)../../Binaries/$(ConfigurationName)/" &amp;&amp; cp -r "$(ProjectDir)../../ThirdParty/V8.NET/Net40/Release"/* "$(ProjectDir)../../Binaries/$(ConfigurationName)/"</PostBuildEvent>
+  </PropertyGroup>
 </Project>

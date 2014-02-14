@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -7,38 +7,28 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{E1955FF2-6109-4C71-9F13-486A48DE6C17}</ProjectGuid>
     <OutputType>Library</OutputType>
-    <RootNamespace>ClientManager</RootNamespace>
+    <RootNamespace>ClientManagerPlugin</RootNamespace>
     <AssemblyName>ClientManager</AssemblyName>
+    <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\..\</SolutionDir>
+    <RestorePackages>true</RestorePackages>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>True</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>False</Optimize>
-    <OutputPath>bin\Debug</OutputPath>
+    <OutputPath>..\..\Binaries\Debug</OutputPath>
     <DefineConstants>DEBUG;</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <ConsolePause>False</ConsolePause>
-    <CustomCommands>
-      <CustomCommands>
-        <Command type="AfterBuild" command="xcopy /y &quot;${TargetDir}&quot; &quot;${SolutionDir}\BuiltLibs\&quot; || echo &quot;Ignoring error&quot;" externalConsole="True" />
-        <Command type="AfterBuild" command="mkdir -p &quot;${SolutionDir}/BuiltLibs/&quot; &amp;&amp; cp &quot;${TargetDir}/&quot;* &quot;${SolutionDir}/BuiltLibs/&quot; || echo &quot;Ignoring error&quot;" externalConsole="True" />
-      </CustomCommands>
-    </CustomCommands>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>none</DebugType>
     <Optimize>True</Optimize>
-    <OutputPath>bin\Release</OutputPath>
+    <OutputPath>..\..\Binaries\Release</OutputPath>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <ConsolePause>False</ConsolePause>
-    <CustomCommands>
-      <CustomCommands>
-        <Command type="AfterBuild" command="xcopy /y &quot;${TargetDir}&quot; &quot;${SolutionDir}\BuiltLibs\&quot; || echo &quot;Ignoring error&quot;" externalConsole="True" />
-        <Command type="AfterBuild" command="mkdir -p &quot;${SolutionDir}/BuiltLibs/&quot; &amp;&amp; cp &quot;${TargetDir}/&quot;* &quot;${SolutionDir}/BuiltLibs/&quot; || echo &quot;Ignoring error&quot;" externalConsole="True" />
-      </CustomCommands>
-    </CustomCommands>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -56,25 +46,45 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AssemblyInfo.cs" />
-    <Compile Include="ClientManagerPlugin.cs" />
-    <Compile Include="ClientManagerPluginTest.cs" />
+    <Compile Include="ClientManager.cs" />
+    <Compile Include="ClientManagerPluginInitializer.cs" />
+    <Compile Include="ClientUpdateQueue.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
-    <ProjectReference Include="..\..\Core\Core.csproj">
-      <Project>{627CCFC6-4071-4119-92C6-8BC96E4310C8}</Project>
-      <Name>Core</Name>
+    <ProjectReference Include="..\..\Core\Collections\Collections.csproj">
+      <Project>{9c2af21f-4d8c-4ade-a5c4-135a6f50e18a}</Project>
+      <Name>Collections</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Location\Location.csproj">
-      <Project>{C463A928-9F1B-4134-B8C7-D398097E2D73}</Project>
-      <Name>Location</Name>
+    <ProjectReference Include="..\..\Core\DomainModel\DomainModel.csproj">
+      <Project>{79EF699D-6A88-4054-AF04-F22486DB47FA}</Project>
+      <Name>DomainModel</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Renderable\Renderable.csproj">
-      <Project>{74073FC3-BC58-45A8-9897-4A718F903916}</Project>
-      <Name>Renderable</Name>
+    <ProjectReference Include="..\..\Core\Math\Math.csproj">
+      <Project>{A2D1D8E5-7C5C-4EA3-95C7-D8D97AB0B74E}</Project>
+      <Name>Math</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Core\PluginManager\PluginManager.csproj">
+      <Project>{DB1099A1-B7FE-474F-A03A-41687D6C5C76}</Project>
+      <Name>PluginManager</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Auth\Auth.csproj">
+      <Project>{CCDA8021-971D-4703-A4BD-325248EF9499}</Project>
+      <Name>Auth</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\KIARA\KIARA.csproj">
+      <Project>{EEFDDD48-1795-4D62-A255-29167B0A3BC3}</Project>
+      <Name>KIARA</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Terminal\Terminal.csproj">
+      <Project>{fdf2de99-68cf-4947-952c-2d2bcc846f3e}</Project>
+      <Name>Terminal</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <None Include="clientManagerServer.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="packages.config" />
   </ItemGroup>
 </Project>

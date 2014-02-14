@@ -49,10 +49,9 @@ FIVES.Communication = FIVES.Communication || {};
         };
 
         var loginCallback = function(result) {
-            if (result == "") {
+            if (result == false) {
                 reportFailure("Invalid user name or password.");
             } else {
-                self.sessionKey = result;
                 callback(true);
             }
         };
@@ -119,15 +118,13 @@ FIVES.Communication = FIVES.Communication || {};
             FIVES.Models.EntityRegistry.addEntityFromServer(objects[i]);
     };
 
-    var _locationPositionUpdate = function(guid, position) {
-        var entity = FIVES.Models.EntityRegistry.getEntity(guid);
-        entity.updatePosition(position);
-    };
-
-    var _locationOrientationUpdate = function(guid, orientation) {
-        var entity = FIVES.Models.EntityRegistry.getEntity(guid);
-        entity.updateOrientation(orientation);
-    };
+    var _objectUpdate = function(receivedObjectUpdates) {
+        for(var entry in receivedObjectUpdates) {
+            var handledUpdated = receivedObjectUpdates[entry];
+            var updatedEntity = FIVES.Models.EntityRegistry.getEntity(handledUpdated.entityGuid);
+            updatedEntity.updateAttribute(handledUpdated.componentName, handledUpdated.attributeName, handledUpdated.value);
+        }
+    }
 
     c._generateTimestamp = function() {
         var updateTime = new Date().getTime();
@@ -142,26 +139,46 @@ FIVES.Communication = FIVES.Communication || {};
         this.createServerScriptFor = this.connection.generateFuncWrapper("scripting.createServerScriptFor");
 
         this.notifyAboutNewObjects = this.connection.generateFuncWrapper("objectsync.notifyAboutNewObjects");
-        this.notifyAboutNewObjects(this.sessionKey, FIVES.Models.EntityRegistry.addEntityFromServer.bind(FIVES.Models.EntityRegistry));
+        this.notifyAboutNewObjects(FIVES.Models.EntityRegistry.addEntityFromServer.bind(FIVES.Models.EntityRegistry));
+
+        this.notifyAboutObjectUpdates = this.connection.generateFuncWrapper("objectsync.notifyAboutObjectUpdates");
+        this.notifyAboutObjectUpdates(_objectUpdate);
 
         this.updateEntityPosition = this.connection.generateFuncWrapper("location.updatePosition");
         this.updateEntityOrientation = this.connection.generateFuncWrapper("location.updateOrientation");
 
-        this.notifyAboutPositionOfEntityChanged = this.connection.generateFuncWrapper("location.notifyAboutPositionUpdates");
-        this.notifyAboutPositionOfEntityChanged(this.sessionKey, _locationPositionUpdate);
+        this.updateMotion = this.connection.generateFuncWrapper("motion.update");
 
-        this.notifyAboutOrientationOfEntityChanged = this.connection.generateFuncWrapper("location.notifyAboutOrientationUpdates");
-        this.notifyAboutOrientationOfEntityChanged(this.sessionKey, _locationOrientationUpdate);
+        this.getAvatarEntityGuid = this.connection.generateFuncWrapper("avatar.getAvatarEntityGuid");
+        this.startAvatarMotionInDirection = this.connection.generateFuncWrapper("avatar.startAvatarMotionInDirection");
+        this.setAvatarForwardBackwardMotion = this.connection.generateFuncWrapper("avatar.setAvatarForwardBackwardMotion");
+        this.setAvatarLeftRightMotion = this.connection.generateFuncWrapper("avatar.setAvatarLeftRightMotion");
+        this.setAvatarSpinAroundAxis = this.connection.generateFuncWrapper("avatar.setAvatarSpinAroundAxis");
+
+        this.startServersideAnimation = this.connection.generateFuncWrapper("animation.startServersideAnimation");
+        this.stopServersideAnimation = this.connection.generateFuncWrapper("animation.stopServersideAnimation");
+
+        this.startClientsideAnimation = this.connection.generateFuncWrapper("animation.startClientsideAnimation");
+        this.stopClientsideAnimation = this.connection.generateFuncWrapper("animation.stopClientsideAnimation");
+
+        this.notifyAboutClientsideAnimationStart = this.connection.generateFuncWrapper("animation.notifyAboutClientsideAnimationStart");
+        this.notifyAboutClientsideAnimationStop = this.connection.generateFuncWrapper("animation.notifyAboutClientsideAnimationStop");
+        this.notifyAboutClientsideAnimationStart(FIVES.Plugins.Animation.startAnimationPlayback);
+        this.notifyAboutClientsideAnimationStop(FIVES.Plugins.Animation.stopAnimationPlayback);
 
         this.listObjects().on("result", _listObjectsCallback.bind(this));
+        var getEntityGuidCall = this.getAvatarEntityGuid();
+        getEntityGuidCall.on("success", function(avatarEntityGuid) {
+           FIVES.AvatarEntityGuid = avatarEntityGuid;
+        });
     };
 
     c.sendEntityPositionUpdate = function(guid, position) {
-        this.updateEntityPosition(this.sessionKey, guid, position, this._generateTimestamp());
+        this.updateEntityPosition(guid, position, this._generateTimestamp());
     };
 
     c.sendEntityOrientationUpdate = function(guid, orientation) {
-        this.updateEntityOrientation(this.sessionKey, guid, orientation, this._generateTimestamp());
+        this.updateEntityOrientation(guid, orientation, this._generateTimestamp());
     };
 
     // Expose Communicator to namespace

@@ -1,7 +1,7 @@
 using System;
-using Location;
+using FIVES;
 
-namespace Motion
+namespace MotionPlugin
 {
     public struct RotVelocity {
         public Vector axis;

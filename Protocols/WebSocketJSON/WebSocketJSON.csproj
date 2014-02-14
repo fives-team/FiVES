@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -9,42 +9,33 @@
     <OutputType>Library</OutputType>
     <RootNamespace>WebSocketJSON</RootNamespace>
     <AssemblyName>WebSocketJSON</AssemblyName>
+    <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\..\</SolutionDir>
+    <RestorePackages>true</RestorePackages>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>bin\Debug</OutputPath>
+    <OutputPath>..\..\Binaries\Debug</OutputPath>
     <DefineConstants>DEBUG;</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <ConsolePause>false</ConsolePause>
-    <CustomCommands>
-      <CustomCommands>
-        <Command type="AfterBuild" command="xcopy /y &quot;${TargetDir}&quot; &quot;${SolutionDir}\BuiltLibs\&quot; || echo &quot;Ignoring error&quot;" externalConsole="True" />
-        <Command type="AfterBuild" command="mkdir -p &quot;${SolutionDir}/BuiltLibs/&quot; &amp;&amp; cp &quot;${TargetDir}/&quot;* &quot;${SolutionDir}/BuiltLibs/&quot; || echo &quot;Ignoring error&quot;" externalConsole="True" />
-      </CustomCommands>
-    </CustomCommands>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>full</DebugType>
     <Optimize>true</Optimize>
-    <OutputPath>bin\Release</OutputPath>
+    <OutputPath>..\..\Binaries\Release</OutputPath>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <ConsolePause>false</ConsolePause>
-    <CustomCommands>
-      <CustomCommands>
-        <Command type="AfterBuild" command="xcopy /y &quot;${TargetDir}&quot; &quot;${SolutionDir}\BuiltLibs\&quot; || echo &quot;Ignoring error&quot;" externalConsole="True" />
-        <Command type="AfterBuild" command="mkdir -p &quot;${SolutionDir}/BuiltLibs/&quot; &amp;&amp; cp &quot;${TargetDir}/&quot;* &quot;${SolutionDir}/BuiltLibs/&quot; || echo &quot;Ignoring error&quot;" externalConsole="True" />
-      </CustomCommands>
-    </CustomCommands>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="System" />
-    <Reference Include="Newtonsoft.Json">
-      <HintPath>..\..\ThirdParty\Json50r6\Bin\Portable40\Newtonsoft.Json.dll</HintPath>
+    <Reference Include="Newtonsoft.Json, Version=4.5.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\packages\Newtonsoft.Json.4.5.11\lib\net40\Newtonsoft.Json.dll</HintPath>
     </Reference>
+    <Reference Include="System" />
     <Reference Include="System.Configuration" />
     <Reference Include="SuperSocket.Common">
       <HintPath>..\..\ThirdParty\SuperWebSocket\Net40\Debug\SuperSocket.Common.dll</HintPath>
@@ -71,26 +62,37 @@
     <Reference Include="Dynamitey">
       <HintPath>..\..\packages\Dynamitey.1.0.2.0\lib\net40\Dynamitey.dll</HintPath>
     </Reference>
+    <Reference Include="WebSocket4Net">
+      <HintPath>..\..\packages\WebSocket4Net.0.8\lib\net40\WebSocket4Net.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ErrorEventArgs.cs" />
+    <Compile Include="Exceptions\InvalidNumberOfArgs.cs" />
+    <Compile Include="ISocket.cs" />
+    <Compile Include="MessageEventArgs.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="WSJProtocolFactory.cs" />
+    <Compile Include="WebSocketSocketAdapter.cs" />
+    <Compile Include="WSJSessionSocketAdapter.cs" />
+    <Compile Include="WSJConnection.cs" />
+    <Compile Include="WSJConnectionFactory.cs" />
     <Compile Include="WSJServer.cs" />
-    <Compile Include="WSJProtocol.cs" />
+    <Compile Include="WSJSession.cs" />
     <Compile Include="WSJFuncCall.cs" />
     <Compile Include="WSJFuncCallTest.cs" />
-    <Compile Include="WSJProtocolTest.cs" />
+    <Compile Include="WSJConnectionTest.cs" />
     <Compile Include="TestingWrappers.cs" />
-    <Compile Include="WSJProtocolFactoryTest.cs" />
+    <Compile Include="WSJConnectionFactoryTest.cs" />
+    <Compile Include="StandardFloatConverter.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
-    <ProjectReference Include="..\..\Core\Core.csproj">
-      <Project>{627CCFC6-4071-4119-92C6-8BC96E4310C8}</Project>
-      <Name>Core</Name>
-    </ProjectReference>
+    <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="packages.config" />
+    <ProjectReference Include="..\..\Plugins\KIARA\KIARA.csproj">
+      <Project>{EEFDDD48-1795-4D62-A255-29167B0A3BC3}</Project>
+      <Name>KIARA</Name>
+    </ProjectReference>
   </ItemGroup>
 </Project>
