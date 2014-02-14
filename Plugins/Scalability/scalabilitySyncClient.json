@@ -6,7 +6,7 @@
     "protocol": {
       "name": "websocket-json",
       "port": 4374,
-      "host": "localhost"
+      "host": "127.0.0.1"
     }
   }]
 }
