@@ -12,20 +12,18 @@ namespace WebTests
     {
         public static void Login(IWebDriver driver, string username, string password)
         {
-            var jsExecutor = driver as IJavaScriptExecutor;
-            var signinBtn = driver.FindElement(By.Id("signin-btn"));
-            var signinModal = driver.FindElement(By.Id("signin-modal"));
             var wait = new WebDriverWait(driver, TimeSpan.FromSeconds(10));
+            IWebElement signinBtn = wait.Until<IWebElement>(d => d.FindElement(By.Id("signin-btn")));
+            IWebElement signinModal = wait.Until<IWebElement>(d => d.FindElement(By.Id("signin-modal")));
 
-            wait.Until<bool>(d => signinBtn.Displayed);
+            wait.Until<bool>(d => signinBtn.Displayed && signinBtn.Enabled);
 
-            jsExecutor.ExecuteScript("$('#signin-login').val(arguments[0])", username);
-            jsExecutor.ExecuteScript("$('#signin-password').val(arguments[0])", password);
-            signinBtn.Click();
+            var jsExecutor = driver as IJavaScriptExecutor;
+            jsExecutor.ExecuteScript(@"$('#signin-login').val(arguments[0]);
+                $('#signin-password').val(arguments[1]);
+                $('#signin-btn').click();", username, password);
 
-            wait.Until<bool>(d => signinBtn.Enabled || !signinModal.Displayed);
-
-            Assert.IsFalse(signinModal.Displayed);
+            wait.Until<bool>(d => !signinModal.Displayed);
         }
     }
 }
