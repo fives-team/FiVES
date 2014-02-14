@@ -1,0 +1,7 @@
+service serverSync
+{
+    // Returns this server's sync ID.
+    string getSyncID();
+
+    // TODO
+}

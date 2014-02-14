@@ -1,8 +1,5 @@
-﻿using FIVES;
-using System;
+using FIVES;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace ServerSyncPlugin
 {
@@ -34,7 +31,7 @@ namespace ServerSyncPlugin
 
         public void Initialize()
         {
-
+            ServerSync.Instance = new ServerSyncImpl();
         }
 
         public void Shutdown()

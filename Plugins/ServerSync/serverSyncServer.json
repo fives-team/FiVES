@@ -1,0 +1,11 @@
+{
+  "info": "ServerSyncServer",
+  "idlURL": "serverSync.kiara",
+  "servers": [{
+    "services": "*",
+    "protocol": {
+      "name": "websocket-json",
+      "port": 43745,
+    }
+  }]
+}
