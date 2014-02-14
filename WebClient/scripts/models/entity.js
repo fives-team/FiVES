@@ -53,11 +53,7 @@ FIVES.Models = FIVES.Models || {};
     };
 
     e._applyComponentUpdatesTo3DView = function(componentName) {
-        if(componentName == "position")
-            FIVES.Resources.SceneManager.updatePosition(this);
-        else if(componentName == "orientation")
-            FIVES.Resources.SceneManager.updateOrientation(this);
-        else if (componentName == "meshResource")
+        if (componentName == "meshResource")
             FIVES.Resources.SceneManager.updateMesh(this);
         FIVES.Events.ComponentUpdated(this, componentName);
     };
@@ -65,24 +61,6 @@ FIVES.Models = FIVES.Models || {};
     e.updateAttribute = function(componentName, attributeName, value) {
         this._cachedComponentUpdates[componentName] = this._cachedComponentUpdates[componentName] || {};
         this._cachedComponentUpdates[componentName][attributeName] = value;
-    };
-
-    e.updatePosition = function(position) {
-        this.position = position;
-        FIVES.Resources.SceneManager.updatePosition(this);
-    };
-
-    e.updateOrientation = function(orientation) {
-        this.orientation = orientation;
-        FIVES.Resources.SceneManager.updateOrientation(this);
-    };
-
-    e.setPosition = function(x, y, z) {
-        FIVES.Communication.FivesCommunicator.sendEntityPositionUpdate(this.guid, {x: x, y: y, z: z});
-    };
-
-    e.setOrientation = function(x, y, z, w) {
-        FIVES.Communication.FivesCommunicator.sendEntityOrientationUpdate(this.guid, { x: x, y: y, z: z, w: w});
     };
 
     e.getTransformElement = function() {

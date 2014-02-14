@@ -13,4 +13,53 @@ FIVES.Plugins = FIVES.Plugins || {};
 (function (){
     "use strict";
 
+    var _fivesCommunicator = FIVES.Communication.FivesCommunicator;
+
+    var location = function() {
+        _fivesCommunicator.registerFunctionWrapper(this._createFunctionWrappers.bind(this));
+        FIVES.Events.AddOnComponentUpdatedHandler(this._componentUpdatedHandler.bind(this));
+    };
+
+    var l = location.prototype;
+
+    l._createFunctionWrappers = function (){
+        this.updateEntityPosition = _fivesCommunicator.connection.generateFuncWrapper("location.updatePosition");
+        this.updateEntityOrientation = _fivesCommunicator.connection.generateFuncWrapper("location.updateOrientation");
+    };
+
+    l._componentUpdatedHandler = function(entity, componentName) {
+        if(componentName == "position")
+            FIVES.Resources.SceneManager.updatePosition(entity);
+        else if(componentName == "orientation")
+            FIVES.Resources.SceneManager.updateOrientation(entity);
+    };
+
+    l.updatePosition = function(entity, position) {
+        entity.position = position;
+        FIVES.Resources.SceneManager.updatePosition(entity);
+    };
+
+    l.updateOrientation = function(entity, orientation) {
+        entity.orientation = orientation;
+        FIVES.Resources.SceneManager.updateOrientation(entity);
+    };
+
+    l.setEntityPosition = function(entity, x, y, z) {
+        this.sendEntityPositionUpdate(entity.guid, {x: x, y: y, z: z});
+    };
+
+    l.setEntityOrientation = function(entity, x, y, z, w) {
+        this.sendEntityOrientationUpdate(entity.guid, { x: x, y: y, z: z, w: w});
+    };
+
+    l.sendEntityPositionUpdate = function(guid, position) {
+        this.updateEntityPosition(guid, position, _fivesCommunicator._generateTimestamp());
+    };
+
+    l.sendEntityOrientationUpdate = function(guid, orientation) {
+        this.updateEntityOrientation(guid, orientation, _fivesCommunicator._generateTimestamp());
+    };
+
+    FIVES.Plugins.Location = new location();
+
 }());

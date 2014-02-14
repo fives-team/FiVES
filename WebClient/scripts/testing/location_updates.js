@@ -32,7 +32,7 @@ FIVES.Testing = FIVES.Testing || {};
                 rotation.angle = 0;
 
             var q = rotation.getQuaternion();
-            entity.setOrientation(q[0], q[1], q[2], q[3]);
+            FIVES.Plugins.Location.setEntityOrientation(entity, q[0], q[1], q[2], q[3]);
         }
     };
 
@@ -51,7 +51,7 @@ FIVES.Testing = FIVES.Testing || {};
             if(newX < -10)
                 movingBackwards[entity.guid] = false;
 
-            entity.setPosition(newX, p.y, p.z);
+            FIVES.Plugins.Location.setEntityPosition(entity, newX, p.y, p.z);
         }
     };
 

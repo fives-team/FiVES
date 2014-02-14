@@ -142,9 +142,6 @@ FIVES.Communication = FIVES.Communication || {};
         this.notifyAboutObjectUpdates = this.connection.generateFuncWrapper("objectsync.notifyAboutObjectUpdates");
         this.notifyAboutObjectUpdates(_objectUpdate);
 
-        this.updateEntityPosition = this.connection.generateFuncWrapper("location.updatePosition");
-        this.updateEntityOrientation = this.connection.generateFuncWrapper("location.updateOrientation");
-
         this.updateMotion = this.connection.generateFuncWrapper("motion.update");
 
         this.getAvatarEntityGuid = this.connection.generateFuncWrapper("avatar.getAvatarEntityGuid");
@@ -159,14 +156,6 @@ FIVES.Communication = FIVES.Communication || {};
         getEntityGuidCall.on("success", function(avatarEntityGuid) {
            FIVES.AvatarEntityGuid = avatarEntityGuid;
         });
-    };
-
-    c.sendEntityPositionUpdate = function(guid, position) {
-        this.updateEntityPosition(guid, position, this._generateTimestamp());
-    };
-
-    c.sendEntityOrientationUpdate = function(guid, orientation) {
-        this.updateEntityOrientation(guid, orientation, this._generateTimestamp());
     };
 
     // Expose Communicator to namespace
