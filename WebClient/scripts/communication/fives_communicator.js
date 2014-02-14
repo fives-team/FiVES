@@ -16,17 +16,6 @@ FIVES.Communication = FIVES.Communication || {};
     var FivesCommunicator = function() {};
     var c = FivesCommunicator.prototype;
 
-    // Function wrappers for KIARA interface provided by FIVES server
-    c.listObjects = function() {};
-    c.getObjectLocation = function() {};
-    c.createEntityAt = function() {};
-    c.createMeshEntity = function() {};
-    c.createServerScriptFor = function() {};
-    c.notifyAboutNewObjects = function() {};
-    c.getObjectMesh = function() {};
-    c.updateEntityLocation = function() {};
-    c.notifyAboutLocationOfEntityChanged = function() {};
-
 
     c.initialize = function(context, service) {
         this.context = context;
