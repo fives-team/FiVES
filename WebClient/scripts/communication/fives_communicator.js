@@ -103,19 +103,6 @@ FIVES.Communication = FIVES.Communication || {};
             this.onConnected();
     };
 
-    var _listObjectsCallback =  function(error, objects) {
-        for (var i = 0; i < objects.length; i++)
-            FIVES.Models.EntityRegistry.addEntityFromServer(objects[i]);
-    };
-
-    var _objectUpdate = function(receivedObjectUpdates) {
-        for(var entry in receivedObjectUpdates) {
-            var handledUpdated = receivedObjectUpdates[entry];
-            var updatedEntity = FIVES.Models.EntityRegistry.getEntity(handledUpdated.entityGuid);
-            updatedEntity.updateAttribute(handledUpdated.componentName, handledUpdated.attributeName, handledUpdated.value);
-        }
-    }
-
     c.registerFunctionWrapper = function(registerFunction) {
             this.registeredWrapperRegisterers.push(registerFunction);
     };
@@ -131,20 +118,11 @@ FIVES.Communication = FIVES.Communication || {};
             this.registeredWrapperRegisterers[i]();
         }
 
-        this.listObjects = this.connection.generateFuncWrapper("objectsync.listObjects");
         this.createEntityAt = this.connection.generateFuncWrapper("editing.createEntityAt");
         this.createMeshEntity = this.connection.generateFuncWrapper("editing.createMeshEntity");
         this.createServerScriptFor = this.connection.generateFuncWrapper("scripting.createServerScriptFor");
 
-        this.notifyAboutNewObjects = this.connection.generateFuncWrapper("objectsync.notifyAboutNewObjects");
-        this.notifyAboutNewObjects(FIVES.Models.EntityRegistry.addEntityFromServer.bind(FIVES.Models.EntityRegistry));
-
-        this.notifyAboutObjectUpdates = this.connection.generateFuncWrapper("objectsync.notifyAboutObjectUpdates");
-        this.notifyAboutObjectUpdates(_objectUpdate);
-
         this.updateMotion = this.connection.generateFuncWrapper("motion.update");
-
-        this.listObjects().on("result", _listObjectsCallback.bind(this));
     };
 
     // Expose Communicator to namespace
