@@ -13,8 +13,6 @@ FIVES.Plugins = FIVES.Plugins || {};
 (function () {
     "use strict";
 
-    var _xml3dElement =  FIVES.Resources.SceneManager.xml3dElement;
-
     var renderable = function () {
         FIVES.Events.AddEntityAddedHandler(this.addMeshForEntity.bind(this));
         FIVES.Events.AddOnComponentUpdatedHandler(this.updateMesh.bind(this));
@@ -34,12 +32,14 @@ FIVES.Plugins = FIVES.Plugins || {};
     };
 
     r._addMeshDefinitionsToScene = function(entity, meshDocument) {
+        var _xml3dElement = FIVES.Resources.SceneManager.xml3dElement;
         var meshDefinitions = $(meshDocument).children("defs");
         $(_xml3dElement).append(meshDefinitions);
         entity.xml3dView.defElement = meshDefinitions[0];
     };
 
     r._addXml3dGroupsForMesh = function(entity, meshDocument) {
+        var _xml3dElement = FIVES.Resources.SceneManager.xml3dElement;
         var meshGroup = $(meshDocument).children("group");
         var entityGroup = this._createParentGroupForEntity(entity);
         entity.xml3dView.groupElement = entityGroup;
