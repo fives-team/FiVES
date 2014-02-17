@@ -36,6 +36,15 @@ FIVES.Events = FIVES.Events || {};
         _onComponentUpdatedHandler.splice(handler, 1);
     };
 
+    FIVES.Events.AddEntityAddedHandler = function(handler) {
+        _onEntityAddedHandler.push(handler);
+    };
+
+    FIVES.Events.RemoveEntityAddedHandler = function(handler) {
+        if(_onEntityAddedHandler.indexOf(handler) != -1)
+            _onEntityAddedHandler.splice(handler, 1);
+    };
+
     /**
      * Fired when an entity updated one of its components. May be used by plugin scripts to executed
      * @param entity [FIVES.Models.Entity] Entity object that fired the event
