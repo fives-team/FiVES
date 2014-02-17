@@ -88,6 +88,9 @@ namespace ServerSyncPlugin
 
         void AddRemoteServer(Connection connection, IDomainOfResponsibility dor, IDomainOfInterest doi, Guid syncID)
         {
+            if (syncID == ServerSync.LocalServer.SyncID)
+                return;
+
             var newServer = new RemoteServerImpl(connection, doi, dor, syncID);
 
             lock (remoteServers)
