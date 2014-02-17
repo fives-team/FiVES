@@ -112,7 +112,6 @@ FIVES.Resources = FIVES.Resources || {};
             cameraTranslation.y = 1.2;
             view.position.set(cameraTranslation);
         }
-
     };
 
     FIVES.Resources.SceneManager = new SceneManager();
