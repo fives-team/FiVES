@@ -118,8 +118,6 @@ FIVES.Communication = FIVES.Communication || {};
             this.registeredWrapperRegisterers[i]();
         }
 
-        this.createServerScriptFor = this.connection.generateFuncWrapper("scripting.createServerScriptFor");
-
         this.updateMotion = this.connection.generateFuncWrapper("motion.update");
     };
 
