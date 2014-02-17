@@ -17,7 +17,8 @@ FIVES.Plugins = FIVES.Plugins || {};
 
     var avatar = function() {
         _fivesCommunicator.registerFunctionWrapper(this._createFunctionWrappers.bind(this));
-        FIVES.Events.AddOnComponentUpdatedHandler(this._componentUpdateHandler.bind(this));
+        FIVES.Events.AddOnComponentUpdatedHandler(this._setCameraBehindAvatar.bind(this));
+        FIVES.Events.AddEntityGeometryCreatedHandler(this._setCameraBehindAvatar.bind(this));
     };
 
     var a = avatar.prototype;
@@ -40,7 +41,13 @@ FIVES.Plugins = FIVES.Plugins || {};
         });
     };
 
-    a._componentUpdateHandler = function(entity, componentName) {
+    a._handleComponentUpdate = function(entity, componentName) {
+        if(componentName == "position" || componentName == "orientation") {
+            this._setCameraBehindAvatar(entity);
+        }
+    };
+
+    a._setCameraBehindAvatar = function(entity) {
         if(entity.guid == FIVES.AvatarEntityGuid)  {
             FIVES.Resources.SceneManager.updateCameraView(entity);
         }
