@@ -106,9 +106,13 @@ namespace ConfigScalabilityPlugin
 
         private void PrintDoI(string commandLine)
         {
+            string doiComponents = "none";
+            if (doi.RelevantComponents != null)
+                doiComponents = String.Join(", ", doi.RelevantComponents);
+
             var message = String.Format(
                 "Current domain-of-interest: minX = {0}, maxX = {1}, minY = {2}, maxY = {3}, components = ({4})",
-                doi.MinX, doi.MaxX, doi.MinY, doi.MaxY, String.Join(", ", doi.RelevantComponents));
+                doi.MinX, doi.MaxX, doi.MinY, doi.MaxY, doiComponents);
             Terminal.Instance.WriteLine(message);
         }
 
