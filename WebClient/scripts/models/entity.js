@@ -50,8 +50,6 @@ FIVES.Models = FIVES.Models || {};
     };
 
     e._applyComponentUpdatesTo3DView = function(componentName) {
-        if (componentName == "meshResource")
-            FIVES.Resources.SceneManager.updateMesh(this);
         FIVES.Events.ComponentUpdated(this, componentName);
     };
 

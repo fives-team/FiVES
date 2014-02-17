@@ -132,18 +132,6 @@ FIVES.Resources = FIVES.Resources || {};
             transformationForEntity.translation.set(this._createTranslationForEntityGroup(entity));
     };
 
-    scm.updateMesh = function(entity) {
-        // FIXME: We do not support changes to mesh resource attribute. The correct approach would be to remove existing entity
-        // (group and transform elements) from the scene graph and re-create them with the new URI. However removing the group
-        // element, which has a reference to the data element within this group, causes crashes in current implement of xml3d.js
-        // ([put the url to respective issue on the xml3d issue tracker here]). Once this is fixed, we should use the following
-        // code instead:
-        //scm.removeEntity(entity);
-        //scm.addMeshForEntity(entity).
-        // The issue is filed in the xml3d github repo (#50)
-        entity.xml3dView.groupElement.setAttribute("visible", entity["meshResource"]["visible"]);
-    };
-
     scm.updateCameraView = function(entity) {
         var view = $(this.xml3dElement.activeView)[0];
         var entityTransform = entity.xml3dView.transformElement;
