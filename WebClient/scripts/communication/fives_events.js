@@ -27,6 +27,13 @@ FIVES.Events = FIVES.Events || {};
      */
     var _onEntityAddedHandler = [];
 
+    /**
+     * List of handlers that are executed when entity finishes creating its XML3D Geometry
+     * @type {Array}
+     * @private
+     */
+    var _onEntityGeometryCreated = [];
+
     FIVES.Events.AddOnComponentUpdatedHandler = function(handler) {
         _onComponentUpdatedHandler.push(handler);
     };
@@ -45,6 +52,14 @@ FIVES.Events = FIVES.Events || {};
             _onEntityAddedHandler.splice(handler, 1);
     };
 
+    FIVES.Events.AddEntityGeometryCreatedHandler = function(handler) {
+        _onEntityGeometryCreated.push(handler);
+    };
+
+    FIVES.Events.RemoveEntityGeometryCreatedHandler = function(handler) {
+        if(_onEntityGeometryCreated.indexOf(handler) != -1)
+            _onEntityGeometryCreated.splice(handler, 1);
+    };
     /**
      * Fired when an entity updated one of its components. May be used by plugin scripts to executed
      * @param entity [FIVES.Models.Entity] Entity object that fired the event
@@ -65,6 +80,18 @@ FIVES.Events = FIVES.Events || {};
     FIVES.Events.EntityAdded = function(entity) {
         for(var i in _onEntityAddedHandler) {
             _onEntityAddedHandler[i](entity);
+        }
+    };
+
+    /**
+     * Fired when XML3D geometry was created for an entity. May be used by plugins that need to initialize resources
+     * that depend on geometry definitions
+     * @param entity
+     * @constructor
+     */
+    FIVES.Events.EntityGeometryCreated = function(entity) {
+        for(var i in _onEntityGeometryCreated) {
+            _onEntityGeometryCreated[i](entity);
         }
     };
 
