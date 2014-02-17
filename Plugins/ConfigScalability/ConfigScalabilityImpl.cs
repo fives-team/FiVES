@@ -80,6 +80,9 @@ namespace ConfigScalabilityPlugin
 
         private void RegisterTerminalCommands()
         {
+            Terminal.Instance.RegisterCommand("print-doi", "Prints current domain-of-interest", false, PrintDoI);
+            Terminal.Instance.RegisterCommand("print-dor", "Prints current domain-of-responsibility", false, PrintDoR);
+
             Terminal.Instance.RegisterCommand("set-doi-minx", "Changes minimal X boundary for domain-of-interest", 
                 false, ChangeDoIMinX);
             Terminal.Instance.RegisterCommand("set-doi-maxx", "Changes maximum X boundary for domain-of-interest", 
@@ -99,6 +102,22 @@ namespace ConfigScalabilityPlugin
                 "Changes minimal Y boundary for domain-of-responsibility", false, ChangeDoRMinY);
             Terminal.Instance.RegisterCommand("set-dor-maxy", 
                 "Changes maximum Y boundary for domain-of-responsibility", false, ChangeDoRMaxY);
+        }
+
+        private void PrintDoI(string commandLine)
+        {
+            var message = String.Format(
+                "Current domain-of-interest: minX = {0}, maxX = {1}, minY = {2}, maxY = {3}, components = ({4})",
+                doi.MinX, doi.MaxX, doi.MinY, doi.MaxY, String.Join(", ", doi.RelevantComponents));
+            Terminal.Instance.WriteLine(message);
+        }
+
+        private void PrintDoR(string commandLine)
+        {
+            var message = String.Format(
+                "Current domain-of-responsibility: minX = {0}, maxX = {1}, minY = {2}, maxY = {3}",
+                dor.MinX, dor.MaxX, dor.MinY, dor.MaxY);
+            Terminal.Instance.WriteLine(message);
         }
 
         private void ChangeDoIMinX(string commandLine)
