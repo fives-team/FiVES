@@ -30,9 +30,7 @@ FIVES.Plugins = FIVES.Plugins || {};
     l._componentUpdatedHandler = function(entity, componentName, attributeName) {
         if(componentName == "location")
         {
-            if(attributeName == "position")
                 FIVES.Resources.SceneManager.updatePosition(entity);
-            else if(attributeName == "orientation")
                 FIVES.Resources.SceneManager.updateOrientation(entity);
         }
     };
