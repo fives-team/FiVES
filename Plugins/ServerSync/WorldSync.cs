@@ -114,16 +114,7 @@ namespace ServerSyncPlugin
 
             // TODO: Update sync info.
 
-            AttributeUpdate update = new AttributeUpdate
-            {
-                EntityGuid = entityGuid,
-                ComponentName = componentName,
-                AttributeName = attributeName,
-                NewValue = newValue
-            };
-            ignoredAttributeUpdates.Add(update);
-
-            throw new NotImplementedException();
+            ignoredAttributeUpdates.Add(new AttributeUpdate(entityGuid, componentName, attributeName, newValue));
         }
 
         void RegisterToEntityUpdates()
@@ -134,11 +125,8 @@ namespace ServerSyncPlugin
 
         void HandleAddedEntityToWorld(object sender, EntityEventArgs e)
         {
-            if (ignoredEntityAdditions.Contains(e.Entity.Guid))
-            {
-                ignoredEntityAdditions.Remove(e.Entity.Guid);
+            if (ignoredEntityAdditions.Remove(e.Entity.Guid))
                 return;
-            }
 
             foreach (var server in ServerSync.RemoteServers)
                 if (server.DoI.IsInterestedInEntity(e))
@@ -149,11 +137,8 @@ namespace ServerSyncPlugin
 
         void HandleRemovedEntityFromWorld(object sender, EntityEventArgs e)
         {
-            if (ignoredEntityRemovals.Contains(e.Entity.Guid))
-            {
-                ignoredEntityRemovals.Remove(e.Entity.Guid);
+            if (ignoredEntityRemovals.Remove(e.Entity.Guid))
                 return;
-            }
 
             foreach (var server in ServerSync.RemoteServers)
                 if (server.DoI.IsInterestedInEntity(e))
@@ -162,22 +147,9 @@ namespace ServerSyncPlugin
 
         private void HandleEntityAttributeChanged(object sender, ChangedAttributeEventArgs e)
         {
-            var update = new AttributeUpdate
-            {
-                EntityGuid = e.Entity.Guid,
-                ComponentName = e.Component.Name,
-                AttributeName = e.AttributeName,
-                NewValue = e.NewValue
-            };
-
-            foreach (var ignoredUpdate in ignoredAttributeUpdates)
-            {
-                if (ignoredUpdate.Equals(update))
-                {
-                    ignoredAttributeUpdates.Remove(ignoredUpdate);
-                    return;
-                }
-            }
+            var update = new AttributeUpdate(e.Entity.Guid, e.Component.Name, e.AttributeName, e.NewValue);
+            if (ignoredAttributeUpdates.Remove(update))
+                return;
 
             foreach (var server in ServerSync.RemoteServers)
             {
@@ -191,10 +163,13 @@ namespace ServerSyncPlugin
 
         private class AttributeUpdate
         {
-            public Guid EntityGuid;
-            public string ComponentName;
-            public string AttributeName;
-            public object NewValue;
+            public AttributeUpdate(Guid entityGuid, string componentName, string attributeName, object newValue)
+            {
+                EntityGuid = entityGuid;
+                ComponentName = componentName;
+                AttributeName = attributeName;
+                NewValue = newValue;
+            }
 
             public override bool Equals(object otherObject)
             {
@@ -209,10 +184,20 @@ namespace ServerSyncPlugin
 
                 return false;
             }
+
+            public override int GetHashCode()
+            {
+                return EntityGuid.GetHashCode();
+            }
+
+            Guid EntityGuid;
+            string ComponentName;
+            string AttributeName;
+            object NewValue;
         }
 
         private HashSet<Guid> ignoredEntityAdditions = new HashSet<Guid>();
         private HashSet<Guid> ignoredEntityRemovals = new HashSet<Guid>();
-        private List<AttributeUpdate> ignoredAttributeUpdates = new List<AttributeUpdate>();
+        private HashSet<AttributeUpdate> ignoredAttributeUpdates = new HashSet<AttributeUpdate>();
     }
 }
