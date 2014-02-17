@@ -50,6 +50,7 @@ namespace ServerSyncPlugin
             {
                 ServiceWrapper remoteService = ServiceFactory.Discover(configURI + "#" + i);
 
+                localServer.RegisterSyncIDAPI(remoteService);
                 worldSync.RegisterWorldSyncAPI(remoteService);
                 domainSync.RegisterDomainSyncAPI(remoteService);
                 componentSync.RegisterComponentSyncAPI(remoteService);
@@ -106,7 +107,7 @@ namespace ServerSyncPlugin
         }
 
         Dictionary<Connection, IRemoteServer> remoteServers;
-        ILocalServer localServer;
+        LocalServerImpl localServer;
         WorldSync worldSync;
         DomainSync domainSync;
         ComponentSync componentSync;

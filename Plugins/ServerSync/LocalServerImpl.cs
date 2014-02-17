@@ -14,7 +14,7 @@ namespace ServerSyncPlugin
 
             service = ServiceFactory.Create(CommunicationTools.ConvertFileNameToURI("serverSyncServer.json"));
 
-            RegisterSyncIDAPI();
+            RegisterSyncIDAPI(service);
         }
 
         public ServiceImpl Service
@@ -65,7 +65,7 @@ namespace ServerSyncPlugin
             }
         }
 
-        void RegisterSyncIDAPI()
+        public void RegisterSyncIDAPI(Service service)
         {
             service["serverSync.getSyncID"] = (Func<Guid>)GetSyncID;
         }
