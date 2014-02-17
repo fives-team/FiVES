@@ -15,8 +15,8 @@ namespace ServerSyncPlugin
         {
             service["serverSync.getDoR"] = (Func<string>)GetDoR;
             service["serverSync.getDoI"] = (Func<string>)GetDoI;
-            service["serverSync.updateDoI"] = (Action<Connection, string>)UpdateDoR;
-            service["serverSync.updateDoR"] = (Action<Connection, string>)UpdateDoI;
+            service["serverSync.updateDoI"] = (Action<Connection, string>)UpdateDoI;
+            service["serverSync.updateDoR"] = (Action<Connection, string>)UpdateDoR;
         }
 
         void RegisterForDomainChanges()
