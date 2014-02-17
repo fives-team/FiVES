@@ -15,27 +15,32 @@ FIVES.Resources = FIVES.Resources || {};
 
     var SceneManager = function() {};
     var scm = SceneManager.prototype;
-
-    var _xml3dElement;
     var _mainDefs;
 
     var EntityRegistry = {};
 
     scm.initialize = function(xml3dElementId) {
-        _xml3dElement = document.getElementById(xml3dElementId);
-    };
-        if(!_xml3dElement || _xml3dElement.tagName != "xml3d")
-            console.error("[ERROR] (SceneManager) : Cannot find XML3D element with id " + xml3dElementId);
-        _mainDefs = XML3D.createElement("defs");
-        _xml3dElement.appendChild(_mainDefs);
+        this._getXml3dElement(xml3dElementId);
+        this._createMainDefinitions();
+        FIVES.Events.AddEntityAddedHandler(this._addXml3dTranformForMesh.bind(this));
     };
 
+    scm._getXml3dElement = function(xml3dElementId) {
+        var _xml3dElement = document.getElementById(xml3dElementId);
+        if(!_xml3dElement || _xml3dElement.tagName != "xml3d")
+            console.error("[ERROR] (SceneManager) : Cannot find XML3D element with id " + xml3dElementId);
+        this.xml3dElement = _xml3dElement;
+    };
+
+    scm._createMainDefinitions = function() {
+        _mainDefs = XML3D.createElement("defs");
+        this.xml3dElement.appendChild(_mainDefs);
     };
 
     scm.removeEntity = function(entity) {
 
         if (entity.xml3dView.groupElement) {
-            _xml3dElement.removeChild(entity.xml3dView.groupElement);
+            this.xml3dElement.removeChild(entity.xml3dView.groupElement);
             delete entity.xml3dView.groupElement;
         }
 
@@ -45,7 +50,7 @@ FIVES.Resources = FIVES.Resources || {};
         }
 
         if(entity.xml3dView.defElement) {
-            _xml3dElement.removeChild(entity.xml3dView.defElement);
+            this.xml3dElement.removeChild(entity.xml3dView.defElement);
             delete entity.xml3dView.defElement;
         }
     };
@@ -134,13 +139,13 @@ FIVES.Resources = FIVES.Resources || {};
         // ([put the url to respective issue on the xml3d issue tracker here]). Once this is fixed, we should use the following
         // code instead:
         //scm.removeEntity(entity);
-        //scm.addMeshForObject(entity).
+        //scm.addMeshForEntity(entity).
         // The issue is filed in the xml3d github repo (#50)
         entity.xml3dView.groupElement.setAttribute("visible", entity["meshResource"]["visible"]);
     };
 
     scm.updateCameraView = function(entity) {
-        var view = $(_xml3dElement.activeView)[0];
+        var view = $(this.xml3dElement.activeView)[0];
         var entityTransform = entity.xml3dView.transformElement;
         if(entityTransform)
         {
