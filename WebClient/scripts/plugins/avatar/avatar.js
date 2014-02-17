@@ -23,11 +23,16 @@ FIVES.Plugins = FIVES.Plugins || {};
     var a = avatar.prototype;
 
     a._createFunctionWrappers = function (){
-        this.getAvatarEntityGuid = _fivesCommunicator.connection.generateFuncWrapper("avatar.getAvatarEntityGuid");
-        this.startAvatarMotionInDirection = _fivesCommunicator.connection.generateFuncWrapper("avatar.startAvatarMotionInDirection");
-        this.setAvatarForwardBackwardMotion = _fivesCommunicator.connection.generateFuncWrapper("avatar.setAvatarForwardBackwardMotion");
-        this.setAvatarLeftRightMotion = _fivesCommunicator.connection.generateFuncWrapper("avatar.setAvatarLeftRightMotion");
-        this.setAvatarSpinAroundAxis = _fivesCommunicator.connection.generateFuncWrapper("avatar.setAvatarSpinAroundAxis");
+        this.getAvatarEntityGuid =
+            _fivesCommunicator.connection.generateFuncWrapper("avatar.getAvatarEntityGuid");
+        this.startAvatarMotionInDirection =
+            _fivesCommunicator.connection.generateFuncWrapper("avatar.startAvatarMotionInDirection");
+        this.setAvatarForwardBackwardMotion =
+            _fivesCommunicator.connection.generateFuncWrapper("avatar.setAvatarForwardBackwardMotion");
+        this.setAvatarLeftRightMotion =
+            _fivesCommunicator.connection.generateFuncWrapper("avatar.setAvatarLeftRightMotion");
+        this.setAvatarSpinAroundAxis =
+            _fivesCommunicator.connection.generateFuncWrapper("avatar.setAvatarSpinAroundAxis");
 
         var getEntityGuidCall = this.getAvatarEntityGuid();
         getEntityGuidCall.on("success", function(avatarEntityGuid) {
