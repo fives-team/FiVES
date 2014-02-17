@@ -29,6 +29,7 @@ FIVES.Plugins = FIVES.Plugins || {};
         var entity = FIVES.Models.EntityRegistry.getEntity(entityGuid);
         this._addMeshDefinitionsToScene(entity, meshDocument);
         this._addXml3dGroupsForMesh(entity, meshDocument);
+        FIVES.Events.EntityGeometryCreated(entity);
     };
 
     r._addMeshDefinitionsToScene = function(entity, meshDocument) {

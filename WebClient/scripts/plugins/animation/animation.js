@@ -35,7 +35,7 @@ requirejs(["keyframe_animator"], (function () {
     var animation = function () {
         _fivesCommunicator.registerFunctionWrapper(this._createFunctionWrappers.bind(this));
         FIVES.Events.AddOnComponentUpdatedHandler(this._componentUpdatedHandler.bind(this));
-        FIVES.Events.AddEntityAddedHandler(this._addXflowAnimationsForMesh.bind(this));
+        FIVES.Events.AddEntityGeometryCreatedHandler(this._addXflowAnimationsForMesh.bind(this));
 
         window.setInterval(updateLoop.bind(this), 1000.0 / fps);
     };
