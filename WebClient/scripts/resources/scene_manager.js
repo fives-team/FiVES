@@ -17,8 +17,6 @@ FIVES.Resources = FIVES.Resources || {};
     var scm = SceneManager.prototype;
     var _mainDefs;
 
-    var EntityRegistry = {};
-
     scm.initialize = function(xml3dElementId) {
         this._getXml3dElement(xml3dElementId);
         this._createMainDefinitions();
