@@ -117,8 +117,6 @@ FIVES.Communication = FIVES.Communication || {};
         for(var i in this.registeredWrapperRegisterers) {
             this.registeredWrapperRegisterers[i]();
         }
-
-        this.updateMotion = this.connection.generateFuncWrapper("motion.update");
     };
 
     // Expose Communicator to namespace
