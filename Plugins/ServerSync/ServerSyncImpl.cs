@@ -1,6 +1,7 @@
 using KIARAPlugin;
 using System;
 using System.Collections.Generic;
+using System.Configuration;
 
 namespace ServerSyncPlugin
 {
@@ -17,6 +18,7 @@ namespace ServerSyncPlugin
 
             localServer.Service.OnNewClient += HandleNewServerConnected;
 
+            LoadConfig();
             ConnectToRemoteServers();
         }
 
@@ -39,6 +41,19 @@ namespace ServerSyncPlugin
         public event EventHandler<ServerEventArgs> AddedServer;
 
         public event EventHandler<ServerEventArgs> RemovedServer;
+
+        public bool IsSyncRelay { get; private set; }
+
+        /// <summary>
+        /// Loads configuration options from the library configuration file.
+        /// </summary>
+        void LoadConfig()
+        {
+            string scalabilityConfigPath = this.GetType().Assembly.Location;
+            Configuration config = ConfigurationManager.OpenExeConfiguration(scalabilityConfigPath);
+
+            IsSyncRelay = Boolean.Parse(config.AppSettings.Settings["IsSyncRelay"].Value);
+        }
 
         void ConnectToRemoteServers()
         {
