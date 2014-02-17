@@ -27,6 +27,8 @@ namespace KIARAPlugin
         {
             connection = aConnection;
 
+            RegisterMethods(connection);
+
             if (InternalOnConnected != null)
                 InternalOnConnected(aConnection);
         }
