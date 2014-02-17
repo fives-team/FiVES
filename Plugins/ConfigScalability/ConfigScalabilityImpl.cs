@@ -106,22 +106,12 @@ namespace ConfigScalabilityPlugin
 
         private void PrintDoI(string commandLine)
         {
-            string doiComponents = "none";
-            if (doi.RelevantComponents != null)
-                doiComponents = String.Join(", ", doi.RelevantComponents);
-
-            var message = String.Format(
-                "Current domain-of-interest: minX = {0}, maxX = {1}, minY = {2}, maxY = {3}, components = ({4})",
-                doi.MinX, doi.MaxX, doi.MinY, doi.MaxY, doiComponents);
-            Terminal.Instance.WriteLine(message);
+            Terminal.Instance.WriteLine("Current domain-of-interest: " + doi);
         }
 
         private void PrintDoR(string commandLine)
         {
-            var message = String.Format(
-                "Current domain-of-responsibility: minX = {0}, maxX = {1}, minY = {2}, maxY = {3}",
-                dor.MinX, dor.MaxX, dor.MinY, dor.MaxY);
-            Terminal.Instance.WriteLine(message);
+            Terminal.Instance.WriteLine("Current domain-of-responsibility: " + dor);
         }
 
         private void ChangeDoIMinX(string commandLine)

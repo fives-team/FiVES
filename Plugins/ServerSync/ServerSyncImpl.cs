@@ -1,7 +1,9 @@
+using FIVES;
 using KIARAPlugin;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
+using TerminalPlugin;
 
 namespace ServerSyncPlugin
 {
@@ -19,6 +21,8 @@ namespace ServerSyncPlugin
             localServer.Service.OnNewClient += HandleNewServerConnected;
 
             ConnectToRemoteServers();
+
+            PluginManager.Instance.AddPluginLoadedHandler("Terminal", RegisterTerminalCommands);
         }
 
         public IEnumerable<IRemoteServer> RemoteServers
@@ -40,6 +44,21 @@ namespace ServerSyncPlugin
         public event EventHandler<ServerEventArgs> AddedServer;
 
         public event EventHandler<ServerEventArgs> RemovedServer;
+
+        void RegisterTerminalCommands()
+        {
+            Terminal.Instance.RegisterCommand("print-server-info", "Prints info on all remote servers", false,
+                PrintServerInfo, new List<string> { "psi" });
+        }
+
+        void PrintServerInfo(string commandLine)
+        {
+            foreach (IRemoteServer server in ServerSync.RemoteServers)
+            {
+                string message = String.Format("{0}: doi = [{1}], dor = [{2}]", server.SyncID, server.DoI, server.DoR);
+                Terminal.Instance.WriteLine(message);
+            }
+        }
 
         void ConnectToRemoteServers()
         {

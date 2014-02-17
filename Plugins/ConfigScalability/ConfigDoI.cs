@@ -24,6 +24,12 @@ namespace ConfigScalabilityPlugin
             return RelevantComponents == null || RelevantComponents.Contains(componentName);
         }
 
+        public override string ToString()
+        {
+            return String.Format("minX = {0}, maxX = {1}, minY = {2}, maxY = {3}, components = ({4})",
+                MinX, MaxX, MinY, MaxY, RelevantComponents == null ? "none" : String.Join(",", RelevantComponents));
+        }
+
         #region ISerializable interface
 
         public ConfigDoI(SerializationInfo info, StreamingContext context)

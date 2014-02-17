@@ -18,6 +18,11 @@ namespace ConfigScalabilityPlugin
             return position.x >= MinX && position.x < MaxX && position.y >= MinY && position.y < MaxY;
         }
 
+        public override string ToString()
+        {
+            return String.Format("minX = {0}, maxX = {1}, minY = {2}, maxY = {3}", MinX, MaxX, MinY, MaxY);
+        }
+
         #region ISerializable interface
 
         public ConfigDoR(SerializationInfo info, StreamingContext context)

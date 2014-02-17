@@ -90,6 +90,10 @@
       <Project>{eefddd48-1795-4d62-a255-29167b0a3bc3}</Project>
       <Name>KIARA</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Terminal\Terminal.csproj">
+      <Project>{fdf2de99-68cf-4947-952c-2d2bcc846f3e}</Project>
+      <Name>Terminal</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
