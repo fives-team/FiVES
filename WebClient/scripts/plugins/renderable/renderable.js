@@ -13,7 +13,11 @@ FIVES.Plugins = FIVES.Plugins || {};
 (function () {
     "use strict";
 
-    var renderable = function () {};
+    var _xml3dElement =  FIVES.Resources.SceneManager.xml3dElement;
+
+    var renderable = function () {
+        FIVES.Events.AddEntityAddedHandler(this._addMeshToScene.bind(this));
+    };
 
     var r = renderable.prototype;
 

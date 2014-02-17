@@ -17,6 +17,7 @@ FIVES.Models = FIVES.Models || {};
         // FIXME: this should assign values to correct attributes, e.g.
         // meshResouce.meshURI should actually be assigned to meshResource.uri.
         // All uses of these properties must be updated respectively.
+        this.xml3dView = {};
         this.guid = entityDocument.guid;
         this.position = entityDocument.position || {x:0,y:0,z:0};
         this.orientation = entityDocument.orientation || {x:0,y:0,z:0,w:1};
