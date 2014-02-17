@@ -11,28 +11,11 @@ namespace FIVES
     /// 
     /// It can be used to define new components as following:
     /// <example>
-    ///     ComponentDefinition meshResource = new ComponentDefinition("meshResource", 1);
-    ///     meshResource.AddAttribute<string>("uri", "mesh://default");
-    ///     meshResource.AddAttribute<bool>("visible");
-    ///     ComponentRegistry.Instance.Register(meshResource);
-    /// </example>
-    /// 
-    /// Attributes may also be upgraded as following:
-    /// <example>
-    ///     public void upgradeMeshResource1to2(Component meshResource1, Component meshResource2) 
-    ///     {
-    ///         meshResource2["uri"] = meshResource1["uri"];
-    ///         meshResource2["isVisible"] = meshResource1["visible"];
-    ///         // we omit scale attribute to keep the default value
-    ///     }
-    ///     
-    ///     // ...
-    ///     
-    ///     ComponentDefinition meshResource2 = new ComponentDefinition("meshResource", 2);
-    ///     meshResource2.AddAttribute<string>("uri", "mesh://default");
-    ///     meshResource2.AddAttribute<bool>("isVisible", true);
-    ///     meshResource2.AddAttribute<float>("scale", 1.0f);
-    ///     ComponentRegistry.Instance.Upgrade(meshResource2, upgradeMeshResource1to2);
+    ///     ComponentDefinition mesh = new ComponentDefinition("mesh");
+    ///     mesh.AddAttribute<string>("uri", "mesh://default");
+    ///     mesh.AddAttribute<bool>("visible");
+    ///     mesh.AddAttribute<Vector>("scale", new Vector(1, 1, 1));
+    ///     ComponentRegistry.Instance.Register(mesh);
     /// </example>
     /// </summary>
     public sealed class ComponentDefinition : ReadOnlyComponentDefinition

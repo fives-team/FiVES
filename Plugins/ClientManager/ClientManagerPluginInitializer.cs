@@ -32,7 +32,7 @@ namespace ClientManagerPlugin {
         {
             get
             {
-                return new List<string> { "position", "orientation", "scale", "meshResource" };
+                return new List<string> { "location", "mesh" };
             }
         }
 

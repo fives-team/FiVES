@@ -44,16 +44,11 @@ namespace RenderablePlugin
 
         private void DefineComponents()
         {
-            ComponentDefinition renderable = new ComponentDefinition("meshResource");
-            renderable.AddAttribute<string>("uri");
-            renderable.AddAttribute<bool>("visible", true);
-            ComponentRegistry.Instance.Register(renderable);
-
-            ComponentDefinition scale = new ComponentDefinition("scale");
-            scale.AddAttribute<float>("x", 1f);
-            scale.AddAttribute<float>("y", 1f);
-            scale.AddAttribute<float>("z", 1f);
-            ComponentRegistry.Instance.Register(scale);
+            ComponentDefinition mesh = new ComponentDefinition("mesh");
+            mesh.AddAttribute<string>("uri");
+            mesh.AddAttribute<bool>("visible", true);
+            mesh.AddAttribute<Vector>("scale", new Vector(1, 1, 1));
+            ComponentRegistry.Instance.Register(mesh);
         }
 
         #endregion

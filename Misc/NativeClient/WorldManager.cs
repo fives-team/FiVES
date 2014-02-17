@@ -93,13 +93,13 @@ namespace NativeClient
                 Guid = entityInfo["guid"].ToString()
             };
 
-            if (entityInfo["position"] != null)
-                info.Position = entityInfo["position"].ToObject<Vector>();
+            if (entityInfo["location"] != null && entityInfo["location"]["position"] != null)
+                info.Position = entityInfo["location"]["position"].ToObject<Vector>();
             else
                 info.Position = new Vector { x = 0, y = 0, z = 0 };
 
-            if (entityInfo["orientation"] != null)
-                info.Orientation = entityInfo["orientation"].ToObject<Quat>();
+            if (entityInfo["location"] != null && entityInfo["location"]["orientation"] != null)
+                info.Orientation = entityInfo["location"]["orientation"].ToObject<Quat>();
             else
                 info.Orientation = new Quat { x = 0, y = 0, z = 0, w = 1 };
 

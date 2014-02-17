@@ -31,7 +31,7 @@ namespace AvatarPlugin
         {
             get
             {
-                return new List<string> { "meshResource", "scale", "velocity", "rotVelocity" };
+                return new List<string> { "mesh", "motion" };
             }
         }
 
@@ -106,8 +106,8 @@ namespace AvatarPlugin
             if (!avatarEntities.ContainsKey(userLogin)) {
                 Entity newAvatar = new Entity();
                 newAvatar["avatar"]["userLogin"] = userLogin;
-                newAvatar["meshResource"]["uri"] = defaultAvatarMesh;
-                newAvatar["meshResource"]["visible"] = true;
+                newAvatar["mesh"]["uri"] = defaultAvatarMesh;
+                newAvatar["mesh"]["visible"] = true;
                 World.Instance.Add(newAvatar);
             }
 
@@ -132,7 +132,7 @@ namespace AvatarPlugin
         void Activate(Connection connection)
         {
             var avatarEntity = GetAvatarEntityByConnection(connection);
-            avatarEntity["meshResource"]["visible"] = true;
+            avatarEntity["mesh"]["visible"] = true;
         }
 
         /// <summary>
@@ -142,7 +142,7 @@ namespace AvatarPlugin
         void Deactivate(Connection connection)
         {
             var avatarEntity = GetAvatarEntityByConnection(connection);
-            avatarEntity["meshResource"]["visible"] = false;
+            avatarEntity["mesh"]["visible"] = false;
         }
 
         /// <summary>
@@ -155,43 +155,37 @@ namespace AvatarPlugin
         {
             var avatarEntity = GetAvatarEntityByConnection(connection);
 
-            avatarEntity["meshResource"]["uri"] = meshURI;
-
-            avatarEntity["scale"]["x"] = scale.x;
-            avatarEntity["scale"]["y"] = scale.y;
-            avatarEntity["scale"]["z"] = scale.z;
+            avatarEntity["mesh"]["uri"] = meshURI;
+            avatarEntity["mesh"]["scale"] = scale;
         }
 
         void StartAvatarMotionInDirection(Connection connection, Vector velocity)
         {
             var avatarEntity = GetAvatarEntityByConnection(connection);
 
-            avatarEntity["velocity"]["x"] = (float)velocity.x;
-            avatarEntity["velocity"]["y"] = (float)velocity.y;
-            avatarEntity["velocity"]["z"] = (float)velocity.z;
+            avatarEntity["motion"]["velocity"] = velocity;
         }
 
         void SetForwardBackwardMotion(Connection connection, float amount)
         {
             var avatarEntity = GetAvatarEntityByConnection(connection);
-            avatarEntity["velocity"]["x"] = amount;
+            Vector oldVelocity = (Vector)avatarEntity["motion"]["velocity"];
+            avatarEntity["motion"]["velocity"] = new Vector(amount, oldVelocity.y, oldVelocity.z);
         }
 
         void SetLeftRightMotion(Connection connection, float amount)
         {
             var avatarEntity = GetAvatarEntityByConnection(connection);
-            avatarEntity["velocity"]["z"] = amount;
+            Vector oldVelocity = (Vector)avatarEntity["motion"]["velocity"];
+            avatarEntity["motion"]["velocity"] = new Vector(oldVelocity.x, oldVelocity.y, amount);
         }
 
         void SetAvatarSpinAroundAxis(Connection connection, Vector axis, float angle)
         {
             var avatarEntity = GetAvatarEntityByConnection(connection);
-            avatarEntity["rotVelocity"]["x"] = axis.x;
-            avatarEntity["rotVelocity"]["y"] = axis.y;
-            avatarEntity["rotVelocity"]["z"] = axis.z;
-            avatarEntity["rotVelocity"]["r"] = angle;
+            avatarEntity["motion"]["rotVelocity"] = new AxisAngle(axis, angle);
         }
-		
+
         Dictionary<string, Entity> avatarEntities = new Dictionary<string, Entity>();
         // string defaultAvatarMesh = "resources/models/defaultAvatar/avatar.xml3d";
         string defaultAvatarMesh = "resources/proprietary/natalieFives/xml3d/natalie.xml";

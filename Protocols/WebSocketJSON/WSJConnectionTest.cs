@@ -35,12 +35,23 @@ namespace WebSocketJSON
             public List<string> sentMessages = new List<string>();
         }
 
+        public class TestClass
+        {
+            public TestClass()
+            {
+                Prop = 0;
+            }
+
+            public int Prop { get; private set; }
+        }
+
         public interface IHandlers {
             float TestFunc(int i, string s);
             void TestFunc2(float x);
             void TestCallback(int i, FuncWrapper callback);
             void TestCallback2(string a, Action<string> hello);
             void TestFuncWithConn(Connection conn, int i, string s);
+            void TestFuncWithTestClass(TestClass testObj);
         }
 
         WSJConnectionWrapper connection;
@@ -215,6 +226,14 @@ namespace WebSocketJSON
             connection.CallFunc("testFunc", float.NaN, float.PositiveInfinity, float.NegativeInfinity, double.NaN,
                                 double.PositiveInfinity, double.NegativeInfinity);
             Assert.AreEqual("[\"call\",0,\"testFunc\",[],null,null,null,null,null,null]", connection.sentMessages[0]);
+        }
+
+        [Test()]
+        public void ShouldDeserializePropsWithPrivateSetters()
+        {
+            connection.RegisterHandler("testFunc", (Action<TestClass>)mockHandlers.Object.TestFuncWithTestClass);
+            connection.HandleMessage("['call',0,'testFunc',[],{Prop:42}]");
+            mockHandlers.Verify(h => h.TestFuncWithTestClass(It.Is<TestClass>(testObj => testObj.Prop == 42)));
         }
 
         // TODO: Should process IDL (when implemented).

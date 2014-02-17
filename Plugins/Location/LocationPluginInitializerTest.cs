@@ -25,15 +25,9 @@ namespace LocationPlugin
         }
 
         [Test()]
-        public void ShouldRegisterPositionComponent()
+        public void ShouldRegisterLocationComponent()
         {
-            Assert.IsNotNull(ComponentRegistry.Instance.FindComponentDefinition("position"));
-        }
-
-        [Test()]
-        public void ShouldRegisterOrientationComponent()
-        {
-            Assert.IsNotNull(ComponentRegistry.Instance.FindComponentDefinition("orientation"));
+            Assert.IsNotNull(ComponentRegistry.Instance.FindComponentDefinition("location"));
         }
     }
 }
