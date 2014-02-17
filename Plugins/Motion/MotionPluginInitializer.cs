@@ -216,8 +216,8 @@ namespace MotionPlugin
             Vector oldPosition = (Vector)updatedEntity["location"]["position"];
             updatedEntity["location"]["position"] = new Vector(
                 oldPosition.x + localVelocity.x,
-                oldPosition.x + localVelocity.y,
-                oldPosition.x + localVelocity.z
+                oldPosition.y + localVelocity.y,
+                oldPosition.z + localVelocity.z
             );
         }
 
