@@ -37,10 +37,10 @@ FIVES.Input = FIVES.Input || {};
         {
             switch (e.keyCode)
             {
-              /* W */  case 87:  FIVES.Plugins.Avatar.setAvatarForwardBackwardMotion(MOVE_SPEED); break;
-              /* S */  case 83:  FIVES.Plugins.Avatar.setAvatarForwardBackwardMotion(-MOVE_SPEED); break;
-              /* A */  case 65:  FIVES.Plugins.Avatar.setAvatarSpinAroundAxis(UP_AXIS, SPIN_SPEED); break;
-              /* D */  case 68:  FIVES.Plugins.Avatar.setAvatarSpinAroundAxis(UP_AXIS, -SPIN_SPEED); break;
+              /* W */ case 87:  FIVES.Plugins.Avatar.setAvatarForwardBackwardMotion(MOVE_SPEED); break;
+              /* S */ case 83:  FIVES.Plugins.Avatar.setAvatarForwardBackwardMotion(-MOVE_SPEED); break;
+              /* A */ case 65:  FIVES.Plugins.Avatar.setAvatarSpinAroundAxis(UP_AXIS, SPIN_SPEED); break;
+              /* D */ case 68:  FIVES.Plugins.Avatar.setAvatarSpinAroundAxis(UP_AXIS, -SPIN_SPEED); break;
                 default: break;
             }
             var avatarEntity  = FIVES.Models.EntityRegistry.getEntity(FIVES.AvatarEntityGuid);
@@ -48,7 +48,13 @@ FIVES.Input = FIVES.Input || {};
             if(avatarEntity)
             {
                 //FIVES.Communication.FivesCommunicator.startServersideAnimation(FIVES.AvatarEntityGuid, "walk", e.xml3dView.xflowAnimations.walk.startKey, e.xml3dView.xflowAnimations.walk.endKey);
-                FIVES.Plugins.Animation.startClientsideAnimation(FIVES.AvatarEntityGuid, "walk", avatarEntity.xml3dView.xflowAnimations.walk.startKey, avatarEntity.xml3dView.xflowAnimations.walk.endKey, -1, 1.0);
+                FIVES.Plugins.Animation.startClientsideAnimation(
+                    FIVES.AvatarEntityGuid,
+                    "walk",
+                    avatarEntity.xml3dView.xflowAnimations.walk.startKey,
+                    avatarEntity.xml3dView.xflowAnimations.walk.endKey,
+                    -1,
+                    1.0);
                 _pressedKeys[e.keyCode] = true;
             }
         }
