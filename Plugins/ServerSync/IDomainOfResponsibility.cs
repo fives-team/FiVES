@@ -7,6 +7,6 @@ namespace ServerSyncPlugin
     public interface IDomainOfResponsibility : ISerializable
     {
         // Checks if this DoR includes a given entity.
-        bool IsResponsibleFor(Guid entityGuid);
+        bool IsResponsibleFor(Entity entity);
     }
 }
