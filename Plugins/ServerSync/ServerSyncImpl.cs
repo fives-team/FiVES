@@ -22,7 +22,13 @@ namespace ServerSyncPlugin
 
         public IEnumerable<IRemoteServer> RemoteServers
         {
-            get { return new List<IRemoteServer>(remoteServers.Values); }
+            get
+            {
+                lock (remoteServers)
+                {
+                    return new List<IRemoteServer>(remoteServers.Values);
+                }
+            }
         }
 
         public ILocalServer LocalServer
@@ -70,12 +76,18 @@ namespace ServerSyncPlugin
         void AddRemoteServer(Connection connection, IDomainOfResponsibility dor, IDomainOfInterest doi, Guid syncID)
         {
             var newServer = new RemoteServerImpl(connection, doi, dor, syncID);
-            remoteServers.Add(connection, newServer);
+
+            lock (remoteServers)
+                remoteServers.Add(connection, newServer);
+
             if (AddedServer != null)
                 AddedServer(this, new ServerEventArgs(newServer));
 
             connection.Closed += delegate(object sender, EventArgs args)
             {
+                lock (remoteServers)
+                    remoteServers.Remove(connection);
+
                 if (RemovedServer != null)
                     RemovedServer(this, new ServerEventArgs(newServer));
             };
