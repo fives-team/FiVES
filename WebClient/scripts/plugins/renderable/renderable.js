@@ -21,7 +21,7 @@ FIVES.Plugins = FIVES.Plugins || {};
     var r = renderable.prototype;
 
     r.addMeshForEntity = function(entity) {
-        if(entity.meshResource.uri)
+        if(entity.mesh.uri)
             FIVES.Resources.ResourceManager.loadExternalResource(entity, this._addMeshToScene.bind(this));
     };
 
@@ -44,7 +44,7 @@ FIVES.Plugins = FIVES.Plugins || {};
         var meshGroup = $(meshDocument).children("group");
         var entityGroup = this._createParentGroupForEntity(entity);
         entity.xml3dView.groupElement = entityGroup;
-        entity.xml3dView.groupElement.setAttribute("visible", entity["meshResource"]["visible"]);
+        entity.xml3dView.groupElement.setAttribute("visible", entity["mesh"]["visible"]);
         _xml3dElement.appendChild(entity.xml3dView.groupElement);
         $(entity.xml3dView.groupElement).append(meshGroup);
     };
@@ -65,7 +65,7 @@ FIVES.Plugins = FIVES.Plugins || {};
         //scm.removeEntity(entity);
         //scm.addMeshForEntity(entity).
         // The issue is filed in the xml3d github repo (#50)
-        entity.xml3dView.groupElement.setAttribute("visible", entity["meshResource"]["visible"]);
+        entity.xml3dView.groupElement.setAttribute("visible", entity["mesh"]["visible"]);
     };
 
     FIVES.Plugins.Renderable = new renderable();

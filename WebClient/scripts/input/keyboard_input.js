@@ -16,7 +16,7 @@ FIVES.Input = FIVES.Input || {};
     var MOVE_SPEED = 0.2;
     var SPIN_SPEED = 0.05;
 
-    var UP_AXIS = {x: 0, y:1, z: 0};
+    var UP_AXIS = {x: 0, y: 1, z: 0};
 
     var keylistener = function(){
         FIVES.Events.AddEntityGeometryCreatedHandler(this._handleGeometryLoaded.bind(this));

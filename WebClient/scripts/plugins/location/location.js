@@ -27,20 +27,23 @@ FIVES.Plugins = FIVES.Plugins || {};
         this.updateEntityOrientation = _fivesCommunicator.connection.generateFuncWrapper("location.updateOrientation");
     };
 
-    l._componentUpdatedHandler = function(entity, componentName) {
-        if(componentName == "position")
-            FIVES.Resources.SceneManager.updatePosition(entity);
-        else if(componentName == "orientation")
-            FIVES.Resources.SceneManager.updateOrientation(entity);
+    l._componentUpdatedHandler = function(entity, componentName, attributeName) {
+        if(componentName == "location")
+        {
+            if(attributeName == "position")
+                FIVES.Resources.SceneManager.updatePosition(entity);
+            else if(attributeName == "orientation")
+                FIVES.Resources.SceneManager.updateOrientation(entity);
+        }
     };
 
     l.updatePosition = function(entity, position) {
-        entity.position = position;
+        entity.location.position = position;
         FIVES.Resources.SceneManager.updatePosition(entity);
     };
 
     l.updateOrientation = function(entity, orientation) {
-        entity.orientation = orientation;
+        entity.location.orientation = orientation;
         FIVES.Resources.SceneManager.updateOrientation(entity);
     };
 

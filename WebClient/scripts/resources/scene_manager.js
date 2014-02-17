@@ -71,20 +71,20 @@ FIVES.Resources = FIVES.Resources || {};
     };
 
     scm._createTranslationForEntityGroup = function(entity) {
-        var position = entity.position;
+        var position = entity.location.position;
         var xml3dPosition = new XML3DVec3(position.x, position.y, position.z);
         return xml3dPosition;
     };
 
     scm._createRotationFromOrientation = function(entity) {
-        var orientation = entity.orientation;
+        var orientation = entity.location.orientation;
         var axisAngleRotation = new XML3DRotation();
         axisAngleRotation.setQuaternion(orientation, orientation.w);
         return axisAngleRotation;
     };
 
     scm._createScaleForEntityGroup = function(entity) {
-        var scale = entity.scale;
+        var scale = entity.mesh.scale;
         var xml3dScale = new XML3DVec3(scale.x, scale.y, scale.z);
         return xml3dScale;
     };

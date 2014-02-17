@@ -65,9 +65,9 @@ FIVES.Events = FIVES.Events || {};
      * @param entity [FIVES.Models.Entity] Entity object that fired the event
      * @param componentName Name of the component that was updated
      */
-    FIVES.Events.ComponentUpdated = function(entity, componentName) {
+    FIVES.Events.ComponentUpdated = function(entity, componentName,attributeName) {
         for(var i in _onComponentUpdatedHandler) {
-            _onComponentUpdatedHandler[i](entity, componentName);
+            _onComponentUpdatedHandler[i](entity, componentName,attributeName);
         }
     };
 

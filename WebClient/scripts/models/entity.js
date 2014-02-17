@@ -15,14 +15,16 @@ FIVES.Models = FIVES.Models || {};
 
     var Entity = function(entityDocument) {
         // FIXME: this should assign values to correct attributes, e.g.
-        // meshResouce.meshURI should actually be assigned to meshResource.uri.
+        // meshResouce.meshURI should actually be assigned to mesh.uri.
         // All uses of these properties must be updated respectively.
         this.xml3dView = {};
         this.guid = entityDocument.guid;
-        this.position = entityDocument.position || {x:0,y:0,z:0};
-        this.orientation = entityDocument.orientation || {x:0,y:0,z:0,w:1};
-        this.scale= entityDocument.scale|| {x:1,y:1,z:1};
-        this.meshResource = entityDocument.meshResource || {uri:"",visible:true};
+        this.location = entityDocument.location
+            || {position: {x:0,y:0,z:0}, orientation: {x:0,y:0,z:0,w:1}};
+
+        this.mesh = entityDocument.mesh ||
+            {uri:"",visible:true, scale: {x:1, y:1, z:1 }};
+
         this._cachedComponentUpdates = {};
         this._attributeUpdateHandle = setInterval(this._flushUpdates.bind(this), 30);
     };
@@ -46,11 +48,11 @@ FIVES.Models = FIVES.Models || {};
         }
 
         if(this.xml3dView.groupElement && this.xml3dView.transformElement)
-            this._applyComponentUpdatesTo3DView(componentName);
+            this._applyComponentUpdatesTo3DView(componentName, updatedAttribute);
     };
 
-    e._applyComponentUpdatesTo3DView = function(componentName) {
-        FIVES.Events.ComponentUpdated(this, componentName);
+    e._applyComponentUpdatesTo3DView = function(componentName, attributeName) {
+        FIVES.Events.ComponentUpdated(this, componentName,attributeName);
     };
 
     e.updateAttribute = function(componentName, attributeName, value) {
