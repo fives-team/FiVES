@@ -233,12 +233,12 @@ namespace FIVES
             {
                 if (pluginWhiteList != null)
                 {
-                    if (pluginWhiteList.Any(whiteListEntry => filename.Contains(whiteListEntry)))
+                    if (pluginWhiteList.Any(whiteListEntry => filename.StartsWith(whiteListEntry + ".dll")))
                         LoadPlugin(filename);
                 }
                 else if (pluginBlackList != null)
                 {
-                    if (!pluginBlackList.Any(blackListEntry => filename.Contains(blackListEntry)))
+                    if (!pluginBlackList.Any(blackListEntry => filename.Equals(blackListEntry + ".dll")))
                         LoadPlugin(filename);
                 }
                 else
