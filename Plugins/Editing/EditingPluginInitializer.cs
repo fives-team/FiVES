@@ -5,12 +5,13 @@ using ClientManagerPlugin;
 
 namespace EditingNamespace
 {
+#pragma warning disable 649
     struct MeshResource
     {
         public string uri;
         public bool visible;
     }
-
+#pragma warning restore 649
 
     /// <summary>
     /// Plugin that allows changing the world by the users.
