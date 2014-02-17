@@ -7,9 +7,9 @@ namespace ServerSyncPlugin
     public interface IDomainOfInterest : ISerializable
     {
         // Checks if this DoI includes a given entity.
-        bool IsInterestedInEntity(Guid entityGuid);
+        bool IsInterestedInEntity(Entity entity);
 
         // Checks if this DoI includes a given attribute changed event.
-        bool IsInterestedInAttributeChange(Guid entityGuid, string componentName, string attributeName);
+        bool IsInterestedInAttributeChange(Entity entity, string componentName, string attributeName);
     }
 }

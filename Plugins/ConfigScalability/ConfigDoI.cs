@@ -4,20 +4,22 @@ using System.Linq;
 using System.Text;
 using ServerSyncPlugin;
 using System.Runtime.Serialization;
+using FIVES;
 
 namespace ConfigScalabilityPlugin
 {
     [Serializable]
     class ConfigDoI : IDomainOfInterest
     {
-        public bool IsInterestedInEntity(Guid entityGuid)
+        public bool IsInterestedInEntity(Entity entity)
         {
-            throw new NotImplementedException();
+            Vector position = (Vector)entity["location"]["position"];
+            return position.x >= MinX && position.x < MaxX && position.y >= MinY && position.y < MaxY;
         }
 
-        public bool IsInterestedInAttributeChange(Guid entityGuid, string componentName, string attributeName)
+        public bool IsInterestedInAttributeChange(Entity entity, string componentName, string attributeName)
         {
-            throw new NotImplementedException();
+            return IsInterestedInEntity(entity) && RelevantComponents.Contains(componentName);
         }
 
         #region ISerializable interface
