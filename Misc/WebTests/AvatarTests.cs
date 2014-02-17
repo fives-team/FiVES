@@ -76,7 +76,7 @@ namespace WebTests
                 Tools.Login(driver1, "1", "");
                 Tools.Login(driver2, "2", "");
 
-                WebDriverWait wait = new WebDriverWait(driver1, TimeSpan.FromSeconds(10));
+                WebDriverWait wait = new WebDriverWait(driver1, TimeSpan.FromSeconds(20));
                 IJavaScriptExecutor jsExecutor1 = driver1 as IJavaScriptExecutor;
 
                 // Wait for the FIVES.AvatarEntityGuid to become available.
