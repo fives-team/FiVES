@@ -11,7 +11,7 @@ namespace ServerSyncPlugin
         {
         }
 
-        public bool IsResponsibleFor(Entity entity)
+        public bool IsResponsibleFor(Guid entityGuid)
         {
             return false;
         }

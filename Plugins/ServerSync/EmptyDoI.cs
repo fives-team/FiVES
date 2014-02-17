@@ -11,12 +11,12 @@ namespace ServerSyncPlugin
         {
         }
 
-        public bool IsInterestedInEntity(EntityEventArgs args)
+        public bool IsInterestedInEntity(Guid guid)
         {
             return false;
         }
 
-        public bool IsInterestedInAttributeChange(ChangedAttributeEventArgs args)
+        public bool IsInterestedInAttributeChange(Guid entityGuid, string componentName, string attributeName)
         {
             return false;
         }

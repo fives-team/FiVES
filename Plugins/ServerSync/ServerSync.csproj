@@ -51,7 +51,7 @@
     <Compile Include="ComponentSyncInfo.cs" />
     <Compile Include="DomainSync.cs" />
     <Compile Include="EntitySyncInfo.cs" />
-    <Compile Include="CommunicationTools.cs" />
+    <Compile Include="ConversionTools.cs" />
     <Compile Include="WorldSync.cs" />
     <Compile Include="EmptyDoI.cs" />
     <Compile Include="EmptyDoR.cs" />

@@ -12,7 +12,7 @@ namespace ServerSyncPlugin
             doi = new EmptyDoI();
             syncID = Guid.NewGuid();
 
-            service = ServiceFactory.Create(CommunicationTools.ConvertFileNameToURI("serverSyncServer.json"));
+            service = ServiceFactory.Create(ConversionTools.ConvertFileNameToURI("serverSyncServer.json"));
 
             RegisterSyncIDAPI(service);
         }

@@ -43,7 +43,7 @@ namespace ServerSyncPlugin
 
         void ConnectToRemoteServers()
         {
-            string configURI = CommunicationTools.ConvertFileNameToURI("serverSyncClient.json");
+            string configURI = ConversionTools.ConvertFileNameToURI("serverSyncClient.json");
             string fragment;
             Config config = Context.DefaultContext.RetrieveConfig(configURI, out fragment);
             for (int i = 0; i < config.servers.Count; i++)

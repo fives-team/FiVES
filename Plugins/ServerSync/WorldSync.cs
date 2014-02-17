@@ -51,7 +51,9 @@ namespace ServerSyncPlugin
         {
             lock (syncInfo)
             {
-                CommunicationTools.RelaySyncMessage(connection, "serverSync.addEntity", guid, initialSyncInfo);
+                foreach (IRemoteServer server in ServerSync.RemoteServers)
+                    if (server.Connection != connection && server.DoI.IsInterestedInEntity(guid))
+                        server.Connection["serverSync.addEntity"](guid, initialSyncInfo);
 
                 if (!syncInfo.ContainsKey(guid))
                 {
@@ -77,7 +79,9 @@ namespace ServerSyncPlugin
         {
             lock (syncInfo)
             {
-                CommunicationTools.RelaySyncMessage(connection, "serverSync.removeEntity", guid);
+                foreach (IRemoteServer server in ServerSync.RemoteServers)
+                    if (server.Connection != connection && server.DoI.IsInterestedInEntity(guid))
+                        server.Connection["serverSync.removeEntity"](guid);
 
                 if (!syncInfo.ContainsKey(guid))
                 {
@@ -99,7 +103,28 @@ namespace ServerSyncPlugin
         /// <param name="changedAttributes">A set of modified attributes with their remote sync info.</param>
         private void HandleRemoteChangedAttributes(Connection connection, Guid guid, EntitySyncInfo changedAttributes)
         {
-            CommunicationTools.RelaySyncMessage(connection, "serverSync.changeAttributes", guid, changedAttributes);
+            foreach (IRemoteServer server in ServerSync.RemoteServers)
+            {
+                if (server.Connection == connection)
+                    continue;
+
+                EntitySyncInfo filteredAttributes = new EntitySyncInfo();
+                bool containsAttributesToSync = false;
+                foreach (var component in changedAttributes.Components)
+                {
+                    foreach (var attribute in component.Value.Attributes)
+                    {
+                        if (server.DoI.IsInterestedInAttributeChange(guid, component.Key, attribute.Key))
+                        {
+                            filteredAttributes[component.Key][attribute.Key] = attribute.Value;
+                            containsAttributesToSync = true;
+                        }
+                    }
+                }
+
+                if (containsAttributesToSync)
+                    server.Connection["serverSync.changeAttributes"](guid, filteredAttributes);
+            }
 
             ProcessChangedAttributes(guid, changedAttributes);
         }
@@ -168,7 +193,8 @@ namespace ServerSyncPlugin
 
                 // This must be inside the lock to prevent concurrent changes to entity's sync info.
                 foreach (IRemoteServer server in ServerSync.RemoteServers)
-                    server.Connection["serverSync.addEntity"](e.Entity.Guid, syncInfo[e.Entity.Guid]);
+                    if (server.DoI.IsInterestedInEntity(e.Entity.Guid))
+                        server.Connection["serverSync.addEntity"](e.Entity.Guid, syncInfo[e.Entity.Guid]);
             }
         }
 
@@ -196,7 +222,8 @@ namespace ServerSyncPlugin
             }
 
             foreach (IRemoteServer server in ServerSync.RemoteServers)
-                server.Connection["remoteEntity"](e.Entity.Guid);
+                if (server.DoI.IsInterestedInEntity(e.Entity.Guid))
+                    server.Connection["remoteEntity"](e.Entity.Guid);
         }
 
         /// <summary>
@@ -234,7 +261,8 @@ namespace ServerSyncPlugin
             var changedAttributes = new EntitySyncInfo();
             changedAttributes[componentName][attributeName] = newAttributeSyncInfo;
             foreach (IRemoteServer server in ServerSync.RemoteServers)
-                server.Connection["serverSync.changeAttributes"](e.Entity.Guid, changedAttributes);
+                if (server.DoI.IsInterestedInAttributeChange(e.Entity.Guid, e.Component.Name, e.AttributeName))
+                    server.Connection["serverSync.changeAttributes"](e.Entity.Guid, changedAttributes);
         }
 
         void HandleRemoteServerAdded(object sender, ServerEventArgs e)
@@ -246,8 +274,7 @@ namespace ServerSyncPlugin
         {
             foreach (var entity in World.Instance)
             {
-                var entityArgs = new EntityEventArgs(entity);
-                if (server.DoI.IsInterestedInEntity(entityArgs))
+                if (server.DoI.IsInterestedInEntity(entity.Guid))
                     server.Connection["serverSync.addEntity"](entity.Guid, syncInfo[entity.Guid]);
             }
         }
