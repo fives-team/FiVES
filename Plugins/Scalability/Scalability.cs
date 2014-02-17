@@ -1,4 +1,4 @@
-﻿using FIVES;
+using FIVES;
 using KIARAPlugin;
 using NLog;
 using System;

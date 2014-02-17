@@ -40,9 +40,12 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AttributeDef.cs" />
+    <Compile Include="AttributeSyncInfo.cs" />
     <Compile Include="ComponentDef.cs" />
     <Compile Include="ComponentSync.cs" />
+    <Compile Include="ComponentSyncInfo.cs" />
     <Compile Include="DomainSync.cs" />
+    <Compile Include="EntitySyncInfo.cs" />
     <Compile Include="WorldSync.cs" />
     <Compile Include="EmptyDoI.cs" />
     <Compile Include="EmptyDoR.cs" />

@@ -14,7 +14,6 @@ namespace ServerSyncPlugin
             RegisterWorldSyncAPI();
             RegisterToEntityUpdates();
             RegisterToNewRemoteServers();
-
             PerformInitialSync();
         }
 
@@ -199,5 +198,7 @@ namespace ServerSyncPlugin
         private HashSet<Guid> ignoredEntityAdditions = new HashSet<Guid>();
         private HashSet<Guid> ignoredEntityRemovals = new HashSet<Guid>();
         private HashSet<AttributeUpdate> ignoredAttributeUpdates = new HashSet<AttributeUpdate>();
+
+        private Dictionary<Guid, EntitySyncInfo> syncInfo = new Dictionary<Guid, EntitySyncInfo>();
     }
 }
