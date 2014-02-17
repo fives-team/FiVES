@@ -91,8 +91,8 @@ requirejs(["keyframe_animator"], (function () {
     };
 
     a._addXflowAnimationsForMesh = function(entity) {
-        var animationDefinitons = this._createAnimationsForEntity(entity);
-        entity.xml3dView.xflowAnimations = animationDefinitons;
+        var animationDefinitions = this._createAnimationsForEntity(entity);
+        entity.xml3dView.xflowAnimations = animationDefinitions;
     };
 
     // Parses the XML3D model file for <anim> tags that define xflow keyframe animations.
@@ -103,9 +103,10 @@ requirejs(["keyframe_animator"], (function () {
         var animationDefinitions = {};
         var meshDefinitions = $(entity.xml3dView.defElement);
         var meshAnimations = meshDefinitions.find("anim");
+        var that = this;
         meshAnimations.each(function(index, element)
         {
-            var animationDefinition = scm._parseAnimationEntry(element, entity.guid);
+            var animationDefinition = that._parseAnimationEntry(element, entity.guid);
             animationDefinition.key = meshDefinitions.find(animationDefinition.key +"-"+entity.guid);
             animationDefinitions[element.getAttribute("name")] = animationDefinition;
         });
