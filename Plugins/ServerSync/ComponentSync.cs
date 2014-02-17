@@ -30,12 +30,12 @@ namespace ServerSyncPlugin
         private void SyncExistingComponentsToServer(IRemoteServer remoteServer)
         {
             foreach (ReadOnlyComponentDefinition compDef in ComponentRegistry.Instance.RegisteredComponents)
-                remoteServer.Connection["registerComponentDefinition"]((ComponentDef)compDef);
+                remoteServer.Connection["serverSync.registerComponentDefinition"]((ComponentDef)compDef);
         }
 
         private void RegisterComponentSyncAPI()
         {
-            ServerSync.LocalServer.Service["registerComponentDefinition"] =
+            ServerSync.LocalServer.Service["serverSync.registerComponentDefinition"] =
                 (Action<Connection, ComponentDef>)HandleRemoteRegisteredComponentDefinition;
         }
 
@@ -73,7 +73,7 @@ namespace ServerSyncPlugin
             }
 
             foreach (IRemoteServer server in ServerSync.RemoteServers)
-                server.Connection["registerComponentDefinition"]((ComponentDef)e.ComponentDefinition);
+                server.Connection["serverSync.registerComponentDefinition"]((ComponentDef)e.ComponentDefinition);
         }
 
         private List<Guid> ignoredComponentRegistrations = new List<Guid>();
