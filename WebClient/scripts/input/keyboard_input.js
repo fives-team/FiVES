@@ -19,12 +19,18 @@ FIVES.Input = FIVES.Input || {};
     var UP_AXIS = {x: 0, y:1, z: 0};
 
     var keylistener = function(){
-        this._initializeEventListeners();
+        FIVES.Events.AddEntityGeometryCreatedHandler(this._handleGeometryLoaded.bind(this));
     };
+
     var k = keylistener.prototype;
 
     var _pressedKeys = {};
     var _upKeys = {};
+
+    k._handleGeometryLoaded = function(entity) {
+        if(entity.guid == FIVES.AvatarEntityGuid)
+            this._initializeEventListeners();
+    };
 
     k._onKeyDown = function(e) {
         if(!_pressedKeys[e.keyCode])
