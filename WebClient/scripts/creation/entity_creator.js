@@ -23,7 +23,7 @@ FIVES.Creation = FIVES.Creation || {};
         var orientation = _retrieveOrientation();
         var scale = _retrieveScale();
         var mesh = _retrieveMesh();
-        var call = FIVES.Communication.FivesCommunicator.createMeshEntity(position, orientation, scale, mesh);
+        var call = FIVES.Plugins.Editing.createMeshEntity(position, orientation, scale, mesh);
         call.on("result", function(newGuid) {
             console.log("Created Entity with Guid " + newGuid);
         });
@@ -37,7 +37,7 @@ FIVES.Creation = FIVES.Creation || {};
             var scale = { x: scaleFactor, y: scaleFactor, z: scaleFactor};
             var orientation = { x: 0, y: 0, z: 0, w: 1};
             var mesh = {uri: "resources/models/firetruck/xml3d/firetruck.xml", visible: true};
-            var call = FIVES.Communication.FivesCommunicator.createMeshEntity(position, orientation, scale, mesh);
+            var call = FIVES.Plugins.Editing.createMeshEntity(position, orientation, scale, mesh);
             i ++;
         }
     };

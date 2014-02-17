@@ -11,11 +11,20 @@ var FIVES = FIVES || {};
 FIVES.Plugins = FIVES.Plugins || {};
 
 (function () {
-    "use script";
+    "use strict";
 
-    var editing = function() {};
+    var _fivesCommunicator = FIVES.Communication.FivesCommunicator;
+
+    var editing = function() {
+        _fivesCommunicator.registerFunctionWrapper(this._createFunctionWrappers.bind(this));
+    };
 
     var e = editing.prototype;
+
+    e._createFunctionWrappers = function () {
+        this.createEntityAt = _fivesCommunicator.connection.generateFuncWrapper("editing.createEntityAt");
+        this.createMeshEntity = _fivesCommunicator.connection.generateFuncWrapper("editing.createMeshEntity");
+    };
 
     FIVES.Plugins.Editing = new editing();
 }());
