@@ -31,6 +31,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
+    <Reference Include="System.configuration" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
@@ -40,6 +41,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ConfigDoI.cs" />
+    <Compile Include="ConfigDoR.cs" />
     <Compile Include="ConfigScalability.cs" />
     <Compile Include="ConfigScalabilityImpl.cs" />
     <Compile Include="ConfigScalabilityPluginInitializer.cs" />
@@ -71,6 +73,9 @@
       <Project>{fdf2de99-68cf-4947-952c-2d2bcc846f3e}</Project>
       <Name>Terminal</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="App.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

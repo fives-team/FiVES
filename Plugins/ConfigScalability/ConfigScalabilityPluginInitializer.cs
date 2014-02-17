@@ -6,7 +6,7 @@ using FIVES;
 
 namespace ConfigScalabilityPlugin
 {
-    class ConfigScalabilityPluginInitializer : IPluginInitializer
+    public class ConfigScalabilityPluginInitializer : IPluginInitializer
     {
         public string Name
         {
