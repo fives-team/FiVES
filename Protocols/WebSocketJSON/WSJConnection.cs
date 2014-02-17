@@ -43,14 +43,14 @@ namespace WebSocketJSON
             // unclear, but to be safe we ignore messages that have parsing errors.
             try
             {
-                data = JsonConvert.DeserializeObject<List<JToken>>(e.Message);
+                data = JsonConvert.DeserializeObject<List<JToken>>(e.Message, settings);
             }
             catch (JsonException)
             {
                 return;
             }
 
-            string msgType = data[0].ToObject<string>();
+            string msgType = data[0].ToObject<string>(serializer);
             if (msgType == "call-reply")
                 HandleCallReply(data);
             else if (msgType == "call-error")
@@ -102,6 +102,8 @@ namespace WebSocketJSON
         {
             settings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
             settings.Converters.Add(new StandardFloatConverter());
+            settings.ContractResolver = new PrivateSetterResolver();
+            serializer = JsonSerializer.Create(settings);
         }
 
         internal void HandleClosed(object sender, EventArgs e)
@@ -133,8 +135,8 @@ namespace WebSocketJSON
 
         private void HandleCall(List<JToken> data)
         {
-            int callID = data[1].ToObject<int>();
-            string methodName = data[2].ToObject<string>();
+            int callID = data[1].ToObject<int>(serializer);
+            string methodName = data[2].ToObject<string>(serializer);
 
             Delegate nativeMethod = null;
             lock (registeredFunctions)
@@ -149,7 +151,7 @@ namespace WebSocketJSON
                 try
                 {
                     var args = data.GetRange(4, data.Count - 4);
-                    var callbacks = data[3].ToObject<List<int>>();
+                    var callbacks = data[3].ToObject<List<int>>(serializer);
                     var paramInfo = new List<ParameterInfo>(nativeMethod.Method.GetParameters());
                     parameters = ConvertParameters(args, callbacks, paramInfo);
                 }
@@ -207,11 +209,11 @@ namespace WebSocketJSON
                 {
                     if (paramInfo[i].ParameterType == typeof(FuncWrapper))
                     {
-                        parameters[i] = CreateFuncWrapperDelegate(args[i].ToObject<string>());
+                        parameters[i] = CreateFuncWrapperDelegate(args[i].ToObject<string>(serializer));
                     }
                     else if (typeof(Delegate).IsAssignableFrom(paramInfo[i].ParameterType))
                     {
-                        parameters[i] = CreateCustomDelegate(args[i].ToObject<string>(), paramInfo[i].ParameterType);
+                        parameters[i] = CreateCustomDelegate(args[i].ToObject<string>(serializer), paramInfo[i].ParameterType);
                     }
                     else
                     {
@@ -221,7 +223,7 @@ namespace WebSocketJSON
                 }
                 else
                 {
-                    parameters[i] = args[i].ToObject(paramInfo[i].ParameterType);
+                    parameters[i] = args[i].ToObject(paramInfo[i].ParameterType, serializer);
                 }
             }
 
@@ -290,8 +292,8 @@ namespace WebSocketJSON
 
         private void HandleCallError(List<JToken> data)
         {
-            int callID = data[1].ToObject<int>();
-            string reason = data[2].ToObject<string>();
+            int callID = data[1].ToObject<int>(serializer);
+            string reason = data[2].ToObject<string>(serializer);
 
             // Call error with callID = -1 means we've sent something that was not understood by other side or was
             // malformed. This probably means that protocols aren't incompatible or incorrectly implemented on either
@@ -331,7 +333,7 @@ namespace WebSocketJSON
 
             if (completedCall != null)
             {
-                bool success = data[2].ToObject<bool>();
+                bool success = data[2].ToObject<bool>(serializer);
                 JToken result = data.Count == 4 ? data[3] : new JValue((object)null);
                 if (success)
                     completedCall.HandleSuccess(result);
@@ -438,6 +440,7 @@ namespace WebSocketJSON
         private Dictionary<string, Delegate> registeredFunctions = new Dictionary<string, Delegate>();
         private Dictionary<Delegate, string> registeredCallbacks = new Dictionary<Delegate, string>();
         private JsonSerializerSettings settings = new JsonSerializerSettings();
+        private JsonSerializer serializer;
 
         private ISocket socket;
 
