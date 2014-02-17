@@ -58,6 +58,10 @@
       <Project>{79ef699d-6a88-4054-af04-f22486db47fa}</Project>
       <Name>DomainModel</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\Core\Math\Math.csproj">
+      <Project>{a2d1d8e5-7c5c-4ea3-95c7-d8d97ab0b74e}</Project>
+      <Name>Math</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\Core\PluginManager\PluginManager.csproj">
       <Project>{db1099a1-b7fe-474f-a03a-41687d6c5c76}</Project>
       <Name>PluginManager</Name>

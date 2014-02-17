@@ -25,15 +25,9 @@ namespace RenderablePlugin
         }
 
         [Test()]
-        public void ShouldRegisterPositionComponent()
+        public void ShouldRegisterMeshComponent()
         {
-            Assert.IsNotNull(ComponentRegistry.Instance.FindComponentDefinition("meshResource"));
-        }
-
-        [Test()]
-        public void ShouldRegisterOrientationComponent()
-        {
-            Assert.IsNotNull(ComponentRegistry.Instance.FindComponentDefinition("scale"));
+            Assert.IsNotNull(ComponentRegistry.Instance.FindComponentDefinition("mesh"));
         }
     }
 }

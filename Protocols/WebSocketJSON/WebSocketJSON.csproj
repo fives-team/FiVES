@@ -71,6 +71,7 @@
     <Compile Include="Exceptions\InvalidNumberOfArgs.cs" />
     <Compile Include="ISocket.cs" />
     <Compile Include="MessageEventArgs.cs" />
+    <Compile Include="PrivateSetterResolver.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="WebSocketSocketAdapter.cs" />
     <Compile Include="WSJSessionSocketAdapter.cs" />
