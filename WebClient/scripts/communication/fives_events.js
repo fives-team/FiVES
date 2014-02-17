@@ -16,8 +16,16 @@ FIVES.Events = FIVES.Events || {};
     /**
      * List of functions that are executed when an entity fires an attribute changed event
      * @type {Array}
+     * @private
      */
     var _onComponentUpdatedHandler = [];
+
+    /**
+     * List of handlers that are executed when entity added event was fired
+     * @type {Array}
+     * @private
+     */
+    var _onEntityAddedHandler = [];
 
     FIVES.Events.AddOnComponentUpdatedHandler = function(handler) {
         _onComponentUpdatedHandler.push(handler);
@@ -37,5 +45,18 @@ FIVES.Events = FIVES.Events || {};
         for(var i in _onComponentUpdatedHandler) {
             _onComponentUpdatedHandler[i](entity, componentName);
         }
-    }
+    };
+
+    /**
+     * Fired when a new entity was added to its scene. May be used to create resources based on specific plugins
+     * or register events like componentChanged on the entity
+     * @param entity
+     * @constructor
+     */
+    FIVES.Events.EntityAdded = function(entity) {
+        for(var i in _onEntityAddedHandler) {
+            _onEntityAddedHandler[i](entity);
+        }
+    };
+
 }());
