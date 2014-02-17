@@ -23,15 +23,13 @@ FIVES.Resources = FIVES.Resources || {};
 
     scm.initialize = function(xml3dElementId) {
         _xml3dElement = document.getElementById(xml3dElementId);
+    };
         if(!_xml3dElement || _xml3dElement.tagName != "xml3d")
             console.error("[ERROR] (SceneManager) : Cannot find XML3D element with id " + xml3dElementId);
         _mainDefs = XML3D.createElement("defs");
         _xml3dElement.appendChild(_mainDefs);
     };
 
-    scm.addMeshForObject = function(fivesObject) {
-        if(fivesObject.meshResource.uri)
-            FIVES.Resources.ResourceManager.loadExternalResource(fivesObject, this._addMeshToScene.bind(this));
     };
 
     scm.removeEntity = function(entity) {
@@ -52,47 +50,14 @@ FIVES.Resources = FIVES.Resources || {};
         }
     };
 
-    scm._addMeshToScene = function(meshDocument, idSuffix) {
-
-        var meshGroup = $(meshDocument).children("group");
-        var meshDefinitions = $(meshDocument).children("defs");
-        var entity = FIVES.Models.EntityRegistry.getEntity(idSuffix);
-
-        this._addMeshDefinitionsToScene(entity, meshDefinitions);
-
-        this._addXflowAnimationsForMesh(entity);
-        this._addXml3dTranformForMesh(entity);
-        this._addXml3dGroupsForMesh(entity);
-        _xml3dElement.appendChild(entity.xml3dView.groupElement);
-        $(entity.xml3dView.groupElement).append(meshGroup);
-    };
-
-    scm._addMeshDefinitionsToScene = function(entity, meshDefinitions) {
-        $(_xml3dElement).append(meshDefinitions);
-        entity.xml3dView.defElement = meshDefinitions[0];
-    };
-
-    scm._addXml3dTranformForMesh = function(entity) {
-        var transformGroup = this._createTransformForEntityGroup(entity);
-        entity.xml3dView.transformElement = transformGroup;
-    };
-
     scm._addXflowAnimationsForMesh = function(entity) {
         var animationDefinitons = this._createAnimationsForEntity(entity);
         entity.xml3dView.xflowAnimations = animationDefinitons;
     };
 
-    scm._addXml3dGroupsForMesh = function(entity) {
-        var entityGroup = this._createParentGroupForEntity(entity);
-        entity.xml3dView.groupElement = entityGroup;
-        entity.xml3dView.groupElement.setAttribute("visible", entity["meshResource"]["visible"]);
-    };
-
-    scm._createParentGroupForEntity = function(entity) {
-        var entityGroup = XML3D.createElement("group");
-        entityGroup.setAttribute("id", "Entity-" + entity.guid);
-        entityGroup.setAttribute("transform", "#transform-" + entity.guid );
-        return entityGroup;
+    scm._addXml3dTranformForMesh = function(entity) {
+        var transformGroup = this._createTransformForEntityGroup(entity);
+        entity.xml3dView.transformElement = transformGroup;
     };
 
     scm._createTransformForEntityGroup = function(entity) {
