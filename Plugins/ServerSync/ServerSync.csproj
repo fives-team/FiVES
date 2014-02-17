@@ -39,6 +39,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AttributeDef.cs" />
+    <Compile Include="ComponentDef.cs" />
+    <Compile Include="ComponentSync.cs" />
     <Compile Include="DomainSync.cs" />
     <Compile Include="WorldSync.cs" />
     <Compile Include="EmptyDoI.cs" />

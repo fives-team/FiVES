@@ -13,6 +13,7 @@ namespace ServerSyncPlugin
 
             domainSync = new DomainSync();
             worldSync = new WorldSync();
+            componentSync = new ComponentSync();
 
             localServer.Service.OnNewClient += HandleNewServerConnected;
 
@@ -84,5 +85,6 @@ namespace ServerSyncPlugin
         ILocalServer localServer;
         WorldSync worldSync;
         DomainSync domainSync;
+        ComponentSync componentSync;
     }
 }
