@@ -156,12 +156,21 @@ namespace ConfigScalabilityPlugin
 
         private void ChangeDoIComponents(string commandLine)
         {
-            string componentsArgument = commandLine.Substring(commandLine.IndexOf(' ') + 1);
-            List<string> parsedDoIComponents = new List<string>(componentsArgument.Split(','));
-            if (parsedDoIComponents.Find(c => c.Length > 0) != null)
+            int spaceIndex = commandLine.IndexOf(' ');
+            if (spaceIndex == -1)
             {
-                doi.RelevantComponents = parsedDoIComponents;
+                doi.RelevantComponents = null;
                 ServerSync.LocalServer.DoI = doi;
+            }
+            else
+            {
+                string componentsArgument = commandLine.Substring(spaceIndex + 1);
+                List<string> parsedDoIComponents = new List<string>(componentsArgument.Split(','));
+                if (parsedDoIComponents.Find(c => c.Length > 0) != null)
+                {
+                    doi.RelevantComponents = parsedDoIComponents;
+                    ServerSync.LocalServer.DoI = doi;
+                }
             }
         }
 
