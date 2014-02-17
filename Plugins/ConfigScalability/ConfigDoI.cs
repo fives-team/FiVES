@@ -21,7 +21,7 @@ namespace ConfigScalabilityPlugin
 
         public bool IsInterestedInAttributeChange(Entity entity, string componentName, string attributeName)
         {
-            return RelevantComponents.Count == 0 || RelevantComponents.Contains(componentName);
+            return RelevantComponents == null || RelevantComponents.Contains(componentName);
         }
 
         #region ISerializable interface

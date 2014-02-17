@@ -48,8 +48,13 @@ namespace ConfigScalabilityPlugin
             if (doiComponents != null)
             {
                 List<string> parsedDoIComponents = new List<string>(doiComponents.Value.Split(','));
-                if (parsedDoIComponents.Find(c => c.Length > 0) != null)
-                    doi.RelevantComponents = parsedDoIComponents;
+                parsedDoIComponents = parsedDoIComponents.FindAll(c => c.Length > 0);
+
+                // A single asterisk means all components are fine.
+                if (parsedDoIComponents.Count == 1 && parsedDoIComponents[0] == "*")
+                    return;
+
+                doi.RelevantComponents = parsedDoIComponents;
             }
         }
 
