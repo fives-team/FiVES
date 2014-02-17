@@ -12,9 +12,15 @@ namespace ServerSyncPlugin
         public ComponentSync()
         {
             RegisterForLocalComponentRegistrations();
-            RegisterComponentSyncAPI();
+            RegisterComponentSyncAPI(ServerSync.LocalServer.Service);
             RegisterToNewRemoteServers();
             PerformInitialSync();
+        }
+
+        public void RegisterComponentSyncAPI(Service service)
+        {
+            service["serverSync.registerComponentDefinition"] =
+                (Action<Connection, ComponentDef>)HandleRemoteRegisteredComponentDefinition;
         }
 
         private void RegisterToNewRemoteServers()
@@ -31,12 +37,6 @@ namespace ServerSyncPlugin
         {
             foreach (ReadOnlyComponentDefinition compDef in ComponentRegistry.Instance.RegisteredComponents)
                 remoteServer.Connection["serverSync.registerComponentDefinition"]((ComponentDef)compDef);
-        }
-
-        private void RegisterComponentSyncAPI()
-        {
-            ServerSync.LocalServer.Service["serverSync.registerComponentDefinition"] =
-                (Action<Connection, ComponentDef>)HandleRemoteRegisteredComponentDefinition;
         }
 
         private void RegisterForLocalComponentRegistrations()

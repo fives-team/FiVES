@@ -7,7 +7,7 @@ namespace ServerSyncPlugin
 {
     class ServerSyncImpl : IServerSync
     {
-        public ServerSyncImpl()
+        public void Initialize()
         {
             localServer = new LocalServerImpl();
             remoteServers = new Dictionary<Connection, IRemoteServer>();
@@ -49,6 +49,11 @@ namespace ServerSyncPlugin
             for (int i = 0; i < config.servers.Count; i++)
             {
                 ServiceWrapper remoteService = ServiceFactory.Discover(configURI + "#" + i);
+
+                worldSync.RegisterWorldSyncAPI(remoteService);
+                domainSync.RegisterDomainSyncAPI(remoteService);
+                componentSync.RegisterComponentSyncAPI(remoteService);
+
                 remoteService.OnConnected += HandleNewServerConnected;
             }
         }

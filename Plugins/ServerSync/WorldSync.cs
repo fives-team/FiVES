@@ -13,19 +13,17 @@ namespace ServerSyncPlugin
     {
         public WorldSync()
         {
-            RegisterWorldSyncAPI();
+            RegisterWorldSyncAPI(ServerSync.LocalServer.Service);
             RegisterToEntityUpdates();
             RegisterToNewRemoteServers();
             PerformInitialSync();
         }
 
-        void RegisterWorldSyncAPI()
+        public void RegisterWorldSyncAPI(Service service)
         {
-            ServerSync.LocalServer.Service["serverSync.addEntity"] =
-                (Action<Connection, Guid, EntitySyncInfo>)HandleRemoteAddedEntity;
-            ServerSync.LocalServer.Service["serverSync.removeEntity"] =
-                (Action<Connection, Guid>)HandleRemoteRemovedEntity;
-            ServerSync.LocalServer.Service["serverSync.changeAttributes"] =
+            service["serverSync.addEntity"] = (Action<Connection, Guid, EntitySyncInfo>)HandleRemoteAddedEntity;
+            service["serverSync.removeEntity"] = (Action<Connection, Guid>)HandleRemoteRemovedEntity;
+            service["serverSync.changeAttributes"] =
                 (Action<Connection, Guid, EntitySyncInfo>)HandleRemoteChangedAttributes;
         }
 

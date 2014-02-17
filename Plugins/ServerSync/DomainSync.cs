@@ -7,22 +7,22 @@ namespace ServerSyncPlugin
     {
         public DomainSync()
         {
-            RegisterDomainSyncAPI();
+            RegisterDomainSyncAPI(ServerSync.LocalServer.Service);
             RegisterForDomainChanges();
+        }
+
+        public void RegisterDomainSyncAPI(Service service)
+        {
+            service["serverSync.getDoR"] = (Func<string>)GetDoR;
+            service["serverSync.getDoI"] = (Func<string>)GetDoI;
+            service["serverSync.updateDoI"] = (Action<Connection, string>)UpdateDoR;
+            service["serverSync.updateDoR"] = (Action<Connection, string>)UpdateDoI;
         }
 
         void RegisterForDomainChanges()
         {
             ServerSync.LocalServer.DoIChanged += HandleLocalDoIChanged;
             ServerSync.LocalServer.DoRChanged += HandleLocalDoRChanged;
-        }
-
-        void RegisterDomainSyncAPI()
-        {
-            ServerSync.LocalServer.Service["serverSync.getDoR"] = (Func<string>)GetDoR;
-            ServerSync.LocalServer.Service["serverSync.getDoI"] = (Func<string>)GetDoI;
-            ServerSync.LocalServer.Service["serverSync.updateDoI"] = (Action<Connection, string>)UpdateDoR;
-            ServerSync.LocalServer.Service["serverSync.updateDoR"] = (Action<Connection, string>)UpdateDoI;
         }
 
         void HandleLocalDoIChanged(object sender, EventArgs e)

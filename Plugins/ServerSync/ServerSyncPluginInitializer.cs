@@ -31,7 +31,9 @@ namespace ServerSyncPlugin
 
         public void Initialize()
         {
-            ServerSync.Instance = new ServerSyncImpl();
+            var serverSync = new ServerSyncImpl();
+            ServerSync.Instance = serverSync;
+            serverSync.Initialize();
         }
 
         public void Shutdown()
