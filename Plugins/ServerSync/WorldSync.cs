@@ -53,8 +53,7 @@ namespace ServerSyncPlugin
         {
             lock (syncInfo)
             {
-                if (ServerSync.IsSyncRelay)
-                    RelayTools.RelaySyncMessage(connection, "serverSync.addEntity", guid, initialSyncInfo);
+                CommunicationTools.RelaySyncMessage(connection, "serverSync.addEntity", guid, initialSyncInfo);
 
                 if (!syncInfo.ContainsKey(guid))
                 {
@@ -80,8 +79,7 @@ namespace ServerSyncPlugin
         {
             lock (syncInfo)
             {
-                if (ServerSync.IsSyncRelay)
-                    RelayTools.RelaySyncMessage(connection, "serverSync.removeEntity", guid);
+                CommunicationTools.RelaySyncMessage(connection, "serverSync.removeEntity", guid);
 
                 if (!syncInfo.ContainsKey(guid))
                 {
@@ -103,8 +101,7 @@ namespace ServerSyncPlugin
         /// <param name="changedAttributes">A set of modified attributes with their remote sync info.</param>
         private void HandleRemoteChangedAttributes(Connection connection, Guid guid, EntitySyncInfo changedAttributes)
         {
-            if (ServerSync.IsSyncRelay)
-                RelayTools.RelaySyncMessage(connection, "serverSync.changeAttributes", guid, changedAttributes);
+            CommunicationTools.RelaySyncMessage(connection, "serverSync.changeAttributes", guid, changedAttributes);
 
             ProcessChangedAttributes(guid, changedAttributes);
         }
@@ -236,11 +233,8 @@ namespace ServerSyncPlugin
                 entitySyncInfo[componentName][attributeName] = newAttributeSyncInfo;
             }
 
-            // TODO: Optimization: we can send batch updates to improve performance. Received code is written to
-            // process batches already, but sending is trickier as we don't have network load feedback from KIARA yet.
             var changedAttributes = new EntitySyncInfo();
             changedAttributes[componentName][attributeName] = newAttributeSyncInfo;
-
             foreach (IRemoteServer server in ServerSync.RemoteServers)
                 server.Connection["serverSync.changeAttributes"](e.Entity.Guid, changedAttributes);
         }

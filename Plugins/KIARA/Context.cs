@@ -83,7 +83,13 @@ namespace KIARAPlugin
             connectionFactory.StartServer(server, this, onNewClient);
         }
 
-        private Config RetrieveConfig(string configURI, out string fragment)
+        /// <summary>
+        /// Retrieves and parses config file from a given URI.
+        /// </summary>
+        /// <param name="configURI">URI pointing to the config file.</param>
+        /// <param name="fragment">Fragment part of the URI.</param>
+        /// <returns>Parsed config.</returns>
+        public Config RetrieveConfig(string configURI, out string fragment)
         {
             // Extract fragment.
             int hashIndex = configURI.IndexOf("#");

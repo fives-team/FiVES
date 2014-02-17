@@ -52,8 +52,7 @@ namespace ServerSyncPlugin
 
         private void HandleRemoteRegisteredComponentDefinition(Connection connection, ComponentDef componentDef)
         {
-            if (ServerSync.IsSyncRelay)
-                RelayTools.RelaySyncMessage(connection, "registerComponentDefinition", componentDef);
+            CommunicationTools.RelaySyncMessage(connection, "registerComponentDefinition", componentDef);
 
             if (ComponentRegistry.Instance.FindComponentDefinition(componentDef.Name) == null)
             {

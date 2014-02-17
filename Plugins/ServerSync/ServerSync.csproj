@@ -51,7 +51,7 @@
     <Compile Include="ComponentSyncInfo.cs" />
     <Compile Include="DomainSync.cs" />
     <Compile Include="EntitySyncInfo.cs" />
-    <Compile Include="RelayTools.cs" />
+    <Compile Include="CommunicationTools.cs" />
     <Compile Include="WorldSync.cs" />
     <Compile Include="EmptyDoI.cs" />
     <Compile Include="EmptyDoR.cs" />
@@ -92,8 +92,10 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <None Include="App.config" />
     <None Include="packages.config" />
+    <None Include="serverSyncClient.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="serverSync.kiara" />
     <None Include="serverSyncServer.json" />
   </ItemGroup>

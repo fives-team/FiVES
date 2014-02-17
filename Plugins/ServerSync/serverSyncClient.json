@@ -1,0 +1,12 @@
+{
+  "info": "ScalabilitySyncClient",
+  "idlURL": "syncServer.kiara",
+  "servers": [{
+    "services": "*",
+    "protocol": {
+      "name": "websocket-json",
+      "port": 43745,
+      "host": "127.0.0.1"
+    }
+  }]
+}

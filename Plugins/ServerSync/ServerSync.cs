@@ -46,13 +46,5 @@ namespace ServerSyncPlugin
                 Instance.RemovedServer -= value;
             }
         }
-
-        public static bool IsSyncRelay
-        {
-            get
-            {
-                return Instance.IsSyncRelay;
-            }
-        }
     }
 }

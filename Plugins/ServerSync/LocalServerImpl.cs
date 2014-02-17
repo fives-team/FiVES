@@ -8,7 +8,7 @@ namespace ServerSyncPlugin
     {
         public LocalServerImpl()
         {
-            service = ServiceFactory.Create(ConvertFileNameToURI("serverSyncServer.json"));
+            service = ServiceFactory.Create(CommunicationTools.ConvertFileNameToURI("serverSyncServer.json"));
             dor = new EmptyDoR();
             doi = new EmptyDoI();
             syncID = Guid.NewGuid();
@@ -62,18 +62,6 @@ namespace ServerSyncPlugin
             {
                 return syncID;
             }
-        }
-
-        /// <summary>
-        /// Converts a file name to the URI that point to the file as if it was located in the same directory as the
-        /// current assembly.
-        /// </summary>
-        /// <param name="configFilename"></param>
-        /// <returns></returns>
-        string ConvertFileNameToURI(string configFilename)
-        {
-            var configFullPath = Path.Combine(Path.GetDirectoryName(this.GetType().Assembly.Location), configFilename);
-            return "file://" + configFullPath;
         }
 
         void RegisterSyncIDAPI()

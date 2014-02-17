@@ -18,7 +18,6 @@ namespace ServerSyncPlugin
 
             localServer.Service.OnNewClient += HandleNewServerConnected;
 
-            LoadConfig();
             ConnectToRemoteServers();
         }
 
@@ -42,23 +41,16 @@ namespace ServerSyncPlugin
 
         public event EventHandler<ServerEventArgs> RemovedServer;
 
-        public bool IsSyncRelay { get; private set; }
-
-        /// <summary>
-        /// Loads configuration options from the library configuration file.
-        /// </summary>
-        void LoadConfig()
-        {
-            string scalabilityConfigPath = this.GetType().Assembly.Location;
-            Configuration config = ConfigurationManager.OpenExeConfiguration(scalabilityConfigPath);
-
-            IsSyncRelay = Boolean.Parse(config.AppSettings.Settings["IsSyncRelay"].Value);
-        }
-
         void ConnectToRemoteServers()
         {
-            // TODO: read list of remote servers from config
-            // TODO: connect to each of them
+            string configURI = CommunicationTools.ConvertFileNameToURI("serverSyncClient.json");
+            string fragment;
+            Config config = Context.DefaultContext.RetrieveConfig(configURI, out fragment);
+            for (int i = 0; i < config.servers.Count; i++)
+            {
+                ServiceWrapper remoteService = ServiceFactory.Discover(configURI + "#" + i);
+                remoteService.OnConnected += HandleNewServerConnected;
+            }
         }
 
         void HandleNewServerConnected(Connection connection)
