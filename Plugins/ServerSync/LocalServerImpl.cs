@@ -8,10 +8,11 @@ namespace ServerSyncPlugin
     {
         public LocalServerImpl()
         {
-            service = ServiceFactory.Create(CommunicationTools.ConvertFileNameToURI("serverSyncServer.json"));
             dor = new EmptyDoR();
             doi = new EmptyDoI();
             syncID = Guid.NewGuid();
+
+            service = ServiceFactory.Create(CommunicationTools.ConvertFileNameToURI("serverSyncServer.json"));
 
             RegisterSyncIDAPI();
         }
