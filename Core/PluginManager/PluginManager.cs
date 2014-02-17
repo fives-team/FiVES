@@ -231,14 +231,15 @@ namespace FIVES
             string[] files = Directory.GetFiles(pluginDirectory, "*.dll");
             foreach (string filename in files)
             {
+                string cleanFilename = Path.GetFileName(filename);
                 if (pluginWhiteList != null)
                 {
-                    if (pluginWhiteList.Any(whiteListEntry => filename.StartsWith(whiteListEntry + ".dll")))
+                    if (pluginWhiteList.Any(whiteListEntry => cleanFilename.Equals(whiteListEntry + ".dll")))
                         LoadPlugin(filename);
                 }
                 else if (pluginBlackList != null)
                 {
-                    if (!pluginBlackList.Any(blackListEntry => filename.Equals(blackListEntry + ".dll")))
+                    if (!pluginBlackList.Any(blackListEntry => cleanFilename.Equals(blackListEntry + ".dll")))
                         LoadPlugin(filename);
                 }
                 else
