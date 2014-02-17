@@ -35,6 +35,7 @@ requirejs(["keyframe_animator"], (function () {
     var animation = function () {
         _fivesCommunicator.registerFunctionWrapper(this._createFunctionWrappers.bind(this));
         FIVES.Events.AddOnComponentUpdatedHandler(this._componentUpdatedHandler.bind(this));
+        FIVES.Events.AddEntityAddedHandler(this._addXflowAnimationsForMesh.bind(this));
 
         window.setInterval(updateLoop.bind(this), 1000.0 / fps);
     };
@@ -87,6 +88,37 @@ requirejs(["keyframe_animator"], (function () {
     a.registerToAnimationUpdates = function() {
         this.notifyAboutClientsideAnimationStart(this.startAnimationPlayback);
         this.notifyAboutClientsideAnimationStop(this.stopAnimationPlayback);
+    };
+
+    a._addXflowAnimationsForMesh = function(entity) {
+        var animationDefinitons = this._createAnimationsForEntity(entity);
+        entity.xml3dView.xflowAnimations = animationDefinitons;
+    };
+
+    // Parses the XML3D model file for <anim> tags that define xflow keyframe animations.
+    // Within the definition, the id value of the respective xflow key is stated as appearing
+    // in the model file, i.e. ignoring adaptions made to id attributes when adding the entity to the scene.
+    // We therefore need to take this adaption into account here separately
+    a._createAnimationsForEntity = function(entity) {
+        var animationDefinitions = {};
+        var meshDefinitions = $(entity.xml3dView.defElement);
+        var meshAnimations = meshDefinitions.find("anim");
+        meshAnimations.each(function(index, element)
+        {
+            var animationDefinition = scm._parseAnimationEntry(element, entity.guid);
+            animationDefinition.key = meshDefinitions.find(animationDefinition.key +"-"+entity.guid);
+            animationDefinitions[element.getAttribute("name")] = animationDefinition;
+        });
+        return animationDefinitions;
+    };
+
+    a._parseAnimationEntry = function(animationDefinition,entityId) {
+        var animation = {};
+        animation.startKey = animationDefinition.getAttribute("startKey");
+        animation.endKey = animationDefinition.getAttribute("endKey");
+        animation.speed = animationDefinition.getAttribute("speed");
+        animation.key = animationDefinition.getAttribute("key");
+        return animation;
     };
 
     /**
