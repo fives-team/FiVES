@@ -16,7 +16,7 @@ FIVES.Plugins = FIVES.Plugins || {};
     var _fivesCommunicator = FIVES.Communication.FivesCommunicator;
 
     var editing = function() {
-        _fivesCommunicator.registerFunctionWrapper(this._createFunctionWrappers.bind(this));
+        FIVES.Events.AddConnectionEstablishedHandler(this._createFunctionWrappers.bind(this));
     };
 
     var e = editing.prototype;

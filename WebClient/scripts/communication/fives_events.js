@@ -34,6 +34,23 @@ FIVES.Events = FIVES.Events || {};
      */
     var _onEntityGeometryCreated = [];
 
+    /**
+     * List of handlers that are executed when communicator has established a connection to the server.
+     * @type {Array}
+     * @private
+     */
+    var _onConnectionEstablished = [];
+
+
+    FIVES.Events.AddConnectionEstablishedHandler = function(handler) {
+        _onConnectionEstablished.push(handler);
+    };
+
+    FIVES.Events.RemoveConnectionEstablishedHandler = function(handler) {
+        if(_onConnectionEstablished.indexOf(handler) != -1)
+            _onConnectionEstablished.splice(handler, 1);
+    };
+
     FIVES.Events.AddOnComponentUpdatedHandler = function(handler) {
         _onComponentUpdatedHandler.push(handler);
     };
@@ -60,6 +77,18 @@ FIVES.Events = FIVES.Events || {};
         if(_onEntityGeometryCreated.indexOf(handler) != -1)
             _onEntityGeometryCreated.splice(handler, 1);
     };
+
+    /**
+     * Fired when FiVES Communicator is done establishing the connection to the server
+     * @constructor
+     */
+    FIVES.Events.ConnectionEstablished = function() {
+        for(var i in _onConnectionEstablished) {
+            _onConnectionEstablished[i]();
+        }
+    };
+
+
     /**
      * Fired when an entity updated one of its components. May be used by plugin scripts to executed
      * @param entity [FIVES.Models.Entity] Entity object that fired the event

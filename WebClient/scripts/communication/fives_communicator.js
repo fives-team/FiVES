@@ -16,8 +16,6 @@ FIVES.Communication = FIVES.Communication || {};
     var FivesCommunicator = function() {};
     var c = FivesCommunicator.prototype;
 
-    c.registeredWrapperRegisterers = [];
-
     c.initialize = function(context, service) {
         this.context = context;
         context.openConnection(service, _onOpenedConnection.bind(this) );
@@ -84,7 +82,7 @@ FIVES.Communication = FIVES.Communication || {};
                     }
                 }
 
-                _createFunctionWrappers.call(self);
+                FIVES.Events.ConnectionEstablished();
                 callback(true);
             }
         };
@@ -102,10 +100,6 @@ FIVES.Communication = FIVES.Communication || {};
             this.onConnected();
     };
 
-    c.registerFunctionWrapper = function(registerFunction) {
-            this.registeredWrapperRegisterers.push(registerFunction);
-    };
-
     /**
      * Creates a timestamp that may be used to specify the time at which a message was sent to the server
      * via a service function
@@ -116,12 +110,6 @@ FIVES.Communication = FIVES.Communication || {};
         var startOfDay = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 0, 0, 0);
         var timeStamp = now.getTime() - startOfDay.getTime();
         return timeStamp;
-    };
-
-    var _createFunctionWrappers = function(error, supported) {
-        for(var i in this.registeredWrapperRegisterers) {
-            this.registeredWrapperRegisterers[i]();
-        }
     };
 
     // Expose Communicator to namespace

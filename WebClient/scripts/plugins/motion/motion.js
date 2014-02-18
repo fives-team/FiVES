@@ -16,7 +16,7 @@ FIVES.Plugins = FIVES.Plugins || {};
     var _fivesCommunicator = FIVES.Communication.FivesCommunicator;
 
     var motion = function() {
-        _fivesCommunicator.registerFunctionWrapper(this._createFunctionWrappers.bind(this));
+        FIVES.Events.AddConnectionEstablishedHandler(this._createFunctionWrappers.bind(this));
     };
 
     var m = motion.prototype;

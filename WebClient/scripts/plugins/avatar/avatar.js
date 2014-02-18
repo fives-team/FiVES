@@ -16,7 +16,7 @@ FIVES.Plugins = FIVES.Plugins || {};
     var _fivesCommunicator = FIVES.Communication.FivesCommunicator;
 
     var avatar = function() {
-        _fivesCommunicator.registerFunctionWrapper(this._createFunctionWrappers.bind(this));
+        FIVES.Events.AddConnectionEstablishedHandler(this._createFunctionWrappers.bind(this));
         FIVES.Events.AddOnComponentUpdatedHandler(this._setCameraBehindAvatar.bind(this));
         FIVES.Events.AddEntityGeometryCreatedHandler(this._setCameraBehindAvatar.bind(this));
     };

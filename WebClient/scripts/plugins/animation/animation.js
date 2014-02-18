@@ -33,7 +33,7 @@ requirejs(["keyframe_animator"], (function () {
     var _fivesCommunicator = FIVES.Communication.FivesCommunicator;
 
     var animation = function () {
-        _fivesCommunicator.registerFunctionWrapper(this._createFunctionWrappers.bind(this));
+        FIVES.Events.AddConnectionEstablishedHandler(this._createFunctionWrappers.bind(this));
         FIVES.Events.AddOnComponentUpdatedHandler(this._componentUpdatedHandler.bind(this));
         FIVES.Events.AddEntityGeometryCreatedHandler(this._addXflowAnimationsForMesh.bind(this));
 
