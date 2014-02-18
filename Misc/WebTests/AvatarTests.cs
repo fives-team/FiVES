@@ -1,13 +1,12 @@
-﻿using NUnit.Framework;
-using OpenQA.Selenium;
-using OpenQA.Selenium.Chrome;
-using OpenQA.Selenium.Support.UI;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading;
+using NUnit.Framework;
+using OpenQA.Selenium;
+using OpenQA.Selenium.Support.UI;
 
 namespace WebTests
 {
@@ -33,7 +32,7 @@ namespace WebTests
         [Test]
         public void ShouldMoveAvatar()
         {
-            IWebDriver driver = new ChromeDriver();
+            IWebDriver driver = Tools.CreateDriver();
             try
             {
                 driver.Navigate().GoToUrl("http://localhost/projects/test-client/client.xhtml");
@@ -65,8 +64,8 @@ namespace WebTests
         [Test]
         public void ShouldSynchronizeAvatarMovement()
         {
-            IWebDriver driver1 = new ChromeDriver();
-            IWebDriver driver2 = new ChromeDriver();
+            IWebDriver driver1 = Tools.CreateDriver();
+            IWebDriver driver2 = Tools.CreateDriver();
 
             try
             {

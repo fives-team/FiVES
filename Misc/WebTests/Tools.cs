@@ -1,10 +1,11 @@
-﻿using NUnit.Framework;
-using OpenQA.Selenium;
-using OpenQA.Selenium.Support.UI;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using NUnit.Framework;
+using OpenQA.Selenium;
+using OpenQA.Selenium.Chrome;
+using OpenQA.Selenium.Support.UI;
 
 namespace WebTests
 {
@@ -24,6 +25,15 @@ namespace WebTests
                 $('#signin-btn').click();", username, password);
 
             wait.Until<bool>(d => !signinModal.Displayed);
+        }
+
+        public static IWebDriver CreateDriver()
+        {
+            ChromeOptions options = new ChromeOptions();
+            options.AddArgument("--disable-cache");
+            var driver = new ChromeDriver(options);
+            driver.Navigate().GoToUrl("http://localhost/projects/test-client/client.xhtml");
+            return driver;
         }
     }
 }
