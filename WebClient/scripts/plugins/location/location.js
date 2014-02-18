@@ -54,11 +54,11 @@ FIVES.Plugins = FIVES.Plugins || {};
     };
 
     l.sendEntityPositionUpdate = function(guid, position) {
-        this.updateEntityPosition(guid, position, _fivesCommunicator._generateTimestamp());
+        this.updateEntityPosition(guid, position, _fivesCommunicator.generateTimestamp());
     };
 
     l.sendEntityOrientationUpdate = function(guid, orientation) {
-        this.updateEntityOrientation(guid, orientation, _fivesCommunicator._generateTimestamp());
+        this.updateEntityOrientation(guid, orientation, _fivesCommunicator.generateTimestamp());
     };
 
     FIVES.Plugins.Location = new location();
