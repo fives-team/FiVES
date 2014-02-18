@@ -1,10 +1,9 @@
-﻿using NUnit.Framework;
-using System.Text;
-using System;
-using OpenQA.Selenium;
-using OpenQA.Selenium.Chrome;
-using OpenQA.Selenium.Support.UI;
+﻿using System;
 using System.Diagnostics;
+using System.Text;
+using NUnit.Framework;
+using OpenQA.Selenium;
+using OpenQA.Selenium.Support.UI;
 
 namespace WebTests
 {
@@ -31,8 +30,7 @@ namespace WebTests
         [SetUp]
         public void StartChrome()
         {
-            driver = new ChromeDriver();
-            driver.Navigate().GoToUrl("http://localhost/projects/test-client/client.xhtml");
+            driver = Tools.CreateDriver();
         }
 
         [TearDown]
