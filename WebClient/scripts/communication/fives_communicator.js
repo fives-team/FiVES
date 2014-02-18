@@ -85,7 +85,7 @@ FIVES.Communication = FIVES.Communication || {};
                 }
 
                 _createFunctionWrappers.call(self);
-                self.connectedTime = new Date().getTime();
+                self.timestampReferenceTime = new Date(2014, 0, 1, 0, 0,0).getTime();
                 callback(true);
             }
         };
@@ -109,7 +109,7 @@ FIVES.Communication = FIVES.Communication || {};
 
     c._generateTimestamp = function() {
         var updateTime = new Date().getTime();
-        var timeStamp = this.connectedTime - updateTime;
+        var timeStamp = this.timestampReferenceTime - updateTime;
         return timeStamp;
     };
 
