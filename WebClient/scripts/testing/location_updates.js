@@ -24,7 +24,7 @@ FIVES.Testing = FIVES.Testing || {};
     l.rotateAllEntities = function () {
         for (var i in er._entities) {
             var entity = er._entities[i];
-            var o = entity.orientation;
+            var o = entity.location.orientation;
             var rotation = new XML3DRotation();
             rotation._setQuaternion([o.x, o.y, o.z, o.w]);
             rotation.angle += 0.1;
@@ -32,14 +32,14 @@ FIVES.Testing = FIVES.Testing || {};
                 rotation.angle = 0;
 
             var q = rotation.getQuaternion();
-            entity.setOrientation(q[0], q[1], q[2], q[3]);
+            FIVES.Plugins.Location.setEntityOrientation(entity, q[0], q[1], q[2], q[3]);
         }
     };
 
     l.translateAllEntities = function() {
         for (var i in er._entities) {
             var entity = er._entities[i];
-            var p = entity.position;
+            var p = entity.location.position;
             var newX = p.x;
             if(movingBackwards[entity.guid])
                 newX = p.x - 0.1;
@@ -51,7 +51,7 @@ FIVES.Testing = FIVES.Testing || {};
             if(newX < -10)
                 movingBackwards[entity.guid] = false;
 
-            entity.setPosition(newX, p.y, p.z);
+            FIVES.Plugins.Location.setEntityPosition(entity, newX, p.y, p.z);
         }
     };
 

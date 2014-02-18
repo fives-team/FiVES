@@ -15,13 +15,16 @@ FIVES.Models = FIVES.Models || {};
 
     var Entity = function(entityDocument) {
         // FIXME: this should assign values to correct attributes, e.g.
-        // meshResouce.meshURI should actually be assigned to meshResource.uri.
+        // meshResouce.meshURI should actually be assigned to mesh.uri.
         // All uses of these properties must be updated respectively.
+        this.xml3dView = {};
         this.guid = entityDocument.guid;
-        this.position = entityDocument.position || {x:0,y:0,z:0};
-        this.orientation = entityDocument.orientation || {x:0,y:0,z:0,w:1};
-        this.scale= entityDocument.scale|| {x:1,y:1,z:1};
-        this.meshResource = entityDocument.meshResource || {uri:"",visible:true};
+        this.location = entityDocument.location
+            || {position: {x:0,y:0,z:0}, orientation: {x:0,y:0,z:0,w:1}};
+
+        this.mesh = entityDocument.mesh ||
+            {uri:"",visible:true, scale: {x:1, y:1, z:1 }};
+
         this._cachedComponentUpdates = {};
         this._attributeUpdateHandle = setInterval(this._flushUpdates.bind(this), 30);
     };
@@ -32,10 +35,6 @@ FIVES.Models = FIVES.Models || {};
         for(var updatedComponent in this._cachedComponentUpdates) {
             this._applyAttributeUpdates(updatedComponent);
         };
-
-        if(this.guid == FIVES.AvatarEntityGuid)  {
-            FIVES.Resources.SceneManager.updateCameraView(this);
-        }
 
         this._cachedComponentUpdates = {};
     };
@@ -49,98 +48,16 @@ FIVES.Models = FIVES.Models || {};
         }
 
         if(this.xml3dView.groupElement && this.xml3dView.transformElement)
-            this._applyComponentUpdatesTo3DView(componentName);
+            this._applyComponentUpdatesTo3DView(componentName, updatedAttribute);
     };
 
-    e._applyComponentUpdatesTo3DView = function(componentName) {
-        if(componentName == "position")
-            FIVES.Resources.SceneManager.updatePosition(this);
-        else if(componentName == "orientation")
-            FIVES.Resources.SceneManager.updateOrientation(this);
-        else if (componentName == "meshResource")
-            FIVES.Resources.SceneManager.updateMesh(this);
-        else if (componentName == "animation")
-            this.setAnimationKey();
-    };
-
-    e.setAnimationKey = function() {
-        var animationKeyframes = this["animation"]["animationKeyframes"].split(';');
-        for(var k in animationKeyframes) {
-            var animationFrame = animationKeyframes[k];
-            if(animationFrame.indexOf(':') != -1)
-            {
-                var animationWithFrame = animationFrame.split(':');
-                var xflowAnimation = this.xml3dView.xflowAnimations[animationWithFrame[0]];
-                if(xflowAnimation)
-                {
-                    xflowAnimation.key.text(parseFloat(animationWithFrame[1]));
-                }
-            }
-        }
-    };
-
-    e.increaseAnimationKeys = function(fps) {
-        if(this.playingAnimationsCollection)
-        {
-            for(var animationName in this.playingAnimationsCollection)
-            {
-                var playingAnimation = this.playingAnimationsCollection[animationName];
-                var xflowKey = this.xml3dView.xflowAnimations[animationName].key;
-
-                var oldValue = parseFloat(xflowKey.text());
-                var newValue = this._computeNewKeyframeValue(playingAnimation, oldValue, fps);
-                xflowKey.text(newValue);
-            }
-        }
-    };
-
-    e._computeNewKeyframeValue = function(playingAnimation, oldValue, fps) {
-        var newValue = oldValue + playingAnimation.speed * fps / 1000.0;
-        if (newValue > playingAnimation.endFrame)
-        {
-            newValue = this._increaseAnimationCycles(playingAnimation, newValue);
-        }
-        return newValue;
-    };
-
-    e._increaseAnimationCycles = function(playingAnimation, newValue) {
-        var frameRange = playingAnimation.endFrame - playingAnimation.startFrame;
-        playingAnimation.currentCycle += Math.floor(newValue / frameRange);
-
-        var valueInNewCycle = newValue;
-        if(playingAnimation.currentCycle > playingAnimation.cycles && playingAnimation.cycles != -1)
-        {
-            valueInNewCycle = playingAnimation.endFrame;
-            FIVES.Plugins.Animation.stopAnimationPlayback(this.guid, playingAnimation.name);
-        }
-        else
-        {
-            valueInNewCycle = playingAnimation.startFrame + (newValue - playingAnimation.endFrame) % frameRange;
-        }
-        return valueInNewCycle;
+    e._applyComponentUpdatesTo3DView = function(componentName, attributeName) {
+        FIVES.Events.ComponentUpdated(this, componentName,attributeName);
     };
 
     e.updateAttribute = function(componentName, attributeName, value) {
         this._cachedComponentUpdates[componentName] = this._cachedComponentUpdates[componentName] || {};
         this._cachedComponentUpdates[componentName][attributeName] = value;
-    };
-
-    e.updatePosition = function(position) {
-        this.position = position;
-        FIVES.Resources.SceneManager.updatePosition(this);
-    };
-
-    e.updateOrientation = function(orientation) {
-        this.orientation = orientation;
-        FIVES.Resources.SceneManager.updateOrientation(this);
-    };
-
-    e.setPosition = function(x, y, z) {
-        FIVES.Communication.FivesCommunicator.sendEntityPositionUpdate(this.guid, {x: x, y: y, z: z});
-    };
-
-    e.setOrientation = function(x, y, z, w) {
-        FIVES.Communication.FivesCommunicator.sendEntityOrientationUpdate(this.guid, { x: x, y: y, z: z, w: w});
     };
 
     e.getTransformElement = function() {
