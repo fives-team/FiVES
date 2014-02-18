@@ -30,19 +30,19 @@ FIVES.Plugins = FIVES.Plugins || {};
     l._componentUpdatedHandler = function(entity, componentName, attributeName) {
         if(componentName == "location")
         {
-                FIVES.Resources.SceneManager.updatePosition(entity);
-                FIVES.Resources.SceneManager.updateOrientation(entity);
+                FIVES.Resources.SceneManager.applyPositionToXML3DView(entity);
+                FIVES.Resources.SceneManager.applyOrientationToXML3DView(entity);
         }
     };
 
     l.updatePosition = function(entity, position) {
         entity.location.position = position;
-        FIVES.Resources.SceneManager.updatePosition(entity);
+        FIVES.Resources.SceneManager.applyPositionToXML3DView(entity);
     };
 
     l.updateOrientation = function(entity, orientation) {
         entity.location.orientation = orientation;
-        FIVES.Resources.SceneManager.updateOrientation(entity);
+        FIVES.Resources.SceneManager.applyOrientationToXML3DView(entity);
     };
 
     l.setEntityPosition = function(entity, x, y, z) {

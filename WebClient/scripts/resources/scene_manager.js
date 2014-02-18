@@ -87,13 +87,23 @@ FIVES.Resources = FIVES.Resources || {};
         return xml3dScale;
     };
 
-    scm.updateOrientation = function(entity) {
+    /**
+     * Updates the Orientation of an entity in the XML3D view based on the orientation contained in the entity's
+     * orientation attribute.
+     * @param entity Entity of which orientation in attributes should be applied to the XML3D View
+     */
+    scm.applyOrientationToXML3DView = function(entity) {
         var transformationForEntity = entity.getTransformElement();
         if(transformationForEntity)
             transformationForEntity.rotation.set(this._createRotationFromOrientation(entity));
     };
 
-    scm.updatePosition = function(entity) {
+    /**
+     * Updates the Position of an entity in the XML3D view based on the position contained in the entity's
+     * position attribute.
+     * @param entity Entity of which position in attributes should be applied to the XML3D View
+     */
+    scm.applyPositionToXML3DView = function(entity) {
         var transformationForEntity = entity.getTransformElement();
         if(transformationForEntity)
             transformationForEntity.translation.set(this._createTranslationForEntityGroup(entity));
