@@ -114,6 +114,7 @@ namespace WebSocketJSON
             if (name == "JsonSerializerSettings" && value is JsonSerializerSettings)
             {
                 settings = value as JsonSerializerSettings;
+                serializer = JsonSerializer.Create(settings);
                 return true;
             }
 

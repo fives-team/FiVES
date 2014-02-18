@@ -62,7 +62,7 @@ namespace ServerSyncPlugin
 
         void ConnectToRemoteServers()
         {
-            string configURI = ConversionTools.ConvertFileNameToURI("serverSyncClient.json");
+            string configURI = Tools.ConvertFileNameToURI("serverSyncClient.json");
             string fragment;
             Config config = Context.DefaultContext.RetrieveConfig(configURI, out fragment);
             for (int i = 0; i < config.servers.Count; i++)
@@ -74,6 +74,7 @@ namespace ServerSyncPlugin
                 domainSync.RegisterDomainSyncAPI(remoteService);
                 componentSync.RegisterComponentSyncAPI(remoteService);
 
+                remoteService.OnConnected += Tools.ConfigureJsonSerializer;
                 remoteService.OnConnected += HandleNewServerConnected;
             }
         }
