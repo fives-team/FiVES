@@ -57,14 +57,13 @@ FIVES.Plugins = FIVES.Plugins || {};
     };
 
     r.updateMesh = function(entity) {
-        // FIXME: We do not support changes to mesh resource attribute. The correct approach would be to remove existing entity
-        // (group and transform elements) from the scene graph and re-create them with the new URI. However removing the group
-        // element, which has a reference to the data element within this group, causes crashes in current implement of xml3d.js
-        // ([put the url to respective issue on the xml3d issue tracker here]). Once this is fixed, we should use the following
-        // code instead:
+        // FIXME: We do not support changes to mesh resource attribute. The correct approach would be to remove existing
+        // entity (group and transform elements) from the scene graph and re-create them with the new URI. However,
+        // removing the group element, which has a reference to the data element within this group, causes crashes in
+        // current implementation of xml3d.js (https://github.com/xml3d/xml3d.js/issues/50).
+        // Once this is fixed, we should use the following code instead:
         //scm.removeEntity(entity);
         //scm.addMeshForEntity(entity).
-        // The issue is filed in the xml3d github repo (#50)
         entity.xml3dView.groupElement.setAttribute("visible", entity["mesh"]["visible"]);
     };
 
