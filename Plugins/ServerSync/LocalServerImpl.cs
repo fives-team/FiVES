@@ -1,6 +1,7 @@
 using KIARAPlugin;
 using System;
 using System.IO;
+using Newtonsoft.Json;
 
 namespace ServerSyncPlugin
 {
@@ -13,6 +14,7 @@ namespace ServerSyncPlugin
             syncID = Guid.NewGuid();
 
             service = ServiceFactory.Create(ConversionTools.ConvertFileNameToURI("serverSyncServer.json"));
+            service.OnNewClient += ConfigureJsonSerializer;
 
             RegisterSyncIDAPI(service);
         }
@@ -68,6 +70,17 @@ namespace ServerSyncPlugin
         public void RegisterSyncIDAPI(Service service)
         {
             service["serverSync.getSyncID"] = (Func<Guid>)GetSyncID;
+        }
+
+        void ConfigureJsonSerializer(Connection connection)
+        {
+            object settingsObj;
+            if (connection.GetProperty("JsonSerializerSettings", out settingsObj))
+            {
+                JsonSerializerSettings settings = settingsObj as JsonSerializerSettings;
+                if (settings != null)
+                    settings.TypeNameHandling = TypeNameHandling.Auto;
+            }
         }
 
         Guid GetSyncID()
