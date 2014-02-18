@@ -16,25 +16,31 @@ FIVES.Input = FIVES.Input || {};
     var MOVE_SPEED = 0.2;
     var SPIN_SPEED = 0.05;
 
-    var UP_AXIS = {x: 0, y:1, z: 0};
+    var UP_AXIS = {x: 0, y: 1, z: 0};
 
     var keylistener = function(){
-        this._initializeEventListeners();
+        FIVES.Events.AddEntityGeometryCreatedHandler(this._handleGeometryLoaded.bind(this));
     };
+
     var k = keylistener.prototype;
 
     var _pressedKeys = {};
     var _upKeys = {};
+
+    k._handleGeometryLoaded = function(entity) {
+        if(entity.guid == FIVES.AvatarEntityGuid)
+            this._initializeEventListeners();
+    };
 
     k._onKeyDown = function(e) {
         if(!_pressedKeys[e.keyCode])
         {
             switch (e.keyCode)
             {
-              /* W */  case 87:  FIVES.Communication.FivesCommunicator.setAvatarForwardBackwardMotion(MOVE_SPEED); break;
-              /* S */  case 83:  FIVES.Communication.FivesCommunicator.setAvatarForwardBackwardMotion(-MOVE_SPEED); break;
-              /* A */  case 65:  FIVES.Communication.FivesCommunicator.setAvatarSpinAroundAxis(UP_AXIS, SPIN_SPEED); break;
-              /* D */  case 68:  FIVES.Communication.FivesCommunicator.setAvatarSpinAroundAxis(UP_AXIS, -SPIN_SPEED); break;
+              /* W */ case 87:  FIVES.Plugins.Avatar.setAvatarForwardBackwardMotion(MOVE_SPEED); break;
+              /* S */ case 83:  FIVES.Plugins.Avatar.setAvatarForwardBackwardMotion(-MOVE_SPEED); break;
+              /* A */ case 65:  FIVES.Plugins.Avatar.setAvatarSpinAroundAxis(UP_AXIS, SPIN_SPEED); break;
+              /* D */ case 68:  FIVES.Plugins.Avatar.setAvatarSpinAroundAxis(UP_AXIS, -SPIN_SPEED); break;
                 default: break;
             }
             var avatarEntity  = FIVES.Models.EntityRegistry.getEntity(FIVES.AvatarEntityGuid);
@@ -42,7 +48,13 @@ FIVES.Input = FIVES.Input || {};
             if(avatarEntity)
             {
                 //FIVES.Communication.FivesCommunicator.startServersideAnimation(FIVES.AvatarEntityGuid, "walk", e.xml3dView.xflowAnimations.walk.startKey, e.xml3dView.xflowAnimations.walk.endKey);
-                FIVES.Communication.FivesCommunicator.startClientsideAnimation(FIVES.AvatarEntityGuid, "walk", avatarEntity.xml3dView.xflowAnimations.walk.startKey, avatarEntity.xml3dView.xflowAnimations.walk.endKey, -1, 1.0);
+                FIVES.Plugins.Animation.startClientsideAnimation(
+                    FIVES.AvatarEntityGuid,
+                    "walk",
+                    avatarEntity.xml3dView.xflowAnimations.walk.startKey,
+                    avatarEntity.xml3dView.xflowAnimations.walk.endKey,
+                    -1,
+                    1.0);
                 _pressedKeys[e.keyCode] = true;
             }
         }
@@ -54,17 +66,17 @@ FIVES.Input = FIVES.Input || {};
         {
             /* W, S */
             case 87:
-            case 83:  FIVES.Communication.FivesCommunicator.setAvatarForwardBackwardMotion(0); break;
+            case 83:  FIVES.Plugins.Avatar.setAvatarForwardBackwardMotion(0); break;
             /* A, D */
             case 65:
-            case 68:  FIVES.Communication.FivesCommunicator.setAvatarSpinAroundAxis(UP_AXIS , 0); break;
+            case 68:  FIVES.Plugins.Avatar.setAvatarSpinAroundAxis(UP_AXIS , 0); break;
         }
         _pressedKeys[e.keyCode] = false;
         if(FIVES.Models.EntityRegistry.getEntity(FIVES.AvatarEntityGuid))
         {
             if(!(_pressedKeys[87] || _pressedKeys[83] || _pressedKeys[65] || _pressedKeys[68]))
                 // FIVES.Communication.FivesCommunicator.stopServersideAnimation(FIVES.AvatarEntityGuid, "walk");
-                FIVES.Communication.FivesCommunicator.stopClientsideAnimation(FIVES.AvatarEntityGuid, "walk");
+                FIVES.Plugins.Animation.stopClientsideAnimation(FIVES.AvatarEntityGuid, "walk");
         }
     };
 
