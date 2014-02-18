@@ -49,7 +49,7 @@ FIVES.Plugins = FIVES.Plugins || {};
 
     a._setCameraBehindAvatar = function(entity) {
         if(entity.guid == FIVES.AvatarEntityGuid)  {
-            FIVES.Resources.SceneManager.updateCameraView(entity);
+            FIVES.Resources.SceneManager.setCameraViewToEntity(entity);
         }
     };
 

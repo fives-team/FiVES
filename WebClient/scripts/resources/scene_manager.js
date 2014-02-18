@@ -99,7 +99,12 @@ FIVES.Resources = FIVES.Resources || {};
             transformationForEntity.translation.set(this._createTranslationForEntityGroup(entity));
     };
 
-    scm.updateCameraView = function(entity) {
+    /**
+     * Puts the active view of the XML3D view behind an entity to follow it in third person view. May for example
+     * be used by avatar plugin to position the camera behind the user's avatar
+     * @param entity Entity that shall be inspected in 3rd person mode
+     */
+    scm.setCameraViewToEntity = function(entity) {
         var view = $(this.xml3dElement.activeView)[0];
         var entityTransform = entity.xml3dView.transformElement;
         if(entityTransform)
