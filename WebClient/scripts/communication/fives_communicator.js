@@ -85,7 +85,6 @@ FIVES.Communication = FIVES.Communication || {};
                 }
 
                 _createFunctionWrappers.call(self);
-                self.timestampReferenceTime = new Date(2014, 0, 1, 0, 0,0).getTime();
                 callback(true);
             }
         };
@@ -113,8 +112,9 @@ FIVES.Communication = FIVES.Communication || {};
      * @returns {number} Timestamp in milliseconds since 01.01.2014
      */
     c.generateTimestamp = function() {
-        var updateTime = new Date().getTime();
-        var timeStamp = this.timestampReferenceTime - updateTime;
+        var now = new Date();
+        var startOfDay = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 0, 0, 0);
+        var timeStamp = now.getTime() - startOfDay.getTime();
         return timeStamp;
     };
 
