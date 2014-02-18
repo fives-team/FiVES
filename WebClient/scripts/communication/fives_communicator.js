@@ -107,7 +107,12 @@ FIVES.Communication = FIVES.Communication || {};
             this.registeredWrapperRegisterers.push(registerFunction);
     };
 
-    c._generateTimestamp = function() {
+    /**
+     * Creates a timestamp that may be used to specify the time at which a message was sent to the server
+     * via a service function
+     * @returns {number} Timestamp in milliseconds since 01.01.2014
+     */
+    c.generateTimestamp = function() {
         var updateTime = new Date().getTime();
         var timeStamp = this.timestampReferenceTime - updateTime;
         return timeStamp;
