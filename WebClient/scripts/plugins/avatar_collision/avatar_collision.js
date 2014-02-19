@@ -19,12 +19,22 @@ FIVES.Plugins = FIVES.Plugins || {};
     var avatarCollision = function () {
         _xml3dElement = $("xml3d")[0];
         FIVES.Events.AddConnectionEstablishedHandler(this._createFunctionWrappers.bind(this));
+        FIVES.Events.AddOnComponentUpdatedHandler(this._handleEntityPositionUpdate(this));
     };
 
     var a = avatarCollision.prototype;
 
     a._createFunctionWrappers = function() {
         this.setAvatarGroundlevel = _fivesCommunicator.connection.generateFuncWrapper("gravity.setGroundlevel");
+    };
+
+    a._handleEntityPositionUpdate = function(entity) {
+        if(entity.guid == FIVES.AvatarEntityGuid)
+        {
+            this.putMeshOnGround(entity);
+            if(entity.velocity)
+                this.stopMotionOnCollision(entity);
+        }
     };
 
     a.putMeshOnGround = function(entity) {
