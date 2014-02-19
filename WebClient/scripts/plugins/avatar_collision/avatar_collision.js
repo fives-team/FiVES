@@ -14,13 +14,18 @@ FIVES.Plugins = FIVES.Plugins || {};
     "use strict";
 
     var _xml3dElement;
+    var _fivesCommunicator = FIVES.Communication.FivesCommunicator;
 
     var avatarCollision = function () {
         _xml3dElement = $("xml3d")[0];
+        FIVES.Events.AddConnectionEstablishedHandler(this._createFunctionWrappers.bind(this));
     };
 
     var a = avatarCollision.prototype;
 
+    a._createFunctionWrappers = function() {
+        this.setAvatarGroundlevel = _fivesCommunicator.connection.generateFuncWrapper("")
+    };
     a.getHitpointWithGround = function(entity) {
         var rayOrigin = getCollisionRayOrigin(entity);
         var ray = new XML3DRay(rayOrigin, new XML3DVec3(0,-1,0));
