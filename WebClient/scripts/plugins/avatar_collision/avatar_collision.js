@@ -32,7 +32,7 @@ FIVES.Plugins = FIVES.Plugins || {};
         if(entity.guid == FIVES.AvatarEntityGuid)
         {
             this.putMeshOnGround(entity);
-            if(entity.velocity)
+            if(entity.motion && entity.motion.velocity)
                 this.stopMotionOnCollision(entity);
         }
     };
@@ -49,7 +49,7 @@ FIVES.Plugins = FIVES.Plugins || {};
         var rayOrigin = getCollisionRayOrigin(entity);
         var view = $(_xml3dElement.activeView)[0];
         var entityDirection = entity.xml3dView.transformElement.rotation.rotateVec3(new XML3DVec3(1,0,0));
-        if(entity.velocity.x < 0)
+        if(entity.motion.velocity.x < 0)
             entityDirection = entityDirection.negate();
 
         var ray = new XML3DRay(rayOrigin, entityDirection);
@@ -59,7 +59,7 @@ FIVES.Plugins = FIVES.Plugins || {};
         if(outHitpoint.x && !isNaN(outHitpoint.x)
             && outHitpoint.z && !isNaN(outHitpoint.z))
         {
-            var entityPositionInPlane = new XML3DVec3(entity.position.x, 0, entity.position.z);
+            var entityPositionInPlane = new XML3DVec3(entity.location.position.x, 0, entity.location.position.z);
             var hitpointInPlane = new XML3DVec3(outHitpoint.x, 0, outHitpoint.z);
             if(entityPositionInPlane.subtract(hitpointInPlane).length() < 2.5)
             {
