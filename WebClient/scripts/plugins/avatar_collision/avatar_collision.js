@@ -26,6 +26,15 @@ FIVES.Plugins = FIVES.Plugins || {};
     a._createFunctionWrappers = function() {
         this.setAvatarGroundlevel = _fivesCommunicator.connection.generateFuncWrapper("")
     };
+
+    a.putMeshOnGround = function(entity) {
+        var hitpointWithGround = this.getHitpointWithGround(entity);
+        if(hitpointWithGround && !isNaN(hitpointWithGround.y))
+        {
+            this.seAvatarGroundlevel(FIVES.AvatarEntityGuid, hitpointWithGround.y);
+        }
+    };
+
     a.getHitpointWithGround = function(entity) {
         var rayOrigin = getCollisionRayOrigin(entity);
         var ray = new XML3DRay(rayOrigin, new XML3DVec3(0,-1,0));
