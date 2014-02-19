@@ -63,7 +63,7 @@ FIVES.Plugins = FIVES.Plugins || {};
             var hitpointInPlane = new XML3DVec3(outHitpoint.x, 0, outHitpoint.z);
             if(entityPositionInPlane.subtract(hitpointInPlane).length() < 2.5)
             {
-                FIVES.Communication.FivesCommunicator.setAvatarForwardBackwardMotion(0);
+                FIVES.Plugins.Avatar.setAvatarForwardBackwardMotion(0);
             }
         }
     };
