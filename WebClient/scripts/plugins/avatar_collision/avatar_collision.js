@@ -19,7 +19,7 @@ FIVES.Plugins = FIVES.Plugins || {};
     var avatarCollision = function () {
         _xml3dElement = $("xml3d")[0];
         FIVES.Events.AddConnectionEstablishedHandler(this._createFunctionWrappers.bind(this));
-        FIVES.Events.AddOnComponentUpdatedHandler(this._handleEntityPositionUpdate(this));
+        FIVES.Events.AddOnComponentUpdatedHandler(this._handleEntityPositionUpdate.bind(this));
     };
 
     var a = avatarCollision.prototype;
