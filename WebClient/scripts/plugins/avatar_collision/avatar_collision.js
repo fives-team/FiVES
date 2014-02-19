@@ -16,6 +16,12 @@ FIVES.Plugins = FIVES.Plugins || {};
     var _xml3dElement;
     var _fivesCommunicator = FIVES.Communication.FivesCommunicator;
 
+    /**
+     * Avatar Collision Plugin is used to determine if the user runs into some obstacle or has elevated from the ground
+     * when exploring the scene. There are two collisions to be checked: First, collision with ground, to put
+     * avatar back there if it e.g. moves up or down a slope or step. Second: Collision with geometry in move
+     * direction to ensure avatar does not run through walls.
+     */
     var avatarCollision = function () {
         _xml3dElement = $("xml3d")[0];
         FIVES.Events.AddConnectionEstablishedHandler(this._createFunctionWrappers.bind(this));
@@ -37,25 +43,34 @@ FIVES.Plugins = FIVES.Plugins || {};
         }
     };
 
+    /**
+     * Casts a ray down from upper bound of avatar towards the ground to determine the height of current ground level.
+     * Transmits this value to the server which will then adapt the position of an entity on every position change
+     * to take into account changing groundlevels
+     * @param entity The Entity that shall be put on the ground
+     */
     a.putMeshOnGround = function(entity) {
-        var hitpointWithGround = this.getHitpointWithGround(entity);
+        var hitpointWithGround = this._getHitpointWithGround(entity);
         if(hitpointWithGround && !isNaN(hitpointWithGround.y))
         {
             this.setAvatarGroundlevel(FIVES.AvatarEntityGuid, hitpointWithGround.y);
         }
     };
 
-    a.stopMotionOnCollision = function(entity) {
+    a._getHitpointWithGround = function(entity) {
         var rayOrigin = getCollisionRayOrigin(entity);
-        var view = $(_xml3dElement.activeView)[0];
-        var entityDirection = entity.xml3dView.transformElement.rotation.rotateVec3(new XML3DVec3(1,0,0));
-        if(entity.motion.velocity.x < 0)
-            entityDirection = entityDirection.negate();
-
-        var ray = new XML3DRay(rayOrigin, entityDirection);
-
+        var ray = new XML3DRay(rayOrigin, new XML3DVec3(0,-1,0));
         var outHitpoint = new XML3DVec3(0,0,0);
         _xml3dElement.getElementByRay(ray, outHitpoint);
+        return outHitpoint;
+    };
+
+    /**
+     * Casts a ray in movement direction and stops the avatar motion if it hits an obstacle
+     * @param entity The Entity for which collision check shall be performed
+     */
+    a.stopMotionOnCollision = function(entity) {
+        var outHitpoint = this._getHitpointInMovementDirection(entity);
         if(outHitpoint.x && !isNaN(outHitpoint.x)
             && outHitpoint.z && !isNaN(outHitpoint.z))
         {
@@ -68,9 +83,15 @@ FIVES.Plugins = FIVES.Plugins || {};
         }
     };
 
-    a.getHitpointWithGround = function(entity) {
-        var rayOrigin = getCollisionRayOrigin(entity);
-        var ray = new XML3DRay(rayOrigin, new XML3DVec3(0,-1,0));
+    a._getHitpointInMovementDirection = function(entity) {
+        var rayOrigin = getCollisionRayOrigin(entity, "forward");
+        var view = $(_xml3dElement.activeView)[0];
+        var entityDirection = entity.xml3dView.transformElement.rotation.rotateVec3(new XML3DVec3(1,0,0));
+        if(entity.motion.velocity.x < 0)
+            entityDirection = entityDirection.negate();
+
+        var ray = new XML3DRay(rayOrigin, entityDirection);
+
         var outHitpoint = new XML3DVec3(0,0,0);
         _xml3dElement.getElementByRay(ray, outHitpoint);
         return outHitpoint;
