@@ -6,13 +6,17 @@ using System.Threading.Tasks;
 using ClientManagerPlugin;
 using FIVES;
 
-namespace SimpleGravityPlugin
+namespace AvatarCollisionPlugin
 {
     /// <summary>
-    /// Simple Gravity introduces an attribute that specifies the current ground level for an avatar as determined by a client.
+    /// AvatarCollision introduces an attribute that specifies the current ground level for an avatar as determined by a client.
     /// If the groundlevel is set (may not be the case for non-avatar entities), the entitiy is automatically put to this height.
+    /// Collision with geometry in moving direction of the avatar is handled by the client setting velocity to 0.
+    /// Having the height of the avatar set on the server avoids sending incorrect collision values to the client which then have
+    /// to be resent to the server in corrected form. Instead, the server checks for correct position and sends a correct vector
+    /// immediately.
     /// </summary>
-    public class SimpleGravityPluginInitializer : IPluginInitializer
+    public class AvatarCollisionPluginInitializer : IPluginInitializer
     {
         public string Name
         {
@@ -51,7 +55,7 @@ namespace SimpleGravityPlugin
 
         private void RegisterService()
         {
-            ClientManager.Instance.RegisterClientService("gravity", false, new Dictionary<string, Delegate>
+            ClientManager.Instance.RegisterClientService("avatarCollision", false, new Dictionary<string, Delegate>
             {
                 {"setGroundlevel", (Action<string, float>)SetGroundlevel}
             });
@@ -75,7 +79,7 @@ namespace SimpleGravityPlugin
         /// <param name="e">Entity Added event arguments</param>
         private void HandleEntityAdded(Object sender, EntityEventArgs e)
         {
-            e.Entity["gravity"]["groundLevel"] = e.Entity["position"]["y"]; // Initialise entities without gravity
+            e.Entity["avatarCollision"]["groundLevel"] = e.Entity["position"]["y"]; // Initialise entities without gravity
             e.Entity.ChangedAttribute += new EventHandler<ChangedAttributeEventArgs>(HandleAttributeChanged);
         }
 
@@ -89,8 +93,8 @@ namespace SimpleGravityPlugin
             if (e.Component.Name == "position")
             {
                 Entity entity = (Entity)sender;
-                if (entity["position"]["y"] != entity["gravity"]["groundLevel"])
-                    entity["position"]["y"] = (float)entity["gravity"]["groundLevel"];
+                if (entity["position"]["y"] != entity["avatarCollision"]["groundLevel"])
+                    entity["position"]["y"] = (float)entity["avatarCollision"]["groundLevel"];
             }
         }
 
@@ -102,7 +106,7 @@ namespace SimpleGravityPlugin
         private void SetGroundlevel(string entityGuid, float groundLevel)
         {
             var entity = World.Instance.FindEntity(entityGuid);
-            entity["gravity"]["groundLevel"] = groundLevel;
+            entity["avatarCollision"]["groundLevel"] = groundLevel;
         }
     }
 }

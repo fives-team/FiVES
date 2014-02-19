@@ -7,8 +7,8 @@
     <ProjectGuid>{7CF92274-BC04-499F-AA62-4A0C1B3F7D5B}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>SimpleGravityPlugin</RootNamespace>
-    <AssemblyName>SimpleGravity</AssemblyName>
+    <RootNamespace>AvatarCollisionPlugin</RootNamespace>
+    <AssemblyName>AvatarCollision</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
@@ -40,7 +40,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="SimpleGravityPluginInitializer.cs" />
+    <Compile Include="AvatarCollisionPluginInitializer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
