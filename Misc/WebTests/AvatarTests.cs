@@ -88,13 +88,12 @@ namespace WebTests
 
                 string startTranslation = avatarTransform1.GetAttribute("translation");
 
-                IHasInputDevices input1 = driver1 as IHasInputDevices;
-                input1.Keyboard.PressKey("w");
+                jsExecutor1.ExecuteScript("$(document).trigger({type: 'keydown', which: 87, keyCode: 87})");
 
                 // Wait until avatar starts to move.
                 wait.Until(d => avatarTransform1.GetAttribute("translation") != startTranslation);
 
-                input1.Keyboard.ReleaseKey("w");
+                jsExecutor1.ExecuteScript("$(document).trigger({type: 'keyup', which: 87, keyCode: 87})");
 
                 // Wait until avatars are synchronized.
                 wait.Until(d => avatarTransform1.GetAttribute("translation") ==
