@@ -35,6 +35,29 @@ FIVES.Plugins = FIVES.Plugins || {};
         }
     };
 
+    a.stopMotionOnCollision = function(entity) {
+        var rayOrigin = getCollisionRayOrigin(entity);
+        var view = $(_xml3dElement.activeView)[0];
+        var entityDirection = entity.xml3dView.transformElement.rotation.rotateVec3(new XML3DVec3(1,0,0));
+        if(entity.velocity.x < 0)
+            entityDirection = entityDirection.negate();
+
+        var ray = new XML3DRay(rayOrigin, entityDirection);
+
+        var outHitpoint = new XML3DVec3(0,0,0);
+        _xml3dElement.getElementByRay(ray, outHitpoint);
+        if(outHitpoint.x && !isNaN(outHitpoint.x)
+            && outHitpoint.z && !isNaN(outHitpoint.z))
+        {
+            var entityPositionInPlane = new XML3DVec3(entity.position.x, 0, entity.position.z);
+            var hitpointInPlane = new XML3DVec3(outHitpoint.x, 0, outHitpoint.z);
+            if(entityPositionInPlane.subtract(hitpointInPlane).length() < 2.5)
+            {
+                FIVES.Communication.FivesCommunicator.setAvatarForwardBackwardMotion(0);
+            }
+        }
+    };
+
     a.getHitpointWithGround = function(entity) {
         var rayOrigin = getCollisionRayOrigin(entity);
         var ray = new XML3DRay(rayOrigin, new XML3DVec3(0,-1,0));
