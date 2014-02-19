@@ -13,7 +13,7 @@ FIVES.Input = FIVES.Input || {};
 (function() {
      "use strict";
 
-    var MOVE_SPEED = 0.2;
+    var MOVE_SPEED = 0.1;
     var SPIN_SPEED = 0.05;
 
     var UP_AXIS = {x: 0, y: 1, z: 0};
