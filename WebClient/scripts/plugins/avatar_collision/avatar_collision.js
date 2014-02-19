@@ -25,7 +25,7 @@ FIVES.Plugins = FIVES.Plugins || {};
     var a = avatarCollision.prototype;
 
     a._createFunctionWrappers = function() {
-        this.setAvatarGroundlevel = _fivesCommunicator.connection.generateFuncWrapper("gravity.setGroundlevel");
+        this.setAvatarGroundlevel = _fivesCommunicator.connection.generateFuncWrapper("avatarCollision.setGroundlevel");
     };
 
     a._handleEntityPositionUpdate = function(entity) {
