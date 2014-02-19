@@ -93,8 +93,16 @@ namespace AvatarCollisionPlugin
             if (e.Component.Name == "position")
             {
                 Entity entity = (Entity)sender;
-                if (entity["position"]["y"] != entity["avatarCollision"]["groundLevel"])
-                    entity["position"]["y"] = (float)entity["avatarCollision"]["groundLevel"];
+                Vector entityPosition = (Vector)entity["location"]["position"];
+
+                if (entityPosition.y != (float)entity["avatarCollision"]["groundLevel"])
+                {
+                    Vector correctedPosition = new Vector(entityPosition.x,
+                                                            (float)entity["avatarCollision"]["groundLevel"],
+                                                            entityPosition.z);
+
+                    entity["location"]["position"] = correctedPosition;
+                }
             }
         }
 
