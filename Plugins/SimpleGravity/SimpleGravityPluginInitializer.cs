@@ -28,18 +28,26 @@ namespace SimpleGravityPlugin
         public void Initialize()
         {
             RegisterComponents();
+            RegisterService();
             RegisterToEvents();
         }
 
         public void Shutdown()
         {
-            throw new NotImplementedException();
         }
 
         private void RegisterComponents() {
             ComponentDefinition gravityDefinition = new ComponentDefinition("gravity");
             gravityDefinition.AddAttribute<float>("drag");
             ComponentRegistry.Instance.Register(gravityDefinition);
+        }
+
+        private void RegisterService()
+        {
+            ClientManager.Instance.RegisterClientService("gravity", false, new Dictionary<string, Delegate>
+            {
+                {"setDrag", (Action<string, float>)SetDrag}
+            });
         }
 
         private void RegisterToEvents()
@@ -67,5 +75,10 @@ namespace SimpleGravityPlugin
             }
         }
 
+        private void SetDrag(string entityGuid, float dragValue)
+        {
+            var entity = World.Instance.FindEntity(entityGuid);
+            entity["gravity"]["drag"] = dragValue;
+        }
     }
 }
