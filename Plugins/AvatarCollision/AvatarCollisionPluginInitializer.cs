@@ -47,7 +47,7 @@ namespace AvatarCollisionPlugin
         /// <summary>
         /// Registers gravity component that carries the attribute for the groundlevel
         /// </summary>
-        private void RegisterComponents() {
+        internal void RegisterComponents() {
             ComponentDefinition gravityDefinition = new ComponentDefinition("avatarCollision");
             gravityDefinition.AddAttribute<float>("groundLevel");
             ComponentRegistry.Instance.Register(gravityDefinition);
@@ -61,7 +61,7 @@ namespace AvatarCollisionPlugin
             });
         }
 
-        private void RegisterToEvents()
+        internal void RegisterToEvents()
         {
             World.Instance.AddedEntity += new EventHandler<EntityEventArgs>(HandleEntityAdded);
             foreach (Entity entity in World.Instance)
