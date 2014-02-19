@@ -85,5 +85,6 @@ FIVES.Plugins = FIVES.Plugins || {};
         return rayOrigin;
     };
 
+    FIVES.Plugins.AvatarCollision = new avatarCollision();
 }());
 
