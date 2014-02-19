@@ -81,8 +81,8 @@ FIVES.Input = FIVES.Input || {};
     };
 
     k._initializeEventListeners = function() {
-        document.addEventListener("keydown", this._onKeyDown);
-        document.addEventListener("keyup", this._onKeyUp);
+        $(document).keydown(this._onKeyDown);
+        $(document).keyup(this._onKeyUp);
     };
 
     FIVES.Input.KeyListener = new keylistener();
