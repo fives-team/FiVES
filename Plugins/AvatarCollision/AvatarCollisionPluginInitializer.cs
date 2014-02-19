@@ -20,7 +20,7 @@ namespace AvatarCollisionPlugin
     {
         public string Name
         {
-            get { return "SimpleGravity"; }
+            get { return "AvatarCollision"; }
         }
 
         public List<string> PluginDependencies
@@ -30,7 +30,7 @@ namespace AvatarCollisionPlugin
 
         public List<string> ComponentDependencies
         {
-            get { return new List<string> {"position"}; }
+            get { return new List<string> {"location"}; }
         }
 
         public void Initialize()
@@ -48,7 +48,7 @@ namespace AvatarCollisionPlugin
         /// Registers gravity component that carries the attribute for the groundlevel
         /// </summary>
         private void RegisterComponents() {
-            ComponentDefinition gravityDefinition = new ComponentDefinition("gravity");
+            ComponentDefinition gravityDefinition = new ComponentDefinition("avatarCollision");
             gravityDefinition.AddAttribute<float>("groundLevel");
             ComponentRegistry.Instance.Register(gravityDefinition);
         }
@@ -79,7 +79,7 @@ namespace AvatarCollisionPlugin
         /// <param name="e">Entity Added event arguments</param>
         private void HandleEntityAdded(Object sender, EntityEventArgs e)
         {
-            e.Entity["avatarCollision"]["groundLevel"] = e.Entity["position"]["y"]; // Initialise entities without gravity
+            e.Entity["avatarCollision"]["groundLevel"] = ((Vector)e.Entity["location"]["position"]).y; // Initialise entities without gravity
             e.Entity.ChangedAttribute += new EventHandler<ChangedAttributeEventArgs>(HandleAttributeChanged);
         }
 
@@ -90,7 +90,7 @@ namespace AvatarCollisionPlugin
         /// <param name="e">The Attribute changed Event Args</param>
         private void HandleAttributeChanged(Object sender, ChangedAttributeEventArgs e)
         {
-            if (e.Component.Name == "position")
+            if (e.Component.Name == "location")
             {
                 Entity entity = (Entity)sender;
                 Vector entityPosition = (Vector)entity["location"]["position"];

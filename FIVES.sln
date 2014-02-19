@@ -67,7 +67,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KeyframeAnimation", "Plugin
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebTests", "Misc\WebTests\WebTests.csproj", "{12F9A872-0105-420D-AD53-641EDB8FD345}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SimpleGravity", "Plugins\SimpleGravity\SimpleGravity.csproj", "{7CF92274-BC04-499F-AA62-4A0C1B3F7D5B}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AvatarCollision", "Plugins\AvatarCollision\AvatarCollision.csproj", "{7CF92274-BC04-499F-AA62-4A0C1B3F7D5B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
