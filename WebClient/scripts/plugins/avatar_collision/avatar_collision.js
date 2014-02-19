@@ -76,12 +76,21 @@ FIVES.Plugins = FIVES.Plugins || {};
         return outHitpoint;
     };
 
-    var getCollisionRayOrigin = function(entity) {
+    var getCollisionRayOrigin = function(entity, collisionDirection) {
         var boundingBox = entity.xml3dView.groupElement.getBoundingBox();
         var center = boundingBox.center();
         var view = $(_xml3dElement.activeView)[0];
         var viewDirection = view.getDirection();
-        var rayOrigin = new XML3DVec3(center.x + viewDirection.x * 0.5, boundingBox.max.y, center.z + viewDirection.z * 0.5);
+        var rayOrigin;
+        if(collisionDirection == "forward")
+            rayOrigin = new XML3DVec3(center.x + viewDirection.x * 0.5,
+                boundingBox.center().y,
+                center.z + viewDirection.z * 0.5);
+        else
+            rayOrigin = new XML3DVec3(center.x + viewDirection.x * 0.5,
+                boundingBox.max.y,
+                center.z + viewDirection.z * 0.5);
+
         return rayOrigin;
     };
 
