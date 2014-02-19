@@ -78,7 +78,7 @@ namespace FIVES
         {
             var definition = componentRegistry.FindComponentDefinition(componentName);
             if (definition == null)
-                throw new ComponentAccessException("Component with given name is not registered.");
+                throw new ComponentAccessException("Component with given name '" + componentName + "' is not registered.");
 
             Component component = new Component(definition, this);
             components[componentName] = component;
