@@ -3,7 +3,7 @@ using System.ServiceModel;
 
 namespace TestingPlugin
 {
-    [ServiceContract(Namespace = "http://sergiyb.com")]
+    [ServiceContract()]
     public interface ITestingService
     {
         [OperationContract]
