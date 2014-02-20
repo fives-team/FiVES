@@ -37,10 +37,17 @@ namespace TestingPlugin
 
         private void HandlePluginsLoaded(object sender, System.EventArgs e)
         {
-            NetNamedPipeBinding binding = new NetNamedPipeBinding(NetNamedPipeSecurityMode.None);
-            EndpointAddress ep = new EndpointAddress(Testing.ServiceURI);
-            ITestingService channel = ChannelFactory<ITestingService>.CreateChannel(binding, ep);
-            channel.NotifyServerReady();
+            try
+            {
+                NetNamedPipeBinding binding = new NetNamedPipeBinding(NetNamedPipeSecurityMode.None);
+                EndpointAddress ep = new EndpointAddress(Testing.ServiceURI);
+                ITestingService channel = ChannelFactory<ITestingService>.CreateChannel(binding, ep);
+                channel.NotifyServerReady();
+            }
+            catch (EndpointNotFoundException)
+            {
+                // No endpoint means that we are not being run within a test. This is normal :-)
+            }
         }
 
         public void Shutdown()
