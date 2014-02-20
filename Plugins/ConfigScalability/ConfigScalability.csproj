@@ -43,9 +43,7 @@
     <Compile Include="ConfigDoI.cs" />
     <Compile Include="ConfigDoR.cs" />
     <Compile Include="ConfigScalability.cs" />
-    <Compile Include="ConfigScalabilityImpl.cs" />
     <Compile Include="ConfigScalabilityPluginInitializer.cs" />
-    <Compile Include="IConfigScalability.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -64,6 +62,10 @@
     <ProjectReference Include="..\..\Core\PluginManager\PluginManager.csproj">
       <Project>{db1099a1-b7fe-474f-a03a-41687d6c5c76}</Project>
       <Name>PluginManager</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Scalability\Scalability.csproj">
+      <Project>{f88daf4a-1c7b-4ef0-aee0-55624976c4db}</Project>
+      <Name>Scalability</Name>
     </ProjectReference>
     <ProjectReference Include="..\ServerSync\ServerSync.csproj">
       <Project>{5782bb3a-3eff-4787-80d2-81a1e1dbae7e}</Project>

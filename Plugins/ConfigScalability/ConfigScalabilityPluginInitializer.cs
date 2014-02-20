@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using FIVES;
+using ScalabilityPlugin;
 
 namespace ConfigScalabilityPlugin
 {
@@ -20,7 +21,7 @@ namespace ConfigScalabilityPlugin
         {
             get
             {
-                return new List<string> { "ServerSync" };
+                return new List<string> { "ServerSync", "Scalability" };
             }
         }
 
@@ -34,7 +35,7 @@ namespace ConfigScalabilityPlugin
 
         public void Initialize()
         {
-            ConfigScalability.Instance = new ConfigScalabilityImpl();
+            Scalability.Instance = new ConfigScalability();
         }
 
         public void Shutdown()
