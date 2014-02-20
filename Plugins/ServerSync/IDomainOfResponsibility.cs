@@ -8,5 +8,8 @@ namespace ServerSyncPlugin
     {
         // Checks if this DoR includes a given entity.
         bool IsResponsibleFor(Entity entity);
+
+        // Triggered when this DoR changes.
+        event EventHandler Changed;
     }
 }

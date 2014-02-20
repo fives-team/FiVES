@@ -30,34 +30,104 @@ namespace ConfigScalabilityPlugin
                 MinX, MaxX, MinY, MaxY, RelevantComponents == null ? "none" : String.Join(",", RelevantComponents));
         }
 
+        public event EventHandler Changed;
+
         #region ISerializable interface
 
         public ConfigDoI(SerializationInfo info, StreamingContext context)
         {
-            MinX = info.GetDouble("minX");
-            MaxX = info.GetDouble("maxX");
-            MinY = info.GetDouble("minY");
-            MaxY = info.GetDouble("maxY");
-            RelevantComponents = (List<string>)info.GetValue("relevantComponents", typeof(List<string>));
+            minX = info.GetDouble("minX");
+            maxX = info.GetDouble("maxX");
+            minY = info.GetDouble("minY");
+            maxY = info.GetDouble("maxY");
+            relevantComponents = (List<string>)info.GetValue("relevantComponents", typeof(List<string>));
         }
 
         public void GetObjectData(SerializationInfo info, StreamingContext context)
         {
-            info.AddValue("minX", MinX);
-            info.AddValue("maxX", MaxX);
-            info.AddValue("minY", MinY);
-            info.AddValue("maxY", MaxY);
-            info.AddValue("relevantComponents", RelevantComponents);
+            info.AddValue("minX", minX);
+            info.AddValue("maxX", maxX);
+            info.AddValue("minY", minY);
+            info.AddValue("maxY", maxY);
+            info.AddValue("relevantComponents", relevantComponents);
         }
 
         #endregion
 
-        internal double MinX;
-        internal double MaxX;
+        internal double MinX
+        {
+            get
+            {
+                return minX;
+            }
+            set
+            {
+                minX = value;
+                if (Changed != null)
+                    Changed(this, new EventArgs());
+            }
+        }
 
-        internal double MinY;
-        internal double MaxY;
+        internal double MaxX
+        {
+            get
+            {
+                return maxX;
+            }
+            set
+            {
+                maxX = value;
+                if (Changed != null)
+                    Changed(this, new EventArgs());
+            }
+        }
 
-        internal List<string> RelevantComponents;
+        internal double MinY
+        {
+            get
+            {
+                return minY;
+            }
+            set
+            {
+                minY = value;
+                if (Changed != null)
+                    Changed(this, new EventArgs());
+            }
+        }
+
+        internal double MaxY
+        {
+            get
+            {
+                return maxY;
+            }
+            set
+            {
+                maxY = value;
+                if (Changed != null)
+                    Changed(this, new EventArgs());
+            }
+        }
+
+        internal List<string> RelevantComponents
+        {
+            get
+            {
+                return relevantComponents;
+            }
+            set
+            {
+                relevantComponents = value;
+                if (Changed != null)
+                    Changed(this, new EventArgs());
+            }
+        }
+
+        private double minX;
+        private double maxX;
+        private double minY;
+        private double maxY;
+        private List<string> relevantComponents;
     }
 }

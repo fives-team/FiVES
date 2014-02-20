@@ -34,11 +34,10 @@ namespace ConfigScalabilityPlugin
             doi = new ConfigDoI();
             ReadDoIBoundaries(config, doi);
             ReadDoIComponents(config, doi);
+            ServerSync.LocalServer.DoI = doi;
 
             dor = new ConfigDoR();
             ReadDoRBoundaries(config, dor);
-
-            ServerSync.LocalServer.DoI = doi;
             ServerSync.LocalServer.DoR = dor;
         }
 
@@ -126,59 +125,41 @@ namespace ConfigScalabilityPlugin
         {
             double value;
             if (Double.TryParse(commandLine.Substring(commandLine.IndexOf(' ') + 1), out value))
-            {
                 doi.MinX = value;
-                ServerSync.LocalServer.DoI = doi;
-            }
         }
 
         private void ChangeDoIMaxX(string commandLine)
         {
             double value;
             if (Double.TryParse(commandLine.Substring(commandLine.IndexOf(' ') + 1), out value))
-            {
                 doi.MaxX = value;
-                ServerSync.LocalServer.DoI = doi;
-            }
         }
 
         private void ChangeDoIMinY(string commandLine)
         {
             double value;
             if (Double.TryParse(commandLine.Substring(commandLine.IndexOf(' ') + 1), out value))
-            {
                 doi.MinY = value;
-                ServerSync.LocalServer.DoI = doi;
-            }
         }
 
         private void ChangeDoIMaxY(string commandLine)
         {
             double value;
             if (Double.TryParse(commandLine.Substring(commandLine.IndexOf(' ') + 1), out value))
-            {
                 doi.MaxY = value;
-                ServerSync.LocalServer.DoI = doi;
-            }
         }
 
         private void ChangeDoIComponents(string commandLine)
         {
             int spaceIndex = commandLine.IndexOf(' ');
             if (spaceIndex == -1)
-            {
                 doi.RelevantComponents = null;
-                ServerSync.LocalServer.DoI = doi;
-            }
             else
             {
                 string componentsArgument = commandLine.Substring(spaceIndex + 1);
                 List<string> parsedDoIComponents = new List<string>(componentsArgument.Split(','));
                 if (parsedDoIComponents.Find(c => c.Length > 0) != null)
-                {
                     doi.RelevantComponents = parsedDoIComponents;
-                    ServerSync.LocalServer.DoI = doi;
-                }
             }
         }
 
@@ -186,40 +167,28 @@ namespace ConfigScalabilityPlugin
         {
             double value;
             if (Double.TryParse(commandLine.Substring(commandLine.IndexOf(' ') + 1), out value))
-            {
                 dor.MinX = value;
-                ServerSync.LocalServer.DoR = dor;
-            }
         }
 
         private void ChangeDoRMaxX(string commandLine)
         {
             double value;
             if (Double.TryParse(commandLine.Substring(commandLine.IndexOf(' ') + 1), out value))
-            {
                 dor.MaxX = value;
-                ServerSync.LocalServer.DoR = dor;
-            }
         }
 
         private void ChangeDoRMinY(string commandLine)
         {
             double value;
             if (Double.TryParse(commandLine.Substring(commandLine.IndexOf(' ') + 1), out value))
-            {
                 dor.MinY = value;
-                ServerSync.LocalServer.DoR = dor;
-            }
         }
 
         private void ChangeDoRMaxY(string commandLine)
         {
             double value;
             if (Double.TryParse(commandLine.Substring(commandLine.IndexOf(' ') + 1), out value))
-            {
                 dor.MaxY = value;
-                ServerSync.LocalServer.DoR = dor;
-            }
         }
 
         ConfigDoI doi;

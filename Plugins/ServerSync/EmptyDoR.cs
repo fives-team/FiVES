@@ -16,6 +16,10 @@ namespace ServerSyncPlugin
             return false;
         }
 
+#pragma warning disable 67
+        public event EventHandler Changed;
+#pragma warning restore 67
+
         #region ISerializable interface
 
         public EmptyDoR(SerializationInfo info, StreamingContext context)

@@ -11,5 +11,7 @@ namespace ServerSyncPlugin
 
         // Checks if this DoI includes a given attribute changed event.
         bool IsInterestedInAttributeChange(Entity entity, string componentName, string attributeName);
+
+        event EventHandler Changed;
     }
 }

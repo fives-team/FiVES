@@ -9,8 +9,8 @@ namespace ServerSyncPlugin
     {
         public LocalServerImpl()
         {
-            dor = new EmptyDoR();
-            doi = new EmptyDoI();
+            DoR = new EmptyDoR();
+            DoI = new EmptyDoI();
             syncID = Guid.NewGuid();
 
             service = ServiceFactory.Create(Tools.ConvertFileNameToURI("serverSyncServer.json"));
@@ -35,9 +35,10 @@ namespace ServerSyncPlugin
             }
             set
             {
+                dor.Changed -= HandleDoRChanged;
                 dor = value;
-                if (DoRChanged != null)
-                    DoRChanged(this, new EventArgs());
+                dor.Changed += HandleDoRChanged;
+                HandleDoRChanged(this, new EventArgs());
             }
         }
 
@@ -49,9 +50,10 @@ namespace ServerSyncPlugin
             }
             set
             {
+                doi.Changed -= HandleDoIChanged;
                 doi = value;
-                if (DoIChanged != null)
-                    DoIChanged(this, new EventArgs());
+                doi.Changed += HandleDoIChanged;
+                HandleDoIChanged(this, new EventArgs());
             }
         }
 
@@ -70,6 +72,18 @@ namespace ServerSyncPlugin
         public void RegisterSyncIDAPI(Service service)
         {
             service["serverSync.getSyncID"] = (Func<Guid>)GetSyncID;
+        }
+
+        void HandleDoIChanged(object sender, EventArgs e)
+        {
+            if (DoIChanged != null)
+                DoIChanged(this, new EventArgs());
+        }
+
+        void HandleDoRChanged(object sender, EventArgs e)
+        {
+            if (DoRChanged != null)
+                DoRChanged(this, new EventArgs());
         }
 
         Guid GetSyncID()
