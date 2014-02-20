@@ -16,9 +16,7 @@ namespace WebTests
         [TestFixtureSetUp]
         public void StartServer()
         {
-            ProcessStartInfo serverInfo = new ProcessStartInfo("FIVES.exe");
-            serverInfo.WindowStyle = ProcessWindowStyle.Hidden;
-            server = Process.Start(serverInfo);
+            server = Tools.StartServer();
         }
 
         [TestFixtureTearDown]
