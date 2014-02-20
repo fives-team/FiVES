@@ -9,7 +9,7 @@ namespace FIVES
 {
     public class Application
     {
-        public static ApplicationController Controller = null;
+        public static ApplicationController Controller = new ApplicationController();
 
         static int Main(string[] args)
         {
@@ -38,7 +38,9 @@ namespace FIVES
 
             PluginManager.Instance.OnAnyPluginInitialized += HandlePluginInitialized;
 
-            if (Controller == null)
+            Controller.NotifyPluginsLoaded();
+
+            if (!Controller.ControlTaken)
             {
                 // Wait for 'q' key to be pressed.
                 Console.WriteLine("The server is up and running. Press 'q' to stop it...");

@@ -43,7 +43,7 @@ namespace TerminalPlugin
         {
             Terminal.Instance = new Terminal();
 
-            Application.Controller = new ApplicationController();
+            Application.Controller.ControlTaken = true;
             Commands.Instance = new Commands(Application.Controller);
 
             // Replace console target with custom target that will interleave logs with terminal.

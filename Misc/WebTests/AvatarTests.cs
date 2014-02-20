@@ -13,20 +13,16 @@ namespace WebTests
     [TestFixture]
     public class AvatarTests
     {
-        private Process server;
-
         [TestFixtureSetUp]
         public void StartServer()
         {
-            ProcessStartInfo serverInfo = new ProcessStartInfo("FIVES.exe");
-            serverInfo.WindowStyle = ProcessWindowStyle.Hidden;
-            server = Process.Start(serverInfo);
+            Tools.StartServer();
         }
 
         [TestFixtureTearDown]
         public void StopServer()
         {
-            server.Kill();
+            Tools.StopServer();
         }
 
         [Test]
@@ -49,8 +45,7 @@ namespace WebTests
 
                 string startTranslation = avatarTransform.GetAttribute("translation");
 
-                IHasInputDevices input = driver as IHasInputDevices;
-                input.Keyboard.PressKey("w");
+                jsExecutor.ExecuteScript("$(document).trigger({type: 'keydown', which: 87, keyCode: 87})");
 
                 // Wait until avatar starts to move.
                 wait.Until(d => avatarTransform.GetAttribute("translation") != startTranslation);
