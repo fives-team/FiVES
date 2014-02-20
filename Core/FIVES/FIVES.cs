@@ -38,6 +38,8 @@ namespace FIVES
 
             PluginManager.Instance.OnAnyPluginInitialized += HandlePluginInitialized;
 
+            Controller.NotifyPluginsLoaded();
+
             if (!Controller.ControlTaken)
             {
                 // Wait for 'q' key to be pressed.

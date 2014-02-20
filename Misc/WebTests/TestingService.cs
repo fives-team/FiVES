@@ -10,12 +10,12 @@ namespace WebTests
     [ServiceBehavior(InstanceContextMode = InstanceContextMode.Single)]
     class TestingService : ITestingService
     {
-        public event EventHandler ServerStarted;
+        public event EventHandler ServerReady;
 
-        public void NotifyServerStarted()
+        public void NotifyServerReady()
         {
-            if (ServerStarted != null)
-                ServerStarted(this, new EventArgs());
+            if (ServerReady != null)
+                ServerReady(this, new EventArgs());
         }
     }
 }
