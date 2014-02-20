@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using NLog;
 using System.Reflection;
 
@@ -62,12 +63,23 @@ namespace KIARAPlugin
             return registeredProtocols.ContainsKey(protocol);
         }
 
-        public void LoadProtocolsFrom(string protocolDir)
+        public void LoadProtocolsFrom(string protocolDir, string[] pluginWhiteList)
         {
             string[] files = Directory.GetFiles(protocolDir, "*.dll");
 
             foreach (string filename in files)
-                LoadProtocol(filename);
+            {
+                string cleanFilename = Path.GetFileName(filename);
+                if (pluginWhiteList != null)
+                {
+                    if (pluginWhiteList.Any(whiteListEntry => cleanFilename.Equals(whiteListEntry + ".dll")))
+                        LoadProtocol(filename);
+                }
+                else
+                {
+                    LoadProtocol(filename);
+                }
+            }
         }
 
         void LoadProtocol(string filename)
