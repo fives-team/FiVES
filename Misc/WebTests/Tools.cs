@@ -52,10 +52,9 @@ namespace WebTests
             serverInfo.WindowStyle = ProcessWindowStyle.Hidden;
             var server = Process.Start(serverInfo);
 
-            var serverStarted = false;
-            testingService.ServerStarted += (sender, args) => serverStarted = true;
-            while (!serverStarted)
-                Thread.Sleep(300);
+            AutoResetEvent serverHasStarted = new AutoResetEvent(false);
+            testingService.ServerStarted += (sender, args) => serverHasStarted.Set();
+            serverHasStarted.WaitOne();
 
             return server;
         }
