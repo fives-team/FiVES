@@ -37,8 +37,10 @@ namespace KIARAPlugin
 
         public void Initialize()
         {
-            var protocolDir = GetProtocolDir();
-            LoadProtocols(protocolDir);
+            string protocolDir;
+            string[] pluginWhiteList;
+            LoadConfig(out protocolDir, out pluginWhiteList);
+            LoadProtocols(protocolDir, pluginWhiteList);
         }
 
         public void Shutdown()
@@ -47,13 +49,13 @@ namespace KIARAPlugin
 
         #endregion
 
-        static void LoadProtocols(string protocolDir)
+        static void LoadProtocols(string protocolDir, string[] pluginWhiteList)
         {
             logger.Info("Loading protocols");
-        
+
             if (protocolDir != null && Directory.Exists(protocolDir))
             {
-                ProtocolRegistry.Instance.LoadProtocolsFrom(protocolDir);
+                ProtocolRegistry.Instance.LoadProtocolsFrom(protocolDir, pluginWhiteList);
             }
             else
             {
@@ -63,22 +65,24 @@ namespace KIARAPlugin
             logger.Info("Finished loading protocols");
         }
 
-        static string GetProtocolDir()
+        static void LoadConfig(out string protocolDir, out string[] protocolWhiteList)
         {
-            string protocolDir = null;
             ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
 
             try
             {
                 protocolDir = ConfigurationManager.AppSettings["ProtocolDir"].ToString();
+                string protocolWhiteListStr = ConfigurationManager.AppSettings["ProtocolWhiteList"];
+                if (protocolWhiteListStr != null)
+                    protocolWhiteList = protocolWhiteListStr.Split(',');
+                else
+                    protocolWhiteList = null;
             }
             catch (ConfigurationErrorsException cee)
             {
                 logger.Error("KIARA configuration is missing or corrupt.");
                 throw cee;
             }
-
-            return protocolDir;
         }
 
         private static Logger logger = LogManager.GetCurrentClassLogger();
