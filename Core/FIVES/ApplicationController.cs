@@ -13,8 +13,13 @@ namespace FIVES
             applicationTerminated.Set();
         }
 
+        public event EventHandler ServerStarted;
+
         internal void WaitForTerminate()
         {
+            if (ServerStarted != null)
+                ServerStarted(this, new EventArgs());
+
             applicationTerminated.WaitOne();
         }
 
