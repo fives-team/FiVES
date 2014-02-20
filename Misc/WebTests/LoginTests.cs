@@ -11,18 +11,17 @@ namespace WebTests
     public class LoginTests
     {
         private IWebDriver driver;
-        private Process server;
 
         [TestFixtureSetUp]
         public void StartServer()
         {
-            server = Tools.StartServer();
+            Tools.StartServer();
         }
 
         [TestFixtureTearDown]
         public void StopServer()
         {
-            server.Kill();
+            Tools.StopServer();
         }
 
         [SetUp]
