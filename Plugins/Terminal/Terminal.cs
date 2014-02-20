@@ -19,7 +19,7 @@ namespace TerminalPlugin
             RegisterCommand("help", "Shows help for a command or all commands if none specified.", false, ShowHelp,
                 new List<string> { "h", "?" });
 
-            Task.Factory.StartNew(TerminalThreadFunc);
+            Application.Controller.PluginsLoaded += HandlePluginsLoaded;
         }
 
         /// <summary>
@@ -89,6 +89,11 @@ namespace TerminalPlugin
                         AddCommand(alias, info);
                 }
             }
+        }
+
+        private void HandlePluginsLoaded(object sender, EventArgs e)
+        {
+            Task.Factory.StartNew(TerminalThreadFunc);
         }
 
         private void AddCommand(string name, CommandInfo info)
