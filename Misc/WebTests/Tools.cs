@@ -53,7 +53,7 @@ namespace WebTests
             var server = Process.Start(serverInfo);
 
             AutoResetEvent serverHasStarted = new AutoResetEvent(false);
-            testingService.ServerStarted += (sender, args) => serverHasStarted.Set();
+            testingService.ServerReady += (sender, args) => serverHasStarted.Set();
             serverHasStarted.WaitOne();
 
             return server;

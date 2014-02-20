@@ -7,6 +7,6 @@ namespace TestingPlugin
     public interface ITestingService
     {
         [OperationContract]
-        void NotifyServerStarted();
+        void NotifyServerReady();
     }
 }
