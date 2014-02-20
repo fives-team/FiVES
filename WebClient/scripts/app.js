@@ -63,16 +63,13 @@ function(KIARA, $) {
             }
         };
 
-        // Make a small pause so that users can appreciated the "Signing in..." message.
-        setTimeout( function() {
-            FIVES.Communication.FivesCommunicator.auth(login, password, authCallback);
-        }, 1000);
-
         // Disable input fields and button, hide error message if any.
         $("#signin-btn").button("loading");
         $("#signin-login").prop('disabled', true);
         $("#signin-password").prop('disabled', true);
         $("#signin-failed").hide();
+
+        FIVES.Communication.FivesCommunicator.auth(login, password, authCallback);
 
         return false;
     }
