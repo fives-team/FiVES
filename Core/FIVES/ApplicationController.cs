@@ -13,6 +13,8 @@ namespace FIVES
             applicationTerminated.Set();
         }
 
+        public bool ControlTaken { get; set; }
+
         public event EventHandler ServerStarted;
 
         internal void WaitForTerminate()
