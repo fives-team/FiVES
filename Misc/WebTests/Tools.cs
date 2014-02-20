@@ -6,6 +6,10 @@ using NUnit.Framework;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
 using OpenQA.Selenium.Support.UI;
+using System.Diagnostics;
+using TestingPlugin;
+using System.ServiceModel;
+using System.Threading;
 
 namespace WebTests
 {
@@ -34,6 +38,26 @@ namespace WebTests
             var driver = new ChromeDriver(options);
             driver.Navigate().GoToUrl("http://localhost/projects/test-client/client.xhtml");
             return driver;
+        }
+
+        public static Process StartServer()
+        {
+            var testingService = new TestingService();
+            ServiceHost serviceHost = new ServiceHost(testingService);
+            NetNamedPipeBinding binding = new NetNamedPipeBinding(NetNamedPipeSecurityMode.None);
+            serviceHost.AddServiceEndpoint(typeof(ITestingService), binding, Testing.ServiceURI);
+            serviceHost.Open();
+
+            ProcessStartInfo serverInfo = new ProcessStartInfo("FIVES.exe");
+            serverInfo.WindowStyle = ProcessWindowStyle.Hidden;
+            var server = Process.Start(serverInfo);
+
+            var serverStarted = false;
+            testingService.ServerStarted += (sender, args) => serverStarted = true;
+            while (!serverStarted)
+                Thread.Sleep(300);
+
+            return server;
         }
     }
 }
