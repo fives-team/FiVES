@@ -40,23 +40,31 @@ namespace WebTests
             return driver;
         }
 
-        public static Process StartServer()
+        public static void StartServer()
         {
-            var testingService = new TestingService();
-            ServiceHost serviceHost = new ServiceHost(testingService);
+            testingService = new TestingService();
+            serviceHost = new ServiceHost(testingService);
             NetNamedPipeBinding binding = new NetNamedPipeBinding(NetNamedPipeSecurityMode.None);
             serviceHost.AddServiceEndpoint(typeof(ITestingService), binding, Testing.ServiceURI);
             serviceHost.Open();
 
             ProcessStartInfo serverInfo = new ProcessStartInfo("FIVES.exe");
             serverInfo.WindowStyle = ProcessWindowStyle.Hidden;
-            var server = Process.Start(serverInfo);
+            server = Process.Start(serverInfo);
 
             AutoResetEvent serverHasStarted = new AutoResetEvent(false);
             testingService.ServerReady += (sender, args) => serverHasStarted.Set();
             serverHasStarted.WaitOne();
-
-            return server;
         }
+
+        public static void StopServer()
+        {
+            server.Kill();
+            serviceHost.Close();
+        }
+
+        static TestingService testingService;
+        static ServiceHost serviceHost;
+        static Process server;
     }
 }

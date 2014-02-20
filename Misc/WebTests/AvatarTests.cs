@@ -13,18 +13,16 @@ namespace WebTests
     [TestFixture]
     public class AvatarTests
     {
-        private Process server;
-
         [TestFixtureSetUp]
         public void StartServer()
         {
-            server = Tools.StartServer();
+            Tools.StartServer();
         }
 
         [TestFixtureTearDown]
         public void StopServer()
         {
-            server.Kill();
+            Tools.StopServer();
         }
 
         [Test]
