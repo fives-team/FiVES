@@ -32,15 +32,15 @@ namespace TestingPlugin
 
         public void Initialize()
         {
-            Application.Controller.ServerStarted += HandleServerStarted;
+            Application.Controller.PluginsLoaded += HandlePluginsLoaded;
         }
 
-        private void HandleServerStarted(object sender, System.EventArgs e)
+        private void HandlePluginsLoaded(object sender, System.EventArgs e)
         {
             NetNamedPipeBinding binding = new NetNamedPipeBinding(NetNamedPipeSecurityMode.None);
             EndpointAddress ep = new EndpointAddress(Testing.ServiceURI);
             ITestingService channel = ChannelFactory<ITestingService>.CreateChannel(binding, ep);
-            channel.NotifyServerStarted();
+            channel.NotifyServerReady();
         }
 
         public void Shutdown()

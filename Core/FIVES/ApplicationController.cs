@@ -15,14 +15,17 @@ namespace FIVES
 
         public bool ControlTaken { get; set; }
 
-        public event EventHandler ServerStarted;
+        public event EventHandler PluginsLoaded;
 
         internal void WaitForTerminate()
         {
-            if (ServerStarted != null)
-                ServerStarted(this, new EventArgs());
-
             applicationTerminated.WaitOne();
+        }
+
+        internal void NotifyPluginsLoaded()
+        {
+            if (PluginsLoaded != null)
+                PluginsLoaded(this, new EventArgs());
         }
 
         private AutoResetEvent applicationTerminated = new AutoResetEvent(false);
