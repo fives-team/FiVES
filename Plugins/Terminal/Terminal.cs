@@ -192,6 +192,16 @@ namespace TerminalPlugin
                         Task.Factory.StartNew(() => info.Handler(command));
                     else if (command != "")
                         WriteLine("Invalid command");
+
+                    lastCommand = command;
+                }
+                else if (keyInfo.Key == ConsoleKey.UpArrow)
+                {
+                    if (lastCommand != null)
+                    {
+                        currentCommand.Clear();
+                        currentCommand.Append(lastCommand);
+                    }
                 }
                 else if (IsText(keyInfo))
                 {
@@ -273,6 +283,7 @@ namespace TerminalPlugin
 
         private Dictionary<string, CommandInfo> commands = new Dictionary<string, CommandInfo>();
 
+        string lastCommand = null;
         private const string commandLinePrefix = ">> ";
         private int previousCommandLineLength = commandLinePrefix.Length;
         private StringBuilder currentCommand = new StringBuilder();
