@@ -19,6 +19,7 @@ namespace AvatarCollisionPlugin
             p.RegisterComponents();
             p.RegisterToEvents();
             registerLocationComponent();
+            registerAvatarComponent();
         }
 
         /// <summary>
@@ -34,6 +35,18 @@ namespace AvatarCollisionPlugin
         }
 
         /// <summary>
+        /// Mocks registration of avatar component as dependency to location is not resolved by
+        /// PluginManager and check for existance of avatar component is performed before
+        /// collision operations are performed
+        /// </summary>
+        private void registerAvatarComponent()
+        {
+            ComponentDefinition avatar = new ComponentDefinition("avatar");
+            avatar.AddAttribute<string>("userLogin", null);
+            ComponentRegistry.Instance.Register(avatar);
+        }
+
+        /// <summary>
         /// Tests if entities that are added to the world are initialized with groundlevel equal to
         /// their actual height
         /// </summary>
@@ -41,6 +54,7 @@ namespace AvatarCollisionPlugin
         public void ShouldInitializeGroundlevelCorrectly()
         {
             var e = new Entity();
+            e["avatar"]["userLogin"] = "123";
             e["location"]["position"] = new Vector(0, 5, 0);
             World.Instance.Add(e);
             Assert.AreEqual((float)e["avatarCollision"]["groundLevel"], 5f);
@@ -54,6 +68,7 @@ namespace AvatarCollisionPlugin
         public void ShouldSetEntityToGroundlevel()
         {
             var e = new Entity();
+            e["avatar"]["userLogin"] = "123";
             e["avatarCollision"]["groundLevel"] = 0f;
             World.Instance.Add(e);
             e["location"]["position"] = new Vector(1, 2, 3);
