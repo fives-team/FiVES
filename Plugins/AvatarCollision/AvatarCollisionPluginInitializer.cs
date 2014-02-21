@@ -25,7 +25,7 @@ namespace AvatarCollisionPlugin
 
         public List<string> PluginDependencies
         {
-            get { return new List<string> { "ClientManager"}; }
+            get { return new List<string> (); }
         }
 
         public List<string> ComponentDependencies
@@ -36,8 +36,13 @@ namespace AvatarCollisionPlugin
         public void Initialize()
         {
             RegisterComponents();
-            RegisterService();
             RegisterToEvents();
+
+            PluginManager.Instance.OnAnyPluginInitialized += (o, e) =>
+            {
+                if (e.pluginName == "ClientManager")
+                    RegisterService();
+            };
         }
 
         public void Shutdown()
