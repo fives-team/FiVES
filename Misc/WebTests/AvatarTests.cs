@@ -49,8 +49,7 @@ namespace WebTests
 
                 string startTranslation = avatarTransform.GetAttribute("translation");
 
-                IHasInputDevices input = driver as IHasInputDevices;
-                input.Keyboard.PressKey("w");
+                jsExecutor.ExecuteScript("$(document).trigger({type: 'keydown', which: 87, keyCode: 87})");
 
                 // Wait until avatar starts to move.
                 wait.Until(d => avatarTransform.GetAttribute("translation") != startTranslation);
