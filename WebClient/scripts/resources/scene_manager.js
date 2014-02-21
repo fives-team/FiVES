@@ -122,7 +122,7 @@ FIVES.Resources = FIVES.Resources || {};
             view.setDirection(entityTransform.rotation.rotateVec3(new XML3DVec3(1,0,0)));
             var viewDirection = view.getDirection();
             var cameraTranslation = entityTransform.translation.subtract(viewDirection.scale(6));
-            cameraTranslation.y = 1.2;
+            cameraTranslation.y += 1.2;
             view.position.set(cameraTranslation);
         }
     };
