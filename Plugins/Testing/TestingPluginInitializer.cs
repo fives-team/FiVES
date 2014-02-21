@@ -39,6 +39,7 @@ namespace TestingPlugin
         {
             try
             {
+                // Connect to the testing service and notify that server is ready.
                 NetNamedPipeBinding binding = new NetNamedPipeBinding(NetNamedPipeSecurityMode.None);
                 EndpointAddress ep = new EndpointAddress(Testing.ServiceURI);
                 ITestingService channel = ChannelFactory<ITestingService>.CreateChannel(binding, ep);
