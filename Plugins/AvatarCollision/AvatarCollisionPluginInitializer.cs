@@ -38,11 +38,7 @@ namespace AvatarCollisionPlugin
             RegisterComponents();
             RegisterToEvents();
 
-            PluginManager.Instance.OnAnyPluginInitialized += (o, e) =>
-            {
-                if (e.pluginName == "ClientManager")
-                    RegisterService();
-            };
+            PluginManager.Instance.AddPluginLoadedHandler("ClientManager", RegisterService);
         }
 
         public void Shutdown()
