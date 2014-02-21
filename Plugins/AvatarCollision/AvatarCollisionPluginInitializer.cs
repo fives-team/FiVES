@@ -125,7 +125,7 @@ namespace AvatarCollisionPlugin
         /// </summary>
         /// <param name="entityGuid">Guid of the entity to be changed</param>
         /// <param name="groundLevel">New groundlevel</param>
-        private void SetGroundlevel(string entityGuid, float groundLevel)
+        public void SetGroundlevel(string entityGuid, float groundLevel)
         {
             var entity = World.Instance.FindEntity(entityGuid);
             entity["avatarCollision"]["groundLevel"] = groundLevel;
