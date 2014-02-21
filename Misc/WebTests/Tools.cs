@@ -42,7 +42,6 @@ namespace WebTests
 
         public static void StartServer()
         {
-            testingService = new TestingService();
             serviceHost = new ServiceHost(testingService);
             NetNamedPipeBinding binding = new NetNamedPipeBinding(NetNamedPipeSecurityMode.None);
             serviceHost.AddServiceEndpoint(typeof(ITestingService), binding, Testing.ServiceURI);
@@ -63,7 +62,7 @@ namespace WebTests
             serviceHost.Close();
         }
 
-        static TestingService testingService;
+        static TestingService testingService = new TestingService();
         static ServiceHost serviceHost;
         static Process server;
     }
