@@ -66,7 +66,10 @@ namespace AvatarCollisionPlugin
             World.Instance.AddedEntity += new EventHandler<EntityEventArgs>(HandleEntityAdded);
             foreach (Entity entity in World.Instance)
             {
-                entity.ChangedAttribute += new EventHandler<ChangedAttributeEventArgs>(HandleAttributeChanged);
+                if(entity.ContainsComponent("avatar"))
+                {
+                    entity.ChangedAttribute += new EventHandler<ChangedAttributeEventArgs>(HandleAttributeChanged);
+                }
             }
         }
 
@@ -79,9 +82,12 @@ namespace AvatarCollisionPlugin
         /// <param name="e">Entity Added event arguments</param>
         private void HandleEntityAdded(Object sender, EntityEventArgs e)
         {
-            e.Entity["avatarCollision"]["groundLevel"] =
-                ((Vector)e.Entity["location"]["position"]).y; // Initialise entities without gravity
-            e.Entity.ChangedAttribute += new EventHandler<ChangedAttributeEventArgs>(HandleAttributeChanged);
+            if (e.Entity.ContainsComponent("avatar"))
+            {
+                e.Entity["avatarCollision"]["groundLevel"] =
+                    ((Vector)e.Entity["location"]["position"]).y; // Initialise entities without gravity
+                e.Entity.ChangedAttribute += new EventHandler<ChangedAttributeEventArgs>(HandleAttributeChanged);
+            }
         }
 
         /// <summary>
@@ -92,7 +98,8 @@ namespace AvatarCollisionPlugin
         /// <param name="e">The Attribute changed Event Args</param>
         private void HandleAttributeChanged(Object sender, ChangedAttributeEventArgs e)
         {
-            if (e.Component.Name == "location")
+            Entity senderEntity = (Entity)sender;
+            if (senderEntity.ContainsComponent("avatar") &&  e.Component.Name == "location")
             {
                 Entity entity = (Entity)sender;
                 Vector entityPosition = (Vector)entity["location"]["position"];
