@@ -11,20 +11,17 @@ namespace WebTests
     public class LoginTests
     {
         private IWebDriver driver;
-        private Process server;
 
         [TestFixtureSetUp]
         public void StartServer()
         {
-            ProcessStartInfo serverInfo = new ProcessStartInfo("FIVES.exe");
-            serverInfo.WindowStyle = ProcessWindowStyle.Hidden;
-            server = Process.Start(serverInfo);
+            Tools.StartServer();
         }
 
         [TestFixtureTearDown]
         public void StopServer()
         {
-            server.Kill();
+            Tools.StopServer();
         }
 
         [SetUp]

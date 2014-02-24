@@ -13,20 +13,16 @@ namespace WebTests
     [TestFixture]
     public class AvatarTests
     {
-        private Process server;
-
         [TestFixtureSetUp]
         public void StartServer()
         {
-            ProcessStartInfo serverInfo = new ProcessStartInfo("FIVES.exe");
-            serverInfo.WindowStyle = ProcessWindowStyle.Hidden;
-            server = Process.Start(serverInfo);
+            Tools.StartServer();
         }
 
         [TestFixtureTearDown]
         public void StopServer()
         {
-            server.Kill();
+            Tools.StopServer();
         }
 
         [Test]
