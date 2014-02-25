@@ -7,6 +7,9 @@ using System.Text;
 
 namespace ScalabilityPlugin
 {
+    /// <summary>
+    /// Class that provides shortcuts to the methods of the class implementing IScalability interface.
+    /// </summary>
     public static class Scalability
     {
         public static IScalability Instance;

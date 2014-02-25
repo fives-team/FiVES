@@ -35,6 +35,7 @@ namespace ConfigScalabilityPlugin
 
         public void Initialize()
         {
+            // Registers ConfigScalability as the class implementing IScalability interface.
             Scalability.Instance = new ConfigScalability();
         }
 
