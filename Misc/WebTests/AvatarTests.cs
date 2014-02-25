@@ -13,16 +13,19 @@ namespace WebTests
     [TestFixture]
     public class AvatarTests
     {
+        private FIVESServer server;
+
         [TestFixtureSetUp]
         public void StartServer()
         {
-            Tools.StartServer();
+            server = new FIVESServer();
+            server.Start();
         }
 
         [TestFixtureTearDown]
         public void StopServer()
         {
-            Tools.StopServer();
+            server.Stop();
         }
 
         [Test]
