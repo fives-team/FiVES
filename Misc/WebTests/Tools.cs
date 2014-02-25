@@ -44,7 +44,7 @@ namespace WebTests
         {
             // Recreate service host (closed service host can't be opened again).
             serviceHost = new ServiceHost(testingService);
-            NetNamedPipeBinding binding = new NetNamedPipeBinding(NetNamedPipeSecurityMode.None);
+            NetTcpBinding binding = new NetTcpBinding();
             serviceHost.AddServiceEndpoint(typeof(ITestingService), binding, Testing.ServiceURI);
             serviceHost.Open();
 
