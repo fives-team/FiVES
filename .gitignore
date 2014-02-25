@@ -9,6 +9,7 @@ Docs/libpeerconnection.log
 packages
 Binaries/
 *.v11.suo
+*.suo
 *.mdf
 TestResults
 Core/PluginManager/TestPlugins
