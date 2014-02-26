@@ -6,7 +6,7 @@ require.config({
     }
 });
 
-requirejs(['kiara', 'jquery', 'websocket-json'],
+requirejs(['kiara', 'jquery', 'websocket-json', 'plugins/testing/testing'],
 function(KIARA, $) {
 
     function setScript(guid) {
