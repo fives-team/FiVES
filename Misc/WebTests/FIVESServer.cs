@@ -52,7 +52,6 @@ namespace WebTests
             process.Kill();
             process.WaitForExit();
 
-
             // Delete testing directory.
             Directory.Delete(TestDirectory, true);
         }
@@ -74,11 +73,11 @@ namespace WebTests
                     + sourceDirName);
             }
 
-            // If the destination directory doesn't exist, create it.
-            if (!Directory.Exists(destDirName))
-            {
-                Directory.CreateDirectory(destDirName);
-            }
+            // If the destination directory exists, delete it first.
+            if (Directory.Exists(destDirName))
+                Directory.Delete(destDirName, copySubDirs);
+            Directory.CreateDirectory(destDirName);
+
 
             // Get the files in the directory and copy them to the new location.
             FileInfo[] files = dir.GetFiles();
