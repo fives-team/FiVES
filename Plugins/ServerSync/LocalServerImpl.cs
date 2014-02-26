@@ -9,8 +9,8 @@ namespace ServerSyncPlugin
     {
         public LocalServerImpl()
         {
-            DoR = new EmptyDoR();
-            DoI = new EmptyDoI();
+            dor = new EmptyDoR();
+            doi = new EmptyDoI();
             syncID = Guid.NewGuid();
 
             service = ServiceFactory.Create(Tools.ConvertFileNameToURI("serverSyncServer.json"));
@@ -35,9 +35,13 @@ namespace ServerSyncPlugin
             }
             set
             {
+                if (value == null)
+                    throw new ArgumentNullException("DoR can not be set to null.");
+
                 dor.Changed -= HandleDoRChanged;
                 dor = value;
                 dor.Changed += HandleDoRChanged;
+
                 HandleDoRChanged(this, new EventArgs());
             }
         }
@@ -50,9 +54,13 @@ namespace ServerSyncPlugin
             }
             set
             {
+                if (value == null)
+                    throw new ArgumentNullException("DoI can not be set to null.");
+
                 doi.Changed -= HandleDoIChanged;
                 doi = value;
                 doi.Changed += HandleDoIChanged;
+
                 HandleDoIChanged(this, new EventArgs());
             }
         }
