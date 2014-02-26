@@ -24,7 +24,7 @@ namespace WebTests
         public void Start()
         {
             // Create a service host.
-            serviceHost = new ServiceHost(testingService);
+            var serviceHost = new ServiceHost(testingService);
             NetNamedPipeBinding binding = new NetNamedPipeBinding(NetNamedPipeSecurityMode.None);
             serviceHost.AddServiceEndpoint(typeof(ITestingService), binding, Testing.ServiceURI);
             serviceHost.Open();
@@ -41,6 +41,9 @@ namespace WebTests
             testingService.ServerReady += handler;
             serverHasStarted.WaitOne();
             testingService.ServerReady -= handler;
+
+            // Close service host.
+            serviceHost.Close();
         }
 
         public void Stop()
@@ -49,8 +52,6 @@ namespace WebTests
             process.Kill();
             process.WaitForExit();
 
-            // Close the service host to terminate its thread. Otherwise tests fail when there are remaining threads.
-            serviceHost.Close();
 
             // Delete testing directory.
             Directory.Delete(TestDirectory, true);
@@ -97,9 +98,6 @@ namespace WebTests
                 }
             }
         }
-
-        // Service host which hosts the testing service.
-        ServiceHost serviceHost;
 
         // The server process.
         Process process;
