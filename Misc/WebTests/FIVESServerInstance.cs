@@ -25,7 +25,7 @@ namespace WebTests
         {
             // Create a service host.
             var serviceHost = new ServiceHost(testingService);
-            NetNamedPipeBinding binding = new NetNamedPipeBinding(NetNamedPipeSecurityMode.None);
+            NetTcpBinding binding = new NetTcpBinding();
             serviceHost.AddServiceEndpoint(typeof(ITestingService), binding, Testing.ServiceURI);
             serviceHost.Open();
 
