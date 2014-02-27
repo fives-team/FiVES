@@ -39,42 +39,5 @@ namespace WebTests
             driver.Navigate().GoToUrl("http://localhost/projects/test-client/client.xhtml");
             return driver;
         }
-
-        public static void StartServer()
-        {
-            // Recreate service host (closed service host can't be opened again).
-            serviceHost = new ServiceHost(testingService);
-            NetTcpBinding binding = new NetTcpBinding();
-            serviceHost.AddServiceEndpoint(typeof(ITestingService), binding, Testing.ServiceURI);
-            serviceHost.Open();
-
-            // Start the server process.
-            ProcessStartInfo serverInfo = new ProcessStartInfo("FIVES.exe");
-            serverInfo.WindowStyle = ProcessWindowStyle.Hidden;
-            server = Process.Start(serverInfo);
-
-            // Wait for the server process to report when server is ready.
-            AutoResetEvent serverHasStarted = new AutoResetEvent(false);
-            testingService.ServerReady += (sender, args) => serverHasStarted.Set();
-            serverHasStarted.WaitOne();
-        }
-
-        public static void StopServer()
-        {
-            // Terminate the server process.
-            server.Kill();
-
-            // Close the service host to terminate its thread. Otherwise tests fail when there are remaining threads.
-            serviceHost.Close();
-        }
-
-        // Global singleton implementing testing service, which is used by the Testing plugin on the server.
-        static TestingService testingService = new TestingService();
-
-        // Service host which hosts the testing service.
-        static ServiceHost serviceHost;
-
-        // The server process.
-        static Process server;
     }
 }
