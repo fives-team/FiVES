@@ -10,9 +10,9 @@ using TestingPlugin;
 
 namespace WebTests
 {
-    class FIVESServer
+    class FIVESServerInstance
     {
-        public FIVESServer()
+        public FIVESServerInstance()
         {
             // Create new directory for the test.
             TestDirectory = Path.Combine(Directory.GetCurrentDirectory(), "..", "FIVES-Test-" + (testCounter++));

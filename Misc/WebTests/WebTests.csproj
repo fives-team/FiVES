@@ -56,7 +56,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AvatarTests.cs" />
-    <Compile Include="FIVESServer.cs" />
+    <Compile Include="FIVESServerInstance.cs" />
     <Compile Include="LoginTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TestingService.cs" />

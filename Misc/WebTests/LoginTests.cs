@@ -11,12 +11,12 @@ namespace WebTests
     public class LoginTests
     {
         private IWebDriver driver;
-        private FIVESServer server;
+        private FIVESServerInstance server;
 
         [TestFixtureSetUp]
         public void StartServer()
         {
-            server = new FIVESServer();
+            server = new FIVESServerInstance();
             server.Start();
         }
 
