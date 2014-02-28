@@ -33,7 +33,6 @@ namespace ServerSyncPlugin
             World.Instance.RemovedEntity += HandleLocalRemovedEntity;
 
             CreateSyncInfoForExistingEntities();
-
         }
 
         void RegisterToNewRemoteServers()
@@ -61,6 +60,7 @@ namespace ServerSyncPlugin
                 else
                 {
                     logger.Warn("Processing addition of already existing entity. Guid: " + guid);
+                    return;
                 }
 
                 ProcessChangedAttributes(guid, initialSyncInfo);
@@ -226,7 +226,7 @@ namespace ServerSyncPlugin
 
             foreach (IRemoteServer server in ServerSync.RemoteServers)
                 if (server.DoI.IsInterestedInEntity(e.Entity))
-                    server.Connection["remoteEntity"](e.Entity.Guid);
+                    server.Connection["serverSync.removeEntity"](e.Entity.Guid);
         }
 
         /// <summary>
