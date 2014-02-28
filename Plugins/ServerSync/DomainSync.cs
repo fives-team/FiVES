@@ -27,14 +27,14 @@ namespace ServerSyncPlugin
 
         void HandleLocalDoIChanged(object sender, EventArgs e)
         {
-            string serializedDoI = Serialization.SerializeObject<IDomainOfInterest>(ServerSync.LocalServer.DoI);
+            string serializedDoI = StringSerialization.SerializeObject<IDomainOfInterest>(ServerSync.LocalServer.DoI);
             foreach (var server in ServerSync.RemoteServers)
                 server.Connection["serverSync.updateDoI"](serializedDoI);
         }
 
         void HandleLocalDoRChanged(object sender, EventArgs e)
         {
-            string serializedDoR = Serialization.SerializeObject<IDomainOfResponsibility>(ServerSync.LocalServer.DoR);
+            string serializedDoR = StringSerialization.SerializeObject<IDomainOfResponsibility>(ServerSync.LocalServer.DoR);
             foreach (var server in ServerSync.RemoteServers)
                 server.Connection["serverSync.updateDoR"](serializedDoR);
         }
@@ -50,7 +50,7 @@ namespace ServerSyncPlugin
             {
                 if (server.Connection == connection)
                 {
-                    var newDoI = Serialization.DeserializeObject<IDomainOfInterest>(serializedDoI);
+                    var newDoI = StringSerialization.DeserializeObject<IDomainOfInterest>(serializedDoI);
                     (server as RemoteServerImpl).DoI = newDoI;
                     return;
                 }
@@ -70,7 +70,7 @@ namespace ServerSyncPlugin
             {
                 if (server.Connection == connection)
                 {
-                    var newDoR = Serialization.DeserializeObject<IDomainOfResponsibility>(serializedDoR);
+                    var newDoR = StringSerialization.DeserializeObject<IDomainOfResponsibility>(serializedDoR);
                     (server as RemoteServerImpl).DoR = newDoR;
                     return;
                 }
@@ -85,7 +85,7 @@ namespace ServerSyncPlugin
         /// <returns>Serialized DoI.</returns>
         string GetDoI()
         {
-            return Serialization.SerializeObject<IDomainOfInterest>(ServerSync.LocalServer.DoI);
+            return StringSerialization.SerializeObject<IDomainOfInterest>(ServerSync.LocalServer.DoI);
         }
 
         /// <summary>
@@ -94,7 +94,7 @@ namespace ServerSyncPlugin
         /// <returns>Serialized DoR.</returns>
         string GetDoR()
         {
-            return Serialization.SerializeObject<IDomainOfResponsibility>(ServerSync.LocalServer.DoR);
+            return StringSerialization.SerializeObject<IDomainOfResponsibility>(ServerSync.LocalServer.DoR);
         }
     }
 }

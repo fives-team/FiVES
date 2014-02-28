@@ -62,9 +62,11 @@
     <Compile Include="ComponentSync.cs" />
     <Compile Include="ComponentSyncInfo.cs" />
     <Compile Include="ComponentSyncTest.cs" />
+    <Compile Include="IStringSerialization.cs" />
     <Compile Include="DomainSync.cs" />
     <Compile Include="EntitySyncInfo.cs" />
     <Compile Include="AttributeSyncInfoTest.cs" />
+    <Compile Include="StringSerializationImpl.cs" />
     <Compile Include="Tools.cs" />
     <Compile Include="WorldSync.cs" />
     <Compile Include="EmptyDoI.cs" />
@@ -81,7 +83,7 @@
     <Compile Include="ServerSync.cs" />
     <Compile Include="ServerSyncImpl.cs" />
     <Compile Include="ServerSyncPluginInitializer.cs" />
-    <Compile Include="StrSerialization.cs" />
+    <Compile Include="StringSerialization.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Core\Collections\Collections.csproj">

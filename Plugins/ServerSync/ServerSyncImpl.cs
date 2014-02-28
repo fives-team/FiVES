@@ -86,14 +86,14 @@ namespace ServerSyncPlugin
             Guid syncID = Guid.Empty;
 
             connection["serverSync.getDoR"]().OnSuccess<string>(delegate(string serializedDoR) {
-                dor = Serialization.DeserializeObject<IDomainOfResponsibility>(serializedDoR);
+                dor = StringSerialization.DeserializeObject<IDomainOfResponsibility>(serializedDoR);
                 if (doi != null && syncID != Guid.Empty)
                     AddRemoteServer(connection, dor, doi, syncID);
             });
 
             connection["serverSync.getDoI"]().OnSuccess<string>(delegate(string serializedDoI)
             {
-                doi = Serialization.DeserializeObject<IDomainOfInterest>(serializedDoI);
+                doi = StringSerialization.DeserializeObject<IDomainOfInterest>(serializedDoI);
                 if (dor != null && syncID != Guid.Empty)
                     AddRemoteServer(connection, dor, doi, syncID);
             });
