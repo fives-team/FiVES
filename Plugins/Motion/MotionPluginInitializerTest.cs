@@ -9,7 +9,7 @@ namespace MotionPlugin
     {
         MotionPluginInitializer plugin = new MotionPluginInitializer();
 
-        ComponentRegistry globalComponentRegistry = ComponentRegistry.Instance;
+        IComponentRegistry globalComponentRegistry = ComponentRegistry.Instance;
 
         [SetUp()]
         public void Init()

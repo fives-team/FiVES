@@ -11,7 +11,7 @@ namespace FIVES
         private PluginManager pm;
         private string pathToPlugins = "TestPlugins/";
 
-        private ComponentRegistry globalComponentRegistry = ComponentRegistry.Instance;
+        private IComponentRegistry globalComponentRegistry = ComponentRegistry.Instance;
         private World globalWorld = World.Instance;
 
         [SetUp()]

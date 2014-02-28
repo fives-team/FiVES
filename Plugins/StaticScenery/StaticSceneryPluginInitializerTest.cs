@@ -14,7 +14,7 @@ namespace StaticSceneryPlugin
         StaticSceneryPluginInitializer plugin = new StaticSceneryPluginInitializer();
 
         // Global instances of FIVES Domain Model
-        private ComponentRegistry globalComponentRegistry = ComponentRegistry.Instance;
+        private IComponentRegistry globalComponentRegistry = ComponentRegistry.Instance;
         private World globalWorld = World.Instance;
 
         // values to mock configfile

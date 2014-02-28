@@ -9,7 +9,7 @@ namespace LocationPlugin
     {
         LocationPluginInitializer plugin = new LocationPluginInitializer();
 
-        ComponentRegistry globalComponentRegistry = ComponentRegistry.Instance;
+        IComponentRegistry globalComponentRegistry = ComponentRegistry.Instance;
 
         [SetUp()]
         public void Init()
