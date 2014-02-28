@@ -15,8 +15,8 @@ namespace ServerSyncPlugin
         {
             service["serverSync.getDoR"] = (Func<string>)GetDoR;
             service["serverSync.getDoI"] = (Func<string>)GetDoI;
-            service["serverSync.updateDoI"] = (Action<Connection, string>)UpdateDoI;
-            service["serverSync.updateDoR"] = (Action<Connection, string>)UpdateDoR;
+            service["serverSync.updateDoI"] = (Action<Connection, string>)HandleRemoteDoIChanged;
+            service["serverSync.updateDoR"] = (Action<Connection, string>)HandleRemoteDoRChanged;
         }
 
         void RegisterForDomainChanges()
@@ -25,16 +25,17 @@ namespace ServerSyncPlugin
             ServerSync.LocalServer.DoRChanged += HandleLocalDoRChanged;
         }
 
-        void HandleLocalDoIChanged(object sender, EventArgs e)
+        internal void HandleLocalDoIChanged(object sender, EventArgs e)
         {
             string serializedDoI = StringSerialization.SerializeObject<IDomainOfInterest>(ServerSync.LocalServer.DoI);
             foreach (var server in ServerSync.RemoteServers)
                 server.Connection["serverSync.updateDoI"](serializedDoI);
         }
 
-        void HandleLocalDoRChanged(object sender, EventArgs e)
+        internal void HandleLocalDoRChanged(object sender, EventArgs e)
         {
-            string serializedDoR = StringSerialization.SerializeObject<IDomainOfResponsibility>(ServerSync.LocalServer.DoR);
+            string serializedDoR = StringSerialization.SerializeObject<IDomainOfResponsibility>(
+                ServerSync.LocalServer.DoR);
             foreach (var server in ServerSync.RemoteServers)
                 server.Connection["serverSync.updateDoR"](serializedDoR);
         }
@@ -44,7 +45,7 @@ namespace ServerSyncPlugin
         /// </summary>
         /// <param name="connection">Connection to the remote server.</param>
         /// <param name="serializedDoI">New serialized domain-of-interest.</param>
-        void UpdateDoI(Connection connection, string serializedDoI)
+        internal void HandleRemoteDoIChanged(Connection connection, string serializedDoI)
         {
             foreach (var server in ServerSync.RemoteServers)
             {
@@ -64,7 +65,7 @@ namespace ServerSyncPlugin
         /// </summary>
         /// <param name="connection">Connection to the remote server.</param>
         /// <param name="serializedDoR">New serialized domain-of-responsibility.</param>
-        void UpdateDoR(Connection connection, string serializedDoR)
+        internal void HandleRemoteDoRChanged(Connection connection, string serializedDoR)
         {
             foreach (var server in ServerSync.RemoteServers)
             {

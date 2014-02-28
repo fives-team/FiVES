@@ -63,6 +63,7 @@
     <Compile Include="ComponentSyncInfo.cs" />
     <Compile Include="ComponentSyncTest.cs" />
     <Compile Include="IStringSerialization.cs" />
+    <Compile Include="DomainSyncTest.cs" />
     <Compile Include="DomainSync.cs" />
     <Compile Include="EntitySyncInfo.cs" />
     <Compile Include="AttributeSyncInfoTest.cs" />
