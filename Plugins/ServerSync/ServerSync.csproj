@@ -62,6 +62,8 @@
     <Compile Include="ComponentSync.cs" />
     <Compile Include="ComponentSyncInfo.cs" />
     <Compile Include="ComponentSyncTest.cs" />
+    <Compile Include="ToolsTest.cs" />
+    <Compile Include="StringSerializationImplTest.cs" />
     <Compile Include="IStringSerialization.cs" />
     <Compile Include="DomainSyncTest.cs" />
     <Compile Include="DomainSync.cs" />
