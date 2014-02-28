@@ -32,7 +32,7 @@ namespace ServerSyncPlugin
         /// <summary>
         /// Timestamp at which the value was assigned. This is used to choose one update over another.
         /// </summary>
-        public long LastTimestamp { get; private set; }
+        public long LastTimestamp { get; internal set; }
 
         /// <summary>
         /// SyncID of the sync node which assigned this value. This is used to break ties when timestamps are the same.

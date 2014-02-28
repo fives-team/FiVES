@@ -50,7 +50,7 @@ namespace ServerSyncPlugin
                 SyncExistingComponentsToServer(server);
         }
 
-        private void HandleRemoteRegisteredComponentDefinition(Connection connection, ComponentDef componentDef)
+        internal void HandleRemoteRegisteredComponentDefinition(Connection connection, ComponentDef componentDef)
         {
             foreach (IRemoteServer server in ServerSync.RemoteServers)
                 if (server.Connection != connection)
@@ -64,7 +64,7 @@ namespace ServerSyncPlugin
             }
         }
 
-        private void HandleLocalRegisteredComponent(object sender, RegisteredComponentEventArgs e)
+        internal void HandleLocalRegisteredComponent(object sender, RegisteredComponentEventArgs e)
         {
             lock (ignoredComponentRegistrations)
             {
