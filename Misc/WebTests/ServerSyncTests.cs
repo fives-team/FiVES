@@ -10,18 +10,18 @@ namespace WebTests
     [TestFixture]
     public class ServerSyncTests
     {
-        private FIVESServer server1;
-        private FIVESServer server2;
+        private FIVESServerInstance server1;
+        private FIVESServerInstance server2;
 
         [TestFixtureSetUp]
         public void StartServer()
         {
-            server1 = new FIVESServer();
+            server1 = new FIVESServerInstance();
             ConfigureServerSyncPorts(server1, 43745, new int[] {});
             ConfigureClientManagerPorts(server1, 34837);
             server1.Start();
 
-            server2 = new FIVESServer();
+            server2 = new FIVESServerInstance();
             ConfigureServerSyncPorts(server2, 43746, new int[] { 43745 });
             ConfigureClientManagerPorts(server2, 34839);
             server2.Start();
@@ -81,7 +81,7 @@ namespace WebTests
             }
         }
 
-        private void ConfigureServerSyncPorts(FIVESServer server, int listeningPort, int[] remotePorts)
+        private void ConfigureServerSyncPorts(FIVESServerInstance server, int listeningPort, int[] remotePorts)
         {
             string serverConfigPath = Path.Combine(server.TestDirectory, "serverSyncServer.json");
             string serverConfig = File.ReadAllText(serverConfigPath);
@@ -100,7 +100,7 @@ namespace WebTests
             File.WriteAllText(clientConfigPath, clientConfig.ToString());
         }
 
-        private void ConfigureClientManagerPorts(FIVESServer server, int listeningPort)
+        private void ConfigureClientManagerPorts(FIVESServerInstance server, int listeningPort)
         {
             string clientManagerConfigPath = Path.Combine(server.TestDirectory, "clientManagerServer.json");
             string clientManagerConfig = File.ReadAllText(clientManagerConfigPath);
