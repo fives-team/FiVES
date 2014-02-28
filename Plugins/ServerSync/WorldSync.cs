@@ -47,7 +47,7 @@ namespace ServerSyncPlugin
                 SyncExistingEntitiesToServer(server);
         }
 
-        private void HandleRemoteAddedEntity(Connection connection, Guid guid, EntitySyncInfo initialSyncInfo)
+        internal void HandleRemoteAddedEntity(Connection connection, Guid guid, EntitySyncInfo initialSyncInfo)
         {
             lock (syncInfo)
             {
@@ -76,7 +76,7 @@ namespace ServerSyncPlugin
         /// Handles an entity removal update from the remote sync node and removes the entity locally.
         /// </summary>
         /// <param name="guid">Guid of the removed entity.</param>
-        private void HandleRemoteRemovedEntity(Connection connection, Guid guid)
+        internal void HandleRemoteRemovedEntity(Connection connection, Guid guid)
         {
             lock (syncInfo)
             {
@@ -103,7 +103,7 @@ namespace ServerSyncPlugin
         /// </summary>
         /// <param name="guid">Guid of the entity containing affected attributes.</param>
         /// <param name="changedAttributes">A set of modified attributes with their remote sync info.</param>
-        private void HandleRemoteChangedAttributes(Connection connection, Guid guid, EntitySyncInfo changedAttributes)
+        internal void HandleRemoteChangedAttributes(Connection connection, Guid guid, EntitySyncInfo changedAttributes)
         {
             Entity entity = World.Instance.FindEntity(guid);
             foreach (IRemoteServer server in ServerSync.RemoteServers)
@@ -173,7 +173,7 @@ namespace ServerSyncPlugin
         /// </summary>
         /// <param name="sender">Event sender.</param>
         /// <param name="e">Event arguments.</param>
-        private void HandleLocalAddedEntity(object sender, EntityEventArgs e)
+        internal void HandleLocalAddedEntity(object sender, EntityEventArgs e)
         {
             e.Entity.ChangedAttribute += HandleLocalChangedAttribute;
 
@@ -207,7 +207,7 @@ namespace ServerSyncPlugin
         /// </summary>
         /// <param name="sender">Event sender.</param>
         /// <param name="e">Event arguments.</param>
-        private void HandleLocalRemovedEntity(object sender, EntityEventArgs e)
+        internal void HandleLocalRemovedEntity(object sender, EntityEventArgs e)
         {
             // Ignore this change if it was caused by the scalability plugin itself.
             lock (ignoredEntityRemovals)
@@ -235,7 +235,7 @@ namespace ServerSyncPlugin
         /// </summary>
         /// <param name="sender">Event sender.</param>
         /// <param name="e">Event arguments.</param>
-        private void HandleLocalChangedAttribute(object sender, ChangedAttributeEventArgs e)
+        internal void HandleLocalChangedAttribute(object sender, ChangedAttributeEventArgs e)
         {
             var componentName = e.Component.Name;
             var attributeName = e.AttributeName;
@@ -418,7 +418,7 @@ namespace ServerSyncPlugin
         private HashSet<Guid> ignoredEntityRemovals = new HashSet<Guid>();
 
         // Sync info for entities in the World.
-        private Dictionary<Guid, EntitySyncInfo> syncInfo = new Dictionary<Guid, EntitySyncInfo>();
+        internal Dictionary<Guid, EntitySyncInfo> syncInfo = new Dictionary<Guid, EntitySyncInfo>();
 
         private static Logger logger = LogManager.GetCurrentClassLogger();
     }
