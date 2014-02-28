@@ -7,6 +7,9 @@ using TerminalPlugin;
 
 namespace ServerSyncPlugin
 {
+    // TODO: Write a test for this class. As it constructs WorldSync, DomainSync and other classes, writing a unit test
+    // is non-trivial and requires major refactoring. However, there is a sufficient functionality in this class, which
+    // should be tested. See relevant issue: https://github.com/rryk/FiVES/issues/97.
     class ServerSyncImpl : IServerSync
     {
         public void Initialize()
