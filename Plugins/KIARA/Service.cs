@@ -3,13 +3,13 @@ using System.Collections.Generic;
 
 namespace KIARAPlugin
 {
-    public abstract class Service
+    abstract class Service : IService
     {
         /// <summary>
         /// Returns the associated context for this service.
         /// </summary>
         /// <value>The associated context.</value>
-        public Context context { get; private set; }
+        public Context Context { get; private set; }
 
         public Delegate this[string name]
         {
@@ -21,7 +21,7 @@ namespace KIARAPlugin
 
         protected Service(Context aContext)
         {
-            context = aContext;
+            Context = aContext;
         }
 
         protected void RegisterMethods(Connection connection)

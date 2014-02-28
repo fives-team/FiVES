@@ -6,7 +6,7 @@ namespace ServerSyncPlugin
     public interface ILocalServer
     {
         // KIARA service on the local service.
-        ServiceImpl Service { get; }
+        IServiceImpl Service { get; }
 
         // Local domain-of-reponsibility.
         IDomainOfResponsibility DoR { get; set; }

@@ -3,12 +3,11 @@ using System.Collections.Generic;
 
 namespace KIARAPlugin
 {
-    public class ServiceImpl : Service
+    class ServiceImpl : Service, IServiceImpl
     {
-        // FIXME: What do we do if we've had new clients before a handler is added? Should we keep the list of all 
-        // opened connections to invoke a new handler on each of them? What if some of these connection are closed 
+        // FIXME: What do we do if we've had new clients before a handler is added? Should we keep the list of all
+        // opened connections to invoke a new handler on each of them? What if some of these connection are closed
         // already?
-        public delegate void NewClient(Connection connection);
         public event NewClient OnNewClient;
 
         internal void HandleNewClient(Connection connection)

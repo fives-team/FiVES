@@ -67,7 +67,7 @@ namespace ServerSyncPlugin
             Config config = Context.DefaultContext.RetrieveConfig(configURI, out fragment);
             for (int i = 0; i < config.servers.Count; i++)
             {
-                ServiceWrapper remoteService = ServiceFactory.Discover(configURI + "#" + i);
+                IServiceWrapper remoteService = ServiceFactory.Discover(configURI + "#" + i);
 
                 localServer.RegisterSyncIDAPI(remoteService);
                 worldSync.RegisterWorldSyncAPI(remoteService);

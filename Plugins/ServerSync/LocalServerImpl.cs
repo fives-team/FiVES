@@ -19,7 +19,7 @@ namespace ServerSyncPlugin
             RegisterSyncIDAPI(service);
         }
 
-        public ServiceImpl Service
+        public IServiceImpl Service
         {
             get
             {
@@ -77,7 +77,7 @@ namespace ServerSyncPlugin
             }
         }
 
-        public void RegisterSyncIDAPI(Service service)
+        public void RegisterSyncIDAPI(IService service)
         {
             service["serverSync.getSyncID"] = (Func<Guid>)GetSyncID;
         }
@@ -99,7 +99,7 @@ namespace ServerSyncPlugin
             return syncID;
         }
 
-        ServiceImpl service;
+        IServiceImpl service;
         IDomainOfResponsibility dor;
         IDomainOfInterest doi;
         Guid syncID;

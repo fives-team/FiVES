@@ -17,7 +17,7 @@ namespace ServerSyncPlugin
             PerformInitialSync();
         }
 
-        public void RegisterComponentSyncAPI(Service service)
+        public void RegisterComponentSyncAPI(IService service)
         {
             service["serverSync.registerComponentDefinition"] =
                 (Action<Connection, ComponentDef>)HandleRemoteRegisteredComponentDefinition;

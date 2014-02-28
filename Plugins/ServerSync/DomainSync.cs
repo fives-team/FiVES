@@ -11,7 +11,7 @@ namespace ServerSyncPlugin
             RegisterForDomainChanges();
         }
 
-        public void RegisterDomainSyncAPI(Service service)
+        public void RegisterDomainSyncAPI(IService service)
         {
             service["serverSync.getDoR"] = (Func<string>)GetDoR;
             service["serverSync.getDoI"] = (Func<string>)GetDoI;

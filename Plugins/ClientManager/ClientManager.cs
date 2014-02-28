@@ -164,7 +164,7 @@ namespace ClientManagerPlugin
         /// <summary>
         /// The client service.
         /// </summary>
-        ServiceImpl clientService;
+        IServiceImpl clientService;
 
         /// <summary>
         /// List of authenticated clients.

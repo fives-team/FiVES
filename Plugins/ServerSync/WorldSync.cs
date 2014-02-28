@@ -19,7 +19,7 @@ namespace ServerSyncPlugin
             PerformInitialSync();
         }
 
-        public void RegisterWorldSyncAPI(Service service)
+        public void RegisterWorldSyncAPI(IService service)
         {
             service["serverSync.addEntity"] = (Action<Connection, Guid, EntitySyncInfo>)HandleRemoteAddedEntity;
             service["serverSync.removeEntity"] = (Action<Connection, Guid>)HandleRemoteRemovedEntity;
