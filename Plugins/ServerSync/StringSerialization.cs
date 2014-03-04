@@ -5,6 +5,9 @@ using System.Runtime.Serialization.Formatters.Binary;
 
 namespace ServerSyncPlugin
 {
+    /// <summary>
+    /// Static containter of and interface to the IStringSerialization object.
+    /// </summary>
     public class StringSerialization
     {
         public static IStringSerialization Instance = new StringSerializationImpl();

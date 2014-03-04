@@ -3,14 +3,24 @@ using System;
 
 namespace ServerSyncPlugin
 {
+    /// <summary>
+    /// Performs synchronization of the DoI and DoR between changes.
+    /// </summary>
     class DomainSync
     {
+        /// <summary>
+        /// Constructs a DomainSync object.
+        /// </summary>
         public DomainSync()
         {
             RegisterDomainSyncAPI(ServerSync.LocalServer.Service);
             RegisterForDomainChanges();
         }
 
+        /// <summary>
+        /// Registers the domain sync APIs in the provided service.
+        /// </summary>
+        /// <param name="service">The provided service.</param>
         public void RegisterDomainSyncAPI(IService service)
         {
             service["serverSync.getDoR"] = (Func<string>)GetDoR;

@@ -3,16 +3,29 @@ using System.Collections.Generic;
 
 namespace ServerSyncPlugin
 {
+    /// <summary>
+    /// The ServerSync plugin interface.
+    /// </summary>
     public interface IServerSync
     {
-        // Collection of remote servers.
+        /// <summary>
+        /// Collection of remote servers.
+        /// </summary>
         IEnumerable<IRemoteServer> RemoteServers { get; }
 
-        // Local server.
+        /// <summary>
+        /// Local server.
+        /// </summary>
         ILocalServer LocalServer { get; }
 
-        // Events when a server is added or removed from the RemoteServers collection.
+        /// <summary>
+        /// Triggered when a remote server is added to the RemoteServers collection.
+        /// </summary>
         event EventHandler<ServerEventArgs> AddedServer;
+
+        /// <summary>
+        /// Triggered when a remote server is removed from the RemoteServers collection.
+        /// </summary>
         event EventHandler<ServerEventArgs> RemovedServer;
     }
 }

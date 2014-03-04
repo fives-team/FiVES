@@ -3,6 +3,9 @@ using System.Collections.Generic;
 
 namespace ServerSyncPlugin
 {
+    /// <summary>
+    /// Static containter of and interface to the IServerSync object.
+    /// </summary>
     public static class ServerSync
     {
         public static IServerSync Instance;

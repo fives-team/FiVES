@@ -5,8 +5,14 @@ using Newtonsoft.Json;
 
 namespace ServerSyncPlugin
 {
+    /// <summary>
+    /// Implementation of the ILocalServer interface.
+    /// </summary>
     class LocalServerImpl : ILocalServer
     {
+        /// <summary>
+        /// Constructs a LocalServerImpl object.
+        /// </summary>
         public LocalServerImpl()
         {
             dor = new EmptyDoR();
@@ -19,6 +25,9 @@ namespace ServerSyncPlugin
             RegisterSyncIDAPI(service);
         }
 
+        /// <summary>
+        /// KIARA service on the local service.
+        /// </summary>
         public IServiceImpl Service
         {
             get
@@ -27,6 +36,9 @@ namespace ServerSyncPlugin
             }
         }
 
+        /// <summary>
+        /// Local domain-of-reponsibility.
+        /// </summary>
         public IDomainOfResponsibility DoR
         {
             get
@@ -46,6 +58,9 @@ namespace ServerSyncPlugin
             }
         }
 
+        /// <summary>
+        /// Local domain-of-interest.
+        /// </summary>
         public IDomainOfInterest DoI
         {
             get
@@ -65,10 +80,19 @@ namespace ServerSyncPlugin
             }
         }
 
+        /// <summary>
+        /// Triggered when the local DoI has changed.
+        /// </summary>
         public event EventHandler DoIChanged;
 
+        /// <summary>
+        /// Triggered when the local DoR has changed.
+        /// </summary>
         public event EventHandler DoRChanged;
 
+        /// <summary>
+        /// Local SyncID.
+        /// </summary>
         public Guid SyncID
         {
             get

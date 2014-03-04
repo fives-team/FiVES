@@ -3,8 +3,18 @@ using System;
 
 namespace ServerSyncPlugin
 {
+    /// <summary>
+    /// Implementation of the IRemoteServer interface.
+    /// </summary>
     class RemoteServerImpl : IRemoteServer
     {
+        /// <summary>
+        /// Constructs a remote server object.
+        /// </summary>
+        /// <param name="connection">An established connection to the remote server.</param>
+        /// <param name="doi">Remote server's DoI.</param>
+        /// <param name="dor">Remote server's DoR.</param>
+        /// <param name="syncID">Remote server's SyncID.</param>
         public RemoteServerImpl(Connection connection, IDomainOfInterest doi, IDomainOfResponsibility dor, Guid syncID)
         {
             this.connection = connection;
@@ -13,6 +23,9 @@ namespace ServerSyncPlugin
             this.syncID = syncID;
         }
 
+        /// <summary>
+        /// KIARA connection to the remote server.
+        /// </summary>
         public Connection Connection
         {
             get
@@ -21,6 +34,9 @@ namespace ServerSyncPlugin
             }
         }
 
+        /// <summary>
+        /// Remote domain-of-reponsibility.
+        /// </summary>
         public IDomainOfResponsibility DoR
         {
             get
@@ -35,6 +51,9 @@ namespace ServerSyncPlugin
             }
         }
 
+        /// <summary>
+        /// Remote domain-of-interest.
+        /// </summary>
         public IDomainOfInterest DoI
         {
             get
@@ -49,11 +68,19 @@ namespace ServerSyncPlugin
             }
         }
 
-
+        /// <summary>
+        /// Triggered when the remote DoI has changed.
+        /// </summary>
         public event EventHandler DoIChanged;
 
+        /// <summary>
+        /// Triggered when the remote DoR has changed.
+        /// </summary>
         public event EventHandler DoRChanged;
 
+        /// <summary>
+        /// Remote SyncID.
+        /// </summary>
         public Guid SyncID
         {
             get

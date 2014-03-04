@@ -7,8 +7,14 @@ using System.Text;
 
 namespace ServerSyncPlugin
 {
+    /// <summary>
+    /// Peforms synchronization of the registered component definitions across servers.
+    /// </summary>
     class ComponentSync
     {
+        /// <summary>
+        /// Construts the ComponentSync object.
+        /// </summary>
         public ComponentSync()
         {
             RegisterForLocalComponentRegistrations();
@@ -17,6 +23,10 @@ namespace ServerSyncPlugin
             PerformInitialSync();
         }
 
+        /// <summary>
+        /// Registers the component sync APIs in the provided service.
+        /// </summary>
+        /// <param name="service">The provided service.</param>
         public void RegisterComponentSyncAPI(IService service)
         {
             service["serverSync.registerComponentDefinition"] =

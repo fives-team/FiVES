@@ -9,8 +9,15 @@ using System.Text;
 
 namespace ServerSyncPlugin
 {
+    /// <summary>
+    /// Peforms synchronization of the changes to the ECA model across servers. Uses DoI to only send the relevant
+    /// updates.
+    /// </summary>
     class WorldSync
     {
+        /// <summary>
+        /// Creates a WorldSync object.
+        /// </summary>
         public WorldSync()
         {
             RegisterWorldSyncAPI(ServerSync.LocalServer.Service);
@@ -19,6 +26,10 @@ namespace ServerSyncPlugin
             PerformInitialSync();
         }
 
+        /// <summary>
+        /// Registers the world sync API in a given service.
+        /// </summary>
+        /// <param name="service">A given service.</param>
         public void RegisterWorldSyncAPI(IService service)
         {
             service["serverSync.addEntity"] = (Action<Connection, Guid, EntitySyncInfo>)HandleRemoteAddedEntity;

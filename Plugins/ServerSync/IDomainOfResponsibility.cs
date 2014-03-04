@@ -6,10 +6,16 @@ namespace ServerSyncPlugin
 {
     public interface IDomainOfResponsibility : ISerializable
     {
-        // Checks if this DoR includes a given entity.
+        /// <summary>
+        /// Checks if this DoR includes a given entity.
+        /// </summary>
+        /// <param name="entity">A given entity.</param>
+        /// <returns>True if the DoR contains a given entity, false otherwise.</returns>
         bool IsResponsibleFor(Entity entity);
 
-        // Triggered when this DoR changes.
+        /// <summary>
+        /// Triggered when this DoR changes.
+        /// </summary>
         event EventHandler Changed;
     }
 }

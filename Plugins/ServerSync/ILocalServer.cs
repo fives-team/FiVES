@@ -3,22 +3,39 @@ using System;
 
 namespace ServerSyncPlugin
 {
+    /// <summary>
+    /// Represents a local server.
+    /// </summary>
     public interface ILocalServer
     {
-        // KIARA service on the local service.
+        /// <summary>
+        /// KIARA service on the local service.
+        /// </summary>
         IServiceImpl Service { get; }
 
-        // Local domain-of-reponsibility.
+        /// <summary>
+        /// Local domain-of-reponsibility.
+        /// </summary>
         IDomainOfResponsibility DoR { get; set; }
 
-        // Local domain-of-interest.
+        /// <summary>
+        /// Local domain-of-interest.
+        /// </summary>
         IDomainOfInterest DoI { get; set; }
 
-        // Local SyncID.
+        /// <summary>
+        /// Local SyncID.
+        /// </summary>
         Guid SyncID { get; }
 
-        // Events which are triggered when the local DoI or DoR has changed.
+        /// <summary>
+        /// Triggered when the local DoI has changed.
+        /// </summary>
         event EventHandler DoIChanged;
+
+        /// <summary>
+        /// Triggered when the local DoR has changed.
+        /// </summary>
         event EventHandler DoRChanged;
     }
 }

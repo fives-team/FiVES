@@ -8,6 +8,11 @@ namespace ServerSyncPlugin
 {
     class ComponentDef
     {
+        /// <summary>
+        /// Converts the ReadOnlyComponentDefinition object to the ComponentDef object.
+        /// </summary>
+        /// <param name="originalDefinition">The ReadOnlyComponentDefinition object.</param>
+        /// <returns>The converted ComponentDef object.</returns>
         public static explicit operator ComponentDef(ReadOnlyComponentDefinition originalDefinition)
         {
             var componentDef = new ComponentDef();
@@ -25,6 +30,11 @@ namespace ServerSyncPlugin
             return componentDef;
         }
 
+        /// <summary>
+        /// Converts the ComponentDef object to the ComponentDefinition object.
+        /// </summary>
+        /// <param name="componentDef">The ComponentDef object.</param>
+        /// <returns>The converted ComponentDefinition object.</returns>
         public static explicit operator ComponentDefinition(ComponentDef componentDef)
         {
             ComponentDefinition newComponent = new ComponentDefinition(componentDef.Name, componentDef.Guid);
