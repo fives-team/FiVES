@@ -9,7 +9,7 @@ namespace RenderablePlugin
     {
         RenderablePluginInitializer plugin = new RenderablePluginInitializer();
 
-        ComponentRegistry globalComponentRegistry = ComponentRegistry.Instance;
+        IComponentRegistry globalComponentRegistry = ComponentRegistry.Instance;
 
         [SetUp()]
         public void Init()

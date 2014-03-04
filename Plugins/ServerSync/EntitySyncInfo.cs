@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace ScalabilityPlugin
+namespace ServerSyncPlugin
 {
     /// <summary>
     /// This is used to store the sync state of the entity including all of its attributes. This class is also used to

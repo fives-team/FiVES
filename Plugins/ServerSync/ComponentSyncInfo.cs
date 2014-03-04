@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace ScalabilityPlugin
+namespace ServerSyncPlugin
 {
     /// <summary>
     /// Contains a collection of attribute sync info for all attributes in one component.

@@ -98,6 +98,29 @@ namespace WebSocketJSON
                 registeredFunctions[funcName] = handler;
         }
 
+        public override bool GetProperty(string name, out object value)
+        {
+            if (name == "JsonSerializerSettings")
+            {
+                value = settings;
+                return true;
+            }
+
+            return base.GetProperty(name, out value);
+        }
+
+        public override bool SetProperty(string name, object value)
+        {
+            if (name == "JsonSerializerSettings" && value is JsonSerializerSettings)
+            {
+                settings = value as JsonSerializerSettings;
+                serializer = JsonSerializer.Create(settings);
+                return true;
+            }
+
+            return base.SetProperty(name, value);
+        }
+
         internal WSJConnection()
         {
             settings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;

@@ -1,18 +1,3 @@
-﻿struct AttributeSyncInfo {
-    i64 LastTimestamp;
-    string LastSyncID;
-    any LastValue;
-}
-
-struct AttributePath {
-    string ComponentName;
-    string AttributeName;
-}
-
-struct EntitySyncInfo {
-    map<AttributePath, ComponentSyncInfo> Components;  // FIXME: there is no map in KIARA, find out what should be here
-}
-
 struct AttributeDef {
     string Guid;
     string Name;
@@ -26,14 +11,24 @@ struct ComponentDef {
     array<AttributeDef> AttributeDefs;
 }
 
-service scalability {
-    // Called by client on the server to initiate communication. Transmits the client's SyncID to server and signals
-    // that all other methods of the interface have been registered and ready to be called.
-    void clientHandshake(string clientSyncID);
+struct AttributeSyncInfo {
+    i64 LastTimestamp;
+    string LastSyncID;
+    any LastValue;
+}
 
-    // Called by the server on the client in response to clientHandshake. Transmits the server's SyncID to server and
-    // signals that all other methods of the interface have been registered and ready to be called.
-    void serverHandshake(string serverSyncID);
+struct ComponentSyncInfo {
+    map<string, AttributeSyncInfo> Attributes;
+}
+
+struct EntitySyncInfo {
+    map<string, ComponentSyncInfo> Components;
+}
+
+service serverSync
+{
+    // Returns this server's sync ID.
+    string getSyncID();
 
     // Called to notify that an entity has been added to the caller's world. Receiving side should create a new entity
     // if it isn't present in the world and use provided initialSyncInfo as a starting sync info. If the entity exists
@@ -60,6 +55,17 @@ service scalability {
     // @param definition Component definition.
     void registerComponentDefinition(ComponentDef definition);
 
-    // Returns the current time on the remote server. Used to estimate time different between servers.
-    DateTime getTime();
+    // Returns serialized version of the remote server's domain-of-responsibility.
+    string getDoR();
+
+    // Returns serialized version of the remote server's domain-of-interest.
+    string getDoI();
+
+    // Called by the remote server to notify on changes to its domain-of-reponsibility, serialized version of which is
+    // passed as a parameter.
+    void updateDoI(string newDoI);
+
+    // Called by the remote server to notify on changes to its domain-of-interest, serialized version of which is
+    // passed as a parameter.
+    void updateDoR(string newDoR);
 }

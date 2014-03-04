@@ -1,11 +1,11 @@
 {
-  "info": "ScalabilitySyncServer",
-  "idlURL": "syncServer.kiara",
+  "info": "ServerSyncServer",
+  "idlURL": "serverSync.kiara",
   "servers": [{
     "services": "*",
     "protocol": {
       "name": "websocket-json",
-      "port": 4374
+      "port": 43745,
     }
   }]
 }

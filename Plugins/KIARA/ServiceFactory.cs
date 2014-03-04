@@ -9,14 +9,14 @@ namespace KIARAPlugin
         /// </summary>
         /// <returns>Created service.</returns>
         /// <param name="configURI">Configuration URI.</param>
-        public static ServiceImpl Create(string configURI)
+        public static IServiceImpl Create(string configURI)
         {
             ServiceImpl service = new ServiceImpl(Context.DefaultContext);
             Context.DefaultContext.StartServer(configURI, service.HandleNewClient);
             return service;
         }
 
-        public static ServiceWrapper Discover(string configURI)
+        public static IServiceWrapper Discover(string configURI)
         {
             ServiceWrapper service = new ServiceWrapper(Context.DefaultContext);
             Context.DefaultContext.OpenConnection(configURI, service.HandleConnected);
