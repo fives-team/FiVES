@@ -13,8 +13,8 @@ namespace ServerSyncPlugin
             doi = new EmptyDoI();
             syncID = Guid.NewGuid();
 
-            service = ServiceFactory.Create(Tools.ConvertFileNameToURI("serverSyncServer.json"));
-            service.OnNewClient += Tools.ConfigureJsonSerializer;
+            service = ServiceFactory.Create(ServerSyncTools.ConvertFileNameToURI("serverSyncServer.json"));
+            service.OnNewClient += ServerSyncTools.ConfigureJsonSerializer;
 
             RegisterSyncIDAPI(service);
         }

@@ -63,7 +63,7 @@
     <Compile Include="ComponentSyncInfo.cs" />
     <Compile Include="ComponentSyncTest.cs" />
     <Compile Include="WorldSyncTest.cs" />
-    <Compile Include="ToolsTest.cs" />
+    <Compile Include="ServerSyncToolsTest.cs" />
     <Compile Include="StringSerializationImplTest.cs" />
     <Compile Include="IStringSerialization.cs" />
     <Compile Include="DomainSyncTest.cs" />
@@ -71,7 +71,7 @@
     <Compile Include="EntitySyncInfo.cs" />
     <Compile Include="AttributeSyncInfoTest.cs" />
     <Compile Include="StringSerializationImpl.cs" />
-    <Compile Include="Tools.cs" />
+    <Compile Include="ServerSyncTools.cs" />
     <Compile Include="WorldSync.cs" />
     <Compile Include="EmptyDoI.cs" />
     <Compile Include="EmptyDoR.cs" />

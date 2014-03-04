@@ -8,7 +8,10 @@ using System.Text;
 
 namespace ServerSyncPlugin
 {
-    static class Tools
+    /// <summary>
+    /// General tool functions used in the ServerSync plugin.
+    /// </summary>
+    static class ServerSyncTools
     {
         /// <summary>
         /// Converts a file name to the URI that point to the file as if it was located in the same directory as the
@@ -23,6 +26,11 @@ namespace ServerSyncPlugin
             return "file://" + configFullPath;
         }
 
+        /// <summary>
+        /// Configures a JsonSerializer used in a given connection to include types names when the declared type of an
+        /// object is different from the actual type.
+        /// </summary>
+        /// <param name="connection">A given connection.</param>
         public static void ConfigureJsonSerializer(Connection connection)
         {
             object settingsObj;

@@ -6,7 +6,7 @@ using NUnit.Framework;
 namespace ServerSyncPlugin
 {
     [TestFixture]
-    public class ToolsTest
+    public class ServerSyncToolsTest
     {
         [Test]
         public void ShouldSetTypeNameHandlingToAutoWhenConfiguringJsonSerializer()
@@ -15,7 +15,7 @@ namespace ServerSyncPlugin
             object settings = new JsonSerializerSettings();
             conn.Setup(c => c.GetProperty("JsonSerializerSettings", out settings)).Returns(true);
 
-            Tools.ConfigureJsonSerializer(conn.Object);
+            ServerSyncTools.ConfigureJsonSerializer(conn.Object);
 
             conn.Verify(c => c.SetProperty("JsonSerializerSettings",
                 It.Is<JsonSerializerSettings>(jss => jss.TypeNameHandling == TypeNameHandling.Auto)));
