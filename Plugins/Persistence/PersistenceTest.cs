@@ -12,7 +12,7 @@ namespace PersistencePlugin
     [TestFixture()]
     public class PersistenceTest
     {
-        ComponentRegistry componentRegistry;
+        IComponentRegistry componentRegistry;
         EntityCollection entityRegistry;
         Configuration cfg;
         //NHibernate.ISessionFactory sessionFactory;

@@ -55,6 +55,9 @@
     <Compile Include="ContextFactory.cs" />
     <Compile Include="ContextFactoryTest.cs" />
     <Compile Include="ContextTest.cs" />
+    <Compile Include="IServiceWrapper.cs" />
+    <Compile Include="IServiceImpl.cs" />
+    <Compile Include="IService.cs" />
     <Compile Include="Error.cs" />
     <Compile Include="Events\ClosedEventArgs.cs" />
     <Compile Include="FuncCallBase.cs" />

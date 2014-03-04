@@ -9,7 +9,7 @@ namespace ScriptingPlugin
     {
         ScriptingPluginInitializer plugin = new ScriptingPluginInitializer();
 
-        ComponentRegistry globalComponentRegistry = ComponentRegistry.Instance;
+        IComponentRegistry globalComponentRegistry = ComponentRegistry.Instance;
 
         [SetUp()]
         public void Init()

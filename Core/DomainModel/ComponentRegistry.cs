@@ -20,7 +20,7 @@ namespace FIVES
     /// </summary>
     public sealed class ComponentRegistry : IComponentRegistry
     {
-        public static ComponentRegistry Instance = new ComponentRegistry();
+        public static IComponentRegistry Instance = new ComponentRegistry();
 
         /// <summary>
         /// A collection of registered components.

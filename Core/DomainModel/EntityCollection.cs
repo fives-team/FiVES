@@ -101,6 +101,16 @@ namespace FIVES
             return entities[guid];
         }
 
+        /// <summary>
+        /// Returns true of an entity with a given guid is present in the collection.
+        /// </summary>
+        /// <param name="guid">Guid of the searched entity.</param>
+        /// <returns>True of an entity with a given guid is present in the collection, false otherwise.</returns>
+        public bool ContainsEntity(Guid guid)
+        {
+            return entities.ContainsKey(guid);
+        }
+
         // Needed by persistence plugin.
         internal EntityCollection(ICollection<Entity> entityCollection)
         {

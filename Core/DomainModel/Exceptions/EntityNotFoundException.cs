@@ -8,7 +8,7 @@ namespace FIVES
     /// <summary>
     /// Raised when entity is not found in the Entitycollection.
     /// </summary>
-    class EntityNotFoundException : Exception
+    public class EntityNotFoundException : Exception
     {
         public EntityNotFoundException() : base() {}
         public EntityNotFoundException(string message) : base(message) { }

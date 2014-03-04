@@ -32,7 +32,7 @@ namespace PersistencePlugin
             }
         }
 
-        private ComponentRegistry Registry = ComponentRegistry.Instance;
+        private IComponentRegistry Registry = ComponentRegistry.Instance;
         private IDictionary<string, ReadOnlyComponentDefinition> OwnerRegisteredComponents { get; set; }
     }
 }

@@ -11,7 +11,7 @@ namespace FIVES
         private PluginManager pm;
         private string pathToPlugins = "TestPlugins/";
 
-        private ComponentRegistry globalComponentRegistry = ComponentRegistry.Instance;
+        private IComponentRegistry globalComponentRegistry = ComponentRegistry.Instance;
         private World globalWorld = World.Instance;
 
         [SetUp()]
@@ -50,7 +50,7 @@ namespace FIVES
         [Test()]
         public void ShouldUseWhiteList()
         {
-            pm.LoadPluginsFrom(pathToPlugins, new string[] { "Plugin1" }, null);
+            pm.LoadPluginsFrom(pathToPlugins, new string[] { "ValidPlugin1" }, null);
             Assert.IsFalse(pm.IsPathLoaded(pathToPlugins + "ValidPlugin2.dll"));
             Assert.IsTrue(pm.IsPathLoaded(pathToPlugins + "ValidPlugin1.dll"));
             Assert.IsTrue(pm.IsPluginLoaded("ValidPlugin1"));
@@ -59,7 +59,7 @@ namespace FIVES
         [Test()]
         public void ShouldUseBlackList()
         {
-            pm.LoadPluginsFrom(pathToPlugins, null, new string[] { "Plugin2" });
+            pm.LoadPluginsFrom(pathToPlugins, null, new string[] { "ValidPlugin2" });
             Assert.IsFalse(pm.IsPathLoaded(pathToPlugins + "ValidPlugin2.dll"));
             Assert.IsTrue(pm.IsPathLoaded(pathToPlugins + "ValidPlugin1.dll"));
             Assert.IsTrue(pm.IsPluginLoaded("ValidPlugin1"));

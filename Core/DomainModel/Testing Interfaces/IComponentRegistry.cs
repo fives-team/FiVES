@@ -13,5 +13,6 @@ namespace FIVES
         ReadOnlyCollection<ReadOnlyComponentDefinition> RegisteredComponents { get; }
         void Register(ComponentDefinition definition);
         ReadOnlyComponentDefinition FindComponentDefinition(string componentName);
+        event EventHandler<RegisteredComponentEventArgs> RegisteredComponent;
     }
 }

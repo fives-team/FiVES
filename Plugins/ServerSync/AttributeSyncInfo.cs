@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace ScalabilityPlugin
+namespace ServerSyncPlugin
 {
     // Optimization: an object of this class is stored per attribute in the World. Therefore, we should carefully
     // choose types to preserve memory. Firstly, there is no need to use 64-bit long for LastTimestamp - a smaller
@@ -32,7 +32,7 @@ namespace ScalabilityPlugin
         /// <summary>
         /// Timestamp at which the value was assigned. This is used to choose one update over another.
         /// </summary>
-        public long LastTimestamp { get; private set; }
+        public long LastTimestamp { get; internal set; }
 
         /// <summary>
         /// SyncID of the sync node which assigned this value. This is used to break ties when timestamps are the same.

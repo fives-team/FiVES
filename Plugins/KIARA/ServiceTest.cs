@@ -15,7 +15,7 @@ namespace KIARAPlugin
         {
             Context context = new Context();
             TestService service = new TestService(context);
-            Assert.AreEqual(context, service.context);
+            Assert.AreEqual(context, service.Context);
         }
     }
 }
