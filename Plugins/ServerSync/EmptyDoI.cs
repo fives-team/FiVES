@@ -21,9 +21,11 @@ namespace ServerSyncPlugin
             return false;
         }
 
-#pragma warning disable 67
-        public event EventHandler Changed;
-#pragma warning restore 67
+        public event EventHandler Changed
+        {
+            add { }
+            remove { }
+        }
 
         #region ISerializable interface
 
