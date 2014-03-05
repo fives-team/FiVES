@@ -77,6 +77,7 @@
     <Compile Include="ReadOnlyComponentDefinitionTest.cs" />
     <Compile Include="Events\RegisteredComponentEventArgs.cs" />
     <Compile Include="ServiceBus\AccumulatedAttributeTransform.cs" />
+    <Compile Include="ServiceBus\AttributeChangeEventArgs.cs" />
     <Compile Include="ServiceBus\EntityAttributeTransformationEventArgs.cs" />
     <Compile Include="ServiceBus\IServiceBus.cs" />
     <Compile Include="ServiceBus\IServiceGateway.cs" />
