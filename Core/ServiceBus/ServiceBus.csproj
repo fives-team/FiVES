@@ -41,7 +41,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AccumulatedAttributeTransform.cs" />
-    <Compile Include="AttributeTransform.cs" />
     <Compile Include="EntityAttributeTransformationEventArgs.cs" />
     <Compile Include="IConsumerPlugin.cs" />
     <Compile Include="IProducerPlugin.cs" />
