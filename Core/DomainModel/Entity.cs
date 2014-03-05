@@ -18,6 +18,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
+using FIVESServiceBus;
 
 namespace FIVES
 {
@@ -66,6 +67,12 @@ namespace FIVES
 
                 return components[componentName];
             }
+        }
+
+        public void ProposeAttributeChange(string componentName, string attributeName, object value)
+        {
+            var changeEvent = new ProposeAttributeChangeEventArgs(this, componentName, attributeName, value);
+            ServiceBus.ServiceGateway.PublishTransformation(changeEvent);
         }
 
         /// <summary>
