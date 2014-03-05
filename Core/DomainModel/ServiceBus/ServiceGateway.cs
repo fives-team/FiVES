@@ -8,11 +8,11 @@ namespace FIVESServiceBus
 {
     public class ServiceGateway : IServiceGateway
     {
-        public event EventHandler<ChangedAttributeEventArgs> PublishedTransformation;
+        public event EventHandler<AttributeChangeEventArgs> PublishedTransformation;
 
         public event EventHandler<AccumulatedAttributeTransform> ReceivedResult;
 
-        public void PublishTransformation(ChangedAttributeEventArgs transform)
+        public void PublishTransformation(AttributeChangeEventArgs transform)
         {
             if (PublishedTransformation != null)
                 PublishedTransformation(this, transform);

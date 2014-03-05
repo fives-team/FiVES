@@ -36,7 +36,7 @@ namespace FIVESServiceBus
         public void Initialize()
         {
             ReadConfig();
-            ServiceGateway.PublishedTransformation += new EventHandler<ChangedAttributeEventArgs>(HandleTransformation);
+            ServiceGateway.PublishedTransformation += new EventHandler<AttributeChangeEventArgs>(HandleTransformation);
         }
 
         private void ReadConfig()
@@ -78,16 +78,16 @@ namespace FIVESServiceBus
             topicSubscriptions[topicName].Add(head);
         }
 
-        private void HandleTransformation(object sender, ChangedAttributeEventArgs transform)
+        private void HandleTransformation(object sender, AttributeChangeEventArgs transform)
         {
             Dictionary<string, Dictionary<string, object>> initialAccumulation = new Dictionary<string, Dictionary<string, object>>();
             Dictionary<string, object> initialAttributeUpdates = new Dictionary<string, object>();
-            initialAttributeUpdates.Add(transform.AttributeName, transform.NewValue);
-            initialAccumulation.Add(transform.Component.Name, initialAttributeUpdates);
+            initialAttributeUpdates.Add(transform.AttributeName, transform.Value);
+            initialAccumulation.Add(transform.ComponentName, initialAttributeUpdates);
 
             AccumulatedAttributeTransform initialTransform = new AccumulatedAttributeTransform(transform.Entity, initialAccumulation);
 
-            string topic = transform.Component.Name + "." + transform.AttributeName;
+            string topic = transform.ComponentName + "." + transform.AttributeName;
             if (topicSubscriptions.ContainsKey(topic) && topicSubscriptions[topic].Count > 0)
             {
                 InvokeTopicHandlers(topic, initialTransform);
