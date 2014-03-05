@@ -31,6 +31,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
+    <Reference Include="System.configuration" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
@@ -39,8 +40,31 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Class1.cs" />
+    <Compile Include="AccumulatedAttributeTransform.cs" />
+    <Compile Include="AttributeTransform.cs" />
+    <Compile Include="EntityAttributeTransformationEventArgs.cs" />
+    <Compile Include="IConsumerPlugin.cs" />
+    <Compile Include="IProducerPlugin.cs" />
+    <Compile Include="IServiceBus.cs" />
+    <Compile Include="IServiceGateway.cs" />
+    <Compile Include="IServiceRegistry.cs" />
+    <Compile Include="ITransformerPlugin.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ServiceBus.cs" />
+    <Compile Include="ServiceBusImplementation.cs" />
+    <Compile Include="ServiceGateway.cs" />
+    <Compile Include="ServiceRegistry.cs" />
+    <Compile Include="TransformationAction.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\DomainModel\DomainModel.csproj">
+      <Project>{79ef699d-6a88-4054-af04-f22486db47fa}</Project>
+      <Name>DomainModel</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\PluginManager\PluginManager.csproj">
+      <Project>{db1099a1-b7fe-474f-a03a-41687d6c5c76}</Project>
+      <Name>PluginManager</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
