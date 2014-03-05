@@ -19,6 +19,7 @@ using NLog;
 using System.IO;
 using System.Text;
 using System.Collections.Generic;
+using FIVESServiceBus;
 
 namespace FIVES
 {
@@ -54,6 +55,8 @@ namespace FIVES
             PluginManager.Instance.OnAnyPluginInitialized += HandlePluginInitialized;
 
             Controller.NotifyPluginsLoaded();
+
+            ServiceBus.Instance = new ServiceBusImplementation();
 
             if (!Controller.ControlTaken)
             {
