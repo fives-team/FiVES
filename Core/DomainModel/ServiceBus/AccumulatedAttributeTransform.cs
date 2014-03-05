@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using FIVES;
 
-namespace ServiceBusPlugin
+namespace FIVESServiceBus
 {
     public class AccumulatedAttributeTransform : EventArgs
     {

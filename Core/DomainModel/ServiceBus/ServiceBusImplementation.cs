@@ -7,7 +7,7 @@ using System.Text;
 using System.Threading;
 using FIVES;
 
-namespace ServiceBusPlugin
+namespace FIVESServiceBus
 {
     public class ServiceBusImplementation : IServiceBus
     {
