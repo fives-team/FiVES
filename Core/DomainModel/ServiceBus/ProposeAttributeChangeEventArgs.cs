@@ -6,10 +6,10 @@ using FIVES;
 
 namespace FIVESServiceBus
 {
-    public class AttributeChangeEventArgs : EventArgs
+    public class ProposeAttributeChangeEventArgs : EventArgs
     {
 
-        public AttributeChangeEventArgs(Entity entity, string componentName, string attributeName, object value)
+        public ProposeAttributeChangeEventArgs(Entity entity, string componentName, string attributeName, object value)
         {
             this.entity = entity;
             this.componentName = componentName;

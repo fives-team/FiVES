@@ -36,7 +36,7 @@ namespace FIVESServiceBus
         public void Initialize()
         {
             ReadConfig();
-            ServiceGateway.PublishedTransformation += new EventHandler<AttributeChangeEventArgs>(HandleTransformation);
+            ServiceGateway.PublishedTransformation += new EventHandler<ProposeAttributeChangeEventArgs>(HandleTransformation);
         }
 
         private void ReadConfig()
@@ -78,7 +78,7 @@ namespace FIVESServiceBus
             topicSubscriptions[topicName].Add(head);
         }
 
-        private void HandleTransformation(object sender, AttributeChangeEventArgs transform)
+        private void HandleTransformation(object sender, ProposeAttributeChangeEventArgs transform)
         {
             Dictionary<string, Dictionary<string, object>> initialAccumulation = new Dictionary<string, Dictionary<string, object>>();
             Dictionary<string, object> initialAttributeUpdates = new Dictionary<string, object>();

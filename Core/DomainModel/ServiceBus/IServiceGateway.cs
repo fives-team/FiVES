@@ -8,10 +8,10 @@ namespace FIVESServiceBus
 {
     public interface IServiceGateway
     {
-        event EventHandler<AttributeChangeEventArgs> PublishedTransformation;
+        event EventHandler<ProposeAttributeChangeEventArgs> PublishedTransformation;
         event EventHandler<AccumulatedAttributeTransform> ReceivedResult;
 
-        void PublishTransformation(AttributeChangeEventArgs transform);
+        void PublishTransformation(ProposeAttributeChangeEventArgs transform);
         void PublishResult(AccumulatedAttributeTransform transformResult);
     }
 }
