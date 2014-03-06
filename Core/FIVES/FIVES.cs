@@ -39,6 +39,8 @@ namespace FIVES
                 logger.Error("Configuration is missing or corrupt.");
             }
 
+            ServiceBus.Instance = new ServiceBusImplementation();
+
             logger.Info("Loading plugins");
             if (pluginDir != null && Directory.Exists(pluginDir)) {
                 PluginManager.Instance.LoadPluginsFrom(pluginDir, pluginWhiteList, pluginBlackList);
@@ -56,7 +58,7 @@ namespace FIVES
 
             Controller.NotifyPluginsLoaded();
 
-            ServiceBus.Instance = new ServiceBusImplementation();
+            ServiceBus.Instance.Initialize();
 
             if (!Controller.ControlTaken)
             {
