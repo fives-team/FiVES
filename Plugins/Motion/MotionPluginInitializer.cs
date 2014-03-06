@@ -131,8 +131,13 @@ namespace MotionPlugin
         private void Update(string guid, Vector velocity, AxisAngle rotVelocity, int timestamp)
         {
             var entity = World.Instance.FindEntity(guid);
-            entity["motion"]["velocity"] = velocity;
-            entity["motion"]["rotVelocity"] = rotVelocity;
+            entity.ProposeAttributeChange("motion",
+                                          "velocity",
+                                          velocity);
+
+            entity.ProposeAttributeChange("motion",
+                                          "rotVelocity",
+                                          rotVelocity);
 
             // We currently ignore timestamp, but may it in the future to implement dead reckoning.
         }
@@ -228,11 +233,14 @@ namespace MotionPlugin
         internal void UpdateMotion(Entity updatedEntity) {
             Vector localVelocity = GetVelocityInWorldSpace(updatedEntity);
             Vector oldPosition = (Vector)updatedEntity["location"]["position"];
-            updatedEntity["location"]["position"] = new Vector(
+            Vector newPosition = new Vector(
                 oldPosition.x + localVelocity.x,
                 oldPosition.y + localVelocity.y,
                 oldPosition.z + localVelocity.z
             );
+            updatedEntity.ProposeAttributeChange("location",
+                                                 "position",
+                                                 newPosition);
         }
 
         /// <summary>
@@ -248,7 +256,9 @@ namespace MotionPlugin
             Quat spinAsQuaternion = FIVES.Math.QuaternionFromAxisAngle(rotVelocity.axis, rotVelocity.angle);
 
             Quat newRotationAsQuaternion = FIVES.Math.MultiplyQuaternions(spinAsQuaternion, entityRotation);
-            updatedEntity["location"]["orientation"] = newRotationAsQuaternion;
+            updatedEntity.ProposeAttributeChange("location",
+                                                 "orientation",
+                                                 newRotationAsQuaternion);
         }
 
         /// <summary>

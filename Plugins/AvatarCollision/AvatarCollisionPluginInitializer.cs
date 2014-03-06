@@ -53,6 +53,7 @@ namespace AvatarCollisionPlugin
             RegisterComponents();
             RegisterToEvents();
 
+            ServiceBus.ServiceRegistry.RegisterService("AvatarCollision", Transform);
             PluginManager.Instance.AddPluginLoadedHandler("ClientManager", RegisterService);
         }
 
@@ -80,13 +81,6 @@ namespace AvatarCollisionPlugin
         internal void RegisterToEvents()
         {
             World.Instance.AddedEntity += new EventHandler<EntityEventArgs>(HandleEntityAdded);
-            foreach (Entity entity in World.Instance)
-            {
-                if(entity.ContainsComponent("avatar"))
-                {
-                    entity.ChangedAttribute += new EventHandler<ChangedAttributeEventArgs>(HandleAttributeChanged);
-                }
-            }
         }
 
         /// <summary>
@@ -100,9 +94,10 @@ namespace AvatarCollisionPlugin
         {
             if (e.Entity.ContainsComponent("avatar"))
             {
-                e.Entity["avatarCollision"]["groundLevel"] =
-                    ((Vector)e.Entity["location"]["position"]).y; // Initialise entities without gravity
-                e.Entity.ChangedAttribute += new EventHandler<ChangedAttributeEventArgs>(HandleAttributeChanged);
+                // Initialise entities without gravity
+                e.Entity.ProposeAttributeChange("avatarCollision",
+                                                "groundLevel",
+                                                ((Vector)e.Entity["location"]["position"]).y);
             }
         }
 
