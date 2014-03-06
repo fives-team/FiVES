@@ -19,6 +19,7 @@ using System.Text;
 using System.Threading.Tasks;
 using ClientManagerPlugin;
 using FIVES;
+using FIVESServiceBus;
 
 namespace AvatarCollisionPlugin
 {
@@ -109,25 +110,22 @@ namespace AvatarCollisionPlugin
         /// Checks if position of entity has changed and sets y attribute to ground level if y and ground level
         /// are different
         /// </summary>
-        /// <param name="sender">Entity that changed position</param>
-        /// <param name="e">The Attribute changed Event Args</param>
-        private void HandleAttributeChanged(Object sender, ChangedAttributeEventArgs e)
+        /// <param name="accumulatedTransforms">Accumulated transformation that happened in the service chain</param>
+        /// <returns>Accumulated changes with adaptions added by AvatarCollison</returns>
+        private AccumulatedAttributeTransform Transform(AccumulatedAttributeTransform accumulatedTransforms)
         {
-            Entity senderEntity = (Entity)sender;
-            if (senderEntity.ContainsComponent("avatar") &&  e.Component.Name == "location")
-            {
-                Entity entity = (Entity)sender;
-                Vector entityPosition = (Vector)entity["location"]["position"];
+            Vector entityPosition =
+                accumulatedTransforms.AccumulatedTransformations.ContainsKey("location")
+                && accumulatedTransforms.AccumulatedTransformations["location"].ContainsKey("position") ?
+                (Vector)accumulatedTransforms.AccumulatedTransformations["location"]["position"]
+                : (Vector)accumulatedTransforms.Entity["location"]["position"];
 
-                if (entityPosition.y != (float)entity["avatarCollision"]["groundLevel"])
-                {
-                    Vector correctedPosition = new Vector(entityPosition.x,
-                                                            (float)entity["avatarCollision"]["groundLevel"],
-                                                            entityPosition.z);
+            Vector adaptedPosition = new Vector (entityPosition.x,
+                (float)accumulatedTransforms.Entity["avatarCollision"]["groundLevel"],
+                entityPosition.z);
 
-                    entity["location"]["position"] = correctedPosition;
-                }
-            }
+            accumulatedTransforms.AddAttributeTransformation("location", "position", adaptedPosition);
+            return accumulatedTransforms;
         }
 
         /// <summary>
