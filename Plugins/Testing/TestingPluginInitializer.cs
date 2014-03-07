@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ServiceModel;
 using System;
+using System.Net.Sockets;
 
 namespace TestingPlugin
 {
@@ -48,7 +49,11 @@ namespace TestingPlugin
             }
             catch (EndpointNotFoundException)
             {
-                // No endpoint means that we are not being run within a test. This is normal :-)
+                // No endpoint means that we are not being run within a test on Windows. This is normal :-)
+            }
+            catch (SocketException)
+            {
+                // Socket exception means that we are not being run within a test on Linux. This is normal :-)
             }
             catch (TimeoutException)
             {
