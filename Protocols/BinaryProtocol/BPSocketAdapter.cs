@@ -42,7 +42,7 @@ namespace BinaryProtocol
 
         public event EventHandler Closed;
 
-        public event EventHandler<WebSocketJSON.ErrorEventArgs> Error;
+        public event EventHandler<WebSocketJSON.SocketErrorEventArgs> Error;
 
         public event EventHandler<MessageEventArgs> Message;
 
@@ -121,7 +121,7 @@ namespace BinaryProtocol
         private void HandleError(Exception exception)
         {
             if (Error != null)
-                Error(this, new WebSocketJSON.ErrorEventArgs(exception));
+                Error(this, new SocketErrorEventArgs(exception));
         }
 
         /// <summary>

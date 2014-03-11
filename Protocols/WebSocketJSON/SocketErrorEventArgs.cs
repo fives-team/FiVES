@@ -5,9 +5,9 @@ using System.Text;
 
 namespace WebSocketJSON
 {
-    public class ErrorEventArgs : EventArgs
+    public class SocketErrorEventArgs : EventArgs
     {
-        public ErrorEventArgs(Exception exception)
+        public SocketErrorEventArgs(Exception exception)
         {
             Exception = exception;
         }

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using WebSocket4Net;
+using SuperSocket.ClientEngine;
 
 namespace WebSocketJSON
 {
@@ -11,14 +12,14 @@ namespace WebSocketJSON
         public WebSocketSocketAdapter(string uri)
             : base(uri)
         {
-            MessageReceived += HandleMessageReceived;
-            Error += HandleError;
+            base.MessageReceived += HandleMessageReceived;
+            base.Error += HandleError;
         }
 
         private void HandleError(object sender, ErrorEventArgs e)
         {
             if (Error != null)
-                Error(sender, new ErrorEventArgs(e.Exception));
+                Error(sender, new SocketErrorEventArgs(e.Exception));
         }
 
         void HandleMessageReceived(object sender, MessageReceivedEventArgs e)
@@ -28,7 +29,7 @@ namespace WebSocketJSON
         }
 
         public event EventHandler<MessageEventArgs> Message;
-        public new event EventHandler<ErrorEventArgs> Error;
+        public new event EventHandler<SocketErrorEventArgs> Error;
 
         public bool IsConnected
         {

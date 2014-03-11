@@ -24,7 +24,7 @@ namespace WebSocketJSON
         /// <summary>
         /// Raised when an error is occured in the connection.
         /// </summary>
-        event EventHandler<ErrorEventArgs> Error;
+        event EventHandler<SocketErrorEventArgs> Error;
 
         /// <summary>
         /// Raised when a message is received by the connection.

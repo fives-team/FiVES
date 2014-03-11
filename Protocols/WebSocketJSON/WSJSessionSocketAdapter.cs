@@ -54,7 +54,7 @@ namespace WebSocketJSON
             remove { throw new NotImplementedException(); }
         }
 
-        event EventHandler<ErrorEventArgs> ISocket.Error
+        event EventHandler<SocketErrorEventArgs> ISocket.Error
         {
             add { throw new NotImplementedException(); }
             remove { throw new NotImplementedException(); }
