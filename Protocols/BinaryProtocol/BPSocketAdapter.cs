@@ -34,6 +34,7 @@ namespace BinaryProtocol
         /// <param name="connectedClient"></param>
         public BPSocketAdapter(TcpClient connectedClient)
         {
+            isOpened = 1;
             client = connectedClient;
             SetUpBufferAndStartReading();
         }
@@ -72,7 +73,6 @@ namespace BinaryProtocol
                     Buffer.BlockCopy(messageBytes, 0, bytes, lenBytes.Length, messageBytes.Length);
 
                     stream.BeginWrite(bytes, 0, bytes.Length, HandleWriteFinished, null);
-                    stream.BeginWrite(bytes, 0, bytes.Length, (ar) => stream.EndWrite(ar), null);
                 }
                 catch (IOException e)
                 {
@@ -144,6 +144,8 @@ namespace BinaryProtocol
         private void HandleConnected(IAsyncResult ar)
         {
             client.EndConnect(ar);
+
+            isOpened = 1;
 
             SetUpBufferAndStartReading();
 
