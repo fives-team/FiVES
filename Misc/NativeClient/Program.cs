@@ -25,8 +25,8 @@ namespace NativeClient
             clientDriver.StartSimulation();
 
             // Wait for 'q' key to be pressed.
-            Console.WriteLine("The client is up and running. Press 'q' to stop it...");
-            while (Console.ReadKey().KeyChar != 'q');
+            Console.WriteLine("The client is up and running. Press Enter to stop it...");
+            Console.In.ReadLine();
             Environment.Exit(0);
         }
 
