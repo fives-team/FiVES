@@ -71,6 +71,7 @@ namespace BinaryProtocol
                     Buffer.BlockCopy(lenBytes, 0, bytes, 0, lenBytes.Length);
                     Buffer.BlockCopy(messageBytes, 0, bytes, lenBytes.Length, messageBytes.Length);
 
+                    stream.BeginWrite(bytes, 0, bytes.Length, HandleWriteFinished, null);
                     stream.BeginWrite(bytes, 0, bytes.Length, (ar) => stream.EndWrite(ar), null);
                 }
                 catch (IOException e)
@@ -85,6 +86,18 @@ namespace BinaryProtocol
                     HandleError(new IOException(
                         "Failed to send. Socket is not opened yet or have been closed already."));
                 }
+            }
+        }
+
+        void HandleWriteFinished(IAsyncResult ar)
+        {
+            try
+            {
+                stream.EndWrite(ar);
+            }
+            catch (IOException)
+            {
+                // If the socket has closed before the write completed, EndWrite will throw. We just ignore this.
             }
         }
 
