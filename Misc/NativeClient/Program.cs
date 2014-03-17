@@ -11,9 +11,13 @@ namespace NativeClient
 
         public static void Main(string[] args)
         {
+            Logger.Debug("start main logger");
+            Console.WriteLine("start main console");
+
             ConfigureNLog(args);
 
-            var clientDriver = new ClientDriver();
+            int clientId = GetClientId(args);
+            var clientDriver = new ClientDriver(clientId);
 
             Logger.Info("Reading configuration");
 
@@ -28,6 +32,18 @@ namespace NativeClient
             Console.WriteLine("The client is up and running. Press Enter to stop it...");
             Console.In.ReadLine();
             Environment.Exit(0);
+        }
+
+        static int GetClientId(string[] args)
+        {
+            int clientId = -1;
+            foreach (string arg in args)
+            {
+                if (arg.StartsWith("--clientId="))
+                    Int32.TryParse(arg.Substring(11), out clientId);
+            }
+
+            return clientId;
         }
 
         /// <summary>

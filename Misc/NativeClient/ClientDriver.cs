@@ -14,6 +14,11 @@ namespace NativeClient
 {
     public class ClientDriver
     {
+        public ClientDriver(int clientId)
+        {
+            ClientID = clientId;
+        }
+
         /// <summary>
         /// Configures the client driver from a set of name-value pairs. Ingores invalid or missing values.
         /// </summary>
@@ -74,22 +79,27 @@ namespace NativeClient
 
         void HandleConnected(object sender, EventArgs e)
         {
-            logger.Info("Estimating time delay");
-
-            TimeDelayEstimator estimator = new TimeDelayEstimator(communicator);
-            estimator.TimeDelayEstimated += HandleTimeDelayEstimated;
-            estimator.StartEstimating(100);
-        }
-
-        void HandleTimeDelayEstimated (object sender, TimeDelayEventArgs e)
-        {
-            logger.Info("Delay to server is " + e.TimeDelayMs);
-
             logger.Info("Authenticating as a client");
 
             Authenticator authenticator = new Authenticator(communicator);
             authenticator.Authenticated += HandleAuthenticated;
+
+//            logger.Info("Estimating time delay");
+//
+//            TimeDelayEstimator estimator = new TimeDelayEstimator(communicator);
+//            estimator.TimeDelayEstimated += HandleTimeDelayEstimated;
+//            estimator.StartEstimating(100);
         }
+
+//        void HandleTimeDelayEstimated (object sender, TimeDelayEventArgs e)
+//        {
+//            logger.Info("Delay to server is " + e.TimeDelayMs);
+//
+//            logger.Info("Authenticating as a client");
+//
+//            Authenticator authenticator = new Authenticator(communicator);
+//            authenticator.Authenticated += HandleAuthenticated;
+//        }
 
         void HandleAuthenticated(object sender, EventArgs e)
         {
@@ -135,6 +145,7 @@ namespace NativeClient
         void MoveEntity(EntityInfo info)
         {
             info.Position.x = Timestamps.FloatMilliseconds;
+            info.Position.y = (ClientID == -1 ? 0 : ClientID * 10000) + (UpdateID++);
             communicator.Call("location.updatePosition", info.Guid, info.Position, Timestamps.UnixTimestamp);
         }
 
@@ -179,6 +190,9 @@ namespace NativeClient
         bool EnableRotation = true;
         int NumEntitiesToGenerate = 1;
         int ActionDelayMs = 250;
+
+        int ClientID = -1;
+        int UpdateID = 0;
 
         Communicator communicator;
         WorldManager worldManager;

@@ -4,7 +4,7 @@ using System.Reflection;
 
 namespace WebSocketJSON
 {
-    class PrivateSetterResolver : DefaultContractResolver
+    public class PrivateSetterResolver : DefaultContractResolver
     {
         public PrivateSetterResolver()
             : base(true)

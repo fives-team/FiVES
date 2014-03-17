@@ -3,11 +3,18 @@ using System.Collections.Generic;
 using NLog;
 using Newtonsoft.Json.Linq;
 using System.Threading;
+using Newtonsoft.Json;
+using WebSocketJSON;
 
 namespace NativeClient
 {
     class WorldManager
     {
+        static WorldManager()
+        {
+            serializer.ContractResolver = new PrivateSetterResolver();
+        }
+
         /// <summary>
         /// Initializes a new instance of the <see cref="NativeClient.WorldManager"/> class.
         /// </summary>
@@ -118,11 +125,15 @@ namespace NativeClient
         private void HandleUpdate(CallRequest request)
         {
             List<UpdateInfo> receivedUpdates = request.Args[0].ToObject<List<UpdateInfo>>();
-            foreach(UpdateInfo update in receivedUpdates) {
-                string entityGuid = update.entityGuid;
-                string attribute = update.attributeName;
-                string component = update.componentName;
-                logger.Info("{0} updated attribute {1} of component {2}", entityGuid, attribute, component);
+            foreach(UpdateInfo update in receivedUpdates)
+            {
+                if (update.componentName == "location" && update.attributeName == "position")
+                {
+                    Vector newPos = (update.value as JToken).ToObject<Vector>(serializer);
+                    double now = Timestamps.FloatMilliseconds;
+                    double delayMs = now - newPos.x;
+                    logger.Info("UpdateDelay=" + delayMs + " ID=" + Math.Round(newPos.y) + " " + newPos.x + "-" + now);
+               }
             }
         }
 
@@ -148,6 +159,7 @@ namespace NativeClient
 
         static Random random = new Random();
         static Logger logger = LogManager.GetCurrentClassLogger();
+        static JsonSerializer serializer = new JsonSerializer();
     }
 }
 
