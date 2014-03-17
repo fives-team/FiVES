@@ -26,7 +26,10 @@ namespace NativeClient
         {
             get
             {
-                TimeSpan span = (DateTime.Now - DateTime.Today);
+                DateTime now = DateTime.Now;
+                DateTime hour = new DateTime(now.Year, now.Month, now.Day, now.Hour,
+                                             (int)(Math.Truncate((double)now.Minute / 10) * 10), 0);
+                TimeSpan span = (DateTime.Now - hour);
                 return (float)span.TotalMilliseconds;
             }
         }
