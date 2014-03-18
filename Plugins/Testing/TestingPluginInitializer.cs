@@ -55,12 +55,6 @@ namespace TestingPlugin
             {
                 // Socket exception means that we are not being run within a test on Linux. This is normal :-)
             }
-            catch (TimeoutException)
-            {
-                // On Mono in Linux, TimeoutException is thrown when the testing server is shut down shortly after
-                // receiving the NotifyServerReady call. This is normal as we close the service upong receiving the call
-                // to reuse the endpoint address for other servers.
-            }
         }
 
         public void Shutdown()
