@@ -64,11 +64,10 @@ namespace FIVES
         [Test()]
         public void ShouldAssignAndRetrieveValidAttributes()
         {
-            component["a"] = "a_new_value";
-            component["b"] = 2.71828f;
-
-            Assert.AreEqual(component["a"], "a_new_value");
-            Assert.AreEqual(component["b"], 2.71828f);
+            component["a"].Value = "a_new_value";
+            component["b"].Value = 2.71828f;
+            Assert.AreEqual(component["a"].Value, "a_new_value");
+            Assert.AreEqual(component["b"].Value, 2.71828f);
         }
 
 
@@ -83,25 +82,25 @@ namespace FIVES
         [ExpectedException(typeof(KeyNotFoundException))]
         public void ShouldFailToAssignUndefinedAttribute()
         {
-            component["c"] = false;
+            component["c"].Value = false;
         }
 
         [Test()]
         [ExpectedException(typeof(AttributeAssignmentException))]
         public void ShouldFailToAssignValueWithInvalidType()
         {
-            component["b"] = 3.14; // double assigned to float
+            component["b"].Value = 3.14; // double assigned to float
         }
 
         [Test()]
         public void ShouldCreateAttributesAccordingToDefinition()
         {
-            object a = component["a"];
-            object b = component["b"];
-            Assert.AreEqual(a.GetType(), typeof(string));
-            Assert.AreEqual(b.GetType(), typeof(float));
-            Assert.AreEqual(a, "a_value");
-            Assert.AreEqual(b, 3.14f);
+            var a = component["a"];
+            var b = component["b"];
+            Assert.AreEqual(a.Type, typeof(string));
+            Assert.AreEqual(b.Type, typeof(float));
+            Assert.AreEqual(a.Value, "a_value");
+            Assert.AreEqual(b.Value, 3.14f);
         }
     }
 }

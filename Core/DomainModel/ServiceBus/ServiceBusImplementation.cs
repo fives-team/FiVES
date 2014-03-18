@@ -122,7 +122,7 @@ namespace FIVESServiceBus
             {
                 foreach(KeyValuePair<string, object> changedAttribute in changedComponent.Value)
                 {
-                    changedEntity[changedComponent.Key][changedAttribute.Key] = changedAttribute.Value;
+                    changedEntity[changedComponent.Key][changedAttribute.Key].Value = changedAttribute.Value;
                 }
             }
         }
