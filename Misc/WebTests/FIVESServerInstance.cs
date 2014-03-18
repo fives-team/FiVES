@@ -32,7 +32,11 @@ namespace WebTests
             // Start the server process.
             ProcessStartInfo serverInfo = new ProcessStartInfo(Path.Combine(TestDirectory, "FIVES.exe"));
             serverInfo.WorkingDirectory = TestDirectory;
+            serverInfo.UseShellExecute = false;
             serverInfo.WindowStyle = ProcessWindowStyle.Hidden;
+            serverInfo.RedirectStandardInput = true;
+            serverInfo.RedirectStandardOutput = true;
+            serverInfo.RedirectStandardError = true;
 
             // Wait for the server process to report when server is ready.
             AutoResetEvent serverHasStarted = new AutoResetEvent(false);
