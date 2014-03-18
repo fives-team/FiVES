@@ -52,6 +52,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Attribute.cs" />
     <Compile Include="ComponentDefinitionTest.cs" />
     <Compile Include="ComponentRegistryTest.cs" />
     <Compile Include="ComponentTest.cs" />
