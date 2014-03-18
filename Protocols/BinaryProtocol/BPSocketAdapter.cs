@@ -34,6 +34,7 @@ namespace BinaryProtocol
         /// <param name="connectedClient"></param>
         public BPSocketAdapter(TcpClient connectedClient)
         {
+            isOpened = 1;
             client = connectedClient;
             SetUpBufferAndStartReading();
         }
@@ -42,7 +43,7 @@ namespace BinaryProtocol
 
         public event EventHandler Closed;
 
-        public event EventHandler<WebSocketJSON.ErrorEventArgs> Error;
+        public event EventHandler<WebSocketJSON.SocketErrorEventArgs> Error;
 
         public event EventHandler<MessageEventArgs> Message;
 
@@ -71,7 +72,7 @@ namespace BinaryProtocol
                     Buffer.BlockCopy(lenBytes, 0, bytes, 0, lenBytes.Length);
                     Buffer.BlockCopy(messageBytes, 0, bytes, lenBytes.Length, messageBytes.Length);
 
-                    stream.BeginWrite(bytes, 0, bytes.Length, (ar) => stream.EndWrite(ar), null);
+                    stream.BeginWrite(bytes, 0, bytes.Length, HandleWriteFinished, null);
                 }
                 catch (IOException e)
                 {
@@ -85,6 +86,18 @@ namespace BinaryProtocol
                     HandleError(new IOException(
                         "Failed to send. Socket is not opened yet or have been closed already."));
                 }
+            }
+        }
+
+        void HandleWriteFinished(IAsyncResult ar)
+        {
+            try
+            {
+                stream.EndWrite(ar);
+            }
+            catch (IOException)
+            {
+                // If the socket has closed before the write completed, EndWrite will throw. We just ignore this.
             }
         }
 
@@ -121,7 +134,7 @@ namespace BinaryProtocol
         private void HandleError(Exception exception)
         {
             if (Error != null)
-                Error(this, new WebSocketJSON.ErrorEventArgs(exception));
+                Error(this, new SocketErrorEventArgs(exception));
         }
 
         /// <summary>
@@ -131,6 +144,8 @@ namespace BinaryProtocol
         private void HandleConnected(IAsyncResult ar)
         {
             client.EndConnect(ar);
+
+            isOpened = 1;
 
             SetUpBufferAndStartReading();
 

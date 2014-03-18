@@ -43,8 +43,8 @@ namespace FIVES
             if (!Controller.ControlTaken)
             {
                 // Wait for 'q' key to be pressed.
-                Console.WriteLine("The server is up and running. Press 'q' to stop it...");
-                while (Console.ReadKey().KeyChar != 'q');
+                Console.WriteLine("The server is up and running. Press Enter to stop it...");
+                Console.In.ReadLine();
             }
             else
             {

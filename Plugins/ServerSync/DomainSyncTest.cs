@@ -43,9 +43,9 @@ namespace ServerSyncPlugin
             handlers = new Mock<IHandlers>();
             remoteConnectionMock = new Mock<Connection>();
             remoteConnectionMock.Setup(rc => rc.GenerateFuncWrapper("serverSync.updateDoI", ""))
-                .Returns(handlers.Object.UpdateDoI);
+                .Returns((FuncWrapper)handlers.Object.UpdateDoI);
             remoteConnectionMock.Setup(rc => rc.GenerateFuncWrapper("serverSync.updateDoR", ""))
-                .Returns(handlers.Object.UpdateDoR);
+                .Returns((FuncWrapper)handlers.Object.UpdateDoR);
 
             doiMock = new Mock<IDomainOfInterest>();
             dorMock = new Mock<IDomainOfResponsibility>();

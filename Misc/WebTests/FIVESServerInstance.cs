@@ -15,7 +15,7 @@ namespace WebTests
         public FIVESServerInstance()
         {
             // Create new directory for the test.
-            TestDirectory = Path.Combine(Directory.GetCurrentDirectory(), "..", "FIVES-Test-" + (testCounter++));
+            TestDirectory = Path.Combine(Directory.GetCurrentDirectory(), "..", "FIVES-Test-" + (uniqueId++));
 
             // Copy the binaries.
             DirectoryCopy(Directory.GetCurrentDirectory(), TestDirectory, true);
@@ -23,27 +23,25 @@ namespace WebTests
 
         public void Start()
         {
-            // Create a service host.
-            var serviceHost = new ServiceHost(testingService);
-            NetTcpBinding binding = new NetTcpBinding();
-            serviceHost.AddServiceEndpoint(typeof(ITestingService), binding, Testing.ServiceURI);
-            serviceHost.Open();
+            if (numInstances++ == 0)
+                StartTestingService();
 
             // Start the server process.
             ProcessStartInfo serverInfo = new ProcessStartInfo(Path.Combine(TestDirectory, "FIVES.exe"));
             serverInfo.WorkingDirectory = TestDirectory;
+            serverInfo.UseShellExecute = false;
             serverInfo.WindowStyle = ProcessWindowStyle.Hidden;
-            process = Process.Start(serverInfo);
+            serverInfo.RedirectStandardInput = true;
+            serverInfo.RedirectStandardOutput = true;
+            serverInfo.RedirectStandardError = true;
 
             // Wait for the server process to report when server is ready.
             AutoResetEvent serverHasStarted = new AutoResetEvent(false);
             EventHandler handler = (sender, args) => serverHasStarted.Set();
             testingService.ServerReady += handler;
+            process = Process.Start(serverInfo);
             serverHasStarted.WaitOne();
             testingService.ServerReady -= handler;
-
-            // Close service host.
-            serviceHost.Close();
         }
 
         public void Stop()
@@ -54,10 +52,27 @@ namespace WebTests
 
             // Delete testing directory.
             Directory.Delete(TestDirectory, true);
+
+            if (--numInstances == 0)
+                StopTestingService();
         }
 
         // Testing directory. Created when the object is constructed. All FIVES binaries are copied here.
         public string TestDirectory { get; private set; }
+
+        private void StartTestingService()
+        {
+            testingService = new TestingService();
+
+            serviceHost = new ServiceHost(testingService);
+            serviceHost.AddServiceEndpoint(typeof(ITestingService), new NetTcpBinding(), Testing.ServiceURI);
+            serviceHost.Open();
+        }
+
+        private void StopTestingService()
+        {
+            serviceHost.Close();
+        }
 
         // Taken from http://msdn.microsoft.com/en-us/library/bb762914(v=vs.110).aspx
         private static void DirectoryCopy(string sourceDirName, string destDirName, bool copySubDirs)
@@ -101,10 +116,17 @@ namespace WebTests
         // The server process.
         Process process;
 
-        // Counter to generate different names for testing folders.
-        static int testCounter = 1;
+        // Global unique used to create testing directories, where FIVES is copied.
+        static int uniqueId = 1;
+
+        // Number of server instances. This is used to initialize the testing service for the first instance is started
+        // and to close it when the last instance is stopped.
+        static int numInstances = 0;
 
         // Global singleton implementing testing service, which is used by the Testing plugin on the server.
-        static TestingService testingService = new TestingService();
+        static TestingService testingService;
+
+        // Service host implementing the testing service.
+        static ServiceHost serviceHost;
     }
 }

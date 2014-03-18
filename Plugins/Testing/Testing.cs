@@ -7,6 +7,6 @@ namespace TestingPlugin
 {
     public static class Testing
     {
-        public static string ServiceURI = "net.tcp://localhost/FIVESTestingInterface";
+        public static string ServiceURI = "net.tcp://localhost:43747/FIVESTestingInterface";
     }
 }

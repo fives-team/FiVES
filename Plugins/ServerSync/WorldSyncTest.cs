@@ -46,11 +46,11 @@ namespace ServerSyncPlugin
             handlers = new Mock<IHandlers>();
             remoteConnectionMock = new Mock<Connection>();
             remoteConnectionMock.Setup(rc => rc.GenerateFuncWrapper("serverSync.addEntity", ""))
-                .Returns(handlers.Object.AddEntity);
+                .Returns((FuncWrapper)handlers.Object.AddEntity);
             remoteConnectionMock.Setup(rc => rc.GenerateFuncWrapper("serverSync.removeEntity", ""))
-                .Returns(handlers.Object.RemoveEntity);
+                .Returns((FuncWrapper)handlers.Object.RemoveEntity);
             remoteConnectionMock.Setup(rc => rc.GenerateFuncWrapper("serverSync.changeAttributes", ""))
-                .Returns(handlers.Object.ChangeAttributes);
+                .Returns((FuncWrapper)handlers.Object.ChangeAttributes);
 
             doiMock = new Mock<IDomainOfInterest>();
             dorMock = new Mock<IDomainOfResponsibility>();
@@ -237,11 +237,11 @@ namespace ServerSyncPlugin
             var otherConnectionMock = new Mock<Connection>();
             var handlers2 = new Mock<IHandlers>();
             otherConnectionMock.Setup(rc => rc.GenerateFuncWrapper("serverSync.addEntity", ""))
-                .Returns(handlers2.Object.AddEntity);
+                .Returns((FuncWrapper)handlers2.Object.AddEntity);
             otherConnectionMock.Setup(rc => rc.GenerateFuncWrapper("serverSync.removeEntity", ""))
-                .Returns(handlers2.Object.RemoveEntity);
+                .Returns((FuncWrapper)handlers2.Object.RemoveEntity);
             otherConnectionMock.Setup(rc => rc.GenerateFuncWrapper("serverSync.changeAttributes", ""))
-                .Returns(handlers2.Object.ChangeAttributes);
+                .Returns((FuncWrapper)handlers2.Object.ChangeAttributes);
 
             var guid = Guid.NewGuid();
             RemoteServerImpl remoteServer2 = new RemoteServerImpl(otherConnectionMock.Object, doiMock.Object,

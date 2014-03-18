@@ -67,7 +67,6 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ErrorEventArgs.cs" />
     <Compile Include="Exceptions\InvalidNumberOfArgs.cs" />
     <Compile Include="ISocket.cs" />
     <Compile Include="MessageEventArgs.cs" />
@@ -85,6 +84,7 @@
     <Compile Include="TestingWrappers.cs" />
     <Compile Include="WSJConnectionFactoryTest.cs" />
     <Compile Include="StandardFloatConverter.cs" />
+    <Compile Include="SocketErrorEventArgs.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

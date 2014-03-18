@@ -54,11 +54,6 @@ namespace NativeClient
     /// </summary>
     class Communicator
     {
-        public Communicator()
-        {
-            settings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
-        }
-
         /// <summary>
         /// Opens a binary protocol connection.
         /// </summary>
