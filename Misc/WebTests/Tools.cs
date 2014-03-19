@@ -36,7 +36,6 @@ namespace WebTests
             ChromeOptions options = new ChromeOptions();
             options.AddArgument("--disable-cache");
             var driver = new ChromeDriver(options);
-            driver.Navigate().GoToUrl("http://localhost/projects/test-client/client.xhtml");
             return driver;
         }
     }
