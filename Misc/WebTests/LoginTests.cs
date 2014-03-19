@@ -17,6 +17,9 @@ namespace WebTests
         public void StartServer()
         {
             server = new FIVESServerInstance();
+            server.ConfigureClientManagerPorts(34837);
+            server.ConfigurePluginsAndProtocols(new string[] { "Auth", "Avatar", "ClientManager", "KIARA", "Location",
+                "Motion", "Testing", "Renderable", "EventLoop", "Editing" }, new string[] { "WebSocketJSON" });
             server.Start();
         }
 
@@ -30,6 +33,8 @@ namespace WebTests
         public void StartChrome()
         {
             driver = Tools.CreateDriver();
+            driver.Navigate().GoToUrl(
+                "http://localhost/projects/test-client/client.xhtml#FIVESTesting&OverrideServerPort=34837");
         }
 
         [TearDown]

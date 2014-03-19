@@ -19,6 +19,9 @@ namespace WebTests
         public void StartServer()
         {
             server = new FIVESServerInstance();
+            server.ConfigureClientManagerPorts(34837);
+            server.ConfigurePluginsAndProtocols(new string[] { "Auth", "Avatar", "ClientManager", "KIARA", "Location",
+                "Motion", "Testing", "Renderable", "EventLoop", "Editing" }, new string[] { "WebSocketJSON" });
             server.Start();
         }
 
@@ -34,7 +37,8 @@ namespace WebTests
             IWebDriver driver = Tools.CreateDriver();
             try
             {
-                driver.Navigate().GoToUrl("http://localhost/projects/test-client/client.xhtml");
+                driver.Navigate().GoToUrl(
+                    "http://localhost/projects/test-client/client.xhtml#FIVESTesting&OverrideServerPort=34837");
                 Tools.Login(driver, "1", "");
 
                 WebDriverWait wait = new WebDriverWait(driver, TimeSpan.FromSeconds(10));
@@ -67,8 +71,10 @@ namespace WebTests
 
             try
             {
-                driver1.Navigate().GoToUrl("http://localhost/projects/test-client/client.xhtml");
-                driver2.Navigate().GoToUrl("http://localhost/projects/test-client/client.xhtml");
+                driver1.Navigate().GoToUrl(
+                    "http://localhost/projects/test-client/client.xhtml#FIVESTesting&OverrideServerPort=34837");
+                driver2.Navigate().GoToUrl(
+                    "http://localhost/projects/test-client/client.xhtml#FIVESTesting&OverrideServerPort=34837");
 
                 Tools.Login(driver1, "1", "");
                 Tools.Login(driver2, "2", "");

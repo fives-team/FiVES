@@ -15,10 +15,10 @@ namespace WebTests
         public FIVESServerInstance()
         {
             // Create new directory for the test.
-            TestDirectory = Path.Combine(Directory.GetCurrentDirectory(), "..", "FIVES-Test-" + (uniqueId++));
+            testDirectory = Path.Combine(Directory.GetCurrentDirectory(), "..", "FIVES-Test-" + (uniqueId++));
 
             // Copy the binaries.
-            DirectoryCopy(Directory.GetCurrentDirectory(), TestDirectory, true);
+            DirectoryCopy(Directory.GetCurrentDirectory(), testDirectory, true);
         }
 
         public void Start()
@@ -27,8 +27,8 @@ namespace WebTests
                 StartTestingService();
 
             // Start the server process.
-            ProcessStartInfo serverInfo = new ProcessStartInfo(Path.Combine(TestDirectory, "FIVES.exe"));
-            serverInfo.WorkingDirectory = TestDirectory;
+            ProcessStartInfo serverInfo = new ProcessStartInfo(Path.Combine(testDirectory, "FIVES.exe"));
+            serverInfo.WorkingDirectory = testDirectory;
             serverInfo.UseShellExecute = false;
             serverInfo.WindowStyle = ProcessWindowStyle.Hidden;
             serverInfo.RedirectStandardInput = true;
@@ -51,14 +51,89 @@ namespace WebTests
             process.WaitForExit();
 
             // Delete testing directory.
-            Directory.Delete(TestDirectory, true);
+            Directory.Delete(testDirectory, true);
 
             if (--numInstances == 0)
                 StopTestingService();
         }
 
-        // Testing directory. Created when the object is constructed. All FIVES binaries are copied here.
-        public string TestDirectory { get; private set; }
+        public void ConfigureClientManagerPorts(int listeningPort)
+        {
+            string clientManagerConfigPath = Path.Combine(testDirectory, "clientManagerServer.json");
+            string clientManagerConfig = @"
+                {
+                  ""info"": ""ClientManagerServer"",
+                  ""idlURL"": ""../../WebClient/kiara/fives.kiara"",
+                  ""servers"": [{
+                    ""services"": ""*"",
+                    ""protocol"": {
+                      ""name"": ""websocket-json"",
+                      ""port"": " + listeningPort + @",
+                    }
+                  }]
+                }
+            ";
+            File.WriteAllText(clientManagerConfigPath, clientManagerConfig);
+        }
+
+        public void ConfigurePluginsAndProtocols(string[] plugins, string[] protocols)
+        {
+            string serverConfigPath = Path.Combine(testDirectory, "FIVES.exe.config");
+            var serverConfig = @"<?xml version=""1.0"" encoding=""utf-8""?>
+                <configuration>
+                    <configSections>
+                        <section name=""nlog"" type=""NLog.Config.ConfigSectionHandler, NLog""/>
+                    </configSections>
+
+                    <appSettings>
+                        <add key=""PluginDir"" value=""."" />
+                        <add key=""PluginWhiteList"" value=""" + String.Join(",", plugins) + @""" />
+                        <add key=""ProtocolDir"" value=""."" />
+                        <add key=""ProtocolWhiteList"" value=""" + String.Join(",", protocols) + @"""/>
+                    </appSettings>
+
+                    <nlog xmlns=""http://www.nlog-project.org/schemas/NLog.xsd"" xmlns:xsi=""http://www.w3.org/2001/XMLSchema-instance"">
+                        <targets>
+                            <target name=""logfile"" xsi:type=""File"" fileName=""FIVES.log"" layout=""${longdate}|${level:uppercase=true}|${callsite}|${logger}|${message}|${exception:format=tostring}"" />
+                        </targets>
+
+                        <rules>
+                            <logger name=""*"" minlevel=""Debug"" writeTo=""logfile"" />
+                        </rules>
+                    </nlog>
+                </configuration>";
+            File.WriteAllText(serverConfigPath, serverConfig);
+        }
+
+        public void ConfigureServerSyncPorts(int listeningPort, int[] remotePorts)
+        {
+            string serverConfigPath = Path.Combine(testDirectory, "serverSyncServer.json");
+            string serverConfig = @"
+                {
+                  ""info"": ""ServerSyncServer"",
+                  ""idlURL"": ""serverSync.kiara"",
+                  ""servers"": [{
+                    ""services"": ""*"",
+                    ""protocol"": {
+                      ""name"": ""websocket-json"",
+                      ""port"": " + listeningPort + @",
+                    }
+                  }]
+                }
+            ";
+            File.WriteAllText(serverConfigPath, serverConfig);
+
+            string clientConfigPath = Path.Combine(testDirectory, "serverSyncClient.json");
+            StringBuilder clientConfig = new StringBuilder();
+            clientConfig.Append("{'info':'ScalabilitySyncClient','idlURL':'syncServer.kiara','servers':[");
+            foreach (int remotePort in remotePorts)
+            {
+                clientConfig.Append("{'services':'*','protocol':{'name':'websocket-json','port':" + remotePort +
+                                    ",'host':'127.0.0.1'}},");
+            }
+            clientConfig.Append("]}");
+            File.WriteAllText(clientConfigPath, clientConfig.ToString());
+        }
 
         private void StartTestingService()
         {
@@ -128,5 +203,8 @@ namespace WebTests
 
         // Service host implementing the testing service.
         static ServiceHost serviceHost;
+
+        // Testing directory. Created when the object is constructed. All FIVES binaries are copied here.
+        private string testDirectory;
     }
 }
