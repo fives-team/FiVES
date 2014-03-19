@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using NLog;
 
 namespace TerminalPlugin
 {
@@ -19,7 +20,15 @@ namespace TerminalPlugin
             RegisterCommand("help", "Shows help for a command or all commands if none specified.", false, ShowHelp,
                 new List<string> { "h", "?" });
 
-            Application.Controller.PluginsLoaded += HandlePluginsLoaded;
+            if (!IsConsoleIORedirected())
+            {
+                Application.Controller.PluginsLoaded += HandlePluginsLoaded;
+                Application.Controller.ControlTaken = true;
+            }
+            else
+            {
+                logger.Warn("Terminal plugin is disabled due to the redirected input stream.");
+            }
         }
 
         /// <summary>
@@ -89,6 +98,12 @@ namespace TerminalPlugin
                         AddCommand(alias, info);
                 }
             }
+        }
+
+        bool IsConsoleIORedirected()
+        {
+            // http://stackoverflow.com/questions/3453220/how-to-detect-if-console-in-stdin-has-been-redirected
+            return (Console.WindowHeight + Console.WindowWidth) == 0;
         }
 
         private void HandlePluginsLoaded(object sender, EventArgs e)
@@ -293,5 +308,7 @@ namespace TerminalPlugin
         private int previousCommandLineLength = commandLinePrefix.Length;
         private StringBuilder currentCommand = new StringBuilder();
         private int cursorPosition = 0;
+
+        private static Logger logger = LogManager.GetCurrentClassLogger();
     }
 }

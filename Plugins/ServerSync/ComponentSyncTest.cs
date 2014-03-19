@@ -32,7 +32,7 @@ namespace ServerSyncPlugin
             handlers = new Mock<IHandlers>();
             remoteConnectionMock = new Mock<Connection>();
             remoteConnectionMock.Setup(rc => rc.GenerateFuncWrapper("serverSync.registerComponentDefinition", ""))
-                .Returns(handlers.Object.RegisterComponentDefinition);
+                .Returns((FuncWrapper)handlers.Object.RegisterComponentDefinition);
 
             var remoteServerMock = new Mock<IRemoteServer>();
             remoteServerMock.Setup(rs => rs.Connection).Returns(remoteConnectionMock.Object);
