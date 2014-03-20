@@ -108,7 +108,7 @@ namespace AvatarPlugin
                 newAvatar["avatar"]["userLogin"] = userLogin;
                 newAvatar["mesh"]["uri"] = defaultAvatarMesh;
                 newAvatar["mesh"]["visible"] = true;
-                newAvatar["location"]["position"] = new Vector(0, 10, 0);
+                newAvatar["location"]["position"] = new Vector(7, 0, 7);
                 World.Instance.Add(newAvatar);
             }
 
