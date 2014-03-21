@@ -1,4 +1,7 @@
+using NLog;
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using V8.Net;
 
 namespace ScriptingPlugin
@@ -12,9 +15,14 @@ namespace ScriptingPlugin
         /// Initializes a new instance of the <see cref="ScriptingPluginInitializer.V8NetContext"/> class.
         /// </summary>
         /// <param name="aEngine">Associated V8Engine.</param>
-        public V8NetContext(V8Engine aEngine)
+        public V8NetContext(V8Engine aEngine, string anInitScript, string theDeps)
         {
             Engine = aEngine;
+
+            deps = theDeps.Split(' ', ',').ToList();
+            initScript = anInitScript;
+            initialized = false;
+            CheckDeps();
         }
 
         #region IJSContext implementation
@@ -28,6 +36,26 @@ namespace ScriptingPlugin
             Engine.WithContextScope = () => {
                 var res = Engine.Execute(script).AsString;
                 //logger.Debug("Script: \n===\n" + script + "\n===\n" + res + "\n===\n");
+            };
+
+            CheckDeps();
+        }
+
+        /// <summary>
+        /// Executes the script with given arguments, which are available as arguments[0], arguments[1] and so on.
+        /// </summary>
+        /// <param name="script">Script to be executed.</param>
+        /// <param name="arguments">Arguments passed to the script.</param>
+        public void Execute(string script, params object[] arguments)
+        {
+            Engine.WithContextScope = () => {
+                InternalHandle argumentsArray = Engine.CreateArray();
+
+                InternalHandle oldArguments = Engine.GlobalObject.GetProperty("arguments");
+                Engine.GlobalObject.SetProperty("arguments", Engine.CreateValue(arguments));
+                var res = Engine.Execute(script).AsString;
+                //logger.Debug("Script: \n===\n" + script + "\n===\n" + res + "\n===\n");
+                Engine.GlobalObject.SetProperty("arguments", oldArguments);
             };
 
             CheckDeps();
