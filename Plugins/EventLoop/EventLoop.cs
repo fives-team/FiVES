@@ -31,5 +31,16 @@ namespace EventLoopPlugin
                 Instance.TickFired -= value;
             }
         }
+
+        public static int IntervalMs
+        {
+            /// <summary>
+            /// Returns the interface in milliseconds at which the tick is triggered.
+            /// </summary>
+            get
+            {
+                return Instance.IntervalMs;
+            }
+        }
     }
 }

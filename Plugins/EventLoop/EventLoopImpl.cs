@@ -20,6 +20,14 @@ namespace EventLoopPlugin
 
         public event EventHandler<TickEventArgs> TickFired;
 
+        public int IntervalMs
+        {
+            get
+            {
+                return tickInterval;
+            }
+        }
+
         /// <summary>
         /// Reads the interval in which the events are fired from the App.cfg file
         /// </summary>
