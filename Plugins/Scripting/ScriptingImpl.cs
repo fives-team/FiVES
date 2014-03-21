@@ -32,7 +32,18 @@ namespace ScriptingPlugin
         {
             if (registeredGlobalObjects.ContainsKey(name))
                 throw new Exception("The object with " + name + " is already registered");
+
             registeredGlobalObjects[name] = csObject;
+
+            // Create global object for existing contexts.
+            foreach (var contextPair in entityContexts)
+            {
+                V8Engine engine = contextPair.Value.Engine;
+                engine.WithContextScope = () =>
+                {
+                    engine.GlobalObject.SetProperty(name, csObject, null, true, V8PropertyAttributes.Locked);
+                };
+            }
 
             // Initialize scripts whose dependencies have been satisfied
             List<Entity> initializedEntities = new List<Entity>();
@@ -57,6 +68,10 @@ namespace ScriptingPlugin
         public void AddNewContextHandler(Action<IJSContext> handler)
         {
             newContextHandlers.Add(handler);
+
+            // Trigger new context handler for all existing contexts.
+            foreach (var contextPair in entityContexts)
+                handler(contextPair.Value);
         }
 
         private void HandleOnEntityAdded(object sender, EntityEventArgs e)
@@ -97,6 +112,7 @@ namespace ScriptingPlugin
                     return;
                 }
             }
+
             logger.Debug("Creating the context. Server script is {0}", serverScript);
 
             V8Engine engine;
@@ -110,15 +126,15 @@ namespace ScriptingPlugin
                 return;
             }
 
-            logger.Debug("Adding context to the list");
-
-            entityContexts.Add(entity.Guid, engine);
-
             logger.Debug("Creating context wrapper");
 
             // This object should be used to assign event handlers, e.g.
             // script.onNewObject = function (newObject) {...}
             var context = new V8NetContext(engine);
+
+            logger.Debug("Adding context to the list");
+
+            entityContexts.Add(entity.Guid, context);
 
             logger.Debug("Creating script object");
 
@@ -148,7 +164,7 @@ namespace ScriptingPlugin
             };
         }
 
-        private Dictionary<Guid, V8Engine> entityContexts = new Dictionary<Guid, V8Engine>();
+        private Dictionary<Guid, V8NetContext> entityContexts = new Dictionary<Guid, V8NetContext>();
 
         private Dictionary<string, object> registeredGlobalObjects = new Dictionary<string, object>();
         private List<Action<IJSContext>> newContextHandlers = new List<Action<IJSContext>>();

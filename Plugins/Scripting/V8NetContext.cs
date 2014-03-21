@@ -14,7 +14,7 @@ namespace ScriptingPlugin
         /// <param name="aEngine">Associated V8Engine.</param>
         public V8NetContext(V8Engine aEngine)
         {
-            engine = aEngine;
+            Engine = aEngine;
         }
 
         #region IJSContext implementation
@@ -26,14 +26,14 @@ namespace ScriptingPlugin
         public object Execute(string script)
         {
             object result = null;
-            engine.WithContextScope = () => {
-                result = engine.Execute(script);
+            Engine.WithContextScope = () => {
+                result = Engine.Execute(script);
             };
             return result;
         }
 
         #endregion
 
-        private V8Engine engine;
+        internal V8Engine Engine;
     }
 }
