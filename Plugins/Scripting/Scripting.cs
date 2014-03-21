@@ -11,9 +11,16 @@ namespace ScriptingPlugin
             Instance.RegisterGlobalObject(name, csObject);
         }
 
-        public static void AddNewContextHandler(Action<IJSContext> handler)
+        public static event EventHandler<NewContextCreatedArgs> NewContextCreated
         {
-            Instance.AddNewContextHandler(handler);
+            add
+            {
+                Instance.NewContextCreated += value;
+            }
+            remove
+            {
+                Instance.NewContextCreated -= value;
+            }
         }
     }
 }

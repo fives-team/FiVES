@@ -55,17 +55,23 @@ namespace ScriptingPlugin
         }
 
         /// <summary>
-        /// Adds a new handler which is invoked each time a new context is create, which happens every time a new
-        /// scripted object is discovered.
+        /// Triggered when a new scripting context has been created, which is done for each entity which has a server
+        /// script. This can be used to perform non-trivial initialization of the scripting API.
         /// </summary>
-        /// <param name="handler">Handler to be invoked.</param>
-        public void AddNewContextHandler(Action<IJSContext> handler)
+        public event EventHandler<NewContextCreatedArgs> NewContextCreated
         {
-            newContextHandlers.Add(handler);
+            add
+            {
+                newContextCreated += value;
 
-            // Trigger new context handler for all existing contexts.
-            foreach (var contextPair in entityContexts)
-                handler(contextPair.Value);
+                // Trigger new context handler for all existing contexts.
+                foreach (var contextPair in entityContexts)
+                    value(this, new NewContextCreatedArgs(contextPair.Key, contextPair.Value));
+            }
+            remove
+            {
+                newContextCreated -= value;
+            }
         }
 
         private void HandleOnEntityAdded(object sender, EntityEventArgs e)
@@ -86,7 +92,7 @@ namespace ScriptingPlugin
         private void InitEntityContext(Entity entity)
         {
             // Remove previous context if any.
-            entityContexts.Remove(entity.Guid);
+            entityContexts.Remove(entity);
 
             logger.Debug("Entered initEntityContext with entity [{0}]", entity.Guid);
 
@@ -128,7 +134,7 @@ namespace ScriptingPlugin
 
             logger.Debug("Adding context to the list");
 
-            entityContexts.Add(entity.Guid, context);
+            entityContexts.Add(entity, context);
 
             logger.Debug("Creating script object");
 
@@ -149,7 +155,8 @@ namespace ScriptingPlugin
                 logger.Debug("Calling context callbacks");
 
                 // Invoke new context handlers.
-                newContextHandlers.ForEach(handler => handler(context));
+                if (newContextCreated != null)
+                    newContextCreated(this, new NewContextCreatedArgs(entity, context));
 
                 logger.Debug("Executing serverScript");
 
@@ -158,10 +165,10 @@ namespace ScriptingPlugin
             };
         }
 
-        private Dictionary<Guid, V8NetContext> entityContexts = new Dictionary<Guid, V8NetContext>();
+        private Dictionary<Entity, V8NetContext> entityContexts = new Dictionary<Entity, V8NetContext>();
 
         private Dictionary<string, object> registeredGlobalObjects = new Dictionary<string, object>();
-        private List<Action<IJSContext>> newContextHandlers = new List<Action<IJSContext>>();
+        private event EventHandler<NewContextCreatedArgs> newContextCreated;
 
         // List of deferred scripts. These have some of their dependencies (global objects) unsatisfied.
         private Dictionary<Entity, List<string>> deferredScripts = new Dictionary<Entity, List<string>>();

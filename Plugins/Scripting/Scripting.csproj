@@ -51,6 +51,7 @@
   <ItemGroup>
     <Compile Include="IScripting.cs" />
     <Compile Include="LoggerScriptingInterface.cs" />
+    <Compile Include="NewContextCreatedArgs.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Scripting.cs" />
     <Compile Include="ScriptingImpl.cs" />

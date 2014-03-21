@@ -19,10 +19,9 @@ namespace ScriptingPlugin
         void RegisterGlobalObject(string name, object csObject);
 
         /// <summary>
-        /// Adds a new handler which is invoked each time a new context is create, which happens every time a new scripted
-        /// object is discovered.
+        /// Triggered when a new scripting context has been created, which is done for each entity which has a server
+        /// script. This can be used to perform non-trivial initialization of the scripting API.
         /// </summary>
-        /// <param name="handler">Handler to be invoked.</param>
-        void AddNewContextHandler(Action<IJSContext> handler);
+        event EventHandler<NewContextCreatedArgs> NewContextCreated;
     }
 }
