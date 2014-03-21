@@ -7,16 +7,6 @@ namespace EventLoopPlugin
 {
     class EventLoopScriptingInterface
     {
-        public void addTickFiredHandler(Delegate callback)
-        {
-            EventLoop.TickFired += delegate(object sender, TickEventArgs args)
-            {
-                callback.DynamicInvoke(args.TimeStamp);
-            };
-        }
-
-        // TODO: removeTickFiredHandler
-
         public int intervalMs
         {
             get
