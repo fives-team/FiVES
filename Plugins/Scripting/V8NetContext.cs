@@ -6,7 +6,7 @@ namespace ScriptingPlugin
     /// <summary>
     /// Implementation of the <see cref="IJSContext"/> for <see cref="V8.Net.V8Engine"/>
     /// </summary>
-    public class V8NetContext : IJSContext
+    class V8NetContext : IJSContext
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="ScriptingPluginInitializer.V8NetContext"/> class.

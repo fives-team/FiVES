@@ -48,7 +48,7 @@ namespace ScriptingPlugin
             scripting.AddAttribute<string>("clientScript");
             ComponentRegistry.Instance.Register(scripting);
 
-            Scripting.Instance = new Scripting();
+            Scripting.Instance = new ScriptingImpl();
         }
 
         public void Shutdown()
