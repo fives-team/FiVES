@@ -23,13 +23,11 @@ namespace ScriptingPlugin
         /// Executes the scripts.
         /// </summary>
         /// <param name="script">Script to be executed.</param>
-        public object Execute(string script)
+        public void Execute(string script)
         {
-            object result = null;
             Engine.WithContextScope = () => {
-                result = Engine.Execute(script);
+                Engine.Execute(script);
             };
-            return result;
         }
 
         /// <summary>

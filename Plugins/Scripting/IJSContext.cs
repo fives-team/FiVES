@@ -8,10 +8,10 @@ namespace ScriptingPlugin
     public interface IJSContext
     {
         /// <summary>
-        /// Executes the scripts.
+        /// Executes the script.
         /// </summary>
         /// <param name="script">Script to be executed.</param>
-        object Execute(string script);
+        void Execute(string script);
 
         /// <summary>
         /// Registers a new global object in this context. The fields and methods of the new object correspond to the
