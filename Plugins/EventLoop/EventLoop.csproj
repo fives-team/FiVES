@@ -53,6 +53,10 @@
       <Project>{db1099a1-b7fe-474f-a03a-41687d6c5c76}</Project>
       <Name>PluginManager</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Scripting\Scripting.csproj">
+      <Project>{b9853261-afd6-48be-928e-1d2e04c287ec}</Project>
+      <Name>Scripting</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

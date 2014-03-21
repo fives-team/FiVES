@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using FIVES;
+using ScriptingPlugin;
 
 namespace EventLoopPlugin
 {
@@ -27,6 +28,13 @@ namespace EventLoopPlugin
         public void Initialize()
         {
             EventLoop.Instance = new EventLoopImpl();
+
+            PluginManager.Instance.AddPluginLoadedHandler("Scripting", RegisterScriptingInterface);
+        }
+
+        private void RegisterScriptingInterface()
+        {
+            Scripting.RegisterGlobalObject("eventLoop", new EventLoopScriptingInterface());
         }
 
         public void Shutdown()
