@@ -12,14 +12,14 @@ namespace ScriptingPlugin
     {
         public ScriptingImpl()
         {
+            // Global object to enable logging from the scripts.
+            RegisterGlobalObject("logger", new LoggerScriptingInterface());
+
             World.Instance.AddedEntity += HandleOnEntityAdded;
 
             // Register event handlers for all entities that were created before this plugin was loaded.
             foreach (var entity in World.Instance)
                 HandleOnEntityAdded(World.Instance, new EntityEventArgs(entity));
-
-            // FIXME: This is for debugging purposes only. Remove in release.
-            registeredGlobalObjects["console"] = new CLRConsole();
         }
 
         /// <summary>
