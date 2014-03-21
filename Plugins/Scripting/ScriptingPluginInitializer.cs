@@ -45,6 +45,7 @@ namespace ScriptingPlugin
             ComponentDefinition scripting = new ComponentDefinition("scripting");
             scripting.AddAttribute<string>("ownerScript");
             scripting.AddAttribute<string>("serverScript");
+            scripting.AddAttribute<string>("serverScriptDeps");
             scripting.AddAttribute<string>("clientScript");
             ComponentRegistry.Instance.Register(scripting);
 

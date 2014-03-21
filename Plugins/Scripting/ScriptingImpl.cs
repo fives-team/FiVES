@@ -33,6 +33,20 @@ namespace ScriptingPlugin
             if (registeredGlobalObjects.ContainsKey(name))
                 throw new Exception("The object with " + name + " is already registered");
             registeredGlobalObjects[name] = csObject;
+
+            // Initialize scripts whose dependencies have been satisfied
+            List<Entity> initializedEntities = new List<Entity>();
+            foreach (var deferredScriptPair in deferredScripts)
+            {
+                deferredScriptPair.Value.Remove(name);
+                if (deferredScriptPair.Value.Count == 0)
+                {
+                    InitEntityContext(deferredScriptPair.Key);
+                    initializedEntities.Add(deferredScriptPair.Key);
+                }
+            }
+
+            initializedEntities.ForEach(e => deferredScripts.Remove(e));
         }
 
         /// <summary>
@@ -71,6 +85,18 @@ namespace ScriptingPlugin
             if (serverScript == null)
                 return;
 
+            // Check for the script dependencies (global objects).
+            string serverScriptDeps = (string)entity["scripting"]["serverScriptDeps"];
+            if (serverScriptDeps != null)
+            {
+                string[] deps = serverScriptDeps.Split(' ', ',');
+                List<string> unsatisfiedDeps = deps.ToList().FindAll(s => !registeredGlobalObjects.ContainsKey(s));
+                if (unsatisfiedDeps.Count > 0)
+                {
+                    deferredScripts.Add(entity, unsatisfiedDeps);
+                    return;
+                }
+            }
             logger.Debug("Creating the context. Server script is {0}", serverScript);
 
             V8Engine engine;
@@ -126,6 +152,9 @@ namespace ScriptingPlugin
 
         private Dictionary<string, object> registeredGlobalObjects = new Dictionary<string, object>();
         private List<Action<IJSContext>> newContextHandlers = new List<Action<IJSContext>>();
+
+        // List of deferred scripts. These have some of their dependencies (global objects) unsatisfied.
+        private Dictionary<Entity, List<string>> deferredScripts = new Dictionary<Entity, List<string>>();
 
         private static Logger logger = LogManager.GetCurrentClassLogger();
     }
