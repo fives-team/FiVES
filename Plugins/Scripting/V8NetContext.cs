@@ -32,6 +32,19 @@ namespace ScriptingPlugin
             return result;
         }
 
+        /// <summary>
+        /// Registers a new global object in this context. The fields and methods of the new object correspond to the
+        /// passed C# object.
+        /// </summary>
+        /// <param name="name">Name of the global object.</param>
+        /// <param name="csObject">Corresponding C# object.</param>
+        public void CreateGlobalObject(string name, object csObject)
+        {
+            Engine.WithContextScope = () => {
+                Engine.GlobalObject.SetProperty(name, csObject, null, true, V8PropertyAttributes.Locked);
+            };
+        }
+
         #endregion
 
         internal V8Engine Engine;

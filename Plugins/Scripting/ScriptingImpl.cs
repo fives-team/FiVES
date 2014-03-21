@@ -37,13 +37,7 @@ namespace ScriptingPlugin
 
             // Create global object for existing contexts.
             foreach (var contextPair in entityContexts)
-            {
-                V8Engine engine = contextPair.Value.Engine;
-                engine.WithContextScope = () =>
-                {
-                    engine.GlobalObject.SetProperty(name, csObject, null, true, V8PropertyAttributes.Locked);
-                };
-            }
+                contextPair.Value.CreateGlobalObject(name, csObject);
 
             // Initialize scripts whose dependencies have been satisfied
             List<Entity> initializedEntities = new List<Entity>();
@@ -150,7 +144,7 @@ namespace ScriptingPlugin
                 // FIXME: Potential security issue. Users can access .Type in script which allows to create any object
                 // and thus run arbitrary code on the server.
                 foreach (var entry in registeredGlobalObjects)
-                    engine.GlobalObject.SetProperty(entry.Key, entry.Value, null, true, V8PropertyAttributes.Locked);
+                    context.CreateGlobalObject(entry.Key, entry.Value);
 
                 logger.Debug("Calling context callbacks");
 
