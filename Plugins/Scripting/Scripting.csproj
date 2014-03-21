@@ -49,6 +49,8 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ComponentScriptingInterface.cs" />
+    <Compile Include="EntityScriptingInterface.cs" />
     <Compile Include="IScripting.cs" />
     <Compile Include="LoggerScriptingInterface.cs" />
     <Compile Include="NewContextCreatedArgs.cs" />

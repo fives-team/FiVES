@@ -15,6 +15,9 @@ namespace ScriptingPlugin
             // Global object to enable logging from the scripts.
             RegisterGlobalObject("logger", new LoggerScriptingInterface());
 
+            // Initialize entity object in the new contexts.
+            NewContextCreated += EntityScriptingInterface.InitializeEntityObject;
+
             World.Instance.AddedEntity += HandleOnEntityAdded;
 
             // Register event handlers for all entities that were created before this plugin was loaded.
