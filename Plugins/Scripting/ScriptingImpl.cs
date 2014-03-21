@@ -41,20 +41,6 @@ namespace ScriptingPlugin
             // Create global object for existing contexts.
             foreach (var contextPair in entityContexts)
                 contextPair.Value.CreateGlobalObject(name, csObject);
-
-            // Initialize scripts whose dependencies have been satisfied
-            List<Entity> initializedEntities = new List<Entity>();
-            foreach (var deferredScriptPair in deferredScripts)
-            {
-                deferredScriptPair.Value.Remove(name);
-                if (deferredScriptPair.Value.Count == 0)
-                {
-                    InitEntityContext(deferredScriptPair.Key);
-                    initializedEntities.Add(deferredScriptPair.Key);
-                }
-            }
-
-            initializedEntities.ForEach(e => deferredScripts.Remove(e));
         }
 
         /// <summary>
@@ -103,19 +89,6 @@ namespace ScriptingPlugin
             if (serverScript == null)
                 return;
 
-            // Check for the script dependencies (global objects).
-            string serverScriptDeps = (string)entity["scripting"]["serverScriptDeps"];
-            if (serverScriptDeps != null)
-            {
-                string[] deps = serverScriptDeps.Split(' ', ',');
-                List<string> unsatisfiedDeps = deps.ToList().FindAll(s => !registeredGlobalObjects.ContainsKey(s));
-                if (unsatisfiedDeps.Count > 0)
-                {
-                    deferredScripts.Add(entity, unsatisfiedDeps);
-                    return;
-                }
-            }
-
             logger.Debug("Creating the context. Server script is {0}", serverScript);
 
             V8Engine engine;
@@ -133,7 +106,7 @@ namespace ScriptingPlugin
 
             // This object should be used to assign event handlers, e.g.
             // script.onNewObject = function (newObject) {...}
-            var context = new V8NetContext(engine);
+            var context = new V8NetContext(engine, serverScript, (string)entity["scripting"]["serverScriptDeps"]);
 
             logger.Debug("Adding context to the list");
 
@@ -145,36 +118,25 @@ namespace ScriptingPlugin
 
             logger.Debug("About to enter context scope");
 
-            engine.WithContextScope = () =>
-            {
-                logger.Debug("Configuring the context");
+            logger.Debug("Configuring the context");
 
-                // Register global objects.
-                // FIXME: Potential security issue. Users can access .Type in script which allows to create any object
-                // and thus run arbitrary code on the server.
-                foreach (var entry in registeredGlobalObjects)
-                    context.CreateGlobalObject(entry.Key, entry.Value);
+            // Register global objects.
+            // FIXME: Potential security issue. Users can access .Type in script which allows to create any object
+            // and thus run arbitrary code on the server.
+            foreach (var entry in registeredGlobalObjects)
+                context.CreateGlobalObject(entry.Key, entry.Value);
 
-                logger.Debug("Calling context callbacks");
+            logger.Debug("Calling context callbacks");
 
-                // Invoke new context handlers.
-                if (newContextCreated != null)
-                    newContextCreated(this, new NewContextCreatedArgs(entity, context));
-
-                logger.Debug("Executing serverScript");
-
-                // Execute server script.
-                engine.Execute(serverScript);
-            };
+            // Invoke new context handlers.
+            if (newContextCreated != null)
+                newContextCreated(this, new NewContextCreatedArgs(entity, context));
         }
 
         private Dictionary<Entity, V8NetContext> entityContexts = new Dictionary<Entity, V8NetContext>();
 
         private Dictionary<string, object> registeredGlobalObjects = new Dictionary<string, object>();
         private event EventHandler<NewContextCreatedArgs> newContextCreated;
-
-        // List of deferred scripts. These have some of their dependencies (global objects) unsatisfied.
-        private Dictionary<Entity, List<string>> deferredScripts = new Dictionary<Entity, List<string>>();
 
         private static Logger logger = LogManager.GetCurrentClassLogger();
     }

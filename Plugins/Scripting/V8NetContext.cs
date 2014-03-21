@@ -26,8 +26,11 @@ namespace ScriptingPlugin
         public void Execute(string script)
         {
             Engine.WithContextScope = () => {
-                Engine.Execute(script);
+                var res = Engine.Execute(script).AsString;
+                //logger.Debug("Script: \n===\n" + script + "\n===\n" + res + "\n===\n");
             };
+
+            CheckDeps();
         }
 
         /// <summary>
@@ -41,10 +44,34 @@ namespace ScriptingPlugin
             Engine.WithContextScope = () => {
                 Engine.GlobalObject.SetProperty(name, csObject, null, true, V8PropertyAttributes.Locked);
             };
+
+            CheckDeps();
         }
 
         #endregion
 
+        private void CheckDeps()
+        {
+            if (!initialized)
+            {
+                Engine.WithContextScope = () =>
+                {
+                    deps = deps.FindAll(dep => Engine.GlobalObject.GetProperty(dep).IsUndefined);
+                };
+
+                if (deps.Count == 0)
+                {
+                    initialized = true; // this comes first to avoid infinite loop
+                    Execute(initScript);
+                }
+            }
+        }
+
         internal V8Engine Engine;
+        List<string> deps;
+        string initScript;
+        bool initialized;
+
+        static Logger logger = LogManager.GetCurrentClassLogger();
     }
 }
