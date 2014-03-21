@@ -15,46 +15,21 @@ namespace EventLoopPlugin
     /// </summary>
     public class EventLoop
     {
-        public static EventLoop Instance;
+        public static IEventLoop Instance;
 
         /// <summary>
-        /// Event Handler to which other plugins can register
+        /// Event that is fired each time a tick is triggered.
         /// </summary>
-        public event EventHandler<TickEventArgs> TickFired;
-
-        public EventLoop()
+        public static event EventHandler<TickEventArgs> TickFired
         {
-            ReadIntervalFromConfig();
-            stopwatch.Start();
-            Task.Factory.StartNew(EventLoopThread, TaskCreationOptions.LongRunning);
-        }
-
-        /// <summary>
-        /// Reads the interval in which the events are fired from the App.cfg file
-        /// </summary>
-        private void ReadIntervalFromConfig()
-        {
-            string eventloopConfigPath = this.GetType().Assembly.Location;
-            Configuration config = ConfigurationManager.OpenExeConfiguration(eventloopConfigPath);
-
-            string configValue = config.AppSettings.Settings["tickinterval"].Value;
-            int.TryParse(configValue, out tickInterval);
-        }
-
-        /// <summary>
-        /// Function that fires the event periodically
-        /// </summary>
-        private void EventLoopThread()
-        {
-            while (true)
+            add
             {
-                if (TickFired != null)
-                    TickFired(this, new TickEventArgs(stopwatch.Elapsed));
-                Thread.Sleep(tickInterval);
+                Instance.TickFired += value;
+            }
+            remove
+            {
+                Instance.TickFired -= value;
             }
         }
-
-        private int tickInterval = 30;
-        private Stopwatch stopwatch = new Stopwatch();
     }
 }

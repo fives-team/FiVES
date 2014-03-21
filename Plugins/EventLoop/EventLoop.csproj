@@ -41,7 +41,10 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="EventLoop.cs" />
+    <Compile Include="EventLoopImpl.cs" />
     <Compile Include="EventLoopPluginInitializer.cs" />
+    <Compile Include="EventLoopScriptingInterface.cs" />
+    <Compile Include="IEventLoop.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TickEventArgs.cs" />
   </ItemGroup>
