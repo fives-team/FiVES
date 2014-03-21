@@ -11,8 +11,8 @@ namespace ScriptingPlugin
     public interface IScripting
     {
         /// <summary>
-        /// Registers a new global object in the script context. The fields and methods of the new object correspond to the
-        /// passed C# object.
+        /// Registers a new global object, which is created in all contexts. The fields and methods of the new object
+        /// correspond to the passed C# object.
         /// </summary>
         /// <param name="name">Name of the global object.</param>
         /// <param name="csObject">Corresponding C# object.</param>
