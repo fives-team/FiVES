@@ -44,7 +44,6 @@ namespace ScriptedBotsPlugin
 
         private void LoadScript()
         {
-            // TODO: implement all global variables used in the script
             botScript = File.ReadAllText(GetResourceFile("botScript.js"));
         }
 
