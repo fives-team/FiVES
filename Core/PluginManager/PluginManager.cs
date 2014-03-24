@@ -140,7 +140,7 @@ namespace FIVES
                     Logger.InfoException(path + " is not a valid assembly and thus cannot be loaded as a plugin.", e);
                     return;
                 } catch (Exception e) {
-                    Logger.WarnException("Failed to load file " + path + " as a plugin", e);
+                    //Logger.WarnException("Failed to load file " + path + " as a plugin", e);
                     return;
                 }
 
@@ -158,7 +158,7 @@ namespace FIVES
         {
             // Iterate over deferred plugins and remove |loadedPlugin| from the list of dependencies.
             foreach (var info in deferredPlugins.Values)
-                info.RemainingPluginDeps.Remove(e.pluginName);
+                info.RemainingPluginDeps.Remove(e.PluginName);
 
             LoadDeferredPluginsWithNoDeps();
         }
@@ -298,7 +298,7 @@ namespace FIVES
             } else {
                 PluginInitialized customPluginInitializedHandler = null;
                 customPluginInitializedHandler = delegate(object sender, PluginInitializedEventArgs args) {
-                    if (args.pluginName == pluginName) {
+                    if (args.PluginName == pluginName) {
                         OnAnyPluginInitialized -= customPluginInitializedHandler;
                         handler();
                     }

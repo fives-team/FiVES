@@ -4,12 +4,12 @@ namespace FIVES
 {
     public class PluginInitializedEventArgs : EventArgs
     {
-        public PluginInitializedEventArgs (string pluginName)
+        public PluginInitializedEventArgs(string pluginName)
         {
-            this.pluginName = pluginName;
+            PluginName = pluginName;
         }
 
-        public string pluginName;
+        public string PluginName { get; private set; }
     }
 }
 

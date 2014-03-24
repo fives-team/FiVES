@@ -70,7 +70,7 @@ namespace FIVES
 
         private static void HandlePluginInitialized(object sender, PluginInitializedEventArgs e)
         {
-            logger.Info("Plugin " + e.pluginName + " loaded");
+            logger.Info("Plugin " + e.PluginName + " loaded");
         }
 
         private static string CreateDeferredPluginsLogEntry()
