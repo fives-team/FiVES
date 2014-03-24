@@ -3,7 +3,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using V8.Net;
 
 namespace ScriptingPlugin
 {
@@ -13,11 +12,15 @@ namespace ScriptingPlugin
         {
             var entityObj = new EntityScriptingInterface(args.Entity);
             args.Context.CreateGlobalObject("entity", entityObj);
+
+            args.Context.RegisterTypeConstructors(typeof(Vector));
+            args.Context.RegisterTypeConstructors(typeof(AxisAngle));
+            args.Context.RegisterTypeConstructors(typeof(Quat));
         }
 
-        public EntityScriptingInterface(Entity aEntity)
+        public EntityScriptingInterface(Entity anEntity)
         {
-            entity = aEntity;
+            entity = anEntity;
         }
 
         public ComponentScriptingInterface this[string componentName]
@@ -34,6 +37,11 @@ namespace ScriptingPlugin
                     return null;
                 }
             }
+        }
+
+        public string toString()
+        {
+            return "[entity " + entity.Guid + "]";
         }
 
         Entity entity;

@@ -27,6 +27,13 @@ namespace ScriptingPlugin
         /// <param name="name">Name of the global object.</param>
         /// <param name="csObject">Corresponding C# object.</param>
         void CreateGlobalObject(string name, object csObject);
+
+        /// <summary>
+        /// Defines a function at global scope which can be used to construct an object of given type.
+        /// </summary>
+        /// <param name="type">Type to be constructed.</param>
+        /// <param name="scriptTypeName">Name of the type in the script. When null, original type name is used.</param>
+        void RegisterTypeConstructors(Type type, string scriptTypeName = null);
     }
 }
 

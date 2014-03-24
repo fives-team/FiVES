@@ -31,7 +31,7 @@ namespace ScriptingPlugin
             {
                 try
                 {
-                    component[attributeName] = Convert.ChangeType(value, component.Definition[attributeName].Type);
+                    component[attributeName] = value;
                 }
                 catch (KeyNotFoundException)
                 {
@@ -50,6 +50,11 @@ namespace ScriptingPlugin
                     // TODO: throw exception in the script
                 }
             }
+        }
+
+        public string toString()
+        {
+            return "[component " + component.Name + "]";
         }
 
         Component component;

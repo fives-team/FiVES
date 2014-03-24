@@ -19,7 +19,7 @@ namespace ScriptingPlugin
         {
             Engine = aEngine;
 
-            deps = theDeps.Split(' ', ',').ToList();
+            deps = theDeps;
             initScript = anInitScript;
             initialized = false;
             CheckDeps();
@@ -33,11 +33,7 @@ namespace ScriptingPlugin
         /// <param name="script">Script to be executed.</param>
         public void Execute(string script)
         {
-            Engine.WithContextScope = () => {
-                var res = Engine.Execute(script).AsString;
-                //logger.Debug("Script: \n===\n" + script + "\n===\n" + res + "\n===\n");
-            };
-
+            Engine.Execute(script);
             CheckDeps();
         }
 
@@ -48,15 +44,12 @@ namespace ScriptingPlugin
         /// <param name="arguments">Arguments passed to the script.</param>
         public void Execute(string script, params object[] arguments)
         {
-            Engine.WithContextScope = () => {
-                InternalHandle argumentsArray = Engine.CreateArray();
+            InternalHandle argumentsArray = Engine.CreateArray();
 
-                InternalHandle oldArguments = Engine.GlobalObject.GetProperty("arguments");
-                Engine.GlobalObject.SetProperty("arguments", Engine.CreateValue(arguments));
-                var res = Engine.Execute(script).AsString;
-                //logger.Debug("Script: \n===\n" + script + "\n===\n" + res + "\n===\n");
-                Engine.GlobalObject.SetProperty("arguments", oldArguments);
-            };
+            InternalHandle oldArguments = Engine.GlobalObject.GetProperty("arguments");
+            Engine.GlobalObject.SetProperty("arguments", Engine.CreateValue(arguments));
+            Engine.Execute(script);
+            Engine.GlobalObject.SetProperty("arguments", oldArguments);
 
             CheckDeps();
         }
@@ -66,14 +59,25 @@ namespace ScriptingPlugin
         /// passed C# object.
         /// </summary>
         /// <param name="name">Name of the global object.</param>
-        /// <param name="csObject">Corresponding C# object.</param>
-        public void CreateGlobalObject(string name, object csObject)
+        /// <param name="obj">Corresponding C# object.</param>
+        public void CreateGlobalObject(string name, object obj)
         {
-            Engine.WithContextScope = () => {
-                Engine.GlobalObject.SetProperty(name, csObject, null, true, V8PropertyAttributes.Locked);
-            };
+            if (obj != null)
+                obj = V8NetObjectWrapper.Wrap(Engine, obj);
+            Engine.GlobalObject.SetProperty(name, obj, null, true, ScriptMemberSecurity.Locked);
 
             CheckDeps();
+        }
+
+        /// <summary>
+        /// Defines a function at global scope which can be used to construct an object of given type.
+        /// </summary>
+        /// <param name="type">Type to be constructed.</param>
+        /// <param name="scriptTypeName">Name of the type in the script. When null, original type name is used.</param>
+        public void RegisterTypeConstructors(Type type, string scriptTypeName = null)
+        {
+            Engine.GlobalObject.SetProperty(type, V8PropertyAttributes.Locked, scriptTypeName, true,
+                ScriptMemberSecurity.Locked);
         }
 
         #endregion
@@ -82,12 +86,8 @@ namespace ScriptingPlugin
         {
             if (!initialized)
             {
-                Engine.WithContextScope = () =>
-                {
-                    deps = deps.FindAll(dep => Engine.GlobalObject.GetProperty(dep).IsUndefined);
-                };
-
-                if (deps.Count == 0)
+                InternalHandle handle = Engine.Execute(deps);
+                if (!handle.IsError && handle.IsBoolean && handle.AsBoolean)
                 {
                     initialized = true; // this comes first to avoid infinite loop
                     Execute(initScript);
@@ -96,7 +96,7 @@ namespace ScriptingPlugin
         }
 
         internal V8Engine Engine;
-        List<string> deps;
+        string deps;
         string initScript;
         bool initialized;
 

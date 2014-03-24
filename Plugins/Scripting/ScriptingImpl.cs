@@ -89,7 +89,7 @@ namespace ScriptingPlugin
             if (serverScript == null)
                 return;
 
-            logger.Debug("Creating the context. Server script is {0}", serverScript);
+            logger.Debug("Creating the context.");
 
             V8Engine engine;
             try

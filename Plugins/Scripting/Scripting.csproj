@@ -61,6 +61,7 @@
     <Compile Include="IJSContext.cs" />
     <Compile Include="V8NetContext.cs" />
     <Compile Include="ScriptingPluginInitializerTest.cs" />
+    <Compile Include="V8NetObjectWrapper.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -70,6 +71,10 @@
     <ProjectReference Include="..\..\Core\DomainModel\DomainModel.csproj">
       <Project>{79EF699D-6A88-4054-AF04-F22486DB47FA}</Project>
       <Name>DomainModel</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Core\Math\Math.csproj">
+      <Project>{a2d1d8e5-7c5c-4ea3-95c7-d8d97ab0b74e}</Project>
+      <Name>Math</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\Core\PluginManager\PluginManager.csproj">
       <Project>{DB1099A1-B7FE-474F-A03A-41687D6C5C76}</Project>
