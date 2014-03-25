@@ -12,34 +12,66 @@ CARAMEL.Utility = CARAMEL.Utility || {};
      *  will also remove the leading "file:///" prefix if it's given.
      */
     CARAMEL.Utility.RemoteXML3DLoader = new XMOT.Singleton({
-        
+
+        _cachedDocuments : {},
+        _pendingDocuments : [],
+        _pendingRequests : {},
         /**
          * @param {string} url the url to load
          * @param {function(url: string, xml3d: <Object>)} loadedCB the callback to invoke when loading finished.
          */
         loadXML3D: function(fivesObject, loadedCB)
-        {            
-            var self = this;  
-            
-            $.ajax({
-                type: "GET",
-                url: fivesObject.mesh.uri,
-                success: function(response) {
-                    self._handleLoadedXML3D(fivesObject, response, loadedCB);
-                },
-                error: function(status) {console.error(status)}
-            });
+        {
+            var uri = fivesObject.mesh.uri;
+
+            if(this._cachedDocuments[uri])
+                this._handleLoadedXML3D(fivesObject, this._cachedDocuments[uri], loadedCB);
+
+            if(this._pendingDocuments.indexOf(uri) != -1)
+            {
+                this._pendingRequests[uri] = this._pendingRequests[uri] || [];
+                this._pendingRequests[uri].push({entity: fivesObject, callback: loadedCB});
+            }
+
+            else
+            {
+                this._pendingDocuments.push(uri);
+                var self = this;
+                $.ajax({
+                    type: "GET",
+                    url: uri,
+                    success: function(response) {
+                        if(!self._cachedDocuments[uri])
+                            self._cachedDocuments[uri] = response;
+
+                        self._handleLoadedXML3D(fivesObject, response, loadedCB);
+                        self._handlePendingRequests(uri);
+                    },
+                    error: function(status) {console.error(status)}
+                });
+            }
         }, 
-        
+
+        _handlePendingRequests: function(uri) {
+            if(this._pendingRequests[uri])
+            {
+                for(var r in this._pendingRequests[uri])
+                {
+                    var request = this._pendingRequests[uri][r];
+                    this._handleLoadedXML3D(request.entity, this._cachedDocuments[uri], request.callback);
+                }
+            }
+        },
         /** Convert all references to point to the correct server and 
          *  notify the load requester using loadedCB. 
          */
         _handleLoadedXML3D: function(fivesObject, loadedDocument, loadedCB)
         {
-            var loadedXML3DEl = $(loadedDocument).children("xml3d")[0];
+            var loadedXML3DEl = $(loadedDocument).children("xml3d")[0].cloneNode(true);
 
             // construct full path to the files by analysing urlOnServer
             var url = fivesObject.mesh.uri;
+
             var urlLastSlash = url.lastIndexOf("/"); 
             var urlPath = url.slice(0,  urlLastSlash + 1);
             this._adjustReferences(loadedXML3DEl, urlPath);
@@ -54,7 +86,7 @@ CARAMEL.Utility = CARAMEL.Utility || {};
         _adjustReferences: function(node, baseURL)
         {
             // adjust all meshes and images 
-            if(node.tagName === "mesh" || node.tagName === "img"  || node.tagName === "light" || node.tagName === "group" || node.tagName === "data")
+            if(node.tagName === "mesh" || node.tagName === "model" || node.tagName === "img"  || node.tagName === "light" || node.tagName === "group" || node.tagName === "data")
             {
 				this._adjustReferenceForAttribute(node, baseURL, "src");
 				this._adjustReferenceForAttribute(node, baseURL, "shader");
