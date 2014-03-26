@@ -34,7 +34,7 @@ FIVES.Plugins.Animation = FIVES.Plugins.Animation || {};
         }
     };
 
-    a.increaseAnimationKeys = function(entity, fps) {
+    a.increaseAnimationKeys = function(entity, frameDuration) {
         var playingAnimations = entity.playingAnimationsCollection;
         if(playingAnimations)
         {
@@ -44,14 +44,17 @@ FIVES.Plugins.Animation = FIVES.Plugins.Animation || {};
                 var xflowKey = entity.xml3dView.xflowAnimations[animationName].key;
 
                 var oldValue = parseFloat(xflowKey.text());
-                var newValue = this._computeNewKeyframeValue(playingAnimation, oldValue, fps);
+                var newValue = this._computeNewKeyframeValue(playingAnimation, oldValue, frameDuration);
                 xflowKey.text(newValue);
             }
         }
     };
 
-    a._computeNewKeyframeValue = function(playingAnimation, oldValue, fps) {
-        var newValue = oldValue + playingAnimation.speed * fps / 1000.0;
+    a._computeNewKeyframeValue = function(playingAnimation, oldValue, frameDuration) {
+        // Animation speed is designed such that a speed of 1 means 1 second of animation per keyframe.
+        // We compute the new value based on last frame's duration so that we increase keys higher when the
+        // rendering the last frame took long
+        var newValue = oldValue + playingAnimation.speed * (frameDuration / 1000.0);
         if (newValue > playingAnimation.endFrame)
         {
             newValue = this._increaseAnimationCycles(playingAnimation, newValue);
