@@ -84,9 +84,8 @@ requirejs(["keyframe_animator"], (function () {
         for (var i in registeredEntities) {
             var entity = registeredEntities[i];
             if(entity)
-                this._keyframeAnimator.increaseAnimationKeys(entity, 1000.0 / deltaTime);
+                this._keyframeAnimator.increaseAnimationKeys(entity, deltaTime);
         }
-
         var self = this;
         requestAnimationFrame(updateLoop.bind(self));
     };
