@@ -29,7 +29,7 @@ requirejs(["keyframe_animator"], (function () {
 
     "use strict";
 
-    var fps = 30;
+    var fps = 60;
     var _fivesCommunicator = FIVES.Communication.FivesCommunicator;
 
     var animation = function () {
@@ -37,7 +37,8 @@ requirejs(["keyframe_animator"], (function () {
         FIVES.Events.AddOnComponentUpdatedHandler(this._componentUpdatedHandler.bind(this));
         FIVES.Events.AddEntityGeometryCreatedHandler(this._addXflowAnimationsForMesh.bind(this));
 
-        window.setInterval(updateLoop.bind(this), 1000.0 / fps);
+        var boundLoop = updateLoop.bind(this);
+        boundLoop();
     };
 
     var a = animation.prototype;
@@ -73,14 +74,22 @@ requirejs(["keyframe_animator"], (function () {
      * @type {Array}
      */
     var registeredEntities = [];
+    var lastFrame;
 
-    function updateLoop() {
+    function updateLoop(time) {
+        // We workaround here for the first computed frame, as we have no value for the last frame yet.
+        // We just compute the delta time from the chosen fps parameter then
+        var deltaTime = lastFrame ? time - lastFrame : 1000.0 / fps;
+        lastFrame = time;
         for (var i in registeredEntities) {
             var entity = registeredEntities[i];
             if(entity)
-                this._keyframeAnimator.increaseAnimationKeys(entity, fps);
+                this._keyframeAnimator.increaseAnimationKeys(entity, 1000.0 / deltaTime);
         }
-    }
+
+        var self = this;
+        requestAnimationFrame(updateLoop.bind(self));
+    };
 
     /**
      * Registers an enitity to have its keyframe updated during the update loop.
