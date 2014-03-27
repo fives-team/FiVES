@@ -43,18 +43,18 @@ FIVES.Plugins.Animation = FIVES.Plugins.Animation || {};
                 var playingAnimation = playingAnimations[animationName];
                 var xflowKey = entity.xml3dView.xflowAnimations[animationName].key;
 
-                var oldValue = parseFloat(xflowKey.text());
-                var newValue = this._computeNewKeyframeValue(playingAnimation, oldValue, frameDuration);
+                var newValue = this._computeNewKeyframeValue(playingAnimation, frameDuration);
+                playingAnimation.currentFrame = newValue;
                 xflowKey.text(newValue);
             }
         }
     };
 
-    a._computeNewKeyframeValue = function(playingAnimation, oldValue, frameDuration) {
+    a._computeNewKeyframeValue = function(playingAnimation, frameDuration) {
         // Animation speed is designed such that a speed of 1 means 1 second of animation per keyframe.
         // We compute the new value based on last frame's duration so that we increase keys higher when the
         // rendering the last frame took long
-        var newValue = oldValue + playingAnimation.speed * (frameDuration / 1000.0);
+        var newValue = playingAnimation.currentFrame + playingAnimation.speed * (frameDuration / 1000.0);
         if (newValue > playingAnimation.endFrame)
         {
             newValue = this._increaseAnimationCycles(playingAnimation, newValue);

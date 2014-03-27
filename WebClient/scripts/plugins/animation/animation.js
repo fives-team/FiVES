@@ -149,6 +149,7 @@ requirejs(["keyframe_animator"], (function () {
             entity.playingAnimationsCollection[animationName] = {
                 name: animationName,
                 startFrame: startFrame,
+                currentFrame: startFrame,
                 endFrame: endFrame,
                 cycles: cycles,
                 currentCycle: 1,
