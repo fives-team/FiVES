@@ -17,13 +17,19 @@ namespace WebTests
         public void StartServer()
         {
             server1 = new FIVESServerInstance();
-            ConfigureServerSyncPorts(server1, 43745, new int[] {});
-            ConfigureClientManagerPorts(server1, 34837);
+            server1.ConfigureServerSyncPorts(43745, new int[] {});
+            server1.ConfigureClientManagerPorts(34837);
+            server1.ConfigurePluginsAndProtocols(new string[] { "Auth", "Avatar", "ClientManager", "KIARA", "Location",
+                "Motion", "Testing", "Renderable", "EventLoop", "Editing", "ServerSync", "ConfigScalability",
+                "Scalability" }, new string[] { "WebSocketJSON" });
             server1.Start();
 
             server2 = new FIVESServerInstance();
-            ConfigureServerSyncPorts(server2, 43746, new int[] { 43745 });
-            ConfigureClientManagerPorts(server2, 34839);
+            server2.ConfigureServerSyncPorts(43746, new int[] { 43745 });
+            server2.ConfigureClientManagerPorts(34839);
+            server2.ConfigurePluginsAndProtocols(new string[] { "Auth", "Avatar", "ClientManager", "KIARA", "Location",
+                "Motion", "Testing", "Renderable", "EventLoop", "Editing", "ServerSync", "ConfigScalability",
+                "Scalability" }, new string[] { "WebSocketJSON" });
             server2.Start();
         }
 
@@ -79,33 +85,6 @@ namespace WebTests
                 driver1.Quit();
                 driver2.Quit();
             }
-        }
-
-        private void ConfigureServerSyncPorts(FIVESServerInstance server, int listeningPort, int[] remotePorts)
-        {
-            string serverConfigPath = Path.Combine(server.TestDirectory, "serverSyncServer.json");
-            string serverConfig = File.ReadAllText(serverConfigPath);
-            serverConfig = serverConfig.Replace("43745", listeningPort.ToString());
-            File.WriteAllText(serverConfigPath, serverConfig);
-
-            string clientConfigPath = Path.Combine(server.TestDirectory, "serverSyncClient.json");
-            StringBuilder clientConfig = new StringBuilder();
-            clientConfig.Append("{'info':'ScalabilitySyncClient','idlURL':'syncServer.kiara','servers':[");
-            foreach (int remotePort in remotePorts)
-            {
-                clientConfig.Append("{'services':'*','protocol':{'name':'websocket-json','port':" + remotePort +
-                    ",'host':'127.0.0.1'}},");
-            }
-            clientConfig.Append("]}");
-            File.WriteAllText(clientConfigPath, clientConfig.ToString());
-        }
-
-        private void ConfigureClientManagerPorts(FIVESServerInstance server, int listeningPort)
-        {
-            string clientManagerConfigPath = Path.Combine(server.TestDirectory, "clientManagerServer.json");
-            string clientManagerConfig = File.ReadAllText(clientManagerConfigPath);
-            clientManagerConfig = clientManagerConfig.Replace("34837", listeningPort.ToString());
-            File.WriteAllText(clientManagerConfigPath, clientManagerConfig);
         }
     }
 }
