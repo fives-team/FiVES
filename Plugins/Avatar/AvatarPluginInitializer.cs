@@ -189,6 +189,6 @@ namespace AvatarPlugin
 
         Dictionary<string, Entity> avatarEntities = new Dictionary<string, Entity>();
         // string defaultAvatarMesh = "resources/models/defaultAvatar/avatar.xml3d";
-        string defaultAvatarMesh = "resources/proprietary/natalieFives/xml3d/natalie.xml";
+        string defaultAvatarMesh = "resources/proprietary/smilzo-and-ciccio-min/assets/ciccio-model.xml";
     }
 }
