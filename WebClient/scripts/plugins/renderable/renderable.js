@@ -42,6 +42,9 @@ FIVES.Plugins = FIVES.Plugins || {};
     r._addXml3dGroupsForMesh = function(entity, meshDocument) {
         var _xml3dElement = FIVES.Resources.SceneManager.xml3dElement;
         var meshGroup = $(meshDocument).children("group");
+        if(meshGroup.length == 0)
+            meshGroup = $(meshDocument).children("model");
+
         var entityGroup = this._createParentGroupForEntity(entity);
         entity.xml3dView.groupElement = entityGroup;
         entity.xml3dView.groupElement.setAttribute("visible", entity["mesh"]["visible"]);
