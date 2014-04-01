@@ -48,7 +48,16 @@
                            style="width: 1800px; height: 40%;
                            background-size:100% 100%; background-color: lightblue"
                            activeView = "#camera">
+                        <defs id="initalDefs">
+                            <transform id="t_Lamp" rotation="0.7070000171661377 0.7070000171661377 0 11.599999999999975"></transform>
+                            <lightshader id="ls_directional" script="urn:xml3d:lightshader:directional">
+                                <float3 name="intensity">0.9 0.9 1</float3>
+                            </lightshader>
 
+                        </defs>
+                        <group transform="#t_Lamp">
+                            <light shader="#ls_directional"></light>
+                        </group>
                     </xml3d>
                 </div>
             </div>
