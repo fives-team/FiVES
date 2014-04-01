@@ -40,10 +40,15 @@
                 </div>
             </nav>
 
-            <div class = "row">
-                <div class = "col-md-8 col-md-offset-2" id = "xml3d_view">
-                    <xml3d xmlns = "http://www.xml3d.org/2009/xml3d" id="xml3dView" style="width: 1200px; height: 675px; background-color: lightblue" activeView = "#camera">
                        <view id="camera" position = "0 0 10" />
+            <div class = "row" style="height: 80%">
+                <div class = "col-md-9 col-md-offset-1" style="height: 100%" id = "xml3d_view">
+                    <xml3d xmlns = "http://www.xml3d.org/2009/xml3d"
+                           id="xml3dView"
+                           style="width: 1800px; height: 40%;
+                           background-size:100% 100%; background-color: lightblue"
+                           activeView = "#camera">
+
                     </xml3d>
                 </div>
             </div>
@@ -161,9 +166,10 @@
 
         <script type="text/javascript" src="scripts/models/entity.js"></script>
         <script type="text/javascript" src="scripts/models/entity_registry.js"></script>
-
+        <!--
         <script type="text/javascript" src="scripts/plugins/avatar/avatar.js"></script>
         <script type="text/javascript" src="scripts/plugins/avatar_collision/avatar_collision.js"></script>
+        -->
         <script type="text/javascript" src="scripts/plugins/clientsync/clientsync.js"></script>
         <script type="text/javascript" src="scripts/plugins/location/location.js"></script>
         <script type="text/javascript" src="scripts/plugins/renderable/renderable.js"></script>
