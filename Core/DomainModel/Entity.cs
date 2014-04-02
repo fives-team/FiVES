@@ -69,12 +69,6 @@ namespace FIVES
             }
         }
 
-        public void ProposeAttributeChange(string componentName, string attributeName, object value)
-        {
-            var changeEvent = new ProposeAttributeChangeEventArgs(this, componentName, attributeName, value);
-            ServiceBus.ServiceGateway.PublishTransformation(changeEvent);
-        }
-
         /// <summary>
         /// An event that is raised when a new component is created in this entity.
         /// </summary>
