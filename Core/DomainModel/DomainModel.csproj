@@ -79,7 +79,6 @@
     <Compile Include="Events\RegisteredComponentEventArgs.cs" />
     <Compile Include="ServiceBus\AccumulatedAttributeTransform.cs" />
     <Compile Include="ServiceBus\ProposeAttributeChangeEventArgs.cs" />
-    <Compile Include="ServiceBus\EntityAttributeTransformationEventArgs.cs" />
     <Compile Include="ServiceBus\IServiceBus.cs" />
     <Compile Include="ServiceBus\IServiceGateway.cs" />
     <Compile Include="ServiceBus\IServiceRegistry.cs" />
