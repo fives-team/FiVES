@@ -12,6 +12,7 @@ namespace FIVESServiceBus
         ServiceRegistry ServiceRegistry { get; }
 
         void Initialize();
+        void IntroduceTopic(string topic, string services);
         void CloseComputation(AccumulatedAttributeTransform accumulatedResult);
     }
 }

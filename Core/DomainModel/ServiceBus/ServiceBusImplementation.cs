@@ -37,6 +37,10 @@ namespace FIVESServiceBus
         {
             ReadConfig();
             ServiceGateway.PublishedTransformation += new EventHandler<ProposeAttributeChangeEventArgs>(HandleTransformation);
+
+        public void IntroduceTopic(string topicName, string services)
+        {
+            BuildServiceChain(topicName, services);
         }
 
         private void ReadConfig()
