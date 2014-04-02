@@ -29,7 +29,8 @@ namespace ConfigScalabilityPlugin
 
         public bool IsResponsibleFor(Entity entity)
         {
-            Vector position = (Vector)entity["location"]["position"];
+            var positionValue = entity["location"]["position"].Value;
+            Vector position = (Vector)positionValue;
             return position.x >= MinX && position.x < MaxX && position.y >= MinY && position.y < MaxY;
         }
 

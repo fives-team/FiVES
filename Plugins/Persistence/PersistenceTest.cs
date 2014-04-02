@@ -73,8 +73,8 @@ namespace PersistencePlugin
             Entity entity = new Entity();
 
             World.Instance.Add(entity);
-            entity["myComponent"]["IntAttribute"] = 42;
-            entity["myComponent"]["StringAttribute"] = "Hello World!";
+            entity["myComponent"]["IntAttribute"].Suggest(42);
+            entity["myComponent"]["StringAttribute"].Suggest("Hello World!");
 
             // De-Activate on-remove event handler, as for tests, we only want to remove the entity from the local registry, not from the
             // persistence storage
@@ -84,8 +84,8 @@ namespace PersistencePlugin
             plugin.RetrieveEntitiesFromDatabase ();
 
             Entity storedEntity = World.Instance.FindEntity(entity.Guid.ToString());
-            Assert.AreEqual(42, storedEntity["myComponent"]["IntAttribute"]);
-            Assert.AreEqual("Hello World!", storedEntity["myComponent"]["StringAttribute"]);
+            Assert.AreEqual(42, storedEntity["myComponent"]["IntAttribute"].Value);
+            Assert.AreEqual("Hello World!", storedEntity["myComponent"]["StringAttribute"].Value);
         }
 
         [Ignore()]
@@ -126,9 +126,13 @@ namespace PersistencePlugin
         }
 
         public static void TestUpgrader(Component oldComponent, Component newComponent) {
-            newComponent["f"] = (float)(int)oldComponent["i"];
-            newComponent["i"] = (int)(float)oldComponent["f"];
-            newComponent["b"] = oldComponent["b"];
+            var newF = (float)(int)oldComponent["i"].Value;
+            newComponent["f"].Suggest(newF);
+
+            var newI = (int)(float)oldComponent["f"].Value;
+            newComponent["i"].Suggest(newI);
+
+            newComponent["b"].Suggest(oldComponent["b"]);
         }
     }
 }

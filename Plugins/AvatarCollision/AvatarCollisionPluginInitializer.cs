@@ -95,9 +95,8 @@ namespace AvatarCollisionPlugin
             if (e.Entity.ContainsComponent("avatar"))
             {
                 // Initialise entities without gravity
-                e.Entity.ProposeAttributeChange("avatarCollision",
-                                                "groundLevel",
-                                                ((Vector)e.Entity["location"]["position"]).y);
+                float initialGroundlevel = ((Vector)e.Entity["location"]["position"].Value).y;
+                e.Entity["avatarCollision"]["groundLevel"].Suggest(initialGroundlevel);
             }
         }
 
@@ -113,10 +112,10 @@ namespace AvatarCollisionPlugin
                 accumulatedTransforms.AccumulatedTransformations.ContainsKey("location")
                 && accumulatedTransforms.AccumulatedTransformations["location"].ContainsKey("position") ?
                 (Vector)accumulatedTransforms.AccumulatedTransformations["location"]["position"]
-                : (Vector)accumulatedTransforms.Entity["location"]["position"];
+                : (Vector)accumulatedTransforms.Entity["location"]["position"].Value;
 
             Vector adaptedPosition = new Vector (entityPosition.x,
-                (float)accumulatedTransforms.Entity["avatarCollision"]["groundLevel"],
+                (float)accumulatedTransforms.Entity["avatarCollision"]["groundLevel"].Value,
                 entityPosition.z);
 
             accumulatedTransforms.AddAttributeTransformation("location", "position", adaptedPosition);
@@ -131,7 +130,7 @@ namespace AvatarCollisionPlugin
         public void SetGroundlevel(string entityGuid, float groundLevel)
         {
             var entity = World.Instance.FindEntity(entityGuid);
-            entity["avatarCollision"]["groundLevel"] = groundLevel;
+            entity["avatarCollision"]["groundLevel"].Suggest(groundLevel);
         }
     }
 }

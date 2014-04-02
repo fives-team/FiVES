@@ -54,7 +54,7 @@ namespace KeyframeAnimationPlugin
                         animationKeyframes += runningAnimation.Key + ":" + newKey + ";";
                     }
                     Entity entity = World.Instance.FindEntity(animatedEntity.Key);
-                    entity["animation"]["animationKeyframes"] = animationKeyframes;
+                    entity["animation"]["animationKeyframes"].Suggest(animationKeyframes);
                 }
             }
             FinalizeFinishedAnimations();

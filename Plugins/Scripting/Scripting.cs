@@ -83,7 +83,7 @@ namespace ScriptingPlugin
 
             logger.Debug("Entered initEntityContext with entity [{0}]", entity.Guid);
 
-            string serverScript = (string)entity["scripting"]["serverScript"];
+            string serverScript = (string)entity["scripting"]["serverScript"].Value;
             if (serverScript == null)
                 return;
 

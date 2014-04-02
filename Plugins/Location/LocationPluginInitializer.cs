@@ -82,7 +82,7 @@ namespace LocationPlugin
         private void UpdatePosition(string guid, Vector position, int timestamp)
         {
             var entity = World.Instance.FindEntity(guid);
-            entity["location"]["position"] = position;
+            entity["location"]["position"].Suggest(position);
 
             // We currently ignore timestamp, but may it in the future to implement dead reckoning.
         }
@@ -90,7 +90,7 @@ namespace LocationPlugin
         private void UpdateOrientation(string guid, Quat orientation, int timestamp)
         {
             var entity = World.Instance.FindEntity(guid);
-            entity["location"]["orientation"] = orientation;
+            entity["location"]["orientation"].Suggest(orientation);
 
             // We currently ignore timestamp, but may it in the future to implement dead reckoning.
         }

@@ -382,7 +382,7 @@ namespace ServerSyncPlugin
                             attributeValue));
                     }
 
-                    localEntity[componentName][attributeName] = attributeValue;
+                    localEntity[componentName][attributeName].Suggest(attributeValue);
                     return true;
                 }
                 catch (ComponentAccessException)
