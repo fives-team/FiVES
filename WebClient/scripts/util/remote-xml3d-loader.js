@@ -24,15 +24,20 @@ CARAMEL.Utility = CARAMEL.Utility || {};
         {
             var uri = fivesObject.mesh.uri;
 
+            // The requested document may have been loaded before and thus is already available. Return the
+            // cached document in this case
             if(this._cachedDocuments[uri])
                 this._handleLoadedXML3D(fivesObject, this._cachedDocuments[uri], loadedCB);
 
+            // A request to the same document may have been sent, but has not returned yet. Don't send another
+            // request but wait for the pending response and operate on that
             if(this._pendingDocuments.indexOf(uri) != -1)
             {
                 this._pendingRequests[uri] = this._pendingRequests[uri] || [];
                 this._pendingRequests[uri].push({entity: fivesObject, callback: loadedCB});
             }
 
+            // Send a request to retrieve an external document only when requesting a document for the first time
             else
             {
                 this._pendingDocuments.push(uri);
@@ -50,8 +55,14 @@ CARAMEL.Utility = CARAMEL.Utility || {};
                     error: function(status) {console.error(status)}
                 });
             }
-        }, 
+        },
 
+        /**
+         * A document may be waiting for the response of an earlier request of the same URI. When this response
+         * returns, all pending requests to this response are handled
+         * @param uri URI to which the pending request was sent
+         * @private
+         */
         _handlePendingRequests: function(uri) {
             if(this._pendingRequests[uri])
             {
