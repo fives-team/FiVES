@@ -68,10 +68,10 @@ namespace AvatarCollisionPlugin
         public void ShouldInitializeGroundlevelCorrectly()
         {
             var e = new Entity();
-            e["avatar"]["userLogin"] = "123";
-            e["location"]["position"] = new Vector(0, 5, 0);
+            e["avatar"]["userLogin"].Suggest("123");
+            e["location"]["position"].Suggest(new Vector(0, 5, 0));
             World.Instance.Add(e);
-            Assert.AreEqual((float)e["avatarCollision"]["groundLevel"], 5f);
+            Assert.AreEqual((float)e["avatarCollision"]["groundLevel"].Value, 5f);
         }
 
         /// <summary>
@@ -82,11 +82,11 @@ namespace AvatarCollisionPlugin
         public void ShouldSetEntityToGroundlevel()
         {
             var e = new Entity();
-            e["avatar"]["userLogin"] = "123";
-            e["avatarCollision"]["groundLevel"] = 0f;
+            e["avatar"]["userLogin"].Suggest("123");
+            e["avatarCollision"]["groundLevel"].Suggest(0f);
             World.Instance.Add(e);
-            e["location"]["position"] = new Vector(1, 2, 3);
-            Vector entityPosition = (Vector)e["location"]["position"];
+            e["location"]["position"].Suggest(new Vector(1, 2, 3));
+            Vector entityPosition = (Vector)e["location"]["position"].Value;
             Assert.AreEqual(entityPosition.x, 1f);
             Assert.AreEqual(entityPosition.y, 0f);
             Assert.AreEqual(entityPosition.z, 3f);

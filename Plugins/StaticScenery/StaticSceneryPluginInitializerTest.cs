@@ -46,7 +46,7 @@ namespace StaticSceneryPlugin
             ComponentRegistry.Instance = new ComponentRegistry();
             MockReadConfig();
             MockComponentRegistry();
-            plugin.Initialize();
+            plugin.CreateSceneryEntity();
         }
 
         /// <summary>
@@ -95,7 +95,7 @@ namespace StaticSceneryPlugin
             Assert.IsNotEmpty(FIVES.World.Instance);
             var entity = FIVES.World.Instance.ElementAt(0);
 
-            var pos = (Vector)entity["location"]["position"];
+            var pos = (Vector)entity["location"]["position"].Value;
             Assert.AreEqual(pos.x, OffsetX);
             Assert.AreEqual(pos.y, OffsetY);
             Assert.AreEqual(pos.z, OffsetZ);
