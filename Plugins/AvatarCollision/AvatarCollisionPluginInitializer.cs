@@ -106,7 +106,7 @@ namespace AvatarCollisionPlugin
         /// </summary>
         /// <param name="accumulatedTransforms">Accumulated transformation that happened in the service chain</param>
         /// <returns>Accumulated changes with adaptions added by AvatarCollison</returns>
-        private AccumulatedAttributeTransform Transform(AccumulatedAttributeTransform accumulatedTransforms)
+        internal AccumulatedAttributeTransform Transform(AccumulatedAttributeTransform accumulatedTransforms)
         {
             Vector entityPosition =
                 accumulatedTransforms.AccumulatedTransformations.ContainsKey("location")
