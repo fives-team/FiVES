@@ -17,6 +17,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using FIVES;
+using FIVESServiceBus;
 using NUnit.Framework;
 
 
@@ -30,6 +31,12 @@ namespace AvatarCollisionPlugin
         {
             ComponentRegistry.Instance = new ComponentRegistry();
             var p = new AvatarCollisionPluginInitializer();
+
+            ServiceBus.Instance = new ServiceBusImplementation();
+            ServiceBus.Instance.Initialize();
+
+            ServiceBus.ServiceRegistry.RegisterService("collision", p.Transform);
+            ServiceBus.Instance.IntroduceTopic("location.position", "collision");
             p.RegisterComponents();
             p.RegisterToEvents();
             registerLocationComponent();
