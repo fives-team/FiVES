@@ -108,12 +108,7 @@ namespace AvatarCollisionPlugin
         /// <returns>Accumulated changes with adaptions added by AvatarCollison</returns>
         internal AccumulatedAttributeTransform Transform(AccumulatedAttributeTransform accumulatedTransforms)
         {
-            Vector entityPosition =
-                accumulatedTransforms.AccumulatedTransformations.ContainsKey("location")
-                && accumulatedTransforms.AccumulatedTransformations["location"].ContainsKey("position") ?
-                (Vector)accumulatedTransforms.AccumulatedTransformations["location"]["position"]
-                : (Vector)accumulatedTransforms.Entity["location"]["position"].Value;
-
+            Vector entityPosition = (Vector)accumulatedTransforms.CurrentAttributeValue("location", "position");
             Vector adaptedPosition = new Vector (entityPosition.x,
                 (float)accumulatedTransforms.Entity["avatarCollision"]["groundLevel"].Value,
                 entityPosition.z);
