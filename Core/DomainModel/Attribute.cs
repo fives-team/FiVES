@@ -35,13 +35,13 @@ namespace FIVES
             get { return Definition.Type; }
         }
 
-        public void Suggest(object value)
+        public void Suggest(object newValue)
         {
             var proposedChange =
                 new ProposeAttributeChangeEventArgs(ParentComponent.ContainingEntity,
                                                     ParentComponent.Name,
                                                     Definition.Name,
-                                                    Value);
+                                                    newValue);
             
             ServiceBus.ServiceGateway.PublishTransformation(proposedChange);
         }
