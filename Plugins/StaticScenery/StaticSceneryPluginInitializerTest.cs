@@ -19,6 +19,7 @@ using System.Linq;
 using System.Text;
 using NUnit.Framework;
 using FIVES;
+using FIVESServiceBus;
 
 namespace StaticSceneryPlugin
 {
@@ -42,6 +43,9 @@ namespace StaticSceneryPlugin
         [SetUp()]
         public void Init()
         {
+            ServiceBus.Instance = new ServiceBusImplementation();
+            ServiceBus.Instance.Initialize();
+
             World.Instance = new World();
             ComponentRegistry.Instance = new ComponentRegistry();
             MockReadConfig();
@@ -99,7 +103,7 @@ namespace StaticSceneryPlugin
             Assert.AreEqual(pos.x, OffsetX);
             Assert.AreEqual(pos.y, OffsetY);
             Assert.AreEqual(pos.z, OffsetZ);
-            Assert.AreEqual(entity["mesh"]["uri"], SceneryURL);
+            Assert.AreEqual(entity["mesh"]["uri"].Value, SceneryURL);
         }
     }
 }
