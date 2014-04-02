@@ -105,19 +105,7 @@ namespace ServerSyncPlugin
             World.Instance = new World();
 
             ServiceBus.Instance = new ServiceBusImplementation();
-            ServiceBus.ServiceGateway.PublishedTransformation
-                += new EventHandler<ProposeAttributeChangeEventArgs>(HandleTransformation);
-        }
-
-        private void HandleTransformation(object sender, ProposeAttributeChangeEventArgs transform)
-        {
-            Dictionary<string, Dictionary<string, object>> initialAccumulation = new Dictionary<string, Dictionary<string, object>>();
-            Dictionary<string, object> initialAttributeUpdates = new Dictionary<string, object>();
-            initialAttributeUpdates.Add(transform.AttributeName, transform.Value);
-            initialAccumulation.Add(transform.ComponentName, initialAttributeUpdates);
-
-            AccumulatedAttributeTransform initialTransform = new AccumulatedAttributeTransform(transform.Entity, initialAccumulation);
-            ServiceBus.Instance.CloseComputation(initialTransform);
+            ServiceBus.Instance.Initialize();
         }
 
         [TearDown]
