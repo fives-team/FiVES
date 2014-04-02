@@ -77,8 +77,31 @@ namespace AvatarCollisionPlugin
             var e = new Entity();
             e["avatar"]["userLogin"].Suggest("123");
             e["location"]["position"].Suggest(new Vector(0, 5, 0));
-            World.Instance.Add(e);
-            Assert.AreEqual((float)e["avatarCollision"]["groundLevel"].Value, 5f);
+
+            bool finishedComputation = false;
+
+            ServiceBus.ServiceGateway.ReceivedResult += (o, a) =>
+                {
+                    // Wait for location to be set properly before adding entity to the world
+                    if (a.AccumulatedTransformations.ContainsKey("location"))
+                    {
+                        World.Instance.Add(e);
+                    }
+                    // When service bus announced proper setting of ground level, check if the groundlevel
+                    // is correct
+                    else if (a.AccumulatedTransformations.ContainsKey("avatarCollision"))
+                    {
+                        finishedComputation = true;
+                        Assert.AreEqual((float)e["avatarCollision"]["groundLevel"].Value, 5f);
+                    }
+                };
+
+            var delay = 25;
+            var pollingInterval = 100; // 100 milliseconds
+
+            // Check that the computation has actually finished correctly. If the computation was not
+            // run at all, the test may not return a false assertion (as no assert was made)
+            Assert.That(() => finishedComputation, Is.EqualTo(true).After(delay, pollingInterval));
         }
 
         /// <summary>
@@ -93,10 +116,26 @@ namespace AvatarCollisionPlugin
             e["avatarCollision"]["groundLevel"].Suggest(0f);
             World.Instance.Add(e);
             e["location"]["position"].Suggest(new Vector(1, 2, 3));
-            Vector entityPosition = (Vector)e["location"]["position"].Value;
-            Assert.AreEqual(entityPosition.x, 1f);
-            Assert.AreEqual(entityPosition.y, 0f);
-            Assert.AreEqual(entityPosition.z, 3f);
+
+            bool finishedComputation = false;
+            Vector entityPosition = new Vector(0,0,0);
+            ServiceBus.ServiceGateway.ReceivedResult += (o, r) =>
+                {
+                    if (r.AccumulatedTransformations.ContainsKey("location"))
+                    {
+                        finishedComputation = true;
+                        entityPosition = (Vector)e["location"]["position"].Value;
+                        Assert.AreEqual(entityPosition.x, 1f);
+                        Assert.AreEqual(entityPosition.y, 0f);
+                        Assert.AreEqual(entityPosition.z, 3f);
+                    }
+                };
+
+            var delay = 25;
+            var pollingInterval = 100; // 100 milliseconds
+
+            // Check that the computation has actually finished correctly
+            Assert.That(() => finishedComputation, Is.EqualTo(true).After(delay, pollingInterval));
         }
     }
 }
