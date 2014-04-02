@@ -24,6 +24,19 @@ namespace FIVESServiceBus
                 accumulatedTransforms[componentName][attributeName] = newValue;
         }
 
+        public object CurrentAttributeValue(string componentName, string attributeName)
+        {
+            if (accumulatedTransforms.ContainsKey(componentName)
+                && accumulatedTransforms[componentName].ContainsKey(attributeName))
+            {
+                return accumulatedTransforms[componentName][attributeName];
+            }
+            else
+            {
+                return entity[componentName][attributeName].Value;
+            }
+        }
+
         public Dictionary<string, Dictionary<string, object>> AccumulatedTransformations
         {
             get
