@@ -155,7 +155,7 @@ namespace ServerSyncPlugin
 
             handlers.Verify(h => h.AddEntity(entity.Guid, It.Is<EntitySyncInfo>(esi =>
                 esi.Components.Count == 1 &&
-                ((FIVES.Attribute)esi.Components["test"]["a"].LastValue).Value.Equals(33))), Times.Once());
+                esi.Components["test"]["a"].LastValue.Equals(33))), Times.Once());
         }
 
         [Test]

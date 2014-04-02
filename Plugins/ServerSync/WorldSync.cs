@@ -186,7 +186,7 @@ namespace ServerSyncPlugin
                 foreach (ReadOnlyAttributeDefinition attrDefinition in component.Definition.AttributeDefinitions)
                 {
                     entitySyncInfo[component.Name][attrDefinition.Name] =
-                        new AttributeSyncInfo(ServerSync.LocalServer.SyncID, component[attrDefinition.Name]);
+                        new AttributeSyncInfo(ServerSync.LocalServer.SyncID, component[attrDefinition.Name].Value);
                 }
             }
             return entitySyncInfo;
