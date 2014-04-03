@@ -15,6 +15,7 @@ namespace FIVESServiceBus
         {
             this.serviceGateway = new ServiceGateway();
             this.serviceRegistry = new ServiceRegistry();
+            ServiceGateway.PublishedTransformation += new EventHandler<ProposeAttributeChangeEventArgs>(HandleTransformation);
         }
 
         public ServiceGateway ServiceGateway
@@ -42,10 +43,6 @@ namespace FIVESServiceBus
             catch (Exception e)
             {
                 return;
-            }
-            finally
-            {
-                ServiceGateway.PublishedTransformation += new EventHandler<ProposeAttributeChangeEventArgs>(HandleTransformation);
             }
         }
 
