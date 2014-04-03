@@ -37,13 +37,20 @@ namespace FIVES
 
         public void Suggest(object newValue)
         {
-            var proposedChange =
-                new ProposeAttributeChangeEventArgs(ParentComponent.ContainingEntity,
-                                                    ParentComponent.Name,
-                                                    Definition.Name,
-                                                    newValue);
-            
-            ServiceBus.ServiceGateway.PublishTransformation(proposedChange);
+            if (World.Instance.ContainsEntity(ParentComponent.ContainingEntity.Guid))
+            {
+                var proposedChange =
+                    new ProposeAttributeChangeEventArgs(ParentComponent.ContainingEntity,
+                                                        ParentComponent.Name,
+                                                        Definition.Name,
+                                                        newValue);
+
+                ServiceBus.ServiceGateway.PublishTransformation(proposedChange);
+            }
+            else
+            {
+                Set(newValue);
+            }
         }
 
         public T As<T>()
