@@ -27,7 +27,6 @@ CARAMEL.Utility = CARAMEL.Utility || {};
             // cached document in this case
             if(this._cachedDocuments[uri])
                 this._handleLoadedXML3D(fivesObject, this._cachedDocuments[uri], loadedCB);
-
             // A request to the same document may have been sent, but has not returned yet. Don't send another
             // request but wait for the pending response and operate on that
             else if(this._pendingRequests[uri])
