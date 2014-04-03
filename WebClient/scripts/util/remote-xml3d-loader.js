@@ -14,7 +14,6 @@ CARAMEL.Utility = CARAMEL.Utility || {};
     CARAMEL.Utility.RemoteXML3DLoader = new XMOT.Singleton({
 
         _cachedDocuments : {},
-        _pendingDocuments : [],
         _pendingRequests : {},
         /**
          * @param {string} url the url to load
@@ -31,16 +30,14 @@ CARAMEL.Utility = CARAMEL.Utility || {};
 
             // A request to the same document may have been sent, but has not returned yet. Don't send another
             // request but wait for the pending response and operate on that
-            if(this._pendingDocuments.indexOf(uri) != -1)
+            else if(this._pendingRequests[uri].length > 0)
             {
-                this._pendingRequests[uri] = this._pendingRequests[uri] || [];
                 this._pendingRequests[uri].push({entity: fivesObject, callback: loadedCB});
             }
-
             // Send a request to retrieve an external document only when requesting a document for the first time
             else
             {
-                this._pendingDocuments.push(uri);
+                this._pendingRequests[uri].push({entity: fivesObject, callback: loadedCB});
                 var self = this;
                 $.ajax({
                     type: "GET",
@@ -49,7 +46,6 @@ CARAMEL.Utility = CARAMEL.Utility || {};
                         if(!self._cachedDocuments[uri])
                             self._cachedDocuments[uri] = response;
 
-                        self._handleLoadedXML3D(fivesObject, response, loadedCB);
                         self._handlePendingRequests(uri);
                     },
                     error: function(status) {console.error(status)}
@@ -70,6 +66,7 @@ CARAMEL.Utility = CARAMEL.Utility || {};
                 {
                     var request = this._pendingRequests[uri][r];
                     this._handleLoadedXML3D(request.entity, this._cachedDocuments[uri], request.callback);
+                    this._pendingRequests.splice(this._pendingRequests.indexOf(uri), 1);
                 }
             }
         },
