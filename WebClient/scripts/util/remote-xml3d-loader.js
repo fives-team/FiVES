@@ -62,11 +62,11 @@ CARAMEL.Utility = CARAMEL.Utility || {};
         _handlePendingRequests: function(uri) {
             if(this._pendingRequests[uri])
             {
-                for(var r in this._pendingRequests[uri])
+                for(var r = 0; this._pendingRequests[uri].length > 0; r)
                 {
                     var request = this._pendingRequests[uri][r];
                     this._handleLoadedXML3D(request.entity, this._cachedDocuments[uri], request.callback);
-                    this._pendingRequests[uri].splice(this._pendingRequests[uri].indexOf(uri), 1);
+                    this._pendingRequests[uri].splice(0, 1);
                 }
             }
         },
