@@ -62,12 +62,12 @@ CARAMEL.Utility = CARAMEL.Utility || {};
         _handlePendingRequests: function(uri) {
             if(this._pendingRequests[uri])
             {
-                for(var r = 0; this._pendingRequests[uri].length > 0; r)
+                for(var r in this._pendingRequests[uri])
                 {
                     var request = this._pendingRequests[uri][r];
                     this._handleLoadedXML3D(request.entity, this._cachedDocuments[uri], request.callback);
-                    this._pendingRequests[uri].splice(0, 1);
                 }
+                delete this._pendingRequests[uri];
             }
         },
         /** Convert all references to point to the correct server and 
