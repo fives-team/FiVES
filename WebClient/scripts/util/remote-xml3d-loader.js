@@ -12,34 +12,74 @@ CARAMEL.Utility = CARAMEL.Utility || {};
      *  will also remove the leading "file:///" prefix if it's given.
      */
     CARAMEL.Utility.RemoteXML3DLoader = new XMOT.Singleton({
-        
+
+        _cachedDocuments : {},
+        _pendingRequests : {},
         /**
          * @param {string} url the url to load
          * @param {function(url: string, xml3d: <Object>)} loadedCB the callback to invoke when loading finished.
          */
         loadXML3D: function(fivesObject, loadedCB)
-        {            
-            var self = this;  
-            
-            $.ajax({
-                type: "GET",
-                url: fivesObject.mesh.uri,
-                success: function(response) {
-                    self._handleLoadedXML3D(fivesObject, response, loadedCB);
-                },
-                error: function(status) {console.error(status)}
-            });
-        }, 
-        
+        {
+            var uri = fivesObject.mesh.uri;
+
+            // The requested document may have been loaded before and thus is already available. Return the
+            // cached document in this case
+            if(this._cachedDocuments[uri])
+                this._handleLoadedXML3D(fivesObject, this._cachedDocuments[uri], loadedCB);
+            // A request to the same document may have been sent, but has not returned yet. Don't send another
+            // request but wait for the pending response and operate on that
+            else if(this._pendingRequests[uri])
+            {
+                this._pendingRequests[uri].push({entity: fivesObject, callback: loadedCB});
+            }
+            // Send a request to retrieve an external document only when requesting a document for the first time
+            else
+            {
+                this._pendingRequests[uri] = [];
+                this._pendingRequests[uri].push({entity: fivesObject, callback: loadedCB});
+                var self = this;
+                $.ajax({
+                    type: "GET",
+                    url: uri,
+                    success: function(response) {
+                        if(!self._cachedDocuments[uri])
+                            self._cachedDocuments[uri] = response;
+
+                        self._handlePendingRequests(uri);
+                    },
+                    error: function(status) {console.error(status)}
+                });
+            }
+        },
+
+        /**
+         * A document may be waiting for the response of an earlier request of the same URI. When this response
+         * returns, all pending requests to this response are handled
+         * @param uri URI to which the pending request was sent
+         * @private
+         */
+        _handlePendingRequests: function(uri) {
+            if(this._pendingRequests[uri])
+            {
+                for(var r in this._pendingRequests[uri])
+                {
+                    var request = this._pendingRequests[uri][r];
+                    this._handleLoadedXML3D(request.entity, this._cachedDocuments[uri], request.callback);
+                }
+                delete this._pendingRequests[uri];
+            }
+        },
         /** Convert all references to point to the correct server and 
          *  notify the load requester using loadedCB. 
          */
         _handleLoadedXML3D: function(fivesObject, loadedDocument, loadedCB)
         {
-            var loadedXML3DEl = $(loadedDocument).children("xml3d")[0];
+            var loadedXML3DEl = $(loadedDocument).children("xml3d")[0].cloneNode(true);
 
             // construct full path to the files by analysing urlOnServer
             var url = fivesObject.mesh.uri;
+
             var urlLastSlash = url.lastIndexOf("/"); 
             var urlPath = url.slice(0,  urlLastSlash + 1);
             this._adjustReferences(loadedXML3DEl, urlPath);
@@ -54,7 +94,7 @@ CARAMEL.Utility = CARAMEL.Utility || {};
         _adjustReferences: function(node, baseURL)
         {
             // adjust all meshes and images 
-            if(node.tagName === "mesh" || node.tagName === "img"  || node.tagName === "light" || node.tagName === "group" || node.tagName === "data")
+            if(node.tagName === "mesh" || node.tagName === "model" || node.tagName === "img"  || node.tagName === "light" || node.tagName === "group" || node.tagName === "data")
             {
 				this._adjustReferenceForAttribute(node, baseURL, "src");
 				this._adjustReferenceForAttribute(node, baseURL, "shader");
