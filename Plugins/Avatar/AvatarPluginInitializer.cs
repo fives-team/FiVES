@@ -188,9 +188,7 @@ namespace AvatarPlugin
         }
 
         Dictionary<string, Entity> avatarEntities = new Dictionary<string, Entity>();
-
-        // Enter the url to the default avatar description file here
-        //string defaultAvatarMesh = "resources/models/avatar/default.xml";
-
+        // string defaultAvatarMesh = "resources/models/defaultAvatar/avatar.xml3d";
+        string defaultAvatarMesh = "resources/proprietary/smilzo-and-ciccio-min/assets/ciccio-model.xml";
     }
 }
