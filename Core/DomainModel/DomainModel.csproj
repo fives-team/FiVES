@@ -58,6 +58,7 @@
     <Compile Include="ComponentTest.cs" />
     <Compile Include="EntityCollectionTest.cs" />
     <Compile Include="EntityTest.cs" />
+    <Compile Include="Events\ProposeAttributeChangeEventArgs.cs" />
     <Compile Include="Exceptions\EntityNotFoundException.cs" />
     <Compile Include="Exceptions\AttributeAssignmentException.cs" />
     <Compile Include="Exceptions\AttributeDefinitionException.cs" />
@@ -77,16 +78,6 @@
     <Compile Include="ReadOnlyComponentDefinition.cs" />
     <Compile Include="ReadOnlyComponentDefinitionTest.cs" />
     <Compile Include="Events\RegisteredComponentEventArgs.cs" />
-    <Compile Include="ServiceBus\AccumulatedAttributeTransform.cs" />
-    <Compile Include="ServiceBus\ProposeAttributeChangeEventArgs.cs" />
-    <Compile Include="ServiceBus\IServiceBus.cs" />
-    <Compile Include="ServiceBus\IServiceGateway.cs" />
-    <Compile Include="ServiceBus\IServiceRegistry.cs" />
-    <Compile Include="ServiceBus\ServiceBus.cs" />
-    <Compile Include="ServiceBus\ServiceBusImplementation.cs" />
-    <Compile Include="ServiceBus\ServiceGateway.cs" />
-    <Compile Include="ServiceBus\ServiceRegistry.cs" />
-    <Compile Include="ServiceBus\TransformationAction.cs" />
     <Compile Include="Testing Interfaces\IComponentRegistry.cs" />
     <Compile Include="World.cs" />
   </ItemGroup>

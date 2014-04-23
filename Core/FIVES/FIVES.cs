@@ -19,7 +19,6 @@ using NLog;
 using System.IO;
 using System.Text;
 using System.Collections.Generic;
-using FIVESServiceBus;
 
 namespace FIVES
 {
@@ -39,8 +38,6 @@ namespace FIVES
                 logger.Error("Configuration is missing or corrupt.");
             }
 
-            ServiceBus.Instance = new ServiceBusImplementation();
-
             logger.Info("Loading plugins");
             if (pluginDir != null && Directory.Exists(pluginDir)) {
                 PluginManager.Instance.LoadPluginsFrom(pluginDir, pluginWhiteList, pluginBlackList);
@@ -57,8 +54,6 @@ namespace FIVES
             PluginManager.Instance.OnAnyPluginInitialized += HandlePluginInitialized;
 
             Controller.NotifyPluginsLoaded();
-
-            ServiceBus.Instance.Initialize();
 
             if (!Controller.ControlTaken)
             {

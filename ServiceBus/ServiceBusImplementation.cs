@@ -11,19 +11,13 @@ namespace FIVESServiceBus
 {
     public class ServiceBusImplementation : IServiceBus
     {
-        public ServiceBusImplementation()
-        {
-            this.serviceGateway = new ServiceGateway();
-            this.serviceRegistry = new ServiceRegistry();
-            ServiceGateway.PublishedTransformation += new EventHandler<ProposeAttributeChangeEventArgs>(HandleTransformation);
-        }
+        public event EventHandler<AccumulatedAttributeTransform> ComputedResult;
 
-        public ServiceGateway ServiceGateway
-        {
-            get
-            {
-                return this.serviceGateway;
-            }
+        public ServiceBusImplementation()
+        {            
+            this.serviceRegistry = new ServiceRegistry();
+            Application.Controller.PluginsLoaded += new EventHandler((o, e) => { Initialize(); });
+            registerToEvents();            
         }
 
         public ServiceRegistry ServiceRegistry
@@ -49,6 +43,20 @@ namespace FIVESServiceBus
         public void IntroduceTopic(string topicName, string services)
         {
             BuildServiceChain(topicName, services);
+        }
+
+        private void registerToEvents()
+        {
+            // Register to Proposed Attribute Changes of existing entities
+            foreach (Entity e in World.Instance)
+            {
+                e.ProposedAttributeChange += new EventHandler<ProposeAttributeChangeEventArgs>(HandleTransformation);
+            }
+
+            // Register to Proposed Attribute Changes of new entities
+            World.Instance.AddedEntity += new EventHandler<EntityEventArgs>((o,e) => {
+                e.Entity.ProposedAttributeChange += new EventHandler<ProposeAttributeChangeEventArgs>(HandleTransformation);                               
+            });
         }
 
         private void ReadConfig()
@@ -123,7 +131,8 @@ namespace FIVESServiceBus
         public void CloseComputation(AccumulatedAttributeTransform accumulatedResult)
         {
             applyAttributeUpdates(accumulatedResult);
-            ServiceGateway.PublishResult(accumulatedResult);
+            if (ComputedResult != null)
+                ComputedResult(this, accumulatedResult);            
         }
 
         private void applyAttributeUpdates(AccumulatedAttributeTransform accumulatedResult)
@@ -138,8 +147,7 @@ namespace FIVESServiceBus
                 }
             }
         }
-
-        private ServiceGateway serviceGateway;
+        
         private ServiceRegistry serviceRegistry;
         IDictionary<string, ISet<TransformationAction>> topicSubscriptions = new Dictionary<string, ISet<TransformationAction>>();
     }

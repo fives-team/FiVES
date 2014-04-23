@@ -7,9 +7,9 @@ using FIVES;
 namespace FIVESServiceBus
 {
     public interface IServiceBus
-    {
-        ServiceGateway ServiceGateway { get; }
+    {        
         ServiceRegistry ServiceRegistry { get; }
+        event EventHandler<AccumulatedAttributeTransform> ComputedResult;
 
         void Initialize();
         void IntroduceTopic(string topic, string services);

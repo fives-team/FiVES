@@ -9,21 +9,13 @@ namespace FIVESServiceBus
 {
     public static class ServiceBus
     {
-        public static IServiceBus Instance;
+        public static IServiceBus Instance = new ServiceBusImplementation();
 
         public static ServiceRegistry ServiceRegistry
         {
             get
             {
                 return Instance.ServiceRegistry;
-            }
-        }
-
-        public static ServiceGateway ServiceGateway
-        {
-            get
-            {
-                return Instance.ServiceGateway;
             }
         }
 

@@ -61,6 +61,10 @@
       <Project>{db1099a1-b7fe-474f-a03a-41687d6c5c76}</Project>
       <Name>PluginManager</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\ServiceBus\ServiceBus.csproj">
+      <Project>{6c4c01e3-2f44-462f-bf63-a9d5d288c662}</Project>
+      <Name>ServiceBus</Name>
+    </ProjectReference>
     <ProjectReference Include="..\ClientManager\ClientManager.csproj">
       <Project>{e1955ff2-6109-4c71-9f13-486a48de6c17}</Project>
       <Name>ClientManager</Name>
