@@ -11,12 +11,16 @@ var FIVES = FIVES || {};
 FIVES.Input = FIVES.Input || {};
 
 (function() {
-     "use strict";
+    "use strict";
 
     var MOVE_SPEED = 0.1;
     var SPIN_SPEED = 0.05;
 
     var UP_AXIS = {x: 0, y: 1, z: 0};
+
+    var avatarEntity;
+    var walkAnimation;
+    var idleAnimation;
 
     var keylistener = function(){
         FIVES.Events.AddEntityGeometryCreatedHandler(this._handleGeometryLoaded.bind(this));
@@ -29,7 +33,7 @@ FIVES.Input = FIVES.Input || {};
 
     k._handleGeometryLoaded = function(entity) {
         if(entity.guid == FIVES.AvatarEntityGuid)
-            this._initializeEventListeners();
+            this._initializeInteractions();
     };
 
     k._onKeyDown = function(e) {
@@ -37,19 +41,18 @@ FIVES.Input = FIVES.Input || {};
         {
             switch (e.keyCode)
             {
-              /* W */ case 87:  FIVES.Plugins.Avatar.setAvatarForwardBackwardMotion(MOVE_SPEED); break;
-              /* S */ case 83:  FIVES.Plugins.Avatar.setAvatarForwardBackwardMotion(-MOVE_SPEED); break;
-              /* A */ case 65:  FIVES.Plugins.Avatar.setAvatarSpinAroundAxis(UP_AXIS, SPIN_SPEED); break;
-              /* D */ case 68:  FIVES.Plugins.Avatar.setAvatarSpinAroundAxis(UP_AXIS, -SPIN_SPEED); break;
+                /* W */ case 87:  FIVES.Plugins.Avatar.setAvatarForwardBackwardMotion(MOVE_SPEED); break;
+                /* S */ case 83:  FIVES.Plugins.Avatar.setAvatarForwardBackwardMotion(-MOVE_SPEED); break;
+                /* A */ case 65:  FIVES.Plugins.Avatar.setAvatarSpinAroundAxis(UP_AXIS, SPIN_SPEED); break;
+                /* D */ case 68:  FIVES.Plugins.Avatar.setAvatarSpinAroundAxis(UP_AXIS, -SPIN_SPEED); break;
                 default: break;
             }
             var avatarEntity  = FIVES.Models.EntityRegistry.getEntity(FIVES.AvatarEntityGuid);
             if(avatarEntity)
             {
-                if(avatarEntity.xml3dView.xflowAnimations["idle"])
+                if(idleAnimation)
                     FIVES.Plugins.Animation.stopClientsideAnimation(FIVES.AvatarEntityGuid, "idle");
-
-                if(avatarEntity.xml3dView.xflowAnimations["walk"])
+                if(walkAnimation)
                     FIVES.Plugins.Animation.startClientsideAnimation(
                         FIVES.AvatarEntityGuid,
                         "walk",
@@ -57,7 +60,7 @@ FIVES.Input = FIVES.Input || {};
                         avatarEntity.xml3dView.xflowAnimations.walk.endKey,
                         -1,
                         1.0);
-                    _pressedKeys[e.keyCode] = true;
+                _pressedKeys[e.keyCode] = true;
             }
         }
     };
@@ -75,32 +78,32 @@ FIVES.Input = FIVES.Input || {};
         }
         _pressedKeys[e.keyCode] = false;
 
-        var avatarEntity  = FIVES.Models.EntityRegistry.getEntity(FIVES.AvatarEntityGuid);
         if(avatarEntity)
         {
             if(!(_pressedKeys[87] || _pressedKeys[83] || _pressedKeys[65] || _pressedKeys[68]))
             {
-                // FIVES.Communication.FivesCommunicator.stopServersideAnimation(FIVES.AvatarEntityGuid, "walk");
-                if(avatarEntity.xml3dView.xflowAnimations["walk"])
+                if(walkAnimation)
                     FIVES.Plugins.Animation.stopClientsideAnimation(FIVES.AvatarEntityGuid, "walk");
-
-                if(avatarEntity.xml3dView.xflowAnimations["idle"])
+                if(idleAnimation)
                     FIVES.Plugins.Animation.startClientsideAnimation(
                         FIVES.AvatarEntityGuid,
                         "idle",
                         avatarEntity.xml3dView.xflowAnimations.idle.startKey,
                         avatarEntity.xml3dView.xflowAnimations.idle.endKey,
                         -1,
-                    1.0);
+                        1.0);
             }
         }
     };
 
-    k._initializeEventListeners = function() {
+    k._initializeInteractions = function() {
         $(document).keydown(this._onKeyDown);
         $(document).keyup(this._onKeyUp);
-    };
 
+        avatarEntity  = FIVES.Models.EntityRegistry.getEntity(FIVES.AvatarEntityGuid);
+        walkAnimation = avatarEntity.xml3dView.xflowAnimations.walk;
+        idleAnimation = avatarEntity.xml3dView.xflowAnimations.idle;
+    };
     FIVES.Input.KeyListener = new keylistener();
 
 }());
