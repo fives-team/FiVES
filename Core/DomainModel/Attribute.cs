@@ -45,7 +45,7 @@ namespace FIVES
                                                         Definition.Name,
                                                         newValue);
 
-                ServiceBus.ServiceGateway.PublishTransformation(proposedChange);
+                ParentComponent.ContainingEntity.PublishAttributeChangeSuggestion(proposedChange);
             }
             else
             {
