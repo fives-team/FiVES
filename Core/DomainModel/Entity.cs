@@ -80,6 +80,8 @@ namespace FIVES
         /// TODO
         public event EventHandler<ChangedAttributeEventArgs> ChangedAttribute;
 
+        public event EventHandler<ProposeAttributeChangeEventArgs> ProposedAttributeChange;
+
         /// <summary>
         /// Verifies whether this entity contains a component with a given name.
         /// </summary>
@@ -88,6 +90,12 @@ namespace FIVES
         public bool ContainsComponent(string name)
         {
             return components.ContainsKey(name);
+        }
+
+        internal void PublishAttributeChangeSuggestion(ProposeAttributeChangeEventArgs e)
+        {
+            if (this.ProposedAttributeChange != null)
+                this.ProposedAttributeChange(this, e);
         }
 
         private void CreateComponent(string componentName)
