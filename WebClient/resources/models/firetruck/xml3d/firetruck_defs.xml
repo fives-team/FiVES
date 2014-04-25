@@ -103,5 +103,20 @@
     </shader>
     <transform id="t_FACESET_FACESET___999-FACES_12-node" translation="5.366324 0.0 -1.814402"/>
     <transform id="t_FACESET_FACESET_scheiben-FACES-node" translation="5.366324 0.0 -1.814402"/>
-  </defs>  
+  </defs>
+    <asset id="firetruck-asset">
+        <assetmesh src="FACESET_FACESET___1043-FACES_1-mesh.json" meshtype="triangles" transform="#t_FACESET_FACESET___1043-FACES_1-node" shader="#MAT_MAT_Surface_21_1-fx"/>
+        <assetmesh src="FACESET_FACESET___1078-FACES_1-mesh.json" meshtype="triangles" transform="#t_FACESET_FACESET___1078-FACES_1-node" shader="#MAT_MAT_Surface_3_1-fx" />
+        <assetmesh src="FACESET_FACESET___964-FACES_1-mesh.json" meshtype="triangles" shader="#MAT_MAT_Surface_13_1-fx" transform="#t_FACESET_FACESET___964-FACES_1-node"/>
+        <assetmesh src="FACESET_FACESET___985-FACES_1-mesh.json" meshtype="triangles" transform="#t_FACESET_FACESET___985-FACES_1-node" shader="#MAT_MAT_Surface_15_1-fx"/>
+        <assetmesh src="FACESET_FACESET___986-FACES_1-mesh.json" meshtype="triangles" transform="#t_FACESET_FACESET___986-FACES_1-node" shader="#MAT_MAT_Surface_11_1-fx"/>
+        <assetmesh src="FACESET_FACESET___991-FACES_1-mesh.json" meshtype="triangles" transform="#t_FACESET_FACESET___991-FACES_1-node"  shader="#MAT_MAT_Surface_7_1-fx"/>
+        <assetmesh src="FACESET_FACESET___993-FACES_1-mesh.json" meshtype="triangles" transform="#t_FACESET_FACESET___993-FACES_1-node" shader="#MAT_MAT_Surface_9_1-fx"/>
+        <assetmesh src="FACESET_FACESET___997-FACES_1-mesh.json" meshtype="triangles" transform="#t_FACESET_FACESET___997-FACES_1-node" shader="#MAT_MAT_Surface_17_1-fx"/>
+        <assetmesh src="FACESET_FACESET___998-FACES_1-mesh.json" meshtype="triangles" transform="#t_FACESET_FACESET___998-FACES_1-node" shader="#MAT_MAT_Surface_19_1-fx"/>
+        <assetmesh src="FACESET_FACESET___999-FACES_1-mesh.json" meshtype="triangles" transform="#t_FACESET_FACESET___999-FACES_1-node" shader="#MAT_MAT_Surface_1_1-fx"/>
+        <assetmesh src="FACESET_FACESET___999-FACES_11-mesh.json" meshtype="triangles" transform="#t_FACESET_FACESET___999-FACES_11-node" shader="#MAT_MAT_Surface_5_1-fx"/>
+        <assetmesh src="FACESET_FACESET___999-FACES_12-mesh.json" meshtype="triangles" transform="#t_FACESET_FACESET___999-FACES_12-node" shader="#MAT_MAT_Surface_5_1-fx"/>
+        <assetmesh src="FACESET_FACESET_scheiben-FACES-mesh.json" meshtype="triangles" transform="#t_FACESET_FACESET_scheiben-FACES-node" shader="#MAT_MAT_Surface_5_1-fx"/>
+    </asset>
 </xml3d>

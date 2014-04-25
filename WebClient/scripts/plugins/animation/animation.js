@@ -109,13 +109,13 @@ requirejs(["keyframe_animator"], (function () {
     // We therefore need to take this adaption into account here separately
     a._createAnimationsForEntity = function(entity) {
         var animationDefinitions = {};
-        var meshDefinitions = $(entity.xml3dView.defElement);
-        var meshAnimations = meshDefinitions.find("anim");
+        var $xml3dView = $(entity.xml3dView.groupElement);
+        var meshAnimations = $xml3dView.find("anim");
         var that = this;
         meshAnimations.each(function(index, element)
         {
             var animationDefinition = that._parseAnimationEntry(element, entity.guid);
-            animationDefinition.key = meshDefinitions.find(animationDefinition.key +"-"+entity.guid);
+            animationDefinition.key = $xml3dView.find(animationDefinition.key +"-"+entity.guid);
             animationDefinitions[element.getAttribute("name")] = animationDefinition;
         });
         return animationDefinitions;
@@ -149,6 +149,7 @@ requirejs(["keyframe_animator"], (function () {
             entity.playingAnimationsCollection[animationName] = {
                 name: animationName,
                 startFrame: startFrame,
+                currentFrame: startFrame,
                 endFrame: endFrame,
                 cycles: cycles,
                 currentCycle: 1,
