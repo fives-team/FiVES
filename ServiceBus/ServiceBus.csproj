@@ -43,7 +43,6 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="AccumulatedAttributeTransform.cs" />
     <Compile Include="IServiceBus.cs" />
-    <Compile Include="IServiceGateway.cs" />
     <Compile Include="IServiceRegistry.cs" />
     <Compile Include="ServiceBus.cs" />
     <Compile Include="ServiceBusImplementation.cs" />
