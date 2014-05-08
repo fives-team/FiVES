@@ -16,4 +16,5 @@ Core/PluginManager/TestPlugins
 *~
 *.vsp
 *.psess
+*.licenseheader
 WebClient/resources/proprietary
