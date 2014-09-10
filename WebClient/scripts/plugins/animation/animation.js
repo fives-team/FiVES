@@ -90,7 +90,9 @@ requirejs(["keyframe_animator"], (function () {
         for (var i in registeredEntities) {
             var entity = registeredEntities[i];
             if(entity)
+            {
                 this._keyframeAnimator.increaseAnimationKeys(entity, deltaTime);
+            }
         }
         var self = this;
         requestAnimationFrame(updateLoop.bind(self));
@@ -162,7 +164,9 @@ requirejs(["keyframe_animator"], (function () {
                 speed: speed};
 
             if(registeredEntities.indexOf(entity) < 0 )
+            {
                 registeredEntities.push(entity);
+            }
         }
     };
 
@@ -181,7 +185,10 @@ requirejs(["keyframe_animator"], (function () {
             delete entity.playingAnimationsCollection[animationName];
 
         if(Object.keys(entity.playingAnimationsCollection).length == 0)
-            registeredEntities.splice(registeredEntities.indexOf(entityGuid), 1);
+        {
+            var indexOfEntity = registeredEntities.indexOf(FIVES.Models.EntityRegistry.getEntity(entityGuid));
+            registeredEntities.splice(indexOfEntity, 1);
+        }
     };
 
     FIVES.Plugins.Animation = new animation();
