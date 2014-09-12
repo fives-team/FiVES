@@ -46,7 +46,7 @@ namespace KeyframeAnimationPlugin
             RegisterClientServices();
 
             KeyframeAnimationManager.Instance = new KeyframeAnimationManager();
-            KeyframeAnimationManager.Instance.Initialize();
+            KeyframeAnimationManager.Instance.Initialize(this);
         }
 
         public void Shutdown()
@@ -116,7 +116,7 @@ namespace KeyframeAnimationPlugin
         /// <param name="endFrame">Keyframe at which animation playback should end</param>
         /// <param name="cycles">Number of cycles the animation should be played (-1 for infinite playback)</param>
         /// <param param name="speed">Speed in which animation should be played</param>
-        private void StartClientsideAnimation(string entityGuid,
+        internal void StartClientsideAnimation(string entityGuid,
                                               string animationName,
                                               float startFrame, float endFrame,
                                               int cycles, float speed)
@@ -137,7 +137,7 @@ namespace KeyframeAnimationPlugin
         /// </summary>
         /// <param name="entityGuid">Guid of entity for which animation should be played</param>
         /// <param name="name">Name of animation that should be played</param>
-        private void StopClientsideAnimation(string entityGuid, string animationName)
+        internal void StopClientsideAnimation(string entityGuid, string animationName)
         {
             lock (animationStopCallbacks)
             {

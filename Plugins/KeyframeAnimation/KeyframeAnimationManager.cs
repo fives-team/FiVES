@@ -23,6 +23,12 @@ namespace KeyframeAnimationPlugin
             LastTick = new TimeSpan(DateTime.Now.Ticks);
         }
 
+        internal void Initialize(KeyframeAnimationPluginInitializer plugin)
+        {
+            this.animationPlugin = plugin;
+            Initialize();
+        }
+
         /// <summary>
         /// Handler for TickEvent of EventLoop. Will update keyframes of any animation and synchronize it with
         /// clients by setting the respective entity attribute
@@ -143,6 +149,61 @@ namespace KeyframeAnimationPlugin
         }
 
         /// <summary>
+        /// KIARA Service method handler that initiates a server side animation playback for an entity
+        /// </summary>
+        /// <param name="entityGuid">Guid of entity for which animation should be played</param>
+        /// <param name="name">Name of animation that should be played</param>
+        /// <param name="startFrame">Keyframe at which animation playback should start</param>
+        /// <param name="endFrame">Keyframe at which animation playback should end</param>
+        /// <param name="cycles">Number of cycles the animation should be played (-1 for infinite playback)</param>
+        /// <param param name="speed">Speed in which animation should be played</param>
+        public void StartServersideAnimation(Guid entityGuid,
+            string animationName,
+            float startFrame,
+            float endFrame,
+            int cycles,float speed)
+        {
+            animationPlugin.StartServersideAnimation(entityGuid.ToString(), animationName, startFrame, endFrame, cycles, speed);
+        }
+
+        /// <summary>
+        /// Invokes a message to start animations on clients' sides
+        /// </summary>
+        /// <param name="entityGuid">Guid of entity for which animation should be played</param>
+        /// <param name="name">Name of animation that should be played</param>
+        /// <param name="startFrame">Keyframe at which animation playback should start</param>
+        /// <param name="endFrame">Keyframe at which animation playback should end</param>
+        /// <param name="cycles">Number of cycles the animation should be played (-1 for infinite playback)</param>
+        /// <param param name="speed">Speed in which animation should be played</param>
+        public void StartClientsideAnimation(Guid entityGuid,
+            string animationName,
+            float startFrame,
+            float endFrame,
+            int cycles,float speed)
+        {
+            animationPlugin.StartClientsideAnimation(entityGuid.ToString(), animationName, startFrame, endFrame, cycles, speed);
+        }
+
+        /// <summary>
+        /// Handler that stops a server side animation playback for an entity
+        /// </summary>
+        /// <param name="entityGuid">Guid for which playback should be stopped</param>
+        /// <param name="name">Name of animation for which playback should be stopped</param>
+        public void StopServersideAnimation(Guid entityGuid, string name)
+        {
+            animationPlugin.StopServersideAnimation(entityGuid.ToString(), name);
+        }
+
+        /// <summary>
+        /// Invokes a message to stop animations on clients' sides
+        /// </summary>
+        /// <param name="entityGuid">Guid of entity for which animation should be played</param>
+        /// <param name="name">Name of animation that should be played</param>
+        public void StopClientsideAnimation(Guid entityGuid, string name)
+        {
+            animationPlugin.StopClientsideAnimation(entityGuid.ToString(), name);
+        }
+        /// <summary>
         /// Registry of all entities that subscribed to receive tick events from event loop for animation
         /// key frame computation.
         /// Dictionary has stucture Dictionary<EntityGuid,Dictionary<AnimationName, AnimationObject>,
@@ -159,5 +220,7 @@ namespace KeyframeAnimationPlugin
         /// </summary>
         internal Dictionary<Guid, HashSet<string>> FinishedAnimations = new Dictionary<Guid, HashSet<string>>();
         private TimeSpan LastTick;
+
+        KeyframeAnimationPluginInitializer animationPlugin;
     }
 }
