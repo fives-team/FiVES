@@ -32,12 +32,6 @@ namespace StaticSceneryPlugin
         private IComponentRegistry globalComponentRegistry = ComponentRegistry.Instance;
         private World globalWorld = World.Instance;
 
-        // values to mock configfile
-        string SceneryURL = "/static/scenery/url.xml";
-        float OffsetX = 1.0f;
-        float OffsetY = -1.0f;
-        float OffsetZ = 2.0f;
-
         // the initializer of the test corresponds to the intializier of the plugin. Reading Config is mocked by method, as config file is not
         // read by NUnit
         [SetUp()]
@@ -48,7 +42,6 @@ namespace StaticSceneryPlugin
 
             World.Instance = new World();
             ComponentRegistry.Instance = new ComponentRegistry();
-            MockReadConfig();
             MockComponentRegistry();
             plugin.CreateSceneryEntity();
         }
@@ -61,18 +54,6 @@ namespace StaticSceneryPlugin
         {
             World.Instance = globalWorld;
             ComponentRegistry.Instance = globalComponentRegistry;
-        }
-
-        /// <summary>
-        /// We need to mock reading the config file here, as NUnit cannot read the external app.config. That's why we simulate setting the
-        /// needed values by setting them directly from the test fixture's respective members
-        /// </summary>
-        void MockReadConfig()
-        {
-            plugin.SceneryURL = SceneryURL;
-            plugin.OffsetX = OffsetX;
-            plugin.OffsetY = OffsetY;
-            plugin.OffsetZ = OffsetZ;
         }
 
         /// <summary>
@@ -100,10 +81,10 @@ namespace StaticSceneryPlugin
             var entity = FIVES.World.Instance.ElementAt(0);
 
             var pos = (Vector)entity["location"]["position"].Value;
-            Assert.AreEqual(pos.x, OffsetX);
-            Assert.AreEqual(pos.y, OffsetY);
-            Assert.AreEqual(pos.z, OffsetZ);
-            Assert.AreEqual(entity["mesh"]["uri"].Value, SceneryURL);
+            Assert.AreEqual(pos.x, plugin.OffsetX);
+            Assert.AreEqual(pos.y, plugin.OffsetY);
+            Assert.AreEqual(pos.z, plugin.OffsetZ);
+            Assert.AreEqual(entity["mesh"]["uri"].Value, plugin.SceneryURL);
         }
     }
 }
