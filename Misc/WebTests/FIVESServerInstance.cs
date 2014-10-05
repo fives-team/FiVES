@@ -117,6 +117,13 @@ namespace WebTests
                     </nlog>
                 </configuration>";
             File.WriteAllText(serverConfigPath, serverConfig);
+
+            foreach (string plugin in plugins)
+            {
+                string pluginPath = Path.Combine(testDirectory, plugin + ".dll");
+                if (!File.Exists(pluginPath))
+                    throw new Exception("Plugin assembly " + pluginPath + " is not found.");
+            }
         }
 
         public void ConfigureServerSyncPorts(int listeningPort, int[] remotePorts)
