@@ -40,6 +40,7 @@
       <HintPath>..\..\packages\NLog.2.0.1.2\lib\net40\NLog.dll</HintPath>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.configuration" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
@@ -51,11 +52,13 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Attribute.cs" />
     <Compile Include="ComponentDefinitionTest.cs" />
     <Compile Include="ComponentRegistryTest.cs" />
     <Compile Include="ComponentTest.cs" />
     <Compile Include="EntityCollectionTest.cs" />
     <Compile Include="EntityTest.cs" />
+    <Compile Include="Events\ProposeAttributeChangeEventArgs.cs" />
     <Compile Include="Exceptions\EntityNotFoundException.cs" />
     <Compile Include="Exceptions\AttributeAssignmentException.cs" />
     <Compile Include="Exceptions\AttributeDefinitionException.cs" />

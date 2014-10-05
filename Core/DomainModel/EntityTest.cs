@@ -89,7 +89,7 @@ namespace FIVES
         public void ShouldCreateComponentsWhenAccessedAndCorrectVerifyIfEntityContainsAComponent()
         {
             Assert.IsFalse(entity.ContainsComponent("test"));
-            entity["test"]["a"] = 24;
+            entity["test"]["a"].Value = 24;
             Assert.IsTrue(entity.ContainsComponent("test"));
         }
 
@@ -97,13 +97,13 @@ namespace FIVES
         [ExpectedException(typeof(ComponentAccessException))]
         public void ShouldFailToCreateUnregisteredComponents()
         {
-            entity["unregistered-component"]["a"] = 24;
+            entity["unregistered-component"]["a"].Suggest(24);
         }
 
         [Test()]
         public void ShouldReturnCollectionOfComponents()
         {
-            entity["test"]["a"] = 24;
+            entity["test"]["a"].Value = 24;
 
             Assert.AreEqual(1, entity.Components.Count);
             var enumerator = entity.Components.GetEnumerator();
@@ -117,7 +117,7 @@ namespace FIVES
         {
             entity.CreatedComponent += mockHandlers.Object.CreatedComponent;
 
-            entity["test"]["a"] = 24;
+            entity["test"]["a"].Value = 24;
 
             mockHandlers.Verify(h => h.CreatedComponent(It.IsAny<object>(), 
                 It.IsAny<ComponentEventArgs>()), Times.Once());
@@ -128,7 +128,7 @@ namespace FIVES
         {
             entity.ChangedAttribute += mockHandlers.Object.ChangedAttribute;
 
-            entity["test"]["a"] = 24;
+            entity["test"]["a"].Value = 24;
 
             mockHandlers.Verify(h => h.ChangedAttribute(It.IsAny<object>(),
                 It.IsAny<ChangedAttributeEventArgs>()), Times.Once());
@@ -139,7 +139,7 @@ namespace FIVES
         {
             entity.ChangedAttribute += mockHandlers.Object.ChangedAttribute;
 
-            entity["test"]["a"] = 42;
+            entity["test"]["a"].Value = 42;
 
             mockHandlers.Verify(h => h.ChangedAttribute(It.IsAny<object>(),
                 It.IsAny<ChangedAttributeEventArgs>()), Times.Never());
@@ -150,9 +150,9 @@ namespace FIVES
         {
             entity.ChangedAttribute += mockHandlers.Object.ChangedAttribute;
 
-            entity["test"]["n"] = null;
-            entity["test"]["n"] = null; // shouldn't cause AttributeChanged event
-            entity["test"]["n"] = 5;
+            entity["test"]["n"].Value = null;
+            entity["test"]["n"].Value = null; // shouldn't cause AttributeChanged event
+            entity["test"]["n"].Value = 5;
 
             mockHandlers.Verify(h => h.ChangedAttribute(It.IsAny<object>(),
                 It.IsAny<ChangedAttributeEventArgs>()), Times.Exactly(2));

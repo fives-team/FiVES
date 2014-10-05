@@ -105,7 +105,7 @@ namespace AvatarPlugin
         {
             if (entity.ContainsComponent("avatar"))
             {
-                avatarEntities[(string)entity["avatar"]["userLogin"]] = entity;
+                avatarEntities[(string)entity["avatar"]["userLogin"].Value] = entity;
                 return true;
             }
 
@@ -119,10 +119,10 @@ namespace AvatarPlugin
             var userLogin = Authentication.Instance.GetLoginName(connection);
             if (!avatarEntities.ContainsKey(userLogin)) {
                 Entity newAvatar = new Entity();
-                newAvatar["avatar"]["userLogin"] = userLogin;
-                newAvatar["mesh"]["uri"] = defaultAvatarMesh;
-                newAvatar["mesh"]["visible"] = true;
-                newAvatar["location"]["position"] = new Vector(0, 10, 0);
+                newAvatar["avatar"]["userLogin"].Suggest(userLogin);
+                newAvatar["mesh"]["uri"].Suggest(defaultAvatarMesh);
+                newAvatar["mesh"]["visible"].Suggest(true);
+                newAvatar["location"]["position"].Suggest(new Vector(0, 10, 0));
                 World.Instance.Add(newAvatar);
             }
 
@@ -147,7 +147,7 @@ namespace AvatarPlugin
         void Activate(Connection connection)
         {
             var avatarEntity = GetAvatarEntityByConnection(connection);
-            avatarEntity["mesh"]["visible"] = true;
+            avatarEntity["mesh"]["visible"].Suggest(true);
         }
 
         /// <summary>
@@ -157,7 +157,7 @@ namespace AvatarPlugin
         void Deactivate(Connection connection)
         {
             var avatarEntity = GetAvatarEntityByConnection(connection);
-            avatarEntity["mesh"]["visible"] = false;
+            avatarEntity["mesh"]["visible"].Suggest(false);
         }
 
         /// <summary>
@@ -170,35 +170,37 @@ namespace AvatarPlugin
         {
             var avatarEntity = GetAvatarEntityByConnection(connection);
 
-            avatarEntity["mesh"]["uri"] = meshURI;
-            avatarEntity["mesh"]["scale"] = scale;
+            avatarEntity["mesh"]["uri"].Suggest(meshURI);
+            avatarEntity["mesh"]["scale"].Suggest(scale);
         }
 
         void StartAvatarMotionInDirection(Connection connection, Vector velocity)
         {
             var avatarEntity = GetAvatarEntityByConnection(connection);
 
-            avatarEntity["motion"]["velocity"] = velocity;
+            avatarEntity["motion"]["velocity"].Suggest(velocity);
         }
 
         void SetForwardBackwardMotion(Connection connection, float amount)
         {
             var avatarEntity = GetAvatarEntityByConnection(connection);
-            Vector oldVelocity = (Vector)avatarEntity["motion"]["velocity"];
-            avatarEntity["motion"]["velocity"] = new Vector(amount, oldVelocity.y, oldVelocity.z);
+            Vector oldVelocity = (Vector)avatarEntity["motion"]["velocity"].Value;
+            Vector newVelocity = new Vector(amount, oldVelocity.y, oldVelocity.z);
+            avatarEntity["motion"]["velocity"].Suggest(newVelocity); 
         }
 
         void SetLeftRightMotion(Connection connection, float amount)
         {
             var avatarEntity = GetAvatarEntityByConnection(connection);
-            Vector oldVelocity = (Vector)avatarEntity["motion"]["velocity"];
-            avatarEntity["motion"]["velocity"] = new Vector(oldVelocity.x, oldVelocity.y, amount);
+            Vector oldVelocity = (Vector)avatarEntity["motion"]["velocity"].Value;
+            Vector newVelocity =  new Vector(oldVelocity.x, oldVelocity.y, amount);
+            avatarEntity["motion"]["velocity"].Suggest(newVelocity);
         }
 
         void SetAvatarSpinAroundAxis(Connection connection, Vector axis, float angle)
         {
             var avatarEntity = GetAvatarEntityByConnection(connection);
-            avatarEntity["motion"]["rotVelocity"] = new AxisAngle(axis, angle);
+            avatarEntity["motion"]["rotVelocity"].Suggest(new AxisAngle(axis, angle));
         }
 
         Dictionary<string, Entity> avatarEntities = new Dictionary<string, Entity>();

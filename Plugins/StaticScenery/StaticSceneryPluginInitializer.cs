@@ -86,11 +86,11 @@ namespace StaticSceneryPlugin
         /// <summary>
         /// Creates the scenery entity and adds it to the world
         /// </summary>
-        private void CreateSceneryEntity()
+        internal void CreateSceneryEntity()
         {
             Entity sceneryEntity = new Entity();
-            sceneryEntity["mesh"]["uri"] = SceneryURL;
-            sceneryEntity["location"]["position"] = new Vector(OffsetX, OffsetY, OffsetZ);
+            sceneryEntity["mesh"]["uri"].Suggest(SceneryURL);
+            sceneryEntity["location"]["position"].Suggest(new Vector(OffsetX, OffsetY, OffsetZ));
             World.Instance.Add(sceneryEntity);
         }
 

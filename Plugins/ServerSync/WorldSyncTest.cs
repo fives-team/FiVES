@@ -18,6 +18,7 @@ using FIVES;
 using Moq;
 using System.Collections.Generic;
 using KIARAPlugin;
+using FIVESServiceBus;
 
 namespace ServerSyncPlugin
 {
@@ -102,6 +103,9 @@ namespace ServerSyncPlugin
             ComponentRegistry.Instance = componentRegistryMock.Object;
             StringSerialization.Instance = serializationMock.Object;
             World.Instance = new World();
+
+            ServiceBus.Instance = new ServiceBusImplementation();
+            ServiceBus.Instance.Initialize();
         }
 
         [TearDown]
@@ -144,7 +148,7 @@ namespace ServerSyncPlugin
         public void ShouldSendEntityAdditions()
         {
             var entity = new Entity();
-            entity["test"]["a"] = 33;
+            entity["test"]["a"].Suggest(33);
 
             var worldSync = new WorldSync();
             worldSync.HandleLocalAddedEntity(this, new EntityEventArgs(entity));
@@ -168,7 +172,7 @@ namespace ServerSyncPlugin
         public void ShouldSendAttributeChanges()
         {
             var entity = new Entity();
-            entity["test"]["a"] = 33;
+            entity["test"]["a"].Suggest(33);
             World.Instance.Add(entity);
 
             var worldSync = new WorldSync();
@@ -215,7 +219,7 @@ namespace ServerSyncPlugin
             var worldSync = new WorldSync();
             worldSync.HandleRemoteChangedAttributes(remoteConnectionMock.Object, entity.Guid, changedAttributes);
 
-            Assert.AreEqual(entity["test"]["a"], 99);
+            Assert.AreEqual(entity["test"]["a"].Value, 99);
         }
 
         [Test]

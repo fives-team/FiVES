@@ -29,7 +29,7 @@ namespace ConfigScalabilityPlugin
 
         public bool IsInterestedInEntity(Entity entity)
         {
-            Vector position = (Vector)entity["location"]["position"];
+            Vector position = (Vector)entity["location"]["position"].Value;
             return position.x >= MinX && position.x < MaxX && position.y >= MinY && position.y < MaxY;
         }
 

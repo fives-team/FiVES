@@ -76,7 +76,7 @@ namespace EditingNamespace
         string CreateEntityAt(Vector position)
         {
             Entity entity = new Entity();
-            entity["location"]["position"] = position;
+            entity["location"]["position"].Suggest(position);
             World.Instance.Add(entity);
             return entity.Guid.ToString ();
         }
@@ -84,11 +84,11 @@ namespace EditingNamespace
         string CreateMeshEntity(Vector position, Quat orientation, Vector scale, MeshResource mesh)
         {
             Entity entity = new Entity();
-            entity["location"]["position"] = position;
-            entity["location"]["orientation"] = orientation;
-            entity["mesh"]["scale"] = scale;
-            entity["mesh"]["uri"] = mesh.uri;
-            entity["mesh"]["visible"] = mesh.visible;
+            entity["location"]["position"].Suggest(position);
+            entity["location"]["orientation"].Suggest(orientation);
+            entity["mesh"]["scale"].Suggest(scale);
+            entity["mesh"]["uri"].Suggest(mesh.uri);
+            entity["mesh"]["visible"].Suggest(mesh.visible);
             World.Instance.Add(entity);
             return entity.Guid.ToString ();
         }

@@ -87,7 +87,7 @@ namespace ClientManagerPlugin
             {
                 var componentInfo = new Dictionary<string, object>();
                 foreach (ReadOnlyAttributeDefinition attrDefinition in component.Definition.AttributeDefinitions)
-                    componentInfo[attrDefinition.Name] = component[attrDefinition.Name];
+                    componentInfo[attrDefinition.Name] = component[attrDefinition.Name].Value;
                 entityInfo[component.Name] = componentInfo;
             }
 

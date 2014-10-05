@@ -15,6 +15,8 @@
 using System;
 using NUnit.Framework;
 using FIVES;
+using FIVESServiceBus;
+using System.Collections.Generic;
 
 namespace MotionPlugin
 {
@@ -28,6 +30,9 @@ namespace MotionPlugin
         [SetUp()]
         public void Init()
         {
+            ServiceBus.Instance = new ServiceBusImplementation();
+            ServiceBus.Instance.Initialize();
+
             ComponentRegistry.Instance = new ComponentRegistry();
             plugin.RegisterToECA();
             RegisterLocationComponents();
@@ -66,11 +71,11 @@ namespace MotionPlugin
         public void ShouldApplyVelocityToPosition()
         {
             var e = new Entity();
-            e["motion"]["velocity"] = new Vector(1, 0, 0);
+            e["motion"]["velocity"].Suggest(new Vector(1, 0, 0));
 
             plugin.UpdateMotion(e);
 
-            Vector newPosition = (Vector)e["location"]["position"];
+            Vector newPosition = (Vector)e["location"]["position"].Value;
 
             Assert.AreEqual(newPosition.x, 1f);
             Assert.AreEqual(newPosition.y, 0f);
@@ -92,12 +97,12 @@ namespace MotionPlugin
             var e = new Entity();
             Quat orientation = FIVES.Math.QuaternionFromAxisAngle(new Vector(1, 0, 0), 0.1f);
 
-            e["location"]["orientation"] = orientation;
-            e["motion"]["rotVelocity"] = new AxisAngle(1f, 0f, 0f, 0.1f);
+            e["location"]["orientation"].Suggest(orientation);
+            e["motion"]["rotVelocity"].Suggest(new AxisAngle(1f, 0f, 0f, 0.1f));
 
             plugin.UpdateSpin(e);
 
-            Quat newEntityOrientation = (Quat)e["location"]["orientation"];
+            Quat newEntityOrientation = (Quat)e["location"]["orientation"].Value;
 
             Vector axisAfterSpin = FIVES.Math.AxisFromQuaternion(newEntityOrientation);
             float angleAfterSpin = FIVES.Math.AngleFromQuaternion(newEntityOrientation);

@@ -131,8 +131,9 @@ namespace MotionPlugin
         private void Update(string guid, Vector velocity, AxisAngle rotVelocity, int timestamp)
         {
             var entity = World.Instance.FindEntity(guid);
-            entity["motion"]["velocity"] = velocity;
-            entity["motion"]["rotVelocity"] = rotVelocity;
+            entity["motion"]["velocity"].Suggest(velocity);
+
+            entity["motion"]["rotVelocity"].Suggest(rotVelocity);
 
             // We currently ignore timestamp, but may it in the future to implement dead reckoning.
         }
@@ -227,12 +228,13 @@ namespace MotionPlugin
         /// <param name="updatedEntity">Entity for which motion is updated</param>
         internal void UpdateMotion(Entity updatedEntity) {
             Vector localVelocity = GetVelocityInWorldSpace(updatedEntity);
-            Vector oldPosition = (Vector)updatedEntity["location"]["position"];
-            updatedEntity["location"]["position"] = new Vector(
+            Vector oldPosition = (Vector)updatedEntity["location"]["position"].Value;
+            Vector newPosition = new Vector(
                 oldPosition.x + localVelocity.x,
                 oldPosition.y + localVelocity.y,
                 oldPosition.z + localVelocity.z
             );
+            updatedEntity["location"]["position"].Suggest(newPosition);
         }
 
         /// <summary>
@@ -243,12 +245,12 @@ namespace MotionPlugin
         {
             Quat entityRotation = EntityRotationAsQuaternion(updatedEntity);
 
-            AxisAngle rotVelocity = (AxisAngle)updatedEntity["motion"]["rotVelocity"];
+            AxisAngle rotVelocity = (AxisAngle)updatedEntity["motion"]["rotVelocity"].Value;
 
             Quat spinAsQuaternion = FIVES.Math.QuaternionFromAxisAngle(rotVelocity.axis, rotVelocity.angle);
 
             Quat newRotationAsQuaternion = FIVES.Math.MultiplyQuaternions(spinAsQuaternion, entityRotation);
-            updatedEntity["location"]["orientation"] = newRotationAsQuaternion;
+            updatedEntity["location"]["orientation"].Suggest(newRotationAsQuaternion);
         }
 
         /// <summary>
@@ -258,8 +260,8 @@ namespace MotionPlugin
         /// <returns>Entity's velocity in world coordinates</returns>
         private Vector GetVelocityInWorldSpace(Entity updatedEntity)
         {
-            Vector velocity = (Vector)updatedEntity["motion"]["velocity"];
-            Quat entityRotation = (Quat)updatedEntity["location"]["orientation"];
+            Vector velocity = (Vector)updatedEntity["motion"]["velocity"].Value;
+            Quat entityRotation = (Quat)updatedEntity["location"]["orientation"].Value;
 
             Vector axis = FIVES.Math.AxisFromQuaternion(entityRotation);
             float angle = FIVES.Math.AngleFromQuaternion(entityRotation);
@@ -273,7 +275,7 @@ namespace MotionPlugin
         /// <param name="entity">Entity to get orientation from</param>
         /// <returns></returns>
         private Quat EntityRotationAsQuaternion(Entity entity) {
-            return (Quat)entity["location"]["orientation"];
+            return (Quat)entity["location"]["orientation"].Value;
         }
 
         /// <summary>
@@ -282,7 +284,7 @@ namespace MotionPlugin
         /// <param name="entity">Entity to check</param>
         /// <returns>true, if at least one attribute of its velocity component is != 0</returns>
         private bool IsMoving(Entity entity) {
-            var velocity = (Vector)entity["motion"]["velocity"];
+            var velocity = (Vector)entity["motion"]["velocity"].Value;
             return velocity.x != 0 || velocity.y != 0 || velocity.z != 0;
         }
 
@@ -292,7 +294,7 @@ namespace MotionPlugin
         /// <param name="entity">Entity to check</param>
         /// <returns>True, if spin axis is not the null vector, and velocity is not 0</returns>
         private bool IsSpinning(Entity entity) {
-            var rotVelocity = (AxisAngle)entity["motion"]["rotVelocity"];
+            var rotVelocity = (AxisAngle)entity["motion"]["rotVelocity"].Value;
             return rotVelocity.angle != 0 &&
                 !(rotVelocity.axis.x == 0 && rotVelocity.axis.y == 0 && rotVelocity.axis.z == 0);
         }

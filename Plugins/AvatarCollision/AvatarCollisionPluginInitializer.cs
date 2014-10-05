@@ -19,6 +19,7 @@ using System.Text;
 using System.Threading.Tasks;
 using ClientManagerPlugin;
 using FIVES;
+using FIVESServiceBus;
 
 namespace AvatarCollisionPlugin
 {
@@ -52,6 +53,7 @@ namespace AvatarCollisionPlugin
             RegisterComponents();
             RegisterToEvents();
 
+            ServiceBus.ServiceRegistry.RegisterService("AvatarCollision", Transform);
             PluginManager.Instance.AddPluginLoadedHandler("ClientManager", RegisterService);
         }
 
@@ -79,13 +81,6 @@ namespace AvatarCollisionPlugin
         internal void RegisterToEvents()
         {
             World.Instance.AddedEntity += new EventHandler<EntityEventArgs>(HandleEntityAdded);
-            foreach (Entity entity in World.Instance)
-            {
-                if(entity.ContainsComponent("avatar"))
-                {
-                    entity.ChangedAttribute += new EventHandler<ChangedAttributeEventArgs>(HandleAttributeChanged);
-                }
-            }
         }
 
         /// <summary>
@@ -99,9 +94,9 @@ namespace AvatarCollisionPlugin
         {
             if (e.Entity.ContainsComponent("avatar"))
             {
-                e.Entity["avatarCollision"]["groundLevel"] =
-                    ((Vector)e.Entity["location"]["position"]).y; // Initialise entities without gravity
-                e.Entity.ChangedAttribute += new EventHandler<ChangedAttributeEventArgs>(HandleAttributeChanged);
+                // Initialise entities without gravity
+                float initialGroundlevel = ((Vector)e.Entity["location"]["position"].Value).y;
+                e.Entity["avatarCollision"]["groundLevel"].Suggest(initialGroundlevel);
             }
         }
 
@@ -109,25 +104,17 @@ namespace AvatarCollisionPlugin
         /// Checks if position of entity has changed and sets y attribute to ground level if y and ground level
         /// are different
         /// </summary>
-        /// <param name="sender">Entity that changed position</param>
-        /// <param name="e">The Attribute changed Event Args</param>
-        private void HandleAttributeChanged(Object sender, ChangedAttributeEventArgs e)
+        /// <param name="accumulatedTransforms">Accumulated transformation that happened in the service chain</param>
+        /// <returns>Accumulated changes with adaptions added by AvatarCollison</returns>
+        internal AccumulatedAttributeTransform Transform(AccumulatedAttributeTransform accumulatedTransforms)
         {
-            Entity senderEntity = (Entity)sender;
-            if (senderEntity.ContainsComponent("avatar") &&  e.Component.Name == "location")
-            {
-                Entity entity = (Entity)sender;
-                Vector entityPosition = (Vector)entity["location"]["position"];
+            Vector entityPosition = (Vector)accumulatedTransforms.CurrentAttributeValue("location", "position");
+            Vector adaptedPosition = new Vector (entityPosition.x,
+                (float)accumulatedTransforms.Entity["avatarCollision"]["groundLevel"].Value,
+                entityPosition.z);
 
-                if (entityPosition.y != (float)entity["avatarCollision"]["groundLevel"])
-                {
-                    Vector correctedPosition = new Vector(entityPosition.x,
-                                                            (float)entity["avatarCollision"]["groundLevel"],
-                                                            entityPosition.z);
-
-                    entity["location"]["position"] = correctedPosition;
-                }
-            }
+            accumulatedTransforms.AddAttributeTransformation("location", "position", adaptedPosition);
+            return accumulatedTransforms;
         }
 
         /// <summary>
@@ -138,7 +125,7 @@ namespace AvatarCollisionPlugin
         public void SetGroundlevel(string entityGuid, float groundLevel)
         {
             var entity = World.Instance.FindEntity(entityGuid);
-            entity["avatarCollision"]["groundLevel"] = groundLevel;
+            entity["avatarCollision"]["groundLevel"].Suggest(groundLevel);
         }
     }
 }
