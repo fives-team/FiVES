@@ -34,8 +34,10 @@ namespace WebTests
         {
             server = new FIVESServerInstance();
             server.ConfigureClientManagerPorts(34837);
-            server.ConfigurePluginsAndProtocols(new string[] { "Auth", "Avatar", "ClientManager", "KIARA", "Location",
-                "Motion", "Testing", "Renderable", "EventLoop", "Editing" }, new string[] { "WebSocketJSON" });
+            server.ConfigurePluginsAndProtocols(
+                new string[] { "Auth", "Avatar", "ClientManager", "KIARA", "Location", "Motion", "Testing",
+                               "Renderable", "EventLoop", "Editing", "KeyframeAnimation" },
+                new string[] { "WebSocketJSON" });
             server.Start();
         }
 

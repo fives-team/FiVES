@@ -77,6 +77,11 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Scalability", "Plugins\Scal
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ServiceBus", "ServiceBus\ServiceBus.csproj", "{6C4C01E3-2F44-462F-BF63-A9D5D288C662}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{32339AF3-82CA-4897-BFA1-C64BB93D1A64}"
+	ProjectSection(SolutionItems) = preProject
+		.nuget\packages.config = .nuget\packages.config
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -254,9 +259,6 @@ Global
 		{6190805B-0E95-49AC-9C08-70AB7E833B03} = {4493E16B-2266-45D8-A0B5-F998EF9B790E}
 		{1B829184-E0FE-4FEA-84DB-96051D1F74A6} = {4493E16B-2266-45D8-A0B5-F998EF9B790E}
 		{B698B7A2-8E46-4D92-9229-1A68F8BFC545} = {4493E16B-2266-45D8-A0B5-F998EF9B790E}
-	EndGlobalSection
-	GlobalSection(Performance) = preSolution
-		HasPerformanceSessions = true
 	EndGlobalSection
 	GlobalSection(MonoDevelopProperties) = preSolution
 		StartupItem = Core\FIVES\FIVES.csproj

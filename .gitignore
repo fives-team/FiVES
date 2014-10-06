@@ -18,3 +18,4 @@ Core/PluginManager/TestPlugins
 *.psess
 *.licenseheader
 WebClient/resources/proprietary
+TestResult.xml

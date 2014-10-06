@@ -94,7 +94,15 @@ namespace FIVES
         internal void PublishAttributeChangeSuggestion(ProposeAttributeChangeEventArgs e)
         {
             if (this.ProposedAttributeChange != null)
+            {
                 this.ProposedAttributeChange(this, e);
+            }
+            else
+            {
+                // if ProposedAttributeChange is null, then Service Bus is uninitialized and we fall back onto normal
+                // change propagation, i.e. via ChangedAttribute event.
+                e.Entity[e.ComponentName][e.AttributeName].Set(e.Value);
+            }
         }
 
         private void CreateComponent(string componentName)
