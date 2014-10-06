@@ -42,7 +42,7 @@ namespace WebTests
             server2.ConfigureServerSyncPorts(43746, new int[] { 43745 });
             server2.ConfigureClientManagerPorts(34839);
             server2.ConfigurePluginsAndProtocols(new string[] { "Auth", "Avatar", "ClientManager", "KIARA", "Location",
-                "Motion", "Testing", "Renderable", "EventLoop", "Editing", "ServerSync", "ConfigScalability",
+                "Testing", "Renderable", "EventLoop", "Editing", "ServerSync", "ConfigScalability",
                 "Scalability", "KeyframeAnimation" }, new string[] { "WebSocketJSON" });
             server2.Start();
         }
