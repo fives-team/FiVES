@@ -38,7 +38,9 @@ FIVES.Resources = FIVES.Resources || {};
 
     scm._createMainDefinitions = function() {
         _mainDefs = XML3D.createElement("defs");
+        _mainDefs.id = "SceneDefinitions";
         this.xml3dElement.appendChild(_mainDefs);
+        this.SceneDefinitions = _mainDefs;
     };
 
     scm.removeEntity = function(entity) {
