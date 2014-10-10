@@ -19,6 +19,7 @@ FIVES.Plugins = FIVES.Plugins || {};
 (function() {
     "use strict";
 
+    var LIGHT_TYPES = ["point", "directional", "spot"];
     var light = function () {
         FIVES.Events.AddEntityAddedHandler(this.addMeshForEntity.bind(this));
     };
