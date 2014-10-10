@@ -31,6 +31,9 @@ FIVES.Models = FIVES.Models || {};
         this.mesh = entityDocument.mesh ||
             {uri:"",visible:true, scale: {x:1, y:1, z:1 }};
 
+        if(entityDocument.light)
+            this.light = entityDocument.light;
+
         this._cachedComponentUpdates = {};
         this._attributeUpdateHandle = setInterval(this._flushUpdates.bind(this), 30);
     };
