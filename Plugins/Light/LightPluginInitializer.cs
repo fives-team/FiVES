@@ -4,33 +4,45 @@ using System.Linq;
 using System.Text;
 using FIVES;
 
-namespace Light
+namespace LightPlugin
 {
     public class LightPluginInitializer : IPluginInitializer
     {
+        #region Plugin Initializer Interface
+
         public string Name
         {
-            get { throw new NotImplementedException(); }
+            get { return "Light"; }
         }
 
         public List<string> PluginDependencies
         {
-            get { throw new NotImplementedException(); }
+            get { return new List<string>(); }
         }
 
         public List<string> ComponentDependencies
         {
-            get { throw new NotImplementedException(); }
+            get { return new List<string>(); }
         }
 
         public void Initialize()
         {
-            throw new NotImplementedException();
+            registerLightComponent();
         }
 
         public void Shutdown()
         {
-            throw new NotImplementedException();
+        }
+
+        #endregion
+
+        private void registerLightComponent()
+        {
+            ComponentDefinition lightComponent = new ComponentDefinition("light");
+            lightComponent.AddAttribute<LightType>("type");
+            lightComponent.AddAttribute<Vector>("intensity");
+            lightComponent.AddAttribute<Vector>("attenuation");
+            ComponentRegistry.Instance.Register(lightComponent);
         }
     }
 }
