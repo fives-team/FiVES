@@ -28,8 +28,11 @@ FIVES.Plugins = FIVES.Plugins || {};
     var l = light.prototype;
 
     l.addLightForEntity = function(entity) {
-        this._addLightShader(entity);
-        this._addLightGroup(entity);
+        if(entity["light"])
+        {
+            this._addLightShader(entity);
+            this._addLightGroup(entity);
+        }
     };
 
     l._addLightShader = function(entity) {
