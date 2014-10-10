@@ -28,6 +28,10 @@ FIVES.Plugins = FIVES.Plugins || {};
     var l = light.prototype;
 
     l.addLightForEntity = function(entity) {
+        this._addLightShader(entity);
+        this._addLightGroup(entity);
+    };
+
     l._addLightShader = function(entity) {
         var shaderElement = $(_createShaderElement(entity));
         _setShaderParameters(shaderElement, entity);
