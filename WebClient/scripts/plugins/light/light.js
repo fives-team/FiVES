@@ -63,7 +63,19 @@ FIVES.Plugins = FIVES.Plugins || {};
         return parameterTag;
     };
 
+    l._addLightGroup = function(entity) {
+        var groupElement = XML3D.createElement("group");
+        groupElement.id = "light-" + entity.guid;
+        groupElement.setAttribute("transform", "#transform-" + entity.guid);
+        groupElement.appendChild(_createLightElement(entity));
+        entity.xml3dView.groupElement = groupElement;
+        FIVES.Resources.SceneManager.xml3dElement.appendChild(groupElement);
+    };
 
+    var _createLightElement = function(entity) {
+        var lightElement = XML3D.createElement("light");
+        lightElement.setAttribute("shader", "#ls-" + entity.guid);
+        return lightElement;
     };
 
     FIVES.Plugins.Light = new light();
