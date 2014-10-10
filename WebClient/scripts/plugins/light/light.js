@@ -28,6 +28,41 @@ FIVES.Plugins = FIVES.Plugins || {};
     var l = light.prototype;
 
     l.addLightForEntity = function(entity) {
+    l._addLightShader = function(entity) {
+        var shaderElement = $(_createShaderElement(entity));
+        _setShaderParameters(shaderElement, entity);
+        $(FIVES.Resources.SceneManager.SceneDefinitions).append(shaderElement);
+    };
+
+    var _createShaderElement = function(entity)
+    {
+        var shaderElement = document.createElement("lightshader");
+        var lightType = LIGHT_TYPES[entity["light"]["type"]];
+        shaderElement.id = "ls-" + entity.guid;
+        shaderElement.setAttribute("script", "urn:xml3d:lightshader:" + lightType);
+        return shaderElement;
+    };
+
+    var _setShaderParameters = function(shaderElement, entity)
+    {
+        if(entity["light"]["intensity"]) {
+            shaderElement.append(_createShaderParameter("intensity", entity["light"]["intensity"]));
+        }
+
+        if(entity["light"]["attenuation"]) {
+            shaderElement.append(_createShaderParameter("attenuation", entity["light"]["attenuation"]));
+        }
+    };
+
+    var _createShaderParameter = function(parameterName, value)
+    {
+        var parameterTag = $(document.createElement("float3"));
+        var parameterValue = value.x + " " + value.y + " " + value.z;
+        parameterTag.attr("name", parameterName);
+        parameterTag.text(parameterValue);
+        return parameterTag;
+    };
+
 
     };
 
