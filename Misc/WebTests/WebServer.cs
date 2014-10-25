@@ -54,16 +54,26 @@ namespace WebTests
 
         public void Stop()
         {
-            stopRequested = true;
+            listener.Stop();
+            while (running)
+                Thread.Sleep(50);
         }
 
         private void ThreadFunc()
         {
-            while (!stopRequested)
+            while (true)
             {
-                HttpListenerContext context = listener.GetContext();
+                HttpListenerContext context;
+                try
+                {
+                    context = listener.GetContext();
+                }
+                catch (HttpListenerException e)
+                {
+                    break;
+                }
                 string filename = context.Request.Url.AbsolutePath;
-                filename = filename.Substring(1);
+                filename = filename.Substring("/".Length);
                 if (string.IsNullOrEmpty(filename))
                     filename = "client.html";
                 filename = Path.Combine(rootDir, filename);
@@ -75,6 +85,16 @@ namespace WebTests
                 }
                 else
                 {
+                    string extension = Path.GetExtension(filename).ToLower();
+                    if (extension == ".js")
+                        context.Response.Headers.Add("Content-Type", "application/javascript");
+                    else if (extension == ".css")
+                        context.Response.Headers.Add("Content-Type", "text/css");
+                    else if (extension == ".json")
+                        context.Response.Headers.Add("Content-Type", "application/json");
+                    else if (extension == ".xhtml")
+                        context.Response.Headers.Add("Content-Type", "application/xhtml+xml");
+
                     Stream input = new FileStream(filename, FileMode.Open);
                     byte[] buffer = new byte[1024 * 16];
                     int nbytes;
@@ -85,18 +105,15 @@ namespace WebTests
                 }
             }
 
-            listener.Stop();
-            stopRequested = false;
-            running = false;
             listener = null;
             processingThread = null;
+            running = false;
         }
 
         private HttpListener listener = null;
         private Thread processingThread = null;
         private int serverPort = 44838;
-        private bool running = false;
         private string rootDir = Directory.GetCurrentDirectory();
-        private volatile bool stopRequested = false;
+        private volatile bool running = false;
     }
 }
