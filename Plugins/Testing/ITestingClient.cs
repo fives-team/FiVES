@@ -13,14 +13,20 @@
 // You should have received a copy of the GNU General Public License
 // along with FiVES.  If not, see <http://www.gnu.org/licenses/>.
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+using System.ServiceModel;
 
 namespace TestingPlugin
 {
-    public static class Testing
+    /// <summary>
+    /// Testing service used to communicate from the FiVES server to the testing process, which has started it.
+    /// </summary>
+    [ServiceContract()]
+    public interface ITestingClient
     {
-        public static string ServiceURI = "net.tcp://localhost:43747/FIVESTestingInterface";
+        /// <summary>
+        /// Called when the server is ready, which happens when all plugins are loaded.
+        /// </summary>
+        [OperationContract]
+        void NotifyServerReady(string testingServerURI);
     }
 }

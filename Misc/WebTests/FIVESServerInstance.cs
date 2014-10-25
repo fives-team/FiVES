@@ -37,8 +37,14 @@ namespace WebTests
 
         public void Start()
         {
-            if (numInstances++ == 0)
-                StartTestingService();
+            if (plugins != null && protocols != null)
+                throw new Exception("Missing protocol and plugin configuration");
+
+            if (testingClientURI != null && testingServerURI != null)
+                throw new Exception("Missing testing service configuration");
+
+            CreateServerConfig();
+            StartTestingService();
 
             // Start the server process.
             ProcessStartInfo serverInfo = new ProcessStartInfo(Path.Combine(testDirectory, "FIVES.exe"));
@@ -52,23 +58,56 @@ namespace WebTests
             // Wait for the server process to report when server is ready.
             AutoResetEvent serverHasStarted = new AutoResetEvent(false);
             EventHandler handler = (sender, args) => serverHasStarted.Set();
-            testingService.ServerReady += handler;
+            testingClient.ServerReady += handler;
             process = Process.Start(serverInfo);
             serverHasStarted.WaitOne();
-            testingService.ServerReady -= handler;
+            testingClient.ServerReady -= handler;
+        }
+
+        private void CreateServerConfig()
+        {
+            string serverConfigPath = Path.Combine(testDirectory, "FIVES.exe.config");
+            var serverConfig = @"<?xml version=""1.0"" encoding=""utf-8""?>
+                <configuration>
+                    <configSections>
+                        <section name=""nlog"" type=""NLog.Config.ConfigSectionHandler, NLog""/>
+                    </configSections>
+
+                    <appSettings>
+                        <add key=""PluginDir"" value=""."" />
+                        <add key=""PluginWhiteList"" value=""" + String.Join(",", plugins) + @""" />
+                        <add key=""ProtocolDir"" value=""."" />
+                        <add key=""ProtocolWhiteList"" value=""" + String.Join(",", protocols) + @"""/>
+                    </appSettings>
+
+                    <Testing>
+                        <add key=""testingClient"" value=""" + testingClientURI + @"""/>
+                        <add key=""testingServer"" value=""" + testingServerURI + @"""/>
+                    </Testing>
+
+                    <nlog xmlns=""http://www.nlog-project.org/schemas/NLog.xsd"" xmlns:xsi=""http://www.w3.org/2001/XMLSchema-instance"">
+                        <targets>
+                            <target name=""logfile"" xsi:type=""File"" fileName=""FIVES.log"" layout=""${longdate}|${level:uppercase=true}|${callsite}|${logger}|${message}|${exception:format=tostring}"" />
+                        </targets>
+
+                        <rules>
+                            <logger name=""*"" minlevel=""Debug"" writeTo=""logfile"" />
+                        </rules>
+                    </nlog>
+                </configuration>";
+            File.WriteAllText(serverConfigPath, serverConfig);
         }
 
         public void Stop()
         {
             // Terminate the server process.
-            process.Kill();
+            testingClient.ServerChannel.ShutdownServer();
             process.WaitForExit();
 
             // Delete testing directory.
             Directory.Delete(testDirectory, true);
 
-            if (--numInstances == 0)
-                StopTestingService();
+            StopTestingService();
         }
 
         public void ConfigureClientManagerPorts(int listeningPort)
@@ -92,31 +131,8 @@ namespace WebTests
 
         public void ConfigurePluginsAndProtocols(string[] plugins, string[] protocols)
         {
-            string serverConfigPath = Path.Combine(testDirectory, "FIVES.exe.config");
-            var serverConfig = @"<?xml version=""1.0"" encoding=""utf-8""?>
-                <configuration>
-                    <configSections>
-                        <section name=""nlog"" type=""NLog.Config.ConfigSectionHandler, NLog""/>
-                    </configSections>
-
-                    <appSettings>
-                        <add key=""PluginDir"" value=""."" />
-                        <add key=""PluginWhiteList"" value=""" + String.Join(",", plugins) + @""" />
-                        <add key=""ProtocolDir"" value=""."" />
-                        <add key=""ProtocolWhiteList"" value=""" + String.Join(",", protocols) + @"""/>
-                    </appSettings>
-
-                    <nlog xmlns=""http://www.nlog-project.org/schemas/NLog.xsd"" xmlns:xsi=""http://www.w3.org/2001/XMLSchema-instance"">
-                        <targets>
-                            <target name=""logfile"" xsi:type=""File"" fileName=""FIVES.log"" layout=""${longdate}|${level:uppercase=true}|${callsite}|${logger}|${message}|${exception:format=tostring}"" />
-                        </targets>
-
-                        <rules>
-                            <logger name=""*"" minlevel=""Debug"" writeTo=""logfile"" />
-                        </rules>
-                    </nlog>
-                </configuration>";
-            File.WriteAllText(serverConfigPath, serverConfig);
+            this.plugins = plugins;
+            this.protocols = protocols;
 
             foreach (string plugin in plugins)
             {
@@ -124,6 +140,12 @@ namespace WebTests
                 if (!File.Exists(pluginPath))
                     throw new Exception("Plugin assembly " + pluginPath + " is not found.");
             }
+        }
+
+        public void ConfigureTestingService(int clientPort, int serverPort)
+        {
+            this.testingClientURI = "net.tcp://localhost:" + clientPort + "/FIVESTestingService";
+            this.testingServerURI = "net.tcp://localhost:" + serverPort + "/FIVESTestingService";
         }
 
         public void ConfigureServerSyncPorts(int listeningPort, int[] remotePorts)
@@ -158,10 +180,10 @@ namespace WebTests
 
         private void StartTestingService()
         {
-            testingService = new TestingService();
+            testingClient = new TestingClient();
 
-            serviceHost = new ServiceHost(testingService);
-            serviceHost.AddServiceEndpoint(typeof(ITestingService), new NetTcpBinding(), Testing.ServiceURI);
+            serviceHost = new ServiceHost(testingClient);
+            serviceHost.AddServiceEndpoint(typeof(ITestingClient), new NetTcpBinding(), testingClientURI);
             serviceHost.Open();
         }
 
@@ -215,17 +237,19 @@ namespace WebTests
         // Global unique used to create testing directories, where FIVES is copied.
         static int uniqueId = 1;
 
-        // Number of server instances. This is used to initialize the testing service for the first instance is started
-        // and to close it when the last instance is stopped.
-        static int numInstances = 0;
-
         // Global singleton implementing testing service, which is used by the Testing plugin on the server.
-        static TestingService testingService;
+        TestingClient testingClient = null;
 
         // Service host implementing the testing service.
-        static ServiceHost serviceHost;
+        ServiceHost serviceHost;
 
         // Testing directory. Created when the object is constructed. All FIVES binaries are copied here.
         private string testDirectory;
+
+        // Settings for the main configuration file.
+        private string[] plugins = null;
+        private string[] protocols = null;
+        private string testingClientURI = null;
+        private string testingServerURI = null;
     }
 }

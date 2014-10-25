@@ -22,14 +22,26 @@ using TestingPlugin;
 namespace WebTests
 {
     [ServiceBehavior(InstanceContextMode = InstanceContextMode.Single)]
-    class TestingService : ITestingService
+    class TestingClient : ITestingClient
     {
         public event EventHandler ServerReady;
 
-        public void NotifyServerReady()
+        public ITestingServer ServerChannel = null;
+
+        public void NotifyServerReady(string testingServerURI)
         {
             if (ServerReady != null)
                 ServerReady(this, new EventArgs());
+
+            ConnectBackToServer(testingServerURI);
+        }
+
+        void ConnectBackToServer(string testingServerURI)
+        {
+            // Connect to the testing service and notify that server is ready.
+            NetTcpBinding binding = new NetTcpBinding();
+            EndpointAddress ep = new EndpointAddress(testingServerURI);
+            ServerChannel = ChannelFactory<ITestingServer>.CreateChannel(binding, ep);
         }
     }
 }

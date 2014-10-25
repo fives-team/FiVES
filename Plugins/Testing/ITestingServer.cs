@@ -18,15 +18,15 @@ using System.ServiceModel;
 namespace TestingPlugin
 {
     /// <summary>
-    /// Testing service used to communicate from the FiVES server to the testing process, which has started it.
+    /// Testing service used to communicate from the the testing process to the FiVES server, started by it.
     /// </summary>
     [ServiceContract()]
-    public interface ITestingService
+    public interface ITestingServer
     {
         /// <summary>
-        /// Called when the server is ready, which happens when all plugins are loaded.
+        /// Called by test to request a clean server shutdown.
         /// </summary>
         [OperationContract]
-        void NotifyServerReady();
+        void ShutdownServer();
     }
 }

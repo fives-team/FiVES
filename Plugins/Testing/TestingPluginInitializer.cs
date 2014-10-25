@@ -17,6 +17,8 @@ using System.Collections.Generic;
 using System.ServiceModel;
 using System;
 using System.Net.Sockets;
+using System.Collections.Specialized;
+using System.Configuration;
 
 namespace TestingPlugin
 {
@@ -48,18 +50,32 @@ namespace TestingPlugin
 
         public void Initialize()
         {
-            Application.Controller.PluginsLoaded += HandlePluginsLoaded;
+            var testingConfig = ConfigurationManager.GetSection("Testing") as NameValueCollection;
+            if (testingConfig != null )
+            {
+                clientURI = testingConfig.Get("ClientURI");
+                serverURI = testingConfig.Get("ServerURI");
+
+                if (clientURI != null && serverURI != null)
+                    Application.Controller.PluginsLoaded += HandlePluginsLoaded;
+            }
+
         }
 
         private void HandlePluginsLoaded(object sender, System.EventArgs e)
         {
             try
             {
+                testingServer = new TestingServer(Application.Controller);
+                serviceHost = new ServiceHost(testingServer);
+                serviceHost.AddServiceEndpoint(typeof(ITestingServer), new NetTcpBinding(), serverURI);
+                serviceHost.Open();
+
                 // Connect to the testing service and notify that server is ready.
                 NetTcpBinding binding = new NetTcpBinding();
-                EndpointAddress ep = new EndpointAddress(Testing.ServiceURI);
-                ITestingService channel = ChannelFactory<ITestingService>.CreateChannel(binding, ep);
-                channel.NotifyServerReady();
+                EndpointAddress ep = new EndpointAddress(clientURI);
+                ITestingClient channel = ChannelFactory<ITestingClient>.CreateChannel(binding, ep);
+                channel.NotifyServerReady(serverURI);
             }
             catch (EndpointNotFoundException)
             {
@@ -73,7 +89,13 @@ namespace TestingPlugin
 
         public void Shutdown()
         {
-
+            serviceHost.Close();
         }
+
+        private static ServiceHost serviceHost;
+        private static TestingServer testingServer;
+
+        private string clientURI;
+        private string serverURI;
     }
 }

@@ -31,6 +31,8 @@ namespace WebTests
 
         private const int fivesServerPort = 34837;
         private const int webServerPort = 34838;
+        private const int fivesTestingClientPort = 34839;
+        private const int fivesTestingServerPort = 34840;
 
         [TestFixtureSetUp]
         public void StartServer()
@@ -42,6 +44,7 @@ namespace WebTests
 
             server = new FIVESServerInstance();
             server.ConfigureClientManagerPorts(fivesServerPort);
+            server.ConfigureTestingService(fivesTestingClientPort, fivesTestingServerPort);
             server.ConfigurePluginsAndProtocols(
                 new string[] { "Auth", "Avatar", "ClientManager", "KIARA", "Location", "Motion", "Testing",
                                "Renderable", "EventLoop", "Editing", "KeyframeAnimation" },

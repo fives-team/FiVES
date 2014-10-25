@@ -31,6 +31,10 @@ namespace WebTests
         private const int fivesServerPort1 = 34837;
         private const int fivesServerPort2 = 34838;
         private const int webServerPort = 34839;
+        private const int fivesTestingClientPort1 = 34840;
+        private const int fivesTestingServerPort1 = 34841;
+        private const int fivesTestingServerPort2 = 34842;
+        private const int fivesTestingClientPort2 = 34843;
 
         [TestFixtureSetUp]
         public void StartServer()
@@ -43,6 +47,7 @@ namespace WebTests
             server1 = new FIVESServerInstance();
             server1.ConfigureServerSyncPorts(43745, new int[] {});
             server1.ConfigureClientManagerPorts(34837);
+            server1.ConfigureTestingService(fivesTestingClientPort1, fivesTestingServerPort2);
             server1.ConfigurePluginsAndProtocols(new string[] { "Auth", "Avatar", "ClientManager", "KIARA", "Location",
                 "Motion", "Testing", "Renderable", "EventLoop", "Editing", "ServerSync", "ConfigScalability",
                 "Scalability", "KeyframeAnimation" }, new string[] { "WebSocketJSON" });
@@ -51,6 +56,7 @@ namespace WebTests
             server2 = new FIVESServerInstance();
             server2.ConfigureServerSyncPorts(43746, new int[] { 43745 });
             server2.ConfigureClientManagerPorts(34839);
+            server2.ConfigureTestingService(fivesTestingClientPort1, fivesTestingServerPort2);
             server2.ConfigurePluginsAndProtocols(new string[] { "Auth", "Avatar", "ClientManager", "KIARA", "Location",
                 "Testing", "Renderable", "EventLoop", "Editing", "ServerSync", "ConfigScalability",
                 "Scalability", "KeyframeAnimation" }, new string[] { "WebSocketJSON" });
