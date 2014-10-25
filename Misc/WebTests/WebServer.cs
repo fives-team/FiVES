@@ -48,30 +48,46 @@ namespace WebTests
             listener.Prefixes.Add(String.Format("http://localhost:{0}/", serverPort));
             listener.Start();
 
-            processingThread = new Thread(ThreadFunc);
-            processingThread.Start();
+            listenerThread = new Thread(ListenerThread);
+            listenerThread.Start();
+        }
+
+        public void Dispose()
+        {
+            Stop();
         }
 
         public void Stop()
         {
+            stopEvent.Set();
+
+            listenerThread.Join();
+            listenerThread = null;
+
             listener.Stop();
-            while (running)
-                Thread.Sleep(50);
+            listener = null;
+
+            running = false;
+
+            stopEvent.Reset();
         }
 
-        private void ThreadFunc()
+        private void ListenerThread()
         {
-            while (true)
+            while (listener.IsListening)
             {
-                HttpListenerContext context;
-                try
-                {
-                    context = listener.GetContext();
-                }
-                catch (HttpListenerException e)
-                {
+                var context = listener.BeginGetContext(ContextReady, null);
+                if (0 == WaitHandle.WaitAny(new[] { stopEvent, context.AsyncWaitHandle }))
                     break;
-                }
+            }
+        }
+
+        private void ContextReady(IAsyncResult ar)
+        {
+            try
+            {
+                HttpListenerContext context = listener.EndGetContext(ar);
+
                 string filename = context.Request.Url.AbsolutePath;
                 filename = filename.Substring("/".Length);
                 if (string.IsNullOrEmpty(filename))
@@ -94,6 +110,8 @@ namespace WebTests
                         context.Response.Headers.Add("Content-Type", "application/json");
                     else if (extension == ".xhtml")
                         context.Response.Headers.Add("Content-Type", "application/xhtml+xml");
+                    else if (extension == ".xml")
+                        context.Response.Headers.Add("Content-Type", "text/xml");
 
                     Stream input = new FileStream(filename, FileMode.Open);
                     byte[] buffer = new byte[1024 * 16];
@@ -104,16 +122,17 @@ namespace WebTests
                     context.Response.OutputStream.Close();
                 }
             }
-
-            listener = null;
-            processingThread = null;
-            running = false;
+            catch
+            {
+                return;
+            }
         }
 
         private HttpListener listener = null;
-        private Thread processingThread = null;
+        private Thread listenerThread = null;
         private int serverPort = 44838;
         private string rootDir = Directory.GetCurrentDirectory();
         private volatile bool running = false;
+        private ManualResetEvent stopEvent = new ManualResetEvent(false);
     }
 }
