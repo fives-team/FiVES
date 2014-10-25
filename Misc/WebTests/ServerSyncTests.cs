@@ -26,10 +26,20 @@ namespace WebTests
     {
         private FIVESServerInstance server1;
         private FIVESServerInstance server2;
+        private WebServer webServer;
+
+        private const int fivesServerPort1 = 34837;
+        private const int fivesServerPort2 = 34838;
+        private const int webServerPort = 34839;
 
         [TestFixtureSetUp]
         public void StartServer()
         {
+            webServer = new WebServer();
+            webServer.ServerPort = webServerPort;
+            webServer.RootDir = Path.Combine(Directory.GetCurrentDirectory(), "..", "..", "WebClient");
+            webServer.Start();
+
             server1 = new FIVESServerInstance();
             server1.ConfigureServerSyncPorts(43745, new int[] {});
             server1.ConfigureClientManagerPorts(34837);
@@ -62,10 +72,12 @@ namespace WebTests
 
             try
             {
-                driver1.Navigate().GoToUrl(
-                    "http://localhost/projects/test-client/client.xhtml#FIVESTesting&OverrideServerPort=34837");
-                driver2.Navigate().GoToUrl(
-                    "http://localhost/projects/test-client/client.xhtml#FIVESTesting&OverrideServerPort=34839");
+                driver1.Navigate().GoToUrl(String.Format(
+                    "http://localhost:{0}/client.xhtml#FIVESTesting&OverrideServerPort={1}", webServerPort,
+                    fivesServerPort1));
+                driver2.Navigate().GoToUrl(String.Format(
+                    "http://localhost:{0}/client.xhtml#FIVESTesting&OverrideServerPort={1}", webServerPort,
+                    fivesServerPort2));
 
                 Tools.Login(driver1, "1", "");
                 Tools.Login(driver2, "2", "");

@@ -21,6 +21,7 @@ using System.Threading;
 using NUnit.Framework;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Support.UI;
+using System.IO;
 
 namespace WebTests
 {
@@ -28,10 +29,19 @@ namespace WebTests
     public class AvatarTests
     {
         private FIVESServerInstance server;
+        private WebServer webServer;
+
+        private const int fivesServerPort = 34837;
+        private const int webServerPort = 34838;
 
         [TestFixtureSetUp]
         public void StartServer()
         {
+            webServer = new WebServer();
+            webServer.ServerPort = webServerPort;
+            webServer.RootDir = Path.Combine(Directory.GetCurrentDirectory(), "..", "..", "WebClient");
+            webServer.Start();
+
             server = new FIVESServerInstance();
             server.ConfigureClientManagerPorts(34837);
             server.ConfigurePluginsAndProtocols(
@@ -53,8 +63,9 @@ namespace WebTests
             IWebDriver driver = Tools.CreateDriver();
             try
             {
-                driver.Navigate().GoToUrl(
-                    "http://localhost/projects/test-client/client.xhtml#FIVESTesting&OverrideServerPort=34837");
+                driver.Navigate().GoToUrl(String.Format(
+                    "http://localhost:{0}/client.xhtml#FIVESTesting&OverrideServerPort={1}", webServerPort,
+                    fivesServerPort));
                 Tools.Login(driver, "1", "");
 
                 WebDriverWait wait = new WebDriverWait(driver, TimeSpan.FromSeconds(10));
@@ -87,10 +98,12 @@ namespace WebTests
 
             try
             {
-                driver1.Navigate().GoToUrl(
-                    "http://localhost/projects/test-client/client.xhtml#FIVESTesting&OverrideServerPort=34837");
-                driver2.Navigate().GoToUrl(
-                    "http://localhost/projects/test-client/client.xhtml#FIVESTesting&OverrideServerPort=34837");
+                driver1.Navigate().GoToUrl(String.Format(
+                    "http://localhost:{0}/client.xhtml#FIVESTesting&OverrideServerPort={1}", webServerPort,
+                    fivesServerPort));
+                driver2.Navigate().GoToUrl(String.Format(
+                    "http://localhost:{0}/client.xhtml#FIVESTesting&OverrideServerPort={1}", webServerPort,
+                    fivesServerPort));
 
                 Tools.Login(driver1, "1", "");
                 Tools.Login(driver2, "2", "");
