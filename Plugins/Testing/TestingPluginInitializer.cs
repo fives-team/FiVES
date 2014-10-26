@@ -19,6 +19,8 @@ using System;
 using System.Net.Sockets;
 using System.Collections.Specialized;
 using System.Configuration;
+using System.IO;
+using Newtonsoft.Json;
 
 namespace TestingPlugin
 {
@@ -50,16 +52,38 @@ namespace TestingPlugin
 
         public void Initialize()
         {
-            var testingConfig = ConfigurationManager.GetSection("Testing") as NameValueCollection;
-            if (testingConfig != null )
-            {
-                clientURI = testingConfig.Get("ClientURI");
-                serverURI = testingConfig.Get("ServerURI");
+            if (ReadConfig())
+                Application.Controller.PluginsLoaded += HandlePluginsLoaded;
 
-                if (clientURI != null && serverURI != null)
-                    Application.Controller.PluginsLoaded += HandlePluginsLoaded;
-            }
+        }
 
+        /// <summary>
+        /// Converts a file name to the URI that point to the file as if it was located in the same directory as the
+        /// current assembly.
+        /// </summary>
+        /// <param name="configFilename"></param>
+        /// <returns></returns>
+        private static string FindNextToAssembly(string filename)
+        {
+            string assemblyPath = typeof(TestingPluginInitializer).Assembly.Location;
+            var configFullPath = Path.Combine(Path.GetDirectoryName(assemblyPath), filename);
+            return configFullPath;
+        }
+
+        private bool ReadConfig()
+        {
+            string configFilePath = FindNextToAssembly("testing.json");
+            if (!File.Exists(configFilePath))
+                return false;
+
+            Dictionary<string, string> config = JsonConvert.DeserializeObject<Dictionary<string, string>>(
+                File.ReadAllText(configFilePath));
+            if (!config.ContainsKey("clientURI") || !config.ContainsKey("serverURI"))
+                return false;
+
+            clientURI = config["clientURI"];
+            serverURI = config["serverURI"];
+            return true;
         }
 
         private void HandlePluginsLoaded(object sender, System.EventArgs e)

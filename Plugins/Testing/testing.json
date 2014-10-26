@@ -1,0 +1,4 @@
+﻿{
+  "clientURI": "net.tcp://localhost:43747/FIVESTestingService",
+  "serverURI": "net.tcp://localhost:43748/FIVESTestingService",
+}
