@@ -37,13 +37,9 @@ namespace WebTests
 
         public void Start()
         {
-            if (plugins != null && protocols != null)
-                throw new Exception("Missing protocol and plugin configuration");
-
-            if (testingClientURI != null && testingServerURI != null)
+            if (testingClientURI == null || testingServerURI == null)
                 throw new Exception("Missing testing service configuration");
 
-            CreateServerConfig();
             StartTestingService();
 
             // Start the server process.
@@ -56,46 +52,12 @@ namespace WebTests
             serverInfo.RedirectStandardError = true;
 
             // Wait for the server process to report when server is ready.
-            AutoResetEvent serverHasStarted = new AutoResetEvent(false);
+            ManualResetEvent serverHasStarted = new ManualResetEvent(false);
             EventHandler handler = (sender, args) => serverHasStarted.Set();
             testingClient.ServerReady += handler;
             process = Process.Start(serverInfo);
             serverHasStarted.WaitOne();
             testingClient.ServerReady -= handler;
-        }
-
-        private void CreateServerConfig()
-        {
-            string serverConfigPath = Path.Combine(testDirectory, "FIVES.exe.config");
-            var serverConfig = @"<?xml version=""1.0"" encoding=""utf-8""?>
-                <configuration>
-                    <configSections>
-                        <section name=""nlog"" type=""NLog.Config.ConfigSectionHandler, NLog""/>
-                    </configSections>
-
-                    <appSettings>
-                        <add key=""PluginDir"" value=""."" />
-                        <add key=""PluginWhiteList"" value=""" + String.Join(",", plugins) + @""" />
-                        <add key=""ProtocolDir"" value=""."" />
-                        <add key=""ProtocolWhiteList"" value=""" + String.Join(",", protocols) + @"""/>
-                    </appSettings>
-
-                    <Testing>
-                        <add key=""testingClient"" value=""" + testingClientURI + @"""/>
-                        <add key=""testingServer"" value=""" + testingServerURI + @"""/>
-                    </Testing>
-
-                    <nlog xmlns=""http://www.nlog-project.org/schemas/NLog.xsd"" xmlns:xsi=""http://www.w3.org/2001/XMLSchema-instance"">
-                        <targets>
-                            <target name=""logfile"" xsi:type=""File"" fileName=""FIVES.log"" layout=""${longdate}|${level:uppercase=true}|${callsite}|${logger}|${message}|${exception:format=tostring}"" />
-                        </targets>
-
-                        <rules>
-                            <logger name=""*"" minlevel=""Debug"" writeTo=""logfile"" />
-                        </rules>
-                    </nlog>
-                </configuration>";
-            File.WriteAllText(serverConfigPath, serverConfig);
         }
 
         public void Stop()
@@ -131,8 +93,32 @@ namespace WebTests
 
         public void ConfigurePluginsAndProtocols(string[] plugins, string[] protocols)
         {
-            this.plugins = plugins;
-            this.protocols = protocols;
+            string serverConfigPath = Path.Combine(testDirectory, "FIVES.exe.config");
+            var serverConfig = @"<?xml version=""1.0"" encoding=""utf-8""?>
+                <configuration>
+                    <configSections>
+                        <section name=""nlog"" type=""NLog.Config.ConfigSectionHandler, NLog""/>
+                        <section name=""Testing"" type=""System.Configuration.NameValueSectionHandler""/>
+                    </configSections>
+
+                    <appSettings>
+                        <add key=""PluginDir"" value=""."" />
+                        <add key=""PluginWhiteList"" value=""" + String.Join(",", plugins) + @""" />
+                        <add key=""ProtocolDir"" value=""."" />
+                        <add key=""ProtocolWhiteList"" value=""" + String.Join(",", protocols) + @"""/>
+                    </appSettings>
+
+                    <nlog xmlns=""http://www.nlog-project.org/schemas/NLog.xsd"" xmlns:xsi=""http://www.w3.org/2001/XMLSchema-instance"">
+                        <targets>
+                            <target name=""logfile"" xsi:type=""File"" fileName=""FIVES.log"" layout=""${longdate}|${level:uppercase=true}|${callsite}|${logger}|${message}|${exception:format=tostring}"" />
+                        </targets>
+
+                        <rules>
+                            <logger name=""*"" minlevel=""Debug"" writeTo=""logfile"" />
+                        </rules>
+                    </nlog>
+                </configuration>";
+            File.WriteAllText(serverConfigPath, serverConfig);
 
             foreach (string plugin in plugins)
             {
@@ -144,8 +130,17 @@ namespace WebTests
 
         public void ConfigureTestingService(int clientPort, int serverPort)
         {
-            this.testingClientURI = "net.tcp://localhost:" + clientPort + "/FIVESTestingService";
-            this.testingServerURI = "net.tcp://localhost:" + serverPort + "/FIVESTestingService";
+            testingClientURI = "net.tcp://localhost:" + clientPort + "/FIVESTestingService";
+            testingServerURI = "net.tcp://localhost:" + serverPort + "/FIVESTestingService";
+
+            string testingConfigPath = Path.Combine(testDirectory, "testing.json");
+            string testingConfig = @"
+                {
+                    ""clientURI"": """ + testingClientURI + @""",
+                    ""serverURI"": """ + testingServerURI + @""",
+                }
+            ";
+            File.WriteAllText(testingConfigPath, testingConfig);
         }
 
         public void ConfigureServerSyncPorts(int listeningPort, int[] remotePorts)
@@ -247,8 +242,6 @@ namespace WebTests
         private string testDirectory;
 
         // Settings for the main configuration file.
-        private string[] plugins = null;
-        private string[] protocols = null;
         private string testingClientURI = null;
         private string testingServerURI = null;
     }
