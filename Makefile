@@ -22,7 +22,7 @@ mozcerts:
 	mozroots --import --sync
 
 tests: build
-	for PROJECT_FILE in $$(find . -name *.csproj); do                                                                  \
-	  echo "Running tests from $$PROJECT_FILE";                                                                        \
-	  PATH=$$PATH:$$PWD xvfb-run mono packages/NUnit.Runners.2.6.3/tools/nunit-console.exe $$PROJECT_FILE || exit $$?; \
+	for PROJECT_FILE in $$(find . -name *.csproj); do                                                                     \
+	  echo "Running tests from $$PROJECT_FILE";                                                                           \
+	  PATH=$$PATH:$$PWD xvfb-run -a mono packages/NUnit.Runners.2.6.3/tools/nunit-console.exe $$PROJECT_FILE || exit $$?; \
 	done
