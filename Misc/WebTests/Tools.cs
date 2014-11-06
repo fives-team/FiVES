@@ -49,6 +49,11 @@ namespace WebTests
         {
             ChromeOptions options = new ChromeOptions();
             options.AddArgument("--disable-cache");
+
+            // This is a workaround for running tests on VMWare Client. Chrome disables GPU acceleration due to a
+            // vulnerability: https://code.google.com/p/chromium/issues/detail?id=145531. This kills WebGL and XML3D.
+            options.AddArgument("--in-process-gpu");
+
             var driver = new ChromeDriver(options);
             return driver;
         }
