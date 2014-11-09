@@ -155,12 +155,13 @@
             </div>
         </div>
 
-        <!-- Script includes in body for faster page loading -->
-        <script type="text/javascript" src="scripts/lib/require.js" data-main="scripts/app.js"></script>
-
+        <!-- Non-RequireJS modules -->
+        <!-- TODO(tospie): Move all these modules into RequireJS as it complicates dependency resolution and causes
+             some of them to be loaded twice, e.g. jQuery and Bootstrap (see app.js). Difficult part of moving them in
+             is building a correct dependency tree. -->
         <script type="text/javascript" src="scripts/lib/jquery.js"></script>
         <script type="text/javascript" src="scripts/lib/underscore.js"></script>
-        <script type="text/javascript" src="scripts/lib/bootstrap-3.0.0/bootstrap.min.js"></script>
+        <script type="text/javascript" src="scripts/lib/bootstrap-3.0.0/bootstrap.js"></script>
 
         <script type="text/javascript" src="scripts/lib/xml3d/xml3d.js"></script>
         <script type="text/javascript" src="scripts/lib/eyelightShader.js"></script>
@@ -184,7 +185,6 @@
         <script type="text/javascript" src="scripts/plugins/location/location.js"></script>
         <script type="text/javascript" src="scripts/plugins/renderable/renderable.js"></script>
         <script type="text/javascript" src="scripts/plugins/editing/editing.js"></script>
-        <script type="text/javascript" src="scripts/plugins/animation/animation.js"></script>
         <script type="text/javascript" src="scripts/plugins/scripting/scripting.js"></script>
         <script type="text/javascript" src="scripts/plugins/motion/motion.js"></script>
 
@@ -192,5 +192,9 @@
         <script type="text/javascript" src="scripts/input/keyboard_input.js"></script>
 
         <script type="text/javascript" src="scripts/testing/location_updates.js"></script>
+
+        <!-- RequireJS modules -->
+        <script type="text/javascript" src="scripts/lib/require.js" data-main="scripts/app.js"></script>
+        <script type="text/javascript" src="scripts/plugins/animation/animation.js"></script>
     </body>
 </html>

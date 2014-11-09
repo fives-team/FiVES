@@ -18,11 +18,17 @@ require.config({
     paths: {
         'jquery' : 'lib/jquery',
         'kiara' : 'lib/kiara',
-        'websocket-json' : 'lib/websocket-json'
+        'websocket-json' : 'lib/websocket-json',
+        'bootstrap': 'lib/bootstrap-3.0.0/bootstrap'
+    },
+    shim: {
+        'bootstrap': {
+            deps: ['jquery'],
+        }
     }
 });
 
-requirejs(['kiara', 'jquery', 'websocket-json', 'plugins/testing/testing'],
+requirejs(['kiara', 'jquery', 'bootstrap', 'websocket-json', 'plugins/testing/testing'],
 function(KIARA, $) {
 
     function setScript(guid) {
