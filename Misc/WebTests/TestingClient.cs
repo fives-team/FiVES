@@ -30,15 +30,13 @@ namespace WebTests
 
         public void NotifyServerReady(string testingServerURI)
         {
+            ConnectBackToServer(testingServerURI);
             if (ServerReady != null)
                 ServerReady(this, new EventArgs());
-
-            ConnectBackToServer(testingServerURI);
         }
 
         void ConnectBackToServer(string testingServerURI)
         {
-            // Connect to the testing service and notify that server is ready.
             NetTcpBinding binding = new NetTcpBinding();
             EndpointAddress ep = new EndpointAddress(testingServerURI);
             ServerChannel = ChannelFactory<ITestingServer>.CreateChannel(binding, ep);
