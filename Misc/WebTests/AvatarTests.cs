@@ -58,6 +58,7 @@ namespace WebTests
         public void StopServer()
         {
             server.Stop();
+            webServer.Stop();
         }
 
         [Test]

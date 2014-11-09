@@ -72,6 +72,7 @@ namespace WebTests
         {
             server1.Stop();
             server2.Stop();
+            webServer.Stop();
         }
 
         [Test]
