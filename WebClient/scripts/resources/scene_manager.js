@@ -31,7 +31,7 @@ FIVES.Resources = FIVES.Resources || {};
 
     scm._getXml3dElement = function(xml3dElementId) {
         var _xml3dElement = document.getElementById(xml3dElementId);
-        if(!_xml3dElement || _xml3dElement.tagName != "xml3d")
+        if(!_xml3dElement || _xml3dElement.tagName.toUpperCase() != "XML3D")
             console.error("[ERROR] (SceneManager) : Cannot find XML3D element with id " + xml3dElementId);
         this.xml3dElement = _xml3dElement;
     };
