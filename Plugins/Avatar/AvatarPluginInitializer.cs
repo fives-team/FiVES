@@ -37,7 +37,7 @@ namespace AvatarPlugin
         {
             get
             {
-                return new List<string> { "ClientManager", "Auth", "KIARA" };
+                return new List<string> { "ClientManager", "Auth"};
             }
         }
 

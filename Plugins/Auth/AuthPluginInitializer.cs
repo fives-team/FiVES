@@ -34,7 +34,7 @@ namespace AuthPlugin
         {
             get
             {
-                return new List<string> { "KIARA" };
+                return new List<string> ();
             }
         }
 
