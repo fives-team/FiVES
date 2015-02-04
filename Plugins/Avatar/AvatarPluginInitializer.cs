@@ -17,7 +17,7 @@ using FIVES;
 using System.Collections.Generic;
 using AuthPlugin;
 using ClientManagerPlugin;
-using KIARAPlugin;
+using KIARA;
 
 namespace AvatarPlugin
 {

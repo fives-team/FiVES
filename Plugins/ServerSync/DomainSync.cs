@@ -12,7 +12,7 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with FiVES.  If not, see <http://www.gnu.org/licenses/>.
-using KIARAPlugin;
+using KIARA;
 using System;
 
 namespace ServerSyncPlugin
@@ -35,7 +35,7 @@ namespace ServerSyncPlugin
         /// Registers the domain sync APIs in the provided service.
         /// </summary>
         /// <param name="service">The provided service.</param>
-        public void RegisterDomainSyncAPI(IService service)
+        public void RegisterDomainSyncAPI(Service service)
         {
             service["serverSync.getDoR"] = (Func<string>)GetDoR;
             service["serverSync.getDoI"] = (Func<string>)GetDoI;

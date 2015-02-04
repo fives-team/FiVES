@@ -17,7 +17,7 @@ using NUnit.Framework;
 using FIVES;
 using Moq;
 using System.Collections.Generic;
-using KIARAPlugin;
+using KIARA;
 
 namespace ServerSyncPlugin
 {
@@ -29,13 +29,13 @@ namespace ServerSyncPlugin
 
         Mock<IComponentRegistry> componentRegistryMock;
         Mock<Connection> remoteConnectionMock;
-        Mock<IServiceImpl> localServiceMock;
+        Mock<ServiceImplementation> localServiceMock;
 
         ComponentDefinition testComponentDefinition;
 
         public interface IHandlers
         {
-            IFuncCall RegisterComponentDefinition(params object[] args);
+            IClientFunctionCall RegisterComponentDefinition(params object[] args);
         }
 
         public Mock<IHandlers> handlers;
@@ -45,13 +45,13 @@ namespace ServerSyncPlugin
         {
             handlers = new Mock<IHandlers>();
             remoteConnectionMock = new Mock<Connection>();
-            remoteConnectionMock.Setup(rc => rc.GenerateFuncWrapper("serverSync.registerComponentDefinition", ""))
-                .Returns((FuncWrapper)handlers.Object.RegisterComponentDefinition);
+            remoteConnectionMock.Setup(rc => rc.GenerateClientFunction("serverSync.registerComponentDefinition", ""))
+                .Returns((ClientFunction)handlers.Object.RegisterComponentDefinition);
 
             var remoteServerMock = new Mock<IRemoteServer>();
             remoteServerMock.Setup(rs => rs.Connection).Returns(remoteConnectionMock.Object);
 
-            localServiceMock = new Mock<IServiceImpl>();
+            localServiceMock = new Mock<ServiceImplementation>();
             var localServerMock = new Mock<ILocalServer>();
             localServerMock.SetupGet(ls => ls.Service).Returns(localServiceMock.Object);
 

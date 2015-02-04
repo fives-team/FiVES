@@ -71,13 +71,6 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\Protocols\BinaryProtocol\BinaryProtocol.csproj">
-      <Project>{ef693e9d-5908-4d86-897e-9d479bfc0f19}</Project>
-      <Name>BinaryProtocol</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\Protocols\WebSocketJSON\WebSocketJSON.csproj">
-      <Project>{7729110a-d86e-4802-a158-9be992c98f68}</Project>
-      <Name>WebSocketJSON</Name>
-    </ProjectReference>
+    <Service Include="{82A7F48D-3B50-4B1E-B82E-3ADA8210C358}" />
   </ItemGroup>
 </Project>

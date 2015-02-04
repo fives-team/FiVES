@@ -14,7 +14,7 @@
 // along with FiVES.  If not, see <http://www.gnu.org/licenses/>.
 using AuthPlugin;
 using FIVES;
-using KIARAPlugin;
+using KIARA;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -30,7 +30,7 @@ namespace ClientManagerPlugin
 
         public ClientManager()
         {
-            clientService = ServiceFactory.Create(ConvertFileNameToURI("clientManagerServer.json"));
+            clientService = ServiceFactory.Create();
 
             RegisterClientService("kiara", false, new Dictionary<string, Delegate>());
             RegisterClientMethod("kiara.implements", false, (Func<List<string>, List<bool>>)Implements);
@@ -178,7 +178,7 @@ namespace ClientManagerPlugin
         /// <summary>
         /// The client service.
         /// </summary>
-        IServiceImpl clientService;
+        ServiceImplementation clientService;
 
         /// <summary>
         /// List of authenticated clients.

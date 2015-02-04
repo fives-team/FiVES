@@ -12,7 +12,7 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with FiVES.  If not, see <http://www.gnu.org/licenses/>.
-using KIARAPlugin;
+using KIARA;
 using System;
 using System.IO;
 using Newtonsoft.Json;
@@ -33,7 +33,7 @@ namespace ServerSyncPlugin
             doi = new EmptyDoI();
             syncID = Guid.NewGuid();
 
-            service = ServiceFactory.Create(ServerSyncTools.ConvertFileNameToURI("serverSyncServer.json"));
+            service = ServiceFactory.Create();
             service.OnNewClient += ServerSyncTools.ConfigureJsonSerializer;
 
             RegisterSyncIDAPI(service);
@@ -42,7 +42,7 @@ namespace ServerSyncPlugin
         /// <summary>
         /// KIARA service on the local service.
         /// </summary>
-        public IServiceImpl Service
+        public ServiceImplementation Service
         {
             get
             {
@@ -115,7 +115,7 @@ namespace ServerSyncPlugin
             }
         }
 
-        public void RegisterSyncIDAPI(IService service)
+        public void RegisterSyncIDAPI(Service service)
         {
             service["serverSync.getSyncID"] = (Func<Guid>)GetSyncID;
         }
@@ -137,7 +137,7 @@ namespace ServerSyncPlugin
             return syncID;
         }
 
-        IServiceImpl service;
+        ServiceImplementation service;
         IDomainOfResponsibility dor;
         IDomainOfInterest doi;
         Guid syncID;

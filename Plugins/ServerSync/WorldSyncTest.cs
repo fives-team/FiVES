@@ -17,7 +17,7 @@ using NUnit.Framework;
 using FIVES;
 using Moq;
 using System.Collections.Generic;
-using KIARAPlugin;
+using KIARA;
 using FIVESServiceBus;
 
 namespace ServerSyncPlugin
@@ -32,7 +32,7 @@ namespace ServerSyncPlugin
 
         Mock<IComponentRegistry> componentRegistryMock;
         Mock<Connection> remoteConnectionMock;
-        Mock<IServiceImpl> localServiceMock;
+        Mock<ServiceImplementation> localServiceMock;
         Mock<ILocalServer> localServerMock;
         Mock<IDomainOfInterest> doiMock;
         Mock<IDomainOfResponsibility> dorMock;
@@ -48,9 +48,9 @@ namespace ServerSyncPlugin
 
         public interface IHandlers
         {
-            IFuncCall AddEntity(params object[] args);
-            IFuncCall RemoveEntity(params object[] args);
-            IFuncCall ChangeAttributes(params object[] args);
+            IClientFunctionCall AddEntity(params object[] args);
+            IClientFunctionCall RemoveEntity(params object[] args);
+            IClientFunctionCall ChangeAttributes(params object[] args);
         }
 
         public Mock<IHandlers> handlers;
@@ -60,12 +60,12 @@ namespace ServerSyncPlugin
         {
             handlers = new Mock<IHandlers>();
             remoteConnectionMock = new Mock<Connection>();
-            remoteConnectionMock.Setup(rc => rc.GenerateFuncWrapper("serverSync.addEntity", ""))
-                .Returns((FuncWrapper)handlers.Object.AddEntity);
-            remoteConnectionMock.Setup(rc => rc.GenerateFuncWrapper("serverSync.removeEntity", ""))
-                .Returns((FuncWrapper)handlers.Object.RemoveEntity);
-            remoteConnectionMock.Setup(rc => rc.GenerateFuncWrapper("serverSync.changeAttributes", ""))
-                .Returns((FuncWrapper)handlers.Object.ChangeAttributes);
+            remoteConnectionMock.Setup(rc => rc.GenerateClientFunction("serverSync.addEntity", ""))
+                .Returns((ClientFunction)handlers.Object.AddEntity);
+            remoteConnectionMock.Setup(rc => rc.GenerateClientFunction("serverSync.removeEntity", ""))
+                .Returns((ClientFunction)handlers.Object.RemoveEntity);
+            remoteConnectionMock.Setup(rc => rc.GenerateClientFunction("serverSync.changeAttributes", ""))
+                .Returns((ClientFunction)handlers.Object.ChangeAttributes);
 
             doiMock = new Mock<IDomainOfInterest>();
             dorMock = new Mock<IDomainOfResponsibility>();
@@ -75,7 +75,7 @@ namespace ServerSyncPlugin
             dorMock.Setup(dor => dor.IsResponsibleFor(It.IsAny<Entity>())).Returns(true);
 
 
-            localServiceMock = new Mock<IServiceImpl>();
+            localServiceMock = new Mock<ServiceImplementation>();
             localServerMock = new Mock<ILocalServer>();
             localServerMock.SetupGet(ls => ls.Service).Returns(localServiceMock.Object);
             localServerMock.SetupGet(ls => ls.DoI).Returns(doiMock.Object);
@@ -254,12 +254,12 @@ namespace ServerSyncPlugin
         {
             var otherConnectionMock = new Mock<Connection>();
             var handlers2 = new Mock<IHandlers>();
-            otherConnectionMock.Setup(rc => rc.GenerateFuncWrapper("serverSync.addEntity", ""))
-                .Returns((FuncWrapper)handlers2.Object.AddEntity);
-            otherConnectionMock.Setup(rc => rc.GenerateFuncWrapper("serverSync.removeEntity", ""))
-                .Returns((FuncWrapper)handlers2.Object.RemoveEntity);
-            otherConnectionMock.Setup(rc => rc.GenerateFuncWrapper("serverSync.changeAttributes", ""))
-                .Returns((FuncWrapper)handlers2.Object.ChangeAttributes);
+            otherConnectionMock.Setup(rc => rc.GenerateClientFunction("serverSync.addEntity", ""))
+                .Returns((ClientFunction)handlers2.Object.AddEntity);
+            otherConnectionMock.Setup(rc => rc.GenerateClientFunction("serverSync.removeEntity", ""))
+                .Returns((ClientFunction)handlers2.Object.RemoveEntity);
+            otherConnectionMock.Setup(rc => rc.GenerateClientFunction("serverSync.changeAttributes", ""))
+                .Returns((ClientFunction)handlers2.Object.ChangeAttributes);
 
             var guid = Guid.NewGuid();
             RemoteServerImpl remoteServer2 = new RemoteServerImpl(otherConnectionMock.Object, doiMock.Object,

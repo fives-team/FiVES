@@ -13,7 +13,7 @@
 // You should have received a copy of the GNU General Public License
 // along with FiVES.  If not, see <http://www.gnu.org/licenses/>.
 using FIVES;
-using KIARAPlugin;
+using KIARA;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
@@ -105,7 +105,7 @@ namespace ServerSyncPlugin
             Config config = Context.DefaultContext.RetrieveConfig(configURI, out fragment);
             for (int i = 0; i < config.servers.Count; i++)
             {
-                IServiceWrapper remoteService = ServiceFactory.Discover(configURI + "#" + i);
+                ServiceWrapper remoteService = ServiceFactory.Discover(configURI + "#" + i);
 
                 localServer.RegisterSyncIDAPI(remoteService);
                 worldSync.RegisterWorldSyncAPI(remoteService);

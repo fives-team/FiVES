@@ -18,8 +18,6 @@ using WebSocket4Net;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using NLog;
-using BinaryProtocol;
-using WebSocketJSON;
 
 namespace NativeClient
 {

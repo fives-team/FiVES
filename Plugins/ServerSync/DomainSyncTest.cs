@@ -17,7 +17,7 @@ using NUnit.Framework;
 using FIVES;
 using Moq;
 using System.Collections.Generic;
-using KIARAPlugin;
+using KIARA;
 
 namespace ServerSyncPlugin
 {
@@ -30,7 +30,7 @@ namespace ServerSyncPlugin
 
         Mock<IComponentRegistry> componentRegistryMock;
         Mock<Connection> remoteConnectionMock;
-        Mock<IServiceImpl> localServiceMock;
+        Mock<ServiceImplementation> localServiceMock;
         Mock<ILocalServer> localServerMock;
         Mock<IDomainOfInterest> doiMock;
         Mock<IDomainOfResponsibility> dorMock;
@@ -45,8 +45,8 @@ namespace ServerSyncPlugin
 
         public interface IHandlers
         {
-            IFuncCall UpdateDoI(params object[] args);
-            IFuncCall UpdateDoR(params object[] args);
+            IClientFunctionCall UpdateDoI(params object[] args);
+            IClientFunctionCall UpdateDoR(params object[] args);
         }
 
         public Mock<IHandlers> handlers;
@@ -56,14 +56,14 @@ namespace ServerSyncPlugin
         {
             handlers = new Mock<IHandlers>();
             remoteConnectionMock = new Mock<Connection>();
-            remoteConnectionMock.Setup(rc => rc.GenerateFuncWrapper("serverSync.updateDoI", ""))
-                .Returns((FuncWrapper)handlers.Object.UpdateDoI);
-            remoteConnectionMock.Setup(rc => rc.GenerateFuncWrapper("serverSync.updateDoR", ""))
-                .Returns((FuncWrapper)handlers.Object.UpdateDoR);
+            remoteConnectionMock.Setup(rc => rc.GenerateClientFunction("serverSync.updateDoI", ""))
+                .Returns((ClientFunction)handlers.Object.UpdateDoI);
+            remoteConnectionMock.Setup(rc => rc.GenerateClientFunction("serverSync.updateDoR", ""))
+                .Returns((ClientFunction)handlers.Object.UpdateDoR);
 
             doiMock = new Mock<IDomainOfInterest>();
             dorMock = new Mock<IDomainOfResponsibility>();
-            localServiceMock = new Mock<IServiceImpl>();
+            localServiceMock = new Mock<ServiceImplementation>();
             localServerMock = new Mock<ILocalServer>();
             localServerMock.SetupGet(ls => ls.Service).Returns(localServiceMock.Object);
             localServerMock.SetupGet(ls => ls.DoI).Returns(doiMock.Object);

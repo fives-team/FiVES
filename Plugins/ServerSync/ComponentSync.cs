@@ -13,7 +13,7 @@
 // You should have received a copy of the GNU General Public License
 // along with FiVES.  If not, see <http://www.gnu.org/licenses/>.
 using FIVES;
-using KIARAPlugin;
+using KIARA;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -41,7 +41,7 @@ namespace ServerSyncPlugin
         /// Registers the component sync APIs in the provided service.
         /// </summary>
         /// <param name="service">The provided service.</param>
-        public void RegisterComponentSyncAPI(IService service)
+        public void RegisterComponentSyncAPI(Service service)
         {
             service["serverSync.registerComponentDefinition"] =
                 (Action<Connection, ComponentDef>)HandleRemoteRegisteredComponentDefinition;
