@@ -13,6 +13,9 @@
 // You should have received a copy of the GNU General Public License
 // along with FiVES.  If not, see <http://www.gnu.org/licenses/>.
 
+using KIARA;
+using KIARA.Protocols.JsonRPC;
+using KIARA.Transport.WebSocketTransport;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -31,10 +34,13 @@ namespace KIARAPlugin
         public string ServiceTransport { get; private set; }
         public string ServiceProtocol { get; private set; }
         public int ServicePort { get; private set; }
+        public KIARAServer KiaraServer { get; private set; }
 
         public KIARAServerManager()
         {
             ReadConfig();
+            RegisterModules();
+            StartKiaraServer();
         }
 
         private void ReadConfig()
@@ -64,8 +70,18 @@ namespace KIARAPlugin
             ServicePort = int.Parse(serviceConfig.Attributes["port"].Value);
         }
 
+        private void RegisterModules()
+        {
+            var JsonRPCProtocol = new JsonRpcProtocol();
+            var WebsocketTransport = new WebSocketTransport();
+            KIARA.ProtocolRegistry.Instance.RegisterProtocol(JsonRPCProtocol);
+            KIARA.TransportRegistry.Instance.RegisterTransport(WebsocketTransport);
+        }
+
         private void StartKiaraServer()
         {
+            KiaraServer = new KIARAServer(ServerURI, ServerPort, ServerPath, "fives.kiara");
+            KiaraServer.StartService(ServerURI, ServicePort, "/service/", ServiceTransport, ServiceProtocol);
         }
     }
 }
