@@ -46,6 +46,7 @@ namespace KIARAPlugin
 
         public void Shutdown()
         {
+            KIARAServerManager.Instance.KiaraServer.ShutDown();
         }
     }
 }
