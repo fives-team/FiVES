@@ -20,6 +20,8 @@ using System.Threading.Tasks;
 using ClientManagerPlugin;
 using FIVES;
 using FIVESServiceBus;
+using System.IO;
+using KIARAPlugin;
 
 namespace AvatarCollisionPlugin
 {
@@ -40,7 +42,7 @@ namespace AvatarCollisionPlugin
 
         public List<string> PluginDependencies
         {
-            get { return new List<string> (); }
+            get { return new List<string> {"KIARA"}; }
         }
 
         public List<string> ComponentDependencies
@@ -72,6 +74,8 @@ namespace AvatarCollisionPlugin
 
         private void RegisterService()
         {
+            string idlContents = File.ReadAllText("avatarCollision.kiara");
+            KIARAServerManager.Instance.KiaraServer.AmendIDL(idlContents);
             ClientManager.Instance.RegisterClientService("avatarCollision", false, new Dictionary<string, Delegate>
             {
                 {"setGroundlevel", (Action<string, float>)SetGroundlevel}

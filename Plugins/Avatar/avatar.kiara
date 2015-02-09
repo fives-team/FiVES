@@ -6,3 +6,4 @@
 	void setAvatarLeftRightMotion(float amount);
 	void setAvatarSpinAroundAxis(Vector axis, float amount);
 }
+
