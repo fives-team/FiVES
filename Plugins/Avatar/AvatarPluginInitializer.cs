@@ -18,6 +18,10 @@ using System.Collections.Generic;
 using AuthPlugin;
 using ClientManagerPlugin;
 using KIARA;
+using System.Net;
+using System.Reflection;
+using System.IO;
+using KIARAPlugin;
 
 namespace AvatarPlugin
 {
@@ -37,7 +41,7 @@ namespace AvatarPlugin
         {
             get
             {
-                return new List<string> { "ClientManager", "Auth"};
+                return new List<string> { "KIARA", "ClientManager", "Auth"};
             }
         }
 
@@ -51,10 +55,25 @@ namespace AvatarPlugin
 
         public void Initialize ()
         {
+            RegisterComponent();
+            RegisterEvents();
+            RegisterKiaraService();
+        }
+
+        public void Shutdown()
+        {
+        }
+
+        void RegisterComponent()
+        {
             ComponentDefinition avatar = new ComponentDefinition("avatar");
             avatar.AddAttribute<string>("userLogin", null);
             ComponentRegistry.Instance.Register(avatar);
+        }
 
+        void RegisterKiaraService()
+        {
+            AmendKiaraServiceIdl();
             ClientManager.Instance.RegisterClientService("avatar", true, new Dictionary<string, Delegate> {
                 {"getAvatarEntityGuid", (Func<Connection, string>)GetAvatarEntityGuid},
                 {"changeAppearance", (Action<Connection, string, Vector>)ChangeAppearance},
@@ -63,8 +82,18 @@ namespace AvatarPlugin
                 {"setAvatarLeftRightMotion", (Action<Connection, float>)SetLeftRightMotion},
                 {"setAvatarSpinAroundAxis",(Action<Connection, Vector, float>)SetAvatarSpinAroundAxis}
             });
+        }
 
-            ClientManager.Instance.NotifyWhenAnyClientAuthenticated(delegate(Connection connection) {
+        void AmendKiaraServiceIdl()
+        {
+            var idlContent = File.ReadAllText("avatar.kiara");
+            KIARAServerManager.Instance.KiaraServer.AmendIDL(idlContent);
+        }
+
+        void RegisterEvents()
+        {
+            ClientManager.Instance.NotifyWhenAnyClientAuthenticated(delegate(Connection connection)
+            {
                 Activate(connection);
                 connection.Closed += (sender, e) => Deactivate(connection);
             });
@@ -73,10 +102,6 @@ namespace AvatarPlugin
 
             foreach (var entity in World.Instance)
                 CheckAndRegisterAvatarEntity(entity);
-        }
-
-        public void Shutdown()
-        {
         }
 
         void HandleAddedEntity (object sender, EntityEventArgs e)
