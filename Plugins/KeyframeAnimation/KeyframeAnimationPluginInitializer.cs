@@ -20,6 +20,7 @@ using System.Threading.Tasks;
 using ClientManagerPlugin;
 using FIVES;
 using KIARA;
+using System.IO;
 
 namespace KeyframeAnimationPlugin
 {
@@ -62,6 +63,8 @@ namespace KeyframeAnimationPlugin
 
         private void RegisterClientServices()
         {
+            string animationIdl = File.ReadAllText("keyframeAnimation.kiara");
+            KIARAPlugin.KIARAServerManager.Instance.KiaraServer.AmendIDL(animationIdl);
             ClientManager.Instance.RegisterClientService("animation", false, new Dictionary<string, Delegate>
             {
                 {"startServersideAnimation",
