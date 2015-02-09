@@ -94,8 +94,6 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <None Include="clientManagerServer.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     <None Include="clientManager.kiara">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
