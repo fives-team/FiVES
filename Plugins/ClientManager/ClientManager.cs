@@ -32,6 +32,9 @@ namespace ClientManagerPlugin
         {
             clientService = ServiceFactory.Create();
 
+            string clientManagerIDL = File.ReadAllText("clientManager.kiara");
+            KIARAPlugin.KIARAServerManager.Instance.KiaraServer.AmendIDL(clientManagerIDL);
+
             RegisterClientService("kiara", false, new Dictionary<string, Delegate>());
             RegisterClientMethod("kiara.implements", false, (Func<List<string>, List<bool>>)Implements);
             RegisterClientMethod("kiara.implements", true, (Func<List<string>, List<bool>>)AuthenticatedImplements);

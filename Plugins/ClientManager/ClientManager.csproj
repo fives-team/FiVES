@@ -84,6 +84,10 @@
       <Project>{CCDA8021-971D-4703-A4BD-325248EF9499}</Project>
       <Name>Auth</Name>
     </ProjectReference>
+    <ProjectReference Include="..\KIARA\KIARAPlugin.csproj">
+      <Project>{d5b8e5d2-a427-4985-b885-9eac5bddab06}</Project>
+      <Name>KIARAPlugin</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Terminal\Terminal.csproj">
       <Project>{fdf2de99-68cf-4947-952c-2d2bcc846f3e}</Project>
       <Name>Terminal</Name>
@@ -92,6 +96,8 @@
   <ItemGroup>
     <None Include="clientManagerServer.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    <None Include="clientManager.kiara">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="packages.config" />
   </ItemGroup>

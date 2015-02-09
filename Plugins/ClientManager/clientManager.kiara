@@ -1,0 +1,26 @@
+﻿service kiara {
+	boolean implements(array<string> serviceNames);
+}
+
+
+service auth {
+	boolean login(string userName, string password);
+}
+
+struct UpdateInfo {
+	string entityGuid;
+	string componentName;
+	string attributeName;
+	any value;
+}
+
+service objectsync {
+	array<map<string, any>> listObjects();
+	/* * TODO
+	// We need either a way to describe callbacks here, or, better, change notifications to push messages
+	// void notifyAboutNewObjects($CB[map<string, any>] callback);
+	// void notifyAboutRemovedObjects($CB[string] callback);
+	// void notifyAboutObjectUpdates($CB[UpdateInfo] update);
+	*/
+}
+
