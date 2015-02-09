@@ -8,5 +8,6 @@
 	// as soon as they are implemented in KIARA
 	// void notifyAboutClientsideAnimationStart($CB[string, string, float, float, int, float]callback);
 	// void notifyAboutClientsideAnimationStop($CB[string, string]);
+	*/
 }
 
