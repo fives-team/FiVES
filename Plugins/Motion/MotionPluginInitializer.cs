@@ -18,6 +18,7 @@ using FIVES;
 using ClientManagerPlugin;
 using System.Threading;
 using EventLoopPlugin;
+using System.IO;
 
 namespace MotionPlugin
 {
@@ -92,6 +93,8 @@ namespace MotionPlugin
 
         void RegisterClientServices()
         {
+            string motionIdl = File.ReadAllText("motion.kiara");
+            KIARAPlugin.KIARAServerManager.Instance.KiaraServer.AmendIDL(motionIdl);
             ClientManager.Instance.RegisterClientService("motion", true, new Dictionary<string, Delegate> {
                 {"update", (Action<string, Vector, AxisAngle, int>) Update}
             });
