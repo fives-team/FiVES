@@ -31,6 +31,10 @@
     <ConsolePause>false</ConsolePause>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="KIARA, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\ThirdParty\KIARA\KIARA.dll</HintPath>
+    </Reference>
     <Reference Include="NLog, Version=3.2.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\packages\NLog.3.2.0.0\lib\net40\NLog.dll</HintPath>
@@ -50,6 +54,9 @@
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
+    <None Include="location.kiara">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
@@ -68,6 +75,10 @@
     <ProjectReference Include="..\ClientManager\ClientManager.csproj">
       <Project>{E1955FF2-6109-4C71-9F13-486A48DE6C17}</Project>
       <Name>ClientManager</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\KIARA\KIARAPlugin.csproj">
+      <Project>{d5b8e5d2-a427-4985-b885-9eac5bddab06}</Project>
+      <Name>KIARAPlugin</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
