@@ -1420,7 +1420,8 @@ define(function () {
             "omp.movement.updateAvatarMovement",
             "omp.chatServer.messageFromClient",
             "omp.chatClient.messageFromServer",
-            "omp.animationServer.startAnimation"
+            "omp.animationServer.startAnimation",
+            "objectsync.receiveObjectUpdates"
         ];
         return onewayMethods.indexOf(qualifiedMethodName) != -1;
     }
