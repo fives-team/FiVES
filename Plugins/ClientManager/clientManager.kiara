@@ -16,6 +16,11 @@ struct UpdateInfo {
 
 service objectsync {
 	array<map<string, any>> listObjects();
+
+	void receiveNewObjects(map<string, any> objectList);
+	void removeObject(string entityGuid);
+	void receiveObjectUpdates(array<UpdateInfo> updates);
+
 	/* * TODO
 	// We need either a way to describe callbacks here, or, better, change notifications to push messages
 	// void notifyAboutNewObjects($CB[map<string, any>] callback);

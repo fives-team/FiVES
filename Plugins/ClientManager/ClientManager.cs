@@ -47,11 +47,7 @@ namespace ClientManagerPlugin
             RegisterClientMethod("getTime", false, (Func<DateTime>)GetTime);
 
             RegisterClientService("objectsync", true, new Dictionary<string, Delegate> {
-                {"listObjects", (Func<List<Dictionary<string, object>>>) ListObjects},
-                {"notifyAboutNewObjects", (Action<Connection, Action<Dictionary<string, object>>>) NotifyAboutNewObjects},
-                {"notifyAboutRemovedObjects", (Action<Connection, Action<string>>) NotifyAboutRemovedObjects},
-                {"notifyAboutObjectUpdates",
-                    (Action<Connection, Action<List<ClientUpdateQueue.UpdateInfo>>>) NotifyAboutObjectUpdates},
+                {"listObjects", (Func<List<Dictionary<string, object>>>) ListObjects}
             });
 
             PluginManager.Instance.AddPluginLoadedHandler("Terminal", RegisterTerminalCommands);
@@ -112,51 +108,29 @@ namespace ClientManagerPlugin
             foreach (var entry in authenticatedMethods)
                 connection.RegisterFuncImplementation(entry.Key, entry.Value);
 
+            WrapUpdateMethods(connection);
             return true;
+        }
+
+        private void WrapUpdateMethods(Connection connection)
+        {
+            var newObjectUpdates = connection.GenerateClientFunction("objectsync", "receiveNewObjects");
+            onNewEntityHandlers[connection] = newObjectUpdates;
+
+            var removedObjectUpdates = connection.GenerateClientFunction("objectsync", "removeObject");
+            onRemovedEntityHandlers[connection] = removedObjectUpdates;
+
+            var updatedObjectUpdates = connection.GenerateClientFunction("objectsync", "receiveObjectUpdates");
+            UpdateQueue.RegisterToClientUpdates(connection, updatedObjectUpdates);
         }
 
         private void HandleAuthenticatedClientDisconnected(object sender, EventArgs e)
         {
             Connection connection = sender as Connection;
-
-            if (onNewEntityHandlers.ContainsKey(connection))
-            {
-                foreach (var handler in onNewEntityHandlers[connection])
-                    World.Instance.AddedEntity -= handler;
-            }
-
-            if (onRemovedEntityHandlers.ContainsKey(connection))
-            {
-                foreach (var handler in onRemovedEntityHandlers[connection])
-                    World.Instance.RemovedEntity -= handler;
-            }
-
+            onNewEntityHandlers.Remove(connection);
+            onRemovedEntityHandlers.Remove(connection);
             UpdateQueue.StopClientUpdates(connection);
-
             authenticatedClients.Remove(connection);
-        }
-
-        void NotifyAboutNewObjects(Connection connection, Action<Dictionary<string, object>> callback)
-        {
-            var handler = new EventHandler<EntityEventArgs>((sender, e) => callback(ConstructEntityInfo(e.Entity)));
-            if (!onNewEntityHandlers.ContainsKey(connection))
-                onNewEntityHandlers[connection] = new List<EventHandler<EntityEventArgs>>();
-            onNewEntityHandlers[connection].Add(handler);
-            World.Instance.AddedEntity += handler;
-        }
-
-        void NotifyAboutRemovedObjects(Connection connection, Action<string> callback)
-        {
-            var handler = new EventHandler<EntityEventArgs>((sender, e) => callback(e.Entity.Guid.ToString()));
-            if (!onRemovedEntityHandlers.ContainsKey(connection))
-                onRemovedEntityHandlers[connection] = new List<EventHandler<EntityEventArgs>>();
-            onRemovedEntityHandlers[connection].Add(handler);
-            World.Instance.RemovedEntity += handler;
-        }
-
-        void NotifyAboutObjectUpdates(Connection connection, Action<List<ClientUpdateQueue.UpdateInfo>> callback)
-        {
-            UpdateQueue.RegisterToClientUpdates(connection, callback);
         }
 
         List<string> basicClientServices = new List<string>();
@@ -197,10 +171,8 @@ namespace ClientManagerPlugin
         /// <summary>
         /// List of handlers that need to be removed when client disconnects.
         /// </summary>
-        Dictionary<Connection, List<EventHandler<EntityEventArgs>>> onNewEntityHandlers =
-            new Dictionary<Connection, List<EventHandler<EntityEventArgs>>>();
-        Dictionary<Connection, List<EventHandler<EntityEventArgs>>> onRemovedEntityHandlers =
-            new Dictionary<Connection, List<EventHandler<EntityEventArgs>>>();
+        Dictionary<Connection, ClientFunction> onNewEntityHandlers = new Dictionary<Connection, ClientFunction>();
+        Dictionary<Connection, ClientFunction> onRemovedEntityHandlers = new Dictionary<Connection, ClientFunction>();
 
         event Action<Connection> OnAuthenticated;
 
