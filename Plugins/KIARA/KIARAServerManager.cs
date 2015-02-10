@@ -35,7 +35,7 @@ namespace KIARAPlugin
         public string ServiceProtocol { get; private set; }
         public int ServicePort { get; private set; }
         public KIARAServer KiaraServer { get; private set; }
-
+        public ServiceImplementation KiaraService { get; private set; }
         public KIARAServerManager()
         {
             ReadConfig();
@@ -81,7 +81,7 @@ namespace KIARAPlugin
         private void StartKiaraServer()
         {
             KiaraServer = new KIARAServer(ServerURI, ServerPort, ServerPath, "fives.kiara");
-            KiaraServer.StartService(ServerURI, ServicePort, "/service/", ServiceTransport, ServiceProtocol);
+            KiaraService = KiaraServer.StartService(ServerURI, ServicePort, "/service/", ServiceTransport, ServiceProtocol);
         }
     }
 }

@@ -15,6 +15,7 @@
 using AuthPlugin;
 using FIVES;
 using KIARA;
+using KIARAPlugin;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -30,7 +31,7 @@ namespace ClientManagerPlugin
 
         public ClientManager()
         {
-            clientService = ServiceFactory.Create();
+            clientService = KIARAServerManager.Instance.KiaraService;
 
             string clientManagerIDL = File.ReadAllText("clientManager.kiara");
             KIARAPlugin.KIARAServerManager.Instance.KiaraServer.AmendIDL(clientManagerIDL);
