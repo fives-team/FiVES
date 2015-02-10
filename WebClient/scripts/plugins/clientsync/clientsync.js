@@ -28,16 +28,14 @@ FIVES.Plugins = FIVES.Plugins || {};
     var c = clientsync.prototype;
 
     c._createFunctionWrappers = function () {
+        _fivesCommunicator.connection.registerFuncImplementation("objectsync.receiveObjectUpdates", null, this._applyObjectUpdates);
         this.listObjects = _fivesCommunicator.connection.generateFuncWrapper("objectsync.listObjects");
         this.notifyAboutNewObjects = _fivesCommunicator.connection.generateFuncWrapper("objectsync.notifyAboutNewObjects");
-        this.notifyAboutObjectUpdates = _fivesCommunicator.connection.generateFuncWrapper("objectsync.notifyAboutObjectUpdates");
-
         this._initUpdateListeners();
     };
 
     c._initUpdateListeners = function() {
         this.notifyAboutNewObjects(FIVES.Models.EntityRegistry.addEntityFromServer.bind(FIVES.Models.EntityRegistry));
-        this.notifyAboutObjectUpdates(this._applyObjectUpdates);
         this.listObjects().on("result", this._listObjectsCallback);
     };
 
