@@ -1,5 +1,5 @@
 ﻿service kiara {
-	boolean implements(array<string> serviceNames);
+	array<boolean> implements(array<string> serviceNames);
 }
 
 
