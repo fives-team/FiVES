@@ -1477,7 +1477,7 @@ define(function () {
         // If we haven't found any server using a supported protocol, we must fail.
         if (!protocolCtor) {
             handleError(new KIARAError(KIARA.UNSUPPORTED_FEATURE,
-                "Protocol '" + response.protocol + "' is not supported"));
+                "Protocol '" + response.servers[i].protocol.name + "' is not supported"));
         }
 
         try {
