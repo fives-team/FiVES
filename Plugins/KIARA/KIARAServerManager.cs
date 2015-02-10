@@ -13,6 +13,7 @@
 // You should have received a copy of the GNU General Public License
 // along with FiVES.  If not, see <http://www.gnu.org/licenses/>.
 
+using FiVESJson;
 using KIARA;
 using KIARA.Protocols.JsonRPC;
 using KIARA.Transport.WebSocketTransport;
@@ -73,8 +74,10 @@ namespace KIARAPlugin
         private void RegisterModules()
         {
             var JsonRPCProtocol = new JsonRpcProtocol();
+            var FiVESJsonProtocol = new FiVESJsonProtocol();
             var WebsocketTransport = new WebSocketTransport();
             KIARA.ProtocolRegistry.Instance.RegisterProtocol(JsonRPCProtocol);
+            KIARA.ProtocolRegistry.Instance.RegisterProtocol(FiVESJsonProtocol);
             KIARA.TransportRegistry.Instance.RegisterTransport(WebsocketTransport);
         }
 

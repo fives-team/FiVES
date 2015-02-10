@@ -37,6 +37,9 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\ThirdParty\KIARA\Dynamitey.dll</HintPath>
     </Reference>
+    <Reference Include="FiVESJson">
+      <HintPath>..\..\ThirdParty\KIARA\FiVESJson.dll</HintPath>
+    </Reference>
     <Reference Include="JsonRPC">
       <HintPath>..\..\ThirdParty\KIARA\JsonRPC.dll</HintPath>
     </Reference>
