@@ -51,14 +51,8 @@ FIVES.Models = FIVES.Models || {};
         for(var updatedAttribute in updatedComponent)
         {
             this[componentName][updatedAttribute] = updatedComponent[updatedAttribute];
+            FIVES.Events.ComponentUpdated(this, componentName,updatedAttribute);
         }
-
-        if(this.xml3dView.groupElement && this.xml3dView.transformElement)
-            this._applyComponentUpdatesTo3DView(componentName, updatedAttribute);
-    };
-
-    e._applyComponentUpdatesTo3DView = function(componentName, attributeName) {
-        FIVES.Events.ComponentUpdated(this, componentName,attributeName);
     };
 
     e.updateAttribute = function(componentName, attributeName, value) {
