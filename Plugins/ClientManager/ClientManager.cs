@@ -64,6 +64,7 @@ namespace ClientManagerPlugin
         private void RegisterEventHandlers()
         {
             World.Instance.AddedEntity += new EventHandler<EntityEventArgs>(HandleEntityAdded);
+            World.Instance.RemovedEntity += new EventHandler<EntityEventArgs>(HandleEntityRemoved);
             PluginManager.Instance.AddPluginLoadedHandler("Terminal", RegisterTerminalCommands);
         }
 
@@ -143,6 +144,14 @@ namespace ClientManagerPlugin
         private void HandleEntityAdded(object sender, EntityEventArgs e)
         {
             foreach (ClientFunction clientHandler in onNewEntityHandlers.Values)
+            {
+                clientHandler(ConstructEntityInfo(e.Entity));
+            }
+        }
+
+        private void HandleEntityRemoved(object sender, EntityEventArgs e)
+        {
+            foreach (ClientFunction clientHandler in onRemovedEntityHandlers.Values)
             {
                 clientHandler(ConstructEntityInfo(e.Entity));
             }
