@@ -16,5 +16,5 @@ struct Component {
 }
 
 struct Entity {
-	map<string, Component> components;
+	map<string, Component> Components;
 }
