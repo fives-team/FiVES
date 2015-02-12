@@ -4,10 +4,12 @@
 	void startClientSideAnimation(string entityGuid, string animationName, float startFrame, float endFrame, i32 cycles, float speed);
 	void stopClientSideAnimation(string entityGuid, string animationName);
 
-	/* * TODO: Subscription still works with Callbacks here. Replace by push messages,
-	// as soon as they are implemented in KIARA
-	// void notifyAboutClientsideAnimationStart($CB[string, string, float, float, int, float]callback);
-	// void notifyAboutClientsideAnimationStop($CB[string, string]);
+	/* * TODO: These service functions are implemented in terms of push messages
+	// to invoke a RPC from server to client. The current implementation of KIARA does
+	// not consider or parse push annotations yet. As soon as the push message feature
+	// is fully implemented, these functions should be annotated accordingly
 	*/
+	void receiveClientSideAnimationStart(string entityGuid, string animationName, float startFrame, float endFrame, i32 cycles, float speed);
+	void receiveClientSideAnimationStop(string entityGuid, string animationName);
 }
 

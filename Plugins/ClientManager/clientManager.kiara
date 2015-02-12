@@ -17,15 +17,13 @@ struct UpdateInfo {
 service objectsync {
 	array<map<string, any>> listObjects();
 
+	/* * TODO: These service functions are implemented in terms of push messages
+	// to invoke a RPC from server to client. The current implementation of KIARA does
+	// not consider or parse push annotations yet. As soon as the push message feature
+	// is fully implemented, these functions should be annotated accordingly
+	*/
 	void receiveNewObjects(map<string, any> newObject);
 	void removeObject(string entityGuid);
 	void receiveObjectUpdates(array<UpdateInfo> updates);
-
-	/* * TODO
-	// We need either a way to describe callbacks here, or, better, change notifications to push messages
-	// void notifyAboutNewObjects($CB[map<string, any>] callback);
-	// void notifyAboutRemovedObjects($CB[string] callback);
-	// void notifyAboutObjectUpdates($CB[UpdateInfo] update);
-	*/
 }
 
