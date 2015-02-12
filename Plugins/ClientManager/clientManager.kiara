@@ -17,7 +17,7 @@ struct UpdateInfo {
 service objectsync {
 	array<map<string, any>> listObjects();
 
-	void receiveNewObjects(map<string, any> objectList);
+	void receiveNewObjects(map<string, any> newObject);
 	void removeObject(string entityGuid);
 	void receiveObjectUpdates(array<UpdateInfo> updates);
 

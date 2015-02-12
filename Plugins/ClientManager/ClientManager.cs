@@ -31,11 +31,21 @@ namespace ClientManagerPlugin
 
         public ClientManager()
         {
+            InitializeKIARA();
+            RegisterClientServices();
+            RegisterEventHandlers();
+        }
+
+        private void InitializeKIARA()
+        {
             clientService = KIARAServerManager.Instance.KiaraService;
 
             string clientManagerIDL = File.ReadAllText("clientManager.kiara");
             KIARAPlugin.KIARAServerManager.Instance.KiaraServer.AmendIDL(clientManagerIDL);
+        }
 
+        private void RegisterClientServices()
+        {
             RegisterClientService("kiara", false, new Dictionary<string, Delegate>());
             RegisterClientMethod("kiara.implements", false, (Func<List<string>, List<bool>>)Implements);
             RegisterClientMethod("kiara.implements", true, (Func<List<string>, List<bool>>)AuthenticatedImplements);
@@ -49,7 +59,11 @@ namespace ClientManagerPlugin
             RegisterClientService("objectsync", true, new Dictionary<string, Delegate> {
                 {"listObjects", (Func<List<Dictionary<string, object>>>) ListObjects}
             });
+        }
 
+        private void RegisterEventHandlers()
+        {
+            World.Instance.AddedEntity += new EventHandler<EntityEventArgs>(HandleEntityAdded);
             PluginManager.Instance.AddPluginLoadedHandler("Terminal", RegisterTerminalCommands);
 
             // DEBUG
@@ -131,6 +145,14 @@ namespace ClientManagerPlugin
             onRemovedEntityHandlers.Remove(connection);
             UpdateQueue.StopClientUpdates(connection);
             authenticatedClients.Remove(connection);
+        }
+
+        private void HandleEntityAdded(object sender, EntityEventArgs e)
+        {
+            foreach (ClientFunction clientHandler in onNewEntityHandlers.Values)
+            {
+                clientHandler(ConstructEntityInfo(e.Entity));
+            }
         }
 
         List<string> basicClientServices = new List<string>();
