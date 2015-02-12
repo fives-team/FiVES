@@ -65,13 +65,6 @@ namespace ClientManagerPlugin
         {
             World.Instance.AddedEntity += new EventHandler<EntityEventArgs>(HandleEntityAdded);
             PluginManager.Instance.AddPluginLoadedHandler("Terminal", RegisterTerminalCommands);
-
-            // DEBUG
-            //            clientService["scripting.createServerScriptFor"] = (Action<string, string>)createServerScriptFor;
-            //            clientService.OnNewClient += delegate(Connection connection) {
-            //                var getAnswer = connection.generateFuncWrapper("getAnswer");
-            //                getAnswer((Action<int>) delegate(int answer) { Console.WriteLine("The answer is {0}", answer); });
-            //            };
         }
 
         private DateTime GetTime()
