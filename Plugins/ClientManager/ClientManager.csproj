@@ -61,6 +61,7 @@
     <Compile Include="ClientManager.cs" />
     <Compile Include="ClientManagerPluginInitializer.cs" />
     <Compile Include="ClientUpdateQueue.cs" />
+    <Compile Include="ClientConnectionEventArgs.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

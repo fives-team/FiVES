@@ -29,6 +29,9 @@ namespace ClientManagerPlugin
     {
         public static ClientManager Instance;
 
+        public event EventHandler<ClientConnectionEventArgs> NewClientConnected;
+        public event EventHandler<ClientConnectionEventArgs> ClientDisconnected;
+
         public ClientManager()
         {
             InitializeKIARA();
@@ -117,6 +120,8 @@ namespace ClientManagerPlugin
                 connection.RegisterFuncImplementation(entry.Key, entry.Value);
 
             WrapUpdateMethods(connection);
+            if (NewClientConnected != null)
+                NewClientConnected(this, new ClientConnectionEventArgs(connection));
             return true;
         }
 
@@ -139,6 +144,8 @@ namespace ClientManagerPlugin
             onRemovedEntityHandlers.Remove(connection);
             UpdateQueue.StopClientUpdates(connection);
             authenticatedClients.Remove(connection);
+            if (ClientDisconnected != null)
+                ClientDisconnected(this, new ClientConnectionEventArgs(connection));
         }
 
         private void HandleEntityAdded(object sender, EntityEventArgs e)
