@@ -62,12 +62,11 @@ requirejs(["keyframe_animator"], (function () {
         this.startClientsideAnimation = conn.generateFuncWrapper("animation.startClientsideAnimation");
         this.stopClientsideAnimation = conn.generateFuncWrapper("animation.stopClientsideAnimation");
 
-        this.notifyAboutClientsideAnimationStart =
-            conn.generateFuncWrapper("animation.notifyAboutClientsideAnimationStart");
-        this.notifyAboutClientsideAnimationStop =
-            conn.generateFuncWrapper("animation.notifyAboutClientsideAnimationStop");
+        _fivesCommunicator.connection.registerFuncImplementation("animation.receiveClientsideAnimationStart",
+            null, this.startAnimationPlayback);
 
-        this.registerToAnimationUpdates();
+        _fivesCommunicator.connection.registerFuncImplementation("animation.receiveClientsideAnimationStop",
+            null, this.stopAnimationPlayback);
     }
 
     a._componentUpdatedHandler = function(entity, componentName) {
@@ -96,14 +95,6 @@ requirejs(["keyframe_animator"], (function () {
         }
         var self = this;
         requestAnimationFrame(updateLoop.bind(self));
-    };
-
-    /**
-     * Registers an enitity to have its keyframe updated during the update loop.
-     */
-    a.registerToAnimationUpdates = function() {
-        this.notifyAboutClientsideAnimationStart(this.startAnimationPlayback);
-        this.notifyAboutClientsideAnimationStop(this.stopAnimationPlayback);
     };
 
     a._addXflowAnimationsForMesh = function(entity) {

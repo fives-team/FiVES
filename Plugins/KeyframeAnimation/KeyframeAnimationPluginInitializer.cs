@@ -45,7 +45,7 @@ namespace KeyframeAnimationPlugin
         {
             RegisterComponents();
             RegisterClientServices();
-
+            RegisterToEvents();
             KeyframeAnimationManager.Instance = new KeyframeAnimationManager();
             KeyframeAnimationManager.Instance.Initialize(this);
         }
@@ -61,6 +61,12 @@ namespace KeyframeAnimationPlugin
             ComponentRegistry.Instance.Register(animationComponent);
         }
 
+        private void RegisterToEvents()
+        {
+            ClientManager.Instance.NewClientConnected += new EventHandler<ClientConnectionEventArgs>(HandleClientConnected);
+            ClientManager.Instance.ClientDisconnected += new EventHandler<ClientConnectionEventArgs>(HandleClientDisconnected);
+        }
+
         private void RegisterClientServices()
         {
             string animationIdl = File.ReadAllText("keyframeAnimation.kiara");
@@ -74,11 +80,7 @@ namespace KeyframeAnimationPlugin
                 {"startClientsideAnimation",
                     (Action<string, string, float, float, int, float>)StartClientsideAnimation},
                 {"stopClientsideAnimation",
-                    (Action<string, string>)StopClientsideAnimation},
-                {"notifyAboutClientsideAnimationStart",
-                    (Action<Connection, Action<string, string, float, float, int, float>>)ReceiveAnimationStartTrigger},
-                {"notifyAboutClientsideAnimationStop",
-                    (Action<Connection, Action<string, string>>)ReceiveAnimationStopTrigger}
+                    (Action<string, string>)StopClientsideAnimation}
             });
         }
 
@@ -126,11 +128,9 @@ namespace KeyframeAnimationPlugin
         {
             lock (animationStartCallbacks)
             {
-                foreach (KeyValuePair<Connection, Action<string, string, float, float, int, float>> registeredCallback
-                    in animationStartCallbacks)
+                foreach (ClientFunction animationStartTrigger in animationStartCallbacks.Values)
                 {
-                    var callback = registeredCallback.Value;
-                    callback(entityGuid, animationName, startFrame, endFrame, cycles, speed);
+                    animationStartTrigger(entityGuid, animationName, startFrame, endFrame, cycles, speed);
                 }
             }
         }
@@ -144,47 +144,46 @@ namespace KeyframeAnimationPlugin
         {
             lock (animationStopCallbacks)
             {
-                foreach (KeyValuePair<Connection, Action<string, string>> registeredCallback in animationStopCallbacks)
+                foreach (ClientFunction animationStopTrigger in animationStopCallbacks.Values)
                 {
-                    var callback = registeredCallback.Value;
-                    callback(entityGuid, animationName);
+                    animationStopTrigger(entityGuid, animationName);
                 }
             }
         }
 
-        /// <summary>
-        /// Handler of KIARA methods for clients to subscribe to animation start messages
-        /// </summary>
-        /// <param name="clientConnection">Connection that client uses to communicate with the server</param>
-        /// <param name="callback">Client callback that is invoked when the message is sent</param>
-        private void ReceiveAnimationStartTrigger(Connection clientConnection,
-                                                  Action<string, string, float, float, int, float> callback)
+        private void HandleClientConnected(object sender, ClientConnectionEventArgs e)
         {
+            var clientConnection = e.ClientConnection;
+            ClientFunction animationStartTrigger = clientConnection.GenerateClientFunction("animation", "receiveClientsideAnimationStart");
+            ClientFunction animationStopTrigger = clientConnection.GenerateClientFunction("animation", "receiveClientsideAnimationStop");
             lock (animationStartCallbacks)
             {
                 if (!animationStartCallbacks.ContainsKey(clientConnection))
-                    animationStartCallbacks.Add(clientConnection, callback);
+                    animationStartCallbacks.Add(clientConnection, animationStartTrigger);
             }
-        }
-
-        /// <summary>
-        /// Handler of KIARA methods for clients to subscribe to animation start messages
-        /// </summary>
-        /// <param name="clientConnection">Connection that client uses to communicate with the server</param>
-        /// <param name="callback">Client callback that is invoked when the message is sent</param>
-        private void ReceiveAnimationStopTrigger(Connection clientConnection, Action<string, string> callback)
-        {
             lock (animationStopCallbacks)
             {
                 if (!animationStopCallbacks.ContainsKey(clientConnection))
-                    animationStopCallbacks.Add(clientConnection, callback);
+                    animationStopCallbacks.Add(clientConnection, animationStopTrigger);
             }
         }
 
-        Dictionary<Connection, Action<string, string, float, float, int, float>> animationStartCallbacks
-            = new Dictionary<Connection, Action<string, string, float, float, int, float>>();
+        private void HandleClientDisconnected(object sender, ClientConnectionEventArgs e)
+        {
+            var clientConnection = e.ClientConnection;
+            lock(animationStartCallbacks)
+            {
+                if (animationStartCallbacks.ContainsKey(clientConnection))
+                    animationStartCallbacks.Remove(clientConnection);
+            }
+            lock(animationStopCallbacks)
+            {
+                if (animationStopCallbacks.ContainsKey(clientConnection))
+                    animationStopCallbacks.Remove(clientConnection);
+            }
+        }
 
-        Dictionary<Connection, Action<string, string>> animationStopCallbacks
-            = new Dictionary<Connection, Action<string, string>>();
+        Dictionary<Connection, ClientFunction> animationStartCallbacks = new Dictionary<Connection, ClientFunction>();
+        Dictionary<Connection, ClientFunction> animationStopCallbacks = new Dictionary<Connection, ClientFunction>();
     }
 }
