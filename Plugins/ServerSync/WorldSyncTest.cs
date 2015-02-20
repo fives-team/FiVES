@@ -60,11 +60,11 @@ namespace ServerSyncPlugin
         {
             handlers = new Mock<IHandlers>();
             remoteConnectionMock = new Mock<Connection>();
-            remoteConnectionMock.Setup(rc => rc.GenerateClientFunction("serverSync.addEntity", ""))
+            remoteConnectionMock.Setup(rc => rc.GenerateClientFunction("serverSync", "addEntity"))
                 .Returns((ClientFunction)handlers.Object.AddEntity);
-            remoteConnectionMock.Setup(rc => rc.GenerateClientFunction("serverSync.removeEntity", ""))
+            remoteConnectionMock.Setup(rc => rc.GenerateClientFunction("serverSync", "removeEntity"))
                 .Returns((ClientFunction)handlers.Object.RemoveEntity);
-            remoteConnectionMock.Setup(rc => rc.GenerateClientFunction("serverSync.changeAttributes", ""))
+            remoteConnectionMock.Setup(rc => rc.GenerateClientFunction("serverSync", "changeAttributes"))
                 .Returns((ClientFunction)handlers.Object.ChangeAttributes);
 
             doiMock = new Mock<IDomainOfInterest>();
@@ -254,11 +254,11 @@ namespace ServerSyncPlugin
         {
             var otherConnectionMock = new Mock<Connection>();
             var handlers2 = new Mock<IHandlers>();
-            otherConnectionMock.Setup(rc => rc.GenerateClientFunction("serverSync.addEntity", ""))
+            otherConnectionMock.Setup(rc => rc.GenerateClientFunction("serverSync","addEntity"))
                 .Returns((ClientFunction)handlers2.Object.AddEntity);
-            otherConnectionMock.Setup(rc => rc.GenerateClientFunction("serverSync.removeEntity", ""))
+            otherConnectionMock.Setup(rc => rc.GenerateClientFunction("serverSync","removeEntity"))
                 .Returns((ClientFunction)handlers2.Object.RemoveEntity);
-            otherConnectionMock.Setup(rc => rc.GenerateClientFunction("serverSync.changeAttributes", ""))
+            otherConnectionMock.Setup(rc => rc.GenerateClientFunction("serverSync", "changeAttributes"))
                 .Returns((ClientFunction)handlers2.Object.ChangeAttributes);
 
             var guid = Guid.NewGuid();
