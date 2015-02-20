@@ -16,6 +16,9 @@ using KIARA;
 using System;
 using System.IO;
 using Newtonsoft.Json;
+using KIARAPlugin;
+using System.Xml;
+using System.Configuration;
 
 namespace ServerSyncPlugin
 {
@@ -46,6 +49,10 @@ namespace ServerSyncPlugin
             RegisterSyncIDAPI(service);
         }
 
+        public void ShutDown()
+        {
+            server.ShutDown();
+        }
         /// <summary>
         /// KIARA service on the local service.
         /// </summary>

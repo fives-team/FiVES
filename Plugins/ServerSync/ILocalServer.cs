@@ -51,5 +51,10 @@ namespace ServerSyncPlugin
         /// Triggered when the local DoR has changed.
         /// </summary>
         event EventHandler DoRChanged;
+
+        /// <summary>
+        /// Shuts down local kiara server
+        /// </summary>
+        void ShutDown();
     }
 }

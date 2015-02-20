@@ -52,7 +52,7 @@ namespace ServerSyncPlugin
 
         public void Shutdown()
         {
-
+            ServerSync.LocalServer.ShutDown();
         }
     }
 }
