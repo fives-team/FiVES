@@ -16,6 +16,9 @@ using KIARA;
 using System;
 using System.IO;
 using Newtonsoft.Json;
+using KIARAPlugin;
+using System.Xml;
+using System.Configuration;
 
 namespace ServerSyncPlugin
 {
@@ -33,12 +36,23 @@ namespace ServerSyncPlugin
             doi = new EmptyDoI();
             syncID = Guid.NewGuid();
 
-            service = ServiceFactory.Create();
+            server = new KIARAServer(KIARAServerManager.Instance.ServerURI,
+                KIARAServerManager.Instance.ServerPort,
+                "/serversync/",
+                "serverSync.kiara");
+
+            Configuration serverSyncConfig = ConfigurationManager.OpenExeConfiguration(this.GetType().Assembly.Location);
+            int syncPort = int.Parse(serverSyncConfig.AppSettings.Settings["serverSyncPort"].Value);
+            service = server.StartService(KIARAServerManager.Instance.ServerURI, syncPort, "/", "ws", "fives-json");
             service.OnNewClient += ServerSyncTools.ConfigureJsonSerializer;
 
             RegisterSyncIDAPI(service);
         }
 
+        public void ShutDown()
+        {
+            server.ShutDown();
+        }
         /// <summary>
         /// KIARA service on the local service.
         /// </summary>
@@ -137,6 +151,7 @@ namespace ServerSyncPlugin
             return syncID;
         }
 
+        KIARAServer server;
         ServiceImplementation service;
         IDomainOfResponsibility dor;
         IDomainOfInterest doi;
