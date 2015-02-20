@@ -100,12 +100,10 @@ namespace ServerSyncPlugin
 
         void ConnectToRemoteServers()
         {
-            string configURI = ServerSyncTools.ConvertFileNameToURI("serverSyncClient.json");
-            string fragment;
-            Config config = Context.DefaultContext.RetrieveConfig(configURI, out fragment);
-            for (int i = 0; i < config.servers.Count; i++)
+            List<string> remoteServerUris = GetListOfRemoteServers();
+            foreach (string uri in remoteServerUris)
             {
-                ServiceWrapper remoteService = ServiceFactory.Discover(configURI + "#" + i);
+                ServiceWrapper remoteService = ServiceFactory.Discover(uri);
 
                 localServer.RegisterSyncIDAPI(remoteService);
                 worldSync.RegisterWorldSyncAPI(remoteService);
@@ -115,6 +113,18 @@ namespace ServerSyncPlugin
                 remoteService.OnConnected += ServerSyncTools.ConfigureJsonSerializer;
                 remoteService.OnConnected += HandleNewServerConnected;
             }
+        }
+
+        List<string> GetListOfRemoteServers()
+        {
+            List<string> remoteServers = new List<string>();
+            Configuration serverSyncConfig = ConfigurationManager.OpenExeConfiguration(this.GetType().Assembly.Location);
+            RemoteServerCollection remoteServersCollection = ((RemoteServersSection)serverSyncConfig.GetSection("RemoteServers")).Servers;
+            foreach(RemoteServerElement server in remoteServersCollection)
+            {
+                remoteServers.Add(server.Url);
+            }
+            return remoteServers;
         }
 
         void HandleNewServerConnected(Connection connection)
