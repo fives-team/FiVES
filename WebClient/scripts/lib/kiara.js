@@ -1420,7 +1420,8 @@ define(function () {
             "omp.movement.updateAvatarMovement",
             "omp.chatServer.messageFromClient",
             "omp.chatClient.messageFromServer",
-            "omp.animationServer.startAnimation"
+            "omp.animationServer.startAnimation",
+            "objectsync.receiveObjectUpdates"
         ];
         return onewayMethods.indexOf(qualifiedMethodName) != -1;
     }
@@ -1477,7 +1478,7 @@ define(function () {
         // If we haven't found any server using a supported protocol, we must fail.
         if (!protocolCtor) {
             handleError(new KIARAError(KIARA.UNSUPPORTED_FEATURE,
-                "Protocol '" + response.protocol + "' is not supported"));
+                "Protocol '" + response.servers[i].protocol.name + "' is not supported"));
         }
 
         try {

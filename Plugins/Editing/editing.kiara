@@ -1,0 +1,9 @@
+﻿struct MeshResource {
+	string uri;
+	boolean visible;
+}
+
+service editing {
+	string createEntityAt(Vector position);
+	string createMeshEntity(Vector position, Quat rotation, Vector scale, MeshResource mesh);
+}

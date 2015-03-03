@@ -5,7 +5,7 @@
     "services": "*",
     "protocol": {
       "name": "websocket-json",
-      "port": 43745,
+      "port": 43745
     }
   }]
 }

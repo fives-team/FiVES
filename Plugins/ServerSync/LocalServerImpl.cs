@@ -12,10 +12,13 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with FiVES.  If not, see <http://www.gnu.org/licenses/>.
-using KIARAPlugin;
+using KIARA;
 using System;
 using System.IO;
 using Newtonsoft.Json;
+using KIARAPlugin;
+using System.Xml;
+using System.Configuration;
 
 namespace ServerSyncPlugin
 {
@@ -33,16 +36,27 @@ namespace ServerSyncPlugin
             doi = new EmptyDoI();
             syncID = Guid.NewGuid();
 
-            service = ServiceFactory.Create(ServerSyncTools.ConvertFileNameToURI("serverSyncServer.json"));
+            server = new KIARAServer(KIARAServerManager.Instance.ServerURI,
+                KIARAServerManager.Instance.ServerPort,
+                "/serversync/",
+                "serverSync.kiara");
+
+            Configuration serverSyncConfig = ConfigurationManager.OpenExeConfiguration(this.GetType().Assembly.Location);
+            int syncPort = int.Parse(serverSyncConfig.AppSettings.Settings["serverSyncPort"].Value);
+            service = server.StartService(KIARAServerManager.Instance.ServerURI, syncPort, "/", "ws", "fives-json");
             service.OnNewClient += ServerSyncTools.ConfigureJsonSerializer;
 
             RegisterSyncIDAPI(service);
         }
 
+        public void ShutDown()
+        {
+            server.ShutDown();
+        }
         /// <summary>
         /// KIARA service on the local service.
         /// </summary>
-        public IServiceImpl Service
+        public ServiceImplementation Service
         {
             get
             {
@@ -115,7 +129,7 @@ namespace ServerSyncPlugin
             }
         }
 
-        public void RegisterSyncIDAPI(IService service)
+        public void RegisterSyncIDAPI(Service service)
         {
             service["serverSync.getSyncID"] = (Func<Guid>)GetSyncID;
         }
@@ -137,7 +151,8 @@ namespace ServerSyncPlugin
             return syncID;
         }
 
-        IServiceImpl service;
+        KIARAServer server;
+        ServiceImplementation service;
         IDomainOfResponsibility dor;
         IDomainOfInterest doi;
         Guid syncID;

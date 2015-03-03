@@ -99,6 +99,10 @@ FIVES.Communication = FIVES.Communication || {};
     }
 
     var _onOpenedConnection = function(error, conn) {
+        if(!conn) {
+            console.error("Could not establish connection, reason: " + error);
+            return;
+        }
         this.connection = conn;
         this.implements = conn.generateFuncWrapper("kiara.implements");
 

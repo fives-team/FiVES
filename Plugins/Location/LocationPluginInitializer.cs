@@ -16,6 +16,7 @@ using System;
 using FIVES;
 using System.Collections.Generic;
 using ClientManagerPlugin;
+using System.IO;
 
 namespace LocationPlugin
 {
@@ -73,6 +74,8 @@ namespace LocationPlugin
 
         void RegisterClientServices()
         {
+            string locationIdl = File.ReadAllText("location.kiara");
+            KIARAPlugin.KIARAServerManager.Instance.KiaraServer.AmendIDL(locationIdl);
             ClientManager.Instance.RegisterClientService("location", true, new Dictionary<string, Delegate> {
                 {"updatePosition", (Action<string, Vector, int>) UpdatePosition},
                 {"updateOrientation", (Action<string, Quat, int>) UpdateOrientation}

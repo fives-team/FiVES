@@ -1,0 +1,20 @@
+﻿struct Vector {
+	float x;
+	float y;
+	float z;
+}
+
+struct Quat {
+	float x;
+	float y;
+	float z;
+	float w;
+}
+
+struct Component {
+	map<string, any> Attributes;
+}
+
+struct Entity {
+	map<string, Component> Components;
+}

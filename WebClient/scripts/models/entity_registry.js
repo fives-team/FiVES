@@ -32,6 +32,12 @@ FIVES.Models = FIVES.Models || {};
         FIVES.Events.EntityAdded(newEntity);
     };
 
+    er.removeEntity = function(entityGuid) {
+        var entities = FIVES.Models.EntityRegistry._entities;
+        FIVES.Resources.SceneManager.removeEntity(entities[entityGuid]);
+        delete FIVES.Models.EntityRegistry._entities[entityGuid];
+    };
+
     er.getEntity = function (guid) {
         return this._entities[guid];
     };

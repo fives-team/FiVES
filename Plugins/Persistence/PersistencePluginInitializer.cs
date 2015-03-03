@@ -203,7 +203,7 @@ namespace PersistencePlugin
                     }
                     catch (Exception e)
                     {
-                        logger.LogException(LogLevel.Error, "Save or Update of Entity failed", e);
+                        logger.Log(LogLevel.Error, "Save or Update of Entity failed", e);
                     }
                 }
                 try

@@ -18,7 +18,7 @@ using FIVES;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Collections.Concurrent;
-using KIARAPlugin;
+using KIARA;
 
 namespace ClientManagerPlugin
 {
@@ -29,7 +29,7 @@ namespace ClientManagerPlugin
     {
         internal struct UpdateInfo
         {
-            public Guid entityGuid;
+            public string entityGuid;
             public string componentName;
             public string attributeName;
             //public int timeStamp; /* not used yet */
@@ -82,7 +82,7 @@ namespace ClientManagerPlugin
         {
             lock (CallbackRegistryLock)
             {
-                foreach (Action<List<UpdateInfo>> callback in ClientCallbacks.Values)
+                foreach (ClientFunction callback in ClientCallbacks.Values)
                     callback(UpdateQueue);
             }
         }
@@ -92,7 +92,7 @@ namespace ClientManagerPlugin
         /// </summary>
         /// <param name="connection">Client connection</param>
         /// <param name="clientCallback">Callback to be invoked on client to process updates</param>
-        internal void RegisterToClientUpdates(Connection connection, Action<List<UpdateInfo>> clientCallback)
+        internal void RegisterToClientUpdates(Connection connection, ClientFunction clientCallback)
         {
             lock (CallbackRegistryLock)
             {
@@ -184,7 +184,7 @@ namespace ClientManagerPlugin
         /// <param name="e">Event arguments</param>
         private UpdateInfo CreateUpdateInfoFromEventArgs(Entity entity, ChangedAttributeEventArgs e) {
             UpdateInfo newUpdateInfo = new UpdateInfo();
-            newUpdateInfo.entityGuid = entity.Guid;
+            newUpdateInfo.entityGuid = entity.Guid.ToString();
             newUpdateInfo.componentName = e.Component.Name;
             newUpdateInfo.attributeName = e.AttributeName;
             newUpdateInfo.value = e.NewValue;
@@ -215,8 +215,7 @@ namespace ClientManagerPlugin
         /// <summary>
         /// Callback to be called on updates, provided by the client
         /// </summary>
-        private Dictionary<Connection, Action<List<UpdateInfo>>> ClientCallbacks =
-            new Dictionary<Connection, Action<List<UpdateInfo>>>();
+        private Dictionary<Connection, ClientFunction> ClientCallbacks = new Dictionary<Connection, ClientFunction>();
 
         /// <summary>
         /// Mutex Object for the update queue

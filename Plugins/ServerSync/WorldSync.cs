@@ -13,7 +13,7 @@
 // You should have received a copy of the GNU General Public License
 // along with FiVES.  If not, see <http://www.gnu.org/licenses/>.
 using FIVES;
-using KIARAPlugin;
+using KIARA;
 using NLog;
 using System;
 using System.Collections.Generic;
@@ -44,7 +44,7 @@ namespace ServerSyncPlugin
         /// Registers the world sync API in a given service.
         /// </summary>
         /// <param name="service">A given service.</param>
-        public void RegisterWorldSyncAPI(IService service)
+        public void RegisterWorldSyncAPI(Service service)
         {
             service["serverSync.addEntity"] = (Action<Connection, Guid, EntitySyncInfo>)HandleRemoteAddedEntity;
             service["serverSync.removeEntity"] = (Action<Connection, Guid>)HandleRemoteRemovedEntity;

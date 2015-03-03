@@ -16,6 +16,7 @@ using System;
 using FIVES;
 using System.Collections.Generic;
 using ClientManagerPlugin;
+using System.IO;
 
 namespace EditingNamespace
 {
@@ -97,6 +98,9 @@ namespace EditingNamespace
         /// Registers editing APIs with the ClientManager plugin.
         /// </summary>
         private void RegisterEditingAPI() {
+            string idlContents = File.ReadAllText("editing.kiara");
+            KIARAPlugin.KIARAServerManager.Instance.KiaraServer.AmendIDL(idlContents);
+
             ClientManager.Instance.RegisterClientService("editing", true, new Dictionary<string, Delegate> {
                 {"createEntityAt", (Func<Vector, string>)CreateEntityAt},
                 {"createMeshEntity", (Func<Vector, Quat, Vector, MeshResource, string>)CreateMeshEntity}

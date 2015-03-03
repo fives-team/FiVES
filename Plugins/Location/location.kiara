@@ -1,0 +1,5 @@
+﻿service location {
+	void updatePosition(string entityGuid, Vector newPosition, i32 timestamp);
+	void updateOrientation(string entityGuid, Quat newOrientation, i32 timestamp);
+}
+

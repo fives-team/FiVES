@@ -1,0 +1,4 @@
+﻿service avatarCollision {
+	void setGroundlevel(string entityGuid, float groundLevel);
+}
+

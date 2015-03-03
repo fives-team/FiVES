@@ -1,0 +1,15 @@
+﻿service animation {
+	void startServersideAnimation(string entityGuid, string animationName, float startFrame, float endFrame, i32 cycles, float speed);
+	void stopServersideAnimation(string entityGuid, string animationName);
+	void startClientsideAnimation(string entityGuid, string animationName, float startFrame, float endFrame, i32 cycles, float speed);
+	void stopClientsideAnimation(string entityGuid, string animationName);
+
+	/* * TODO: These service functions are implemented in terms of push messages
+	// to invoke a RPC from server to client. The current implementation of KIARA does
+	// not consider or parse push annotations yet. As soon as the push message feature
+	// is fully implemented, these functions should be annotated accordingly
+	*/
+	void receiveClientsideAnimationStart(string entityGuid, string animationName, float startFrame, float endFrame, i32 cycles, float speed);
+	void receiveClientsideAnimationStop(string entityGuid, string animationName);
+}
+

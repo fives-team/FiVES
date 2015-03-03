@@ -1,0 +1,9 @@
+﻿service avatar {
+	string getAvatarEntityGuid();
+	void changeAppearance(string meshUri, Vector scale);
+	void startAvatarMotionInDirection(Vector velocity);
+	void setAvatarForwardBackwardMotion(float amount);
+	void setAvatarLeftRightMotion(float amount);
+	void setAvatarSpinAroundAxis(Vector axis, float amount);
+}
+
