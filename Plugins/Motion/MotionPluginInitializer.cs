@@ -19,6 +19,7 @@ using ClientManagerPlugin;
 using System.Threading;
 using EventLoopPlugin;
 using System.IO;
+using FIVESServiceBus;
 
 namespace MotionPlugin
 {
@@ -55,17 +56,9 @@ namespace MotionPlugin
         /// </summary>
         public void Initialize()
         {
-            RegisterToECA();
-            RegisterToPluginEvents();
-        }
-
-        /// <summary>
-        /// Registers Components to ECA and subscribes to Entity events
-        /// </summary>
-        internal void RegisterToECA()
-        {
             DefineComponents();
-            RegisterEntityEvents();
+            RegisterServiceBusService();
+            RegisterToPluginEvents();
         }
 
         /// <summary>
@@ -83,12 +76,18 @@ namespace MotionPlugin
 
         #endregion
 
-        void DefineComponents()
+        internal void DefineComponents()
         {
             ComponentDefinition motion = new ComponentDefinition("motion");
             motion.AddAttribute<Vector>("velocity", new Vector(0, 0, 0));
             motion.AddAttribute<AxisAngle>("rotVelocity", new AxisAngle(0, 1, 0, 0));
             ComponentRegistry.Instance.Register(motion);
+        }
+
+        internal void RegisterServiceBusService()
+        {
+            ServiceBus.ServiceRegistry.RegisterService("InvokeMotion", InvokeMotion);
+            ServiceBus.ServiceRegistry.RegisterService("InvokeSpin", InvokeSpin);
         }
 
         void RegisterClientServices()
@@ -100,107 +99,60 @@ namespace MotionPlugin
             });
         }
 
-        /// <summary>
-        /// Registers to Events fired by entities
-        /// </summary>
-        private void RegisterEntityEvents()
-        {
-            RegisterToExistingEntities();
-            World.Instance.AddedEntity += new EventHandler<EntityEventArgs>(HandleOnNewEntity);
-        }
-
-        /// <summary>
-        /// Traverses the entity registry and registers the handler for changed attributes on each of them
-        /// </summary>
-        private void RegisterToExistingEntities()
-        {
-            foreach (Entity entity in World.Instance)
-            {
-                entity.ChangedAttribute +=
-                    new EventHandler<ChangedAttributeEventArgs>(HandleOnAttributeChanged);
-            }
-        }
-
-        /// <summary>
-        /// Handles a New Entity Event of the EntityRegistry and registers the handler for attribute changes on this entity
-        /// </summary>
-        /// <param name="sender">The Entity Registry</param>
-        /// <param name="e">The Event Parameters</param>
-        private void HandleOnNewEntity(Object sender, EntityEventArgs e)
-        {
-            e.Entity.ChangedAttribute += new EventHandler<ChangedAttributeEventArgs>(HandleOnAttributeChanged);
-        }
-
         private void Update(string guid, Vector velocity, AxisAngle rotVelocity, int timestamp)
         {
             var entity = World.Instance.FindEntity(guid);
             entity["motion"]["velocity"].Suggest(velocity);
-
             entity["motion"]["rotVelocity"].Suggest(rotVelocity);
-
             // We currently ignore timestamp, but may it in the future to implement dead reckoning.
         }
 
-        /// <summary>
-        /// Handles the AttributeInComponentChanged-Event of an Entity. Invokes or stops a motion depending on the new values for velocity
-        /// </summary>
-        /// <param name="sender">The entity that fired the event</param>
-        /// <param name="e">The EventArgs</param>
-        private void HandleOnAttributeChanged(Object sender, ChangedAttributeEventArgs e)
+        private AccumulatedAttributeTransform InvokeMotion(AccumulatedAttributeTransform accumulatedTransforms)
         {
-            Entity entity = (Entity)sender;
-            CheckForEntityMoving(entity);
-            CheckForEntitySpinning(entity);
-        }
+            var velocity = (Vector)accumulatedTransforms.CurrentAttributeValue("motion", "velocity");
 
-        /// <summary>
-        /// Checks if an attribute update of an entity initiated or ended a movement by checking its new velocity values. Adds or removes the entity
-        /// to the list of ongoing motions depending on the values.
-        /// </summary>
-        /// <param name="entity">Entity that fired attribute changed event</param>
-        private void CheckForEntityMoving(Entity entity)
-        {
-            if (IsMoving(entity))
+            if(velocity.x != 0 || velocity.y != 0 || velocity.z != 0)
             {
                 lock (ongoingMotion)
                 {
-                    if (!ongoingMotion.Contains(entity))
-                        ongoingMotion.Add(entity);
+                    if (!ongoingMotion.Contains(accumulatedTransforms.Entity))
+                        ongoingMotion.Add(accumulatedTransforms.Entity);
                 }
             }
             else
             {
                 lock (ongoingMotion)
                 {
-                    if(ongoingMotion.Contains(entity))
-                        ongoingMotion.Remove(entity);
+                    if (ongoingMotion.Contains(accumulatedTransforms.Entity))
+                        ongoingMotion.Remove(accumulatedTransforms.Entity);
                 }
             }
+            return accumulatedTransforms;
         }
 
-        /// <summary>
-        /// Checks if an attribute update of an entity initiated or ended a spin by checking its new rotational velocity values. Adds or removes the entity
-        /// to the list of ongoing spins depending on the values.
-        /// </summary>
-        /// <param name="entity">Entity that fired attribute changed event</param>
-        private void CheckForEntitySpinning(Entity entity)
+        private AccumulatedAttributeTransform InvokeSpin(AccumulatedAttributeTransform accumulatedTransforms)
         {
-            if (IsSpinning(entity))
+            var rotVelocity = (AxisAngle)accumulatedTransforms.CurrentAttributeValue("motion", "rotVelocity");
+
+            if (rotVelocity.angle != 0 &&
+                !(rotVelocity.axis.x == 0 && rotVelocity.axis.y == 0 && rotVelocity.axis.z == 0))
             {
                 lock (ongoingSpin)
                 {
-                    if (!ongoingSpin.Contains(entity))
-                        ongoingSpin.Add(entity);
+                    if (!ongoingSpin.Contains(accumulatedTransforms.Entity))
+                        ongoingSpin.Add(accumulatedTransforms.Entity);
                 }
             }
             else
             {
                 lock (ongoingSpin)
                 {
-                    if (ongoingSpin.Contains(entity))
-                        ongoingSpin.Remove(entity);
+                    if (ongoingSpin.Contains(accumulatedTransforms.Entity))
+                        ongoingSpin.Remove(accumulatedTransforms.Entity);
                 }
             }
+
+            return accumulatedTransforms;
         }
 
         /// <summary>
@@ -279,27 +231,6 @@ namespace MotionPlugin
         /// <returns></returns>
         private Quat EntityRotationAsQuaternion(Entity entity) {
             return (Quat)entity["location"]["orientation"].Value;
-        }
-
-        /// <summary>
-        /// Checks if the entity has a non 0 velocity
-        /// </summary>
-        /// <param name="entity">Entity to check</param>
-        /// <returns>true, if at least one attribute of its velocity component is != 0</returns>
-        private bool IsMoving(Entity entity) {
-            var velocity = (Vector)entity["motion"]["velocity"].Value;
-            return velocity.x != 0 || velocity.y != 0 || velocity.z != 0;
-        }
-
-        /// <summary>
-        /// Checks if an entity is currently spinning. An entity is not spinning if either the axis or the angular velocity are 0.
-        /// </summary>
-        /// <param name="entity">Entity to check</param>
-        /// <returns>True, if spin axis is not the null vector, and velocity is not 0</returns>
-        private bool IsSpinning(Entity entity) {
-            var rotVelocity = (AxisAngle)entity["motion"]["rotVelocity"].Value;
-            return rotVelocity.angle != 0 &&
-                !(rotVelocity.axis.x == 0 && rotVelocity.axis.y == 0 && rotVelocity.axis.z == 0);
         }
 
         private ISet<Entity> ongoingMotion = new HashSet<Entity>();

@@ -34,7 +34,8 @@ namespace MotionPlugin
             ServiceBus.Instance.Initialize();
 
             ComponentRegistry.Instance = new ComponentRegistry();
-            plugin.RegisterToECA();
+            plugin.DefineComponents();
+            plugin.RegisterServiceBusService();
             RegisterLocationComponents();
         }
 
