@@ -93,7 +93,7 @@ namespace ClientManagerPlugin
         {
             var entityInfo = new Dictionary<string, object>();
             entityInfo["guid"] = entity.Guid;
-
+            entityInfo["owner"] = entity.Owner;
             foreach (Component component in entity.Components)
             {
                 var componentInfo = new Dictionary<string, object>();
