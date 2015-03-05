@@ -26,6 +26,13 @@ namespace FIVES
     /// </summary>
     public class EntityCollection : ICollection<Entity>
     {
+        public Guid ID { get; private set; }
+
+        public EntityCollection()
+        {
+            ID = new Guid();
+        }
+
         public void Add(Entity entity)
         {
             entities.Add(entity.Guid, entity);
@@ -134,9 +141,6 @@ namespace FIVES
                 entities.Add(entity.Guid, entity);
             }
         }
-
-        // Needed for testing.
-        internal EntityCollection() { }
 
         private void HandleAdded(Entity entity)
         {
