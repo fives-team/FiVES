@@ -30,7 +30,7 @@ namespace FIVES
 
         public EntityCollection()
         {
-            ID = new Guid();
+            ID = Guid.NewGuid();
         }
 
         public void Add(Entity entity)
