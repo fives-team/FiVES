@@ -33,7 +33,6 @@ namespace FIVES
         public void Init()
         {
             ComponentRegistry.Instance = new ComponentRegistry();
-            World.Instance = new World();
             pm = new PluginManager();
         }
 
