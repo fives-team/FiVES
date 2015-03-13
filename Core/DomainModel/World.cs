@@ -13,11 +13,15 @@
 // You should have received a copy of the GNU General Public License
 // along with FiVES.  If not, see <http://www.gnu.org/licenses/>.
 
+using KIARA;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 
+[assembly: InternalsVisibleTo("PluginManager")] // FOR SETTING KTD IN PLUGIN MANAGER
+[assembly: InternalsVisibleTo("ServerSync")] // FOR TESTING
 namespace FIVES
 {
     /// <summary>
@@ -25,6 +29,14 @@ namespace FIVES
     /// </summary>
     public sealed class World : EntityCollection
     {
+        public Guid ID { get; private set; }
+        public KTD Ktd { get; internal set; }
+
+        internal World()
+        {
+            ID = Guid.NewGuid();
+        }
+
         public static World Instance = new World();
     }
 }
