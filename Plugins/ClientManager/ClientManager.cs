@@ -79,12 +79,23 @@ namespace ClientManagerPlugin
         private void RegisterTerminalCommands()
         {
             Terminal.Instance.RegisterCommand("numClients", "Prints number of authenticated clients.", false,
-                PrintNumClients, new List<string> { "nc" });
+                   PrintNumClients, new List<string> { "nc" });
+            Terminal.Instance.RegisterCommand("funcImpl", "Prints function implementations provided by client manager", false,
+                PrintRegisteredFunctions, new List<string>{"fi"});
         }
 
         private void PrintNumClients(string commandLine)
         {
             Terminal.Instance.WriteLine("Number of connected clients: " + authenticatedClients.Count);
+        }
+
+        private void PrintRegisteredFunctions(string commandLine)
+        {
+            Terminal.Instance.WriteLine("Authenticated Functions: ");
+            foreach(string functionName in authenticatedMethods.Keys)
+            {
+                Terminal.Instance.WriteLine(functionName);
+            }
         }
 
         #region Client interface
