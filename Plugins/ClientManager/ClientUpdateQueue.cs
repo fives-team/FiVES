@@ -27,15 +27,6 @@ namespace ClientManagerPlugin
     /// </summary>
     internal class ClientUpdateQueue
     {
-        internal struct UpdateInfo
-        {
-            public string entityGuid;
-            public string componentName;
-            public string attributeName;
-            //public int timeStamp; /* not used yet */
-            public object value;
-        }
-
         /// <summary>
         /// Initializes a new instance of the <see cref="ClientManager.ClientUpdateQueue"/> class.
         /// </summary>
