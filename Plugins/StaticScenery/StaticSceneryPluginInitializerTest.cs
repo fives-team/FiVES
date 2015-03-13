@@ -40,7 +40,7 @@ namespace StaticSceneryPlugin
             ServiceBus.Instance = new ServiceBusImplementation();
             ServiceBus.Instance.Initialize();
 
-            World.Instance = new World();
+            World.Instance.Clear();
             ComponentRegistry.Instance = new ComponentRegistry();
             MockComponentRegistry();
             plugin.CreateSceneryEntity();
