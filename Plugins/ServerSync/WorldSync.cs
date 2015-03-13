@@ -46,7 +46,7 @@ namespace ServerSyncPlugin
         /// <param name="service">A given service.</param>
         public void RegisterWorldSyncAPI(Service service)
         {
-            service["serverSync.addEntity"] = (Action<Connection, Guid, EntitySyncInfo>)HandleRemoteAddedEntity;
+            service["serverSync.addEntity"] = (Action<Connection, Guid, Guid, EntitySyncInfo>)HandleRemoteAddedEntity;
             service["serverSync.removeEntity"] = (Action<Connection, Guid>)HandleRemoteRemovedEntity;
             service["serverSync.changeAttributes"] =
                 (Action<Connection, Guid, EntitySyncInfo>)HandleRemoteChangedAttributes;
@@ -71,7 +71,7 @@ namespace ServerSyncPlugin
                 SyncExistingEntitiesToServer(server);
         }
 
-        internal void HandleRemoteAddedEntity(Connection connection, Guid guid, EntitySyncInfo initialSyncInfo)
+        internal void HandleRemoteAddedEntity(Connection connection, Guid guid, Guid owner, EntitySyncInfo initialSyncInfo)
         {
             lock (syncInfo)
             {
@@ -80,7 +80,7 @@ namespace ServerSyncPlugin
                     syncInfo.Add(guid, new EntitySyncInfo());
                     lock (ignoredEntityAdditions)
                         ignoredEntityAdditions.Add(guid);
-                    World.Instance.Add(new Entity(guid));
+                    World.Instance.Add(new Entity(guid, owner));
                 }
                 else
                 {

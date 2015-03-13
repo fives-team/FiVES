@@ -13,6 +13,7 @@
 // You should have received a copy of the GNU General Public License
 // along with FiVES.  If not, see <http://www.gnu.org/licenses/>.
 
+using KIARA;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -26,6 +27,11 @@ namespace FIVES
     /// </summary>
     public class EntityCollection : ICollection<Entity>
     {
+        public EntityCollection()
+        {
+
+        }
+
         public void Add(Entity entity)
         {
             entities.Add(entity.Guid, entity);
@@ -134,9 +140,6 @@ namespace FIVES
                 entities.Add(entity.Guid, entity);
             }
         }
-
-        // Needed for testing.
-        internal EntityCollection() { }
 
         private void HandleAdded(Entity entity)
         {

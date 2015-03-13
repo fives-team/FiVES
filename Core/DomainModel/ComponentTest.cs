@@ -89,7 +89,7 @@ namespace FIVES
         [ExpectedException(typeof(AttributeAssignmentException))]
         public void ShouldFailToAssignValueWithInvalidType()
         {
-            component["b"].Value = 3.14; // double assigned to float
+            component["b"].Suggest("Hello World"); // double assigned to float
         }
 
         [Test()]

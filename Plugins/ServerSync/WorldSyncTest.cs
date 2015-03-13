@@ -187,8 +187,9 @@ namespace ServerSyncPlugin
         public void ShouldAddEntityOnUpdate()
         {
             var guid = Guid.NewGuid();
+            var owner = Guid.NewGuid();
             var worldSync = new WorldSync();
-            worldSync.HandleRemoteAddedEntity(remoteConnectionMock.Object, guid, new EntitySyncInfo());
+            worldSync.HandleRemoteAddedEntity(remoteConnectionMock.Object, guid, owner, new EntitySyncInfo());
 
             // Will throw exception if no such entity.
             World.Instance.FindEntity(guid);
@@ -239,7 +240,7 @@ namespace ServerSyncPlugin
 
             var entity = new Entity();
             var worldSync = new WorldSync();
-            worldSync.HandleRemoteAddedEntity(remoteConnectionMock.Object, entity.Guid, new EntitySyncInfo());
+            worldSync.HandleRemoteAddedEntity(remoteConnectionMock.Object, entity.Guid, entity.Owner, new EntitySyncInfo());
             worldSync.HandleRemoteChangedAttributes(remoteConnectionMock.Object, entity.Guid, new EntitySyncInfo());
             worldSync.HandleRemoteRemovedEntity(remoteConnectionMock.Object, entity.Guid);
 
@@ -272,7 +273,7 @@ namespace ServerSyncPlugin
 
             var entity = new Entity();
             var worldSync = new WorldSync();
-            worldSync.HandleRemoteAddedEntity(remoteConnectionMock.Object, entity.Guid, new EntitySyncInfo());
+            worldSync.HandleRemoteAddedEntity(remoteConnectionMock.Object, entity.Guid, entity.Owner, new EntitySyncInfo());
             worldSync.HandleRemoteChangedAttributes(remoteConnectionMock.Object, entity.Guid, changedAttributes);
             worldSync.HandleRemoteRemovedEntity(remoteConnectionMock.Object, entity.Guid);
 

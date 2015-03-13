@@ -19,6 +19,8 @@ using System.IO;
 using System.Reflection;
 using System.Linq;
 using NLog;
+using KIARA;
+using System.Configuration;
 
 namespace FIVES
 {
@@ -262,6 +264,10 @@ namespace FIVES
                     LoadPlugin(filename);
                 }
             }
+            ConfigurationManager.OpenExeConfiguration(this.GetType().Assembly.Location);
+            string ServerIDLUri = ConfigurationManager.AppSettings["ServerIDL"];
+            if(ServerIDLUri != null)
+                World.Instance.Ktd = IDLParser.Instance.ParseIDLFromUri(ServerIDLUri);
         }
 
         /// <summary>

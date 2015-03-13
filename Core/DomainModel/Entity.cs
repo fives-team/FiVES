@@ -29,17 +29,30 @@ namespace FIVES
         public Entity()
         {
             Guid = Guid.NewGuid();
+            Owner = World.Instance.ID;
         }
 
-        public Entity(Guid guid)
+        /// <summary>
+        /// Copy constructor for an existing entity that may come from a remote server in a cluster.
+        /// As the entity was already created somewhere, it has assigned both ID and Owner
+        /// </summary>
+        /// <param name="guid">Unique Identifier of the entity object</param>
+        /// <param name="owner">Identifier of the owner world</param>
+        public Entity(Guid guid, Guid owner)
         {
             Guid = guid;
+            Owner = owner;
         }
 
         /// <summary>
         /// GUID that uniquely identifies this entity.
         /// </summary>  
         public Guid Guid { get; private set; }
+
+        /// <summary>
+        /// Server that maintains the entity
+        /// </summary>
+        public Guid Owner { get; private set; }
 
         /// <summary>
         /// A read-only collection of components that this entity has. New components are added automatically when 

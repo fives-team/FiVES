@@ -1,4 +1,5 @@
-﻿using System;
+﻿using KIARA;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
@@ -39,40 +40,69 @@ namespace FIVES
 
         public void Suggest(object newValue)
         {
-            if (World.Instance.ContainsEntity(ParentComponent.ContainingEntity.Guid))
+            if(newValue == null && !CanBeAssignedNull(this.Type))
+                    throw(new AttributeAssignmentException("Attribute of type " + this.Type
+                    + " can not be assigned from provided value" + newValue + " of type " + newValue.GetType()) );
+            try
             {
-                var proposedChange =
-                    new ProposeAttributeChangeEventArgs(ParentComponent.ContainingEntity,
-                                                        ParentComponent.Name,
-                                                        Definition.Name,
-                                                        newValue);
+                var convertedValue = convertValueToAttributeType(newValue);
+                if (World.Instance.ContainsEntity(ParentComponent.ContainingEntity.Guid))
+                {
+                    var proposedChange =
+                        new ProposeAttributeChangeEventArgs(ParentComponent.ContainingEntity,
+                                                            ParentComponent.Name,
+                                                            Definition.Name,
+                                                            convertedValue);
 
-                ParentComponent.ContainingEntity.PublishAttributeChangeSuggestion(proposedChange);
+                    ParentComponent.ContainingEntity.PublishAttributeChangeSuggestion(proposedChange);
+                }
+                else
+                {
+                    Set(convertedValue);
+                }
             }
-            else
+            catch
             {
-                Set(newValue);
+                throw new AttributeAssignmentException("Attribute of type " + this.Type
+                    + " can not be assigned from provided value" + newValue + " of type " + newValue.GetType());
             }
+        }
+
+        private object convertValueToAttributeType(object value)
+        {
+            if (value == null || value.GetType() == this.Type)
+                return value;
+
+            if (World.Instance.Ktd != null && World.Instance.Ktd.ContainsType(this.Type.Name))
+            {
+                KtdType typeAsKtdType = World.Instance.Ktd.GetKtdType(this.Type.Name);
+                return typeAsKtdType.AssignValuesToNativeType(value, this.Type);
+            }
+
+            return Convert.ChangeType(value, this.Type);
         }
 
         public T As<T>()
         {
-            return (T)Value;
+            if (!CurrentValue.GetType().IsAssignableFrom(typeof(T)) && World.Instance.Ktd.ContainsType(Type.Name))
+            {
+                KtdType typeAsKtdType = World.Instance.Ktd.GetKtdType(Type.Name);
+                Type t = typeof(T);
+                return (T)typeAsKtdType.AssignValuesToNativeType(Value, t);
+            }
+            else
+            {
+                return (T)Value;
+            }
         }
 
         internal void Set(object value)
         {
-            if ((value == null && !CanBeAssignedNull(Type))
-                || (value != null && !Type.IsAssignableFrom(value.GetType())))
-            {
-                throw new AttributeAssignmentException("Attribute can not be assigned from provided value.");
-            }
-
             var oldValue = CurrentValue;
             CurrentValue = value;
             ParentComponent.raiseChangeEvent(Definition.Name, oldValue, CurrentValue);
         }
-            
+
         private static bool CanBeAssignedNull(Type type)
         {
             if (!type.IsValueType) return true; // ref-type
