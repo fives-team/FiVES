@@ -1,11 +1,33 @@
+// This file is part of FiVES.
+//
+// FiVES is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// FiVES is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with FiVES.  If not, see <http://www.gnu.org/licenses/>.
 using System;
 using FIVES;
 using System.Collections.Generic;
-using RenderablePlugin;
 using ClientManagerPlugin;
+using System.IO;
 
 namespace EditingNamespace
 {
+#pragma warning disable 649
+    struct MeshResource
+    {
+        public string uri;
+        public bool visible;
+    }
+#pragma warning restore 649
+
     /// <summary>
     /// Plugin that allows changing the world by the users.
     /// </summary>
@@ -25,7 +47,7 @@ namespace EditingNamespace
         {
             get
             {
-                return new List<string> { "Renderable" };
+                return new List<string>();
             }
         }
 
@@ -33,7 +55,7 @@ namespace EditingNamespace
         {
             get
             {
-                return new List<string> { "position", "orientation", "scale", "meshResource" };
+                return new List<string> { "location", "mesh" };
             }
         }
 
@@ -49,39 +71,25 @@ namespace EditingNamespace
         #endregion
 
         /// <summary>
-        /// Creates an entity at x, y and z.
+        /// Creates an entity at the given position.
         /// </summary>
-        /// <param name="x">The x coordinate.</param>
-        /// <param name="y">The y coordinate.</param>
-        /// <param name="z">The z coordinate.</param>
-        public string CreateEntityAt(Vector position)
+        /// <param name="position">Given position.</param>
+        string CreateEntityAt(Vector position)
         {
             Entity entity = new Entity();
-            entity["position"]["x"] = position.x;
-            entity["position"]["y"] = position.y;
-            entity["position"]["z"] = position.z;
+            entity["location"]["position"].Suggest(position);
             World.Instance.Add(entity);
             return entity.Guid.ToString ();
         }
 
-        public string CreateMeshEntity(Vector position, Quat orientation, Vector scale, MeshResource mesh)
+        string CreateMeshEntity(Vector position, Quat orientation, Vector scale, MeshResource mesh)
         {
             Entity entity = new Entity();
-            entity["position"]["x"] = position.x;
-            entity["position"]["y"] = position.y;
-            entity["position"]["z"] = position.z;
-
-            entity["orientation"]["x"] = orientation.x;
-            entity["orientation"]["y"] = orientation.y;
-            entity["orientation"]["z"] = orientation.z;
-            entity["orientation"]["w"] = orientation.w;
-
-            entity["scale"]["x"] = scale.x;
-            entity["scale"]["y"] = scale.y;
-            entity["scale"]["z"] = scale.z;
-
-            entity["meshResource"]["uri"] = mesh.uri;
-            entity["meshResource"]["visible"] = true;
+            entity["location"]["position"].Suggest(position);
+            entity["location"]["orientation"].Suggest(orientation);
+            entity["mesh"]["scale"].Suggest(scale);
+            entity["mesh"]["uri"].Suggest(mesh.uri);
+            entity["mesh"]["visible"].Suggest(mesh.visible);
             World.Instance.Add(entity);
             return entity.Guid.ToString ();
         }
@@ -90,9 +98,12 @@ namespace EditingNamespace
         /// Registers editing APIs with the ClientManager plugin.
         /// </summary>
         private void RegisterEditingAPI() {
+            string idlContents = File.ReadAllText("editing.kiara");
+            KIARAPlugin.KIARAServerManager.Instance.KiaraServer.AmendIDL(idlContents);
+
             ClientManager.Instance.RegisterClientService("editing", true, new Dictionary<string, Delegate> {
                 {"createEntityAt", (Func<Vector, string>)CreateEntityAt},
-                {"createMeshEntity",(Func<Vector, Quat, Vector, MeshResource, string>)CreateMeshEntity}
+                {"createMeshEntity", (Func<Vector, Quat, Vector, MeshResource, string>)CreateMeshEntity}
             });
         }
     }

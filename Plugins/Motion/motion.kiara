@@ -1,0 +1,8 @@
+﻿struct AxisAngle {
+	Vector axis;
+	float angle;
+}
+
+service motion {
+	void update(string guid, Vector velocity, AxisAngle rotVelocity, i32 timestamp);
+}

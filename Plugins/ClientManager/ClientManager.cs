@@ -1,5 +1,20 @@
-﻿using AuthPlugin;
+﻿// This file is part of FiVES.
+//
+// FiVES is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// FiVES is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with FiVES.  If not, see <http://www.gnu.org/licenses/>.
+using AuthPlugin;
 using FIVES;
+using KIARA;
 using KIARAPlugin;
 using System;
 using System.Collections.Generic;
@@ -14,10 +29,26 @@ namespace ClientManagerPlugin
     {
         public static ClientManager Instance;
 
+        public event EventHandler<ClientConnectionEventArgs> NewClientConnected;
+        public event EventHandler<ClientConnectionEventArgs> ClientDisconnected;
+
         public ClientManager()
         {
-            clientService = ServiceFactory.Create(ConvertFileNameToURI("clientManagerServer.json"));
+            InitializeKIARA();
+            RegisterClientServices();
+            RegisterEventHandlers();
+        }
 
+        private void InitializeKIARA()
+        {
+            clientService = KIARAServerManager.Instance.KiaraService;
+
+            string clientManagerIDL = File.ReadAllText("clientManager.kiara");
+            KIARAPlugin.KIARAServerManager.Instance.KiaraServer.AmendIDL(clientManagerIDL);
+        }
+
+        private void RegisterClientServices()
+        {
             RegisterClientService("kiara", false, new Dictionary<string, Delegate>());
             RegisterClientMethod("kiara.implements", false, (Func<List<string>, List<bool>>)Implements);
             RegisterClientMethod("kiara.implements", true, (Func<List<string>, List<bool>>)AuthenticatedImplements);
@@ -29,21 +60,15 @@ namespace ClientManagerPlugin
             RegisterClientMethod("getTime", false, (Func<DateTime>)GetTime);
 
             RegisterClientService("objectsync", true, new Dictionary<string, Delegate> {
-                {"listObjects", (Func<List<Dictionary<string, object>>>) ListObjects},
-                {"notifyAboutNewObjects", (Action<Connection, Action<Dictionary<string, object>>>) NotifyAboutNewObjects},
-                {"notifyAboutRemovedObjects", (Action<Connection, Action<string>>) NotifyAboutRemovedObjects},
-                {"notifyAboutObjectUpdates",
-                    (Action<Connection, Action<List<ClientUpdateQueue.UpdateInfo>>>) NotifyAboutObjectUpdates},
+                {"listObjects", (Func<List<Dictionary<string, object>>>) ListObjects}
             });
+        }
 
+        private void RegisterEventHandlers()
+        {
+            World.Instance.AddedEntity += new EventHandler<EntityEventArgs>(HandleEntityAdded);
+            World.Instance.RemovedEntity += new EventHandler<EntityEventArgs>(HandleEntityRemoved);
             PluginManager.Instance.AddPluginLoadedHandler("Terminal", RegisterTerminalCommands);
-
-            // DEBUG
-            //            clientService["scripting.createServerScriptFor"] = (Action<string, string>)createServerScriptFor;
-            //            clientService.OnNewClient += delegate(Connection connection) {
-            //                var getAnswer = connection.generateFuncWrapper("getAnswer");
-            //                getAnswer((Action<int>) delegate(int answer) { Console.WriteLine("The answer is {0}", answer); });
-            //            };
         }
 
         private DateTime GetTime()
@@ -54,12 +79,23 @@ namespace ClientManagerPlugin
         private void RegisterTerminalCommands()
         {
             Terminal.Instance.RegisterCommand("numClients", "Prints number of authenticated clients.", false,
-                PrintNumClients, new List<string> { "nc" });
+                   PrintNumClients, new List<string> { "nc" });
+            Terminal.Instance.RegisterCommand("funcImpl", "Prints function implementations provided by client manager", false,
+                PrintRegisteredFunctions, new List<string>{"fi"});
         }
 
         private void PrintNumClients(string commandLine)
         {
             Terminal.Instance.WriteLine("Number of connected clients: " + authenticatedClients.Count);
+        }
+
+        private void PrintRegisteredFunctions(string commandLine)
+        {
+            Terminal.Instance.WriteLine("Authenticated Functions: ");
+            foreach(string functionName in authenticatedMethods.Keys)
+            {
+                Terminal.Instance.WriteLine(functionName);
+            }
         }
 
         #region Client interface
@@ -68,12 +104,12 @@ namespace ClientManagerPlugin
         {
             var entityInfo = new Dictionary<string, object>();
             entityInfo["guid"] = entity.Guid;
-
+            entityInfo["owner"] = entity.Owner;
             foreach (Component component in entity.Components)
             {
                 var componentInfo = new Dictionary<string, object>();
                 foreach (ReadOnlyAttributeDefinition attrDefinition in component.Definition.AttributeDefinitions)
-                    componentInfo[attrDefinition.Name] = component[attrDefinition.Name];
+                    componentInfo[attrDefinition.Name] = component[attrDefinition.Name].Value;
                 entityInfo[component.Name] = componentInfo;
             }
 
@@ -94,51 +130,49 @@ namespace ClientManagerPlugin
             foreach (var entry in authenticatedMethods)
                 connection.RegisterFuncImplementation(entry.Key, entry.Value);
 
+            WrapUpdateMethods(connection);
+            if (NewClientConnected != null)
+                NewClientConnected(this, new ClientConnectionEventArgs(connection));
             return true;
+        }
+
+        private void WrapUpdateMethods(Connection connection)
+        {
+            var newObjectUpdates = connection.GenerateClientFunction("objectsync", "receiveNewObjects");
+            onNewEntityHandlers[connection] = newObjectUpdates;
+
+            var removedObjectUpdates = connection.GenerateClientFunction("objectsync", "removeObject");
+            onRemovedEntityHandlers[connection] = removedObjectUpdates;
+
+            var updatedObjectUpdates = connection.GenerateClientFunction("objectsync", "receiveObjectUpdates");
+            UpdateQueue.RegisterToClientUpdates(connection, updatedObjectUpdates);
         }
 
         private void HandleAuthenticatedClientDisconnected(object sender, EventArgs e)
         {
             Connection connection = sender as Connection;
-
-            if (onNewEntityHandlers.ContainsKey(connection))
-            {
-                foreach (var handler in onNewEntityHandlers[connection])
-                    World.Instance.AddedEntity -= handler;
-            }
-
-            if (onRemovedEntityHandlers.ContainsKey(connection))
-            {
-                foreach (var handler in onRemovedEntityHandlers[connection])
-                    World.Instance.RemovedEntity -= handler;
-            }
-
+            onNewEntityHandlers.Remove(connection);
+            onRemovedEntityHandlers.Remove(connection);
             UpdateQueue.StopClientUpdates(connection);
-
             authenticatedClients.Remove(connection);
+            if (ClientDisconnected != null)
+                ClientDisconnected(this, new ClientConnectionEventArgs(connection));
         }
 
-        void NotifyAboutNewObjects(Connection connection, Action<Dictionary<string, object>> callback)
+        private void HandleEntityAdded(object sender, EntityEventArgs e)
         {
-            var handler = new EventHandler<EntityEventArgs>((sender, e) => callback(ConstructEntityInfo(e.Entity)));
-            if (!onNewEntityHandlers.ContainsKey(connection))
-                onNewEntityHandlers[connection] = new List<EventHandler<EntityEventArgs>>();
-            onNewEntityHandlers[connection].Add(handler);
-            World.Instance.AddedEntity += handler;
+            foreach (ClientFunction clientHandler in onNewEntityHandlers.Values)
+            {
+                clientHandler(ConstructEntityInfo(e.Entity));
+            }
         }
 
-        void NotifyAboutRemovedObjects(Connection connection, Action<string> callback)
+        private void HandleEntityRemoved(object sender, EntityEventArgs e)
         {
-            var handler = new EventHandler<EntityEventArgs>((sender, e) => callback(e.Entity.Guid.ToString()));
-            if (!onRemovedEntityHandlers.ContainsKey(connection))
-                onRemovedEntityHandlers[connection] = new List<EventHandler<EntityEventArgs>>();
-            onRemovedEntityHandlers[connection].Add(handler);
-            World.Instance.RemovedEntity += handler;
-        }
-
-        void NotifyAboutObjectUpdates(Connection connection, Action<List<ClientUpdateQueue.UpdateInfo>> callback)
-        {
-            UpdateQueue.RegisterToClientUpdates(connection, callback);
+            foreach (ClientFunction clientHandler in onRemovedEntityHandlers.Values)
+            {
+                clientHandler(ConstructEntityInfo(e.Entity));
+            }
         }
 
         List<string> basicClientServices = new List<string>();
@@ -164,7 +198,7 @@ namespace ClientManagerPlugin
         /// <summary>
         /// The client service.
         /// </summary>
-        ServiceImpl clientService;
+        ServiceImplementation clientService;
 
         /// <summary>
         /// List of authenticated clients.
@@ -179,10 +213,8 @@ namespace ClientManagerPlugin
         /// <summary>
         /// List of handlers that need to be removed when client disconnects.
         /// </summary>
-        Dictionary<Connection, List<EventHandler<EntityEventArgs>>> onNewEntityHandlers =
-            new Dictionary<Connection, List<EventHandler<EntityEventArgs>>>();
-        Dictionary<Connection, List<EventHandler<EntityEventArgs>>> onRemovedEntityHandlers =
-            new Dictionary<Connection, List<EventHandler<EntityEventArgs>>>();
+        Dictionary<Connection, ClientFunction> onNewEntityHandlers = new Dictionary<Connection, ClientFunction>();
+        Dictionary<Connection, ClientFunction> onRemovedEntityHandlers = new Dictionary<Connection, ClientFunction>();
 
         event Action<Connection> OnAuthenticated;
 

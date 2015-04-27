@@ -1,3 +1,17 @@
+// This file is part of FiVES.
+//
+// FiVES is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// FiVES is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with FiVES.  If not, see <http://www.gnu.org/licenses/>.
 using System;
 using FIVES;
 using System.Collections.Generic;
@@ -44,16 +58,11 @@ namespace RenderablePlugin
 
         private void DefineComponents()
         {
-            ComponentDefinition renderable = new ComponentDefinition("meshResource");
-            renderable.AddAttribute<string>("uri");
-            renderable.AddAttribute<bool>("visible", true);
-            ComponentRegistry.Instance.Register(renderable);
-
-            ComponentDefinition scale = new ComponentDefinition("scale");
-            scale.AddAttribute<float>("x", 1f);
-            scale.AddAttribute<float>("y", 1f);
-            scale.AddAttribute<float>("z", 1f);
-            ComponentRegistry.Instance.Register(scale);
+            ComponentDefinition mesh = new ComponentDefinition("mesh");
+            mesh.AddAttribute<string>("uri");
+            mesh.AddAttribute<bool>("visible", true);
+            mesh.AddAttribute<Vector>("scale", new Vector(1, 1, 1));
+            ComponentRegistry.Instance.Register(mesh);
         }
 
         #endregion

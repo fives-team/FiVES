@@ -1,4 +1,19 @@
-﻿using Moq;
+﻿// This file is part of FiVES.
+//
+// FiVES is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// FiVES is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with FiVES.  If not, see <http://www.gnu.org/licenses/>.
+
+using Moq;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
@@ -49,11 +64,10 @@ namespace FIVES
         [Test()]
         public void ShouldAssignAndRetrieveValidAttributes()
         {
-            component["a"] = "a_new_value";
-            component["b"] = 2.71828f;
-
-            Assert.AreEqual(component["a"], "a_new_value");
-            Assert.AreEqual(component["b"], 2.71828f);
+            component["a"].Value = "a_new_value";
+            component["b"].Value = 2.71828f;
+            Assert.AreEqual(component["a"].Value, "a_new_value");
+            Assert.AreEqual(component["b"].Value, 2.71828f);
         }
 
 
@@ -68,25 +82,25 @@ namespace FIVES
         [ExpectedException(typeof(KeyNotFoundException))]
         public void ShouldFailToAssignUndefinedAttribute()
         {
-            component["c"] = false;
+            component["c"].Value = false;
         }
 
         [Test()]
         [ExpectedException(typeof(AttributeAssignmentException))]
         public void ShouldFailToAssignValueWithInvalidType()
         {
-            component["b"] = 3.14; // double assigned to float
+            component["b"].Suggest("Hello World"); // double assigned to float
         }
 
         [Test()]
         public void ShouldCreateAttributesAccordingToDefinition()
         {
-            object a = component["a"];
-            object b = component["b"];
-            Assert.AreEqual(a.GetType(), typeof(string));
-            Assert.AreEqual(b.GetType(), typeof(float));
-            Assert.AreEqual(a, "a_value");
-            Assert.AreEqual(b, 3.14f);
+            var a = component["a"];
+            var b = component["b"];
+            Assert.AreEqual(a.Type, typeof(string));
+            Assert.AreEqual(b.Type, typeof(float));
+            Assert.AreEqual(a.Value, "a_value");
+            Assert.AreEqual(b.Value, 3.14f);
         }
     }
 }

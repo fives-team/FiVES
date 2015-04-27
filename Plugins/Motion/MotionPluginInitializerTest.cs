@@ -1,6 +1,22 @@
+// This file is part of FiVES.
+//
+// FiVES is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// FiVES is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with FiVES.  If not, see <http://www.gnu.org/licenses/>.
 using System;
 using NUnit.Framework;
 using FIVES;
+using FIVESServiceBus;
+using System.Collections.Generic;
 
 namespace MotionPlugin
 {
@@ -9,13 +25,17 @@ namespace MotionPlugin
     {
         MotionPluginInitializer plugin = new MotionPluginInitializer();
 
-        ComponentRegistry globalComponentRegistry = ComponentRegistry.Instance;
+        IComponentRegistry globalComponentRegistry = ComponentRegistry.Instance;
 
         [SetUp()]
         public void Init()
         {
+            ServiceBus.Instance = new ServiceBusImplementation();
+            ServiceBus.Instance.Initialize();
+
             ComponentRegistry.Instance = new ComponentRegistry();
-            plugin.RegisterToECA();
+            plugin.DefineComponents();
+            plugin.RegisterServiceBusService();
             RegisterLocationComponents();
         }
 
@@ -25,19 +45,10 @@ namespace MotionPlugin
         /// </summary>
         private void RegisterLocationComponents()
         {
-            var positionComponent = new ComponentDefinition("position");
-            positionComponent.AddAttribute<float>("x", 0f);
-            positionComponent.AddAttribute<float>("y", 0f);
-            positionComponent.AddAttribute<float>("z", 0f);
-            ComponentRegistry.Instance.Register(positionComponent);
-
-            var orientationComponent = new ComponentDefinition("orientation");
-            orientationComponent.AddAttribute<float>("x", 0f);
-            orientationComponent.AddAttribute<float>("y", 0f);
-            orientationComponent.AddAttribute<float>("z", 0f);
-            orientationComponent.AddAttribute<float>("w", 1f);
-            ComponentRegistry.Instance.Register(orientationComponent);
-
+            ComponentDefinition locationComponent = new ComponentDefinition("location");
+            locationComponent.AddAttribute<Vector>("position", new Vector(0, 0, 0));
+            locationComponent.AddAttribute<Quat>("orientation", new Quat(0, 0, 0, 1));
+            ComponentRegistry.Instance.Register(locationComponent);
         }
 
         [TearDown()]
@@ -47,15 +58,9 @@ namespace MotionPlugin
         }
 
         [Test()]
-        public void ShouldRegisterVelocityComponent()
+        public void ShouldRegisterMotionComponent()
         {
-            Assert.IsNotNull(ComponentRegistry.Instance.FindComponentDefinition("velocity"));
-        }
-
-        [Test()]
-        public void ShouldRegisterRotVelocityComponent()
-        {
-            Assert.IsNotNull(ComponentRegistry.Instance.FindComponentDefinition("rotVelocity"));
+            Assert.IsNotNull(ComponentRegistry.Instance.FindComponentDefinition("motion"));
         }
 
         /// <summary>
@@ -67,12 +72,15 @@ namespace MotionPlugin
         public void ShouldApplyVelocityToPosition()
         {
             var e = new Entity();
-            e["velocity"]["x"] = 1f;
+            e["motion"]["velocity"].Suggest(new Vector(1, 0, 0));
 
             plugin.UpdateMotion(e);
-            Assert.AreEqual((float)e["position"]["x"], 1f);
-            Assert.AreEqual((float)e["position"]["y"], 0f);
-            Assert.AreEqual((float)e["position"]["z"], 0f);
+
+            Vector newPosition = (Vector)e["location"]["position"].Value;
+
+            Assert.AreEqual(newPosition.x, 1f);
+            Assert.AreEqual(newPosition.y, 0f);
+            Assert.AreEqual(newPosition.z, 0f);
         }
 
         /// <summary>
@@ -88,28 +96,17 @@ namespace MotionPlugin
         public void ShouldApplyRotVelocityToOrientation()
         {
             var e = new Entity();
-            Quat orientation = FIVES.Math.QuaternionFromAxisAngle(
-                new Vector { x = 1, y = 0, z = 0 }, 0.1f);
+            Quat orientation = FIVES.Math.QuaternionFromAxisAngle(new Vector(1, 0, 0), 0.1f);
 
-            e["orientation"]["x"] = orientation.x;
-            e["orientation"]["y"] = orientation.y;
-            e["orientation"]["z"] = orientation.z;
-            e["orientation"]["w"] = orientation.w;
-
-            e["rotVelocity"]["x"] = 1f;
-            e["rotVelocity"]["y"] = 0f;
-            e["rotVelocity"]["z"] = 0f;
-            e["rotVelocity"]["r"] = 0.1f;
+            e["location"]["orientation"].Suggest(orientation);
+            e["motion"]["rotVelocity"].Suggest(new AxisAngle(1f, 0f, 0f, 0.1f));
 
             plugin.UpdateSpin(e);
-            Quat entityOrientation =
-                new Quat{ x = (float) e["orientation"]["x"],
-                                               y = (float) e["orientation"]["y"],
-                                               z = (float) e["orientation"]["z"],
-                                               w = (float) e["orientation"]["w"]};
 
-            Vector axisAfterSpin = FIVES.Math.AxisFromQuaternion(entityOrientation);
-            float angleAfterSpin = FIVES.Math.AngleFromQuaternion(entityOrientation);
+            Quat newEntityOrientation = (Quat)e["location"]["orientation"].Value;
+
+            Vector axisAfterSpin = FIVES.Math.AxisFromQuaternion(newEntityOrientation);
+            float angleAfterSpin = FIVES.Math.AngleFromQuaternion(newEntityOrientation);
 
             Assert.Less(System.Math.Abs(1f - axisAfterSpin.x), 0.00001f);
             Assert.Less(System.Math.Abs(axisAfterSpin.y), 0.00001f);

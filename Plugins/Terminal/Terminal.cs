@@ -1,9 +1,24 @@
-﻿using FIVES;
+﻿// This file is part of FiVES.
+//
+// FiVES is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// FiVES is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with FiVES.  If not, see <http://www.gnu.org/licenses/>.
+using FIVES;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using NLog;
 
 namespace TerminalPlugin
 {
@@ -19,7 +34,15 @@ namespace TerminalPlugin
             RegisterCommand("help", "Shows help for a command or all commands if none specified.", false, ShowHelp,
                 new List<string> { "h", "?" });
 
-            Task.Factory.StartNew(TerminalThreadFunc);
+            if (!IsConsoleIORedirected())
+            {
+                Application.Controller.PluginsLoaded += HandlePluginsLoaded;
+                Application.Controller.ControlTaken = true;
+            }
+            else
+            {
+                logger.Warn("Terminal plugin is disabled due to the redirected input stream.");
+            }
         }
 
         /// <summary>
@@ -89,6 +112,17 @@ namespace TerminalPlugin
                         AddCommand(alias, info);
                 }
             }
+        }
+
+        bool IsConsoleIORedirected()
+        {
+            // http://stackoverflow.com/questions/3453220/how-to-detect-if-console-in-stdin-has-been-redirected
+            return (Console.WindowHeight + Console.WindowWidth) == 0;
+        }
+
+        private void HandlePluginsLoaded(object sender, EventArgs e)
+        {
+            Task.Factory.StartNew(TerminalThreadFunc);
         }
 
         private void AddCommand(string name, CommandInfo info)
@@ -192,6 +226,16 @@ namespace TerminalPlugin
                         Task.Factory.StartNew(() => info.Handler(command));
                     else if (command != "")
                         WriteLine("Invalid command");
+
+                    lastCommand = command;
+                }
+                else if (keyInfo.Key == ConsoleKey.UpArrow)
+                {
+                    if (lastCommand != null)
+                    {
+                        currentCommand.Clear();
+                        currentCommand.Append(lastCommand);
+                    }
                 }
                 else if (IsText(keyInfo))
                 {
@@ -273,9 +317,12 @@ namespace TerminalPlugin
 
         private Dictionary<string, CommandInfo> commands = new Dictionary<string, CommandInfo>();
 
+        string lastCommand = null;
         private const string commandLinePrefix = ">> ";
         private int previousCommandLineLength = commandLinePrefix.Length;
         private StringBuilder currentCommand = new StringBuilder();
         private int cursorPosition = 0;
+
+        private static Logger logger = LogManager.GetCurrentClassLogger();
     }
 }

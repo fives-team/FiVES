@@ -1,3 +1,19 @@
+// This file is part of FiVES.
+//
+// FiVES is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// FiVES is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with FiVES.  If not, see <http://www.gnu.org/licenses/>.
+
+
 require.config({
     paths: {
         'jquery' : 'lib/jquery',
@@ -6,7 +22,7 @@ require.config({
     }
 });
 
-requirejs(['kiara', 'jquery', 'websocket-json'],
+requirejs(['kiara', 'jquery', 'websocket-json', 'plugins/testing/testing'],
 function(KIARA, $) {
 
     function setScript(guid) {
@@ -63,16 +79,13 @@ function(KIARA, $) {
             }
         };
 
-        // Make a small pause so that users can appreciated the "Signing in..." message.
-        setTimeout( function() {
-            FIVES.Communication.FivesCommunicator.auth(login, password, authCallback);
-        }, 1000);
-
         // Disable input fields and button, hide error message if any.
         $("#signin-btn").button("loading");
         $("#signin-login").prop('disabled', true);
         $("#signin-password").prop('disabled', true);
         $("#signin-failed").hide();
+
+        FIVES.Communication.FivesCommunicator.auth(login, password, authCallback);
 
         return false;
     }

@@ -2,7 +2,6 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
     <head>
         <title>FIVES Test Client</title>
-        <script type="text/javascript" src="scripts/lib/require.js" data-main="scripts/app.js"></script>
         <!-- Framework CSS -->
 
         <link rel="stylesheet" href="css/lib/bootstrap.min.css" />
@@ -41,10 +40,25 @@
                 </div>
             </nav>
 
-            <div class = "row">
-                <div class = "col-md-8 col-md-offset-2" id = "xml3d_view">
-                    <xml3d xmlns = "http://www.xml3d.org/2009/xml3d" id="xml3dView" style="width: 1200px; height: 675px; background-color: lightblue" activeView = "#camera">
-                       <view id="camera" position = "0 0 10" />
+            <div class = "row" style="height: 80%">
+                <div class = "col-md-9 col-md-offset-1" style="height: 100%" id = "xml3d_view">
+                    <xml3d xmlns = "http://www.xml3d.org/2009/xml3d"
+                           id="xml3dView"
+                           style="width: 100%; height: 80%;
+                           background-size:100% 100%;
+                           background-color: lightblue"
+                           activeView = "#camera">
+                        <view id="camera" position = "0 0 10" />
+                        <defs id="initalDefs">
+                            <transform id="t_Lamp" rotation="0.7070000171661377 0.7070000171661377 0 11.599999999999975"></transform>
+                            <lightshader id="ls_directional" script="urn:xml3d:lightshader:directional">
+                                <float3 name="intensity">0.9 0.9 1</float3>
+                            </lightshader>
+
+                        </defs>
+                        <group transform="#t_Lamp">
+                            <light shader="#ls_directional"></light>
+                        </group>
                     </xml3d>
                 </div>
             </div>
@@ -142,10 +156,11 @@
         </div>
 
         <!-- Script includes in body for faster page loading -->
+        <script type="text/javascript" src="scripts/lib/require.js" data-main="scripts/app.js"></script>
+
         <script type="text/javascript" src="scripts/lib/jquery.js"></script>
         <script type="text/javascript" src="scripts/lib/underscore.js"></script>
         <script type="text/javascript" src="scripts/lib/bootstrap-3.0.0/bootstrap.min.js"></script>
-
 
         <script type="text/javascript" src="scripts/lib/xml3d/xml3d.js"></script>
         <script type="text/javascript" src="scripts/lib/eyelightShader.js"></script>
@@ -153,14 +168,27 @@
         <script type="text/javascript" src="scripts/util/remote-xml3d-loader.js"></script>
         <script type="text/javascript" src="scripts/util/template_loader.js"></script>
 
+        <script type="text/javascript" src="scripts/communication/fives_events.js"></script>
+        <script type="text/javascript" src="scripts/communication/fives_communicator.js"></script>
+
         <script type="text/javascript" src="scripts/resources/resource_manager.js"></script>
         <script type="text/javascript" src="scripts/resources/scene_manager.js"></script>
 
         <script type="text/javascript" src="scripts/models/entity.js"></script>
         <script type="text/javascript" src="scripts/models/entity_registry.js"></script>
-        <script type="text/javascript" src="scripts/communication/fives_communicator.js"></script>
 
-        <script type="text/javascript" src="scripts/plugins/animation.js"></script>
+        <script type="text/javascript" src="scripts/plugins/avatar/avatar.js"></script>
+        <script type="text/javascript" src="scripts/plugins/avatar_collision/avatar_collision.js"></script>
+
+        <script type="text/javascript" src="scripts/plugins/clientsync/clientsync.js"></script>
+        <script type="text/javascript" src="scripts/plugins/location/location.js"></script>
+        <script type="text/javascript" src="scripts/plugins/renderable/renderable.js"></script>
+        <script type="text/javascript" src="scripts/plugins/editing/editing.js"></script>
+        <script type="text/javascript" src="scripts/plugins/animation/animation.js"></script>
+        <script type="text/javascript" src="scripts/plugins/scripting/scripting.js"></script>
+        <script type="text/javascript" src="scripts/plugins/motion/motion.js"></script>
+        <script type="text/javascript" src="scripts/plugins/light/light.js"></script>
+
         <script type="text/javascript" src="scripts/creation/entity_creator.js"></script>
         <script type="text/javascript" src="scripts/input/keyboard_input.js"></script>
 

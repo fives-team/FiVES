@@ -1,11 +1,17 @@
-/**
- * Created with JetBrains WebStorm.
- * Author: Torsten Spieldenner
- * Date: 9/18/13
- * Time: 9:33 AM
- * (c) DFKI 2013
- * http://www.dfki.de
- */
+// This file is part of FiVES.
+//
+// FiVES is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// FiVES is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with FiVES.  If not, see <http://www.gnu.org/licenses/>.
 
 var FIVES = FIVES || {};
 FIVES.Models = FIVES.Models || {};
@@ -23,9 +29,13 @@ FIVES.Models = FIVES.Models || {};
     er.addEntityFromServer = function (entityDocument) {
         var newEntity = new FIVES.Models.Entity(entityDocument);
         this._entities[entityDocument.guid] = newEntity;
-        newEntity.xml3dView = {};
+        FIVES.Events.EntityAdded(newEntity);
+    };
 
-        FIVES.Resources.SceneManager.addMeshForObject(newEntity);
+    er.removeEntity = function(entityGuid) {
+        var entities = FIVES.Models.EntityRegistry._entities;
+        FIVES.Resources.SceneManager.removeEntity(entities[entityGuid]);
+        delete FIVES.Models.EntityRegistry._entities[entityGuid];
     };
 
     er.getEntity = function (guid) {

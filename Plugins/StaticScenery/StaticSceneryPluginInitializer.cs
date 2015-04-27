@@ -1,4 +1,18 @@
-﻿using System;
+﻿// This file is part of FiVES.
+//
+// FiVES is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// FiVES is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with FiVES.  If not, see <http://www.gnu.org/licenses/>.
+using System;
 using System.Configuration;
 using System.Collections.Generic;
 using System.Linq;
@@ -27,7 +41,7 @@ namespace StaticSceneryPlugin
 
         public List<string> ComponentDependencies
         {
-            get { return new List<string> {"position", "meshResource"}; }
+            get { return new List<string> { "location", "mesh" }; }
         }
 
         public void Initialize()
@@ -72,13 +86,11 @@ namespace StaticSceneryPlugin
         /// <summary>
         /// Creates the scenery entity and adds it to the world
         /// </summary>
-        private void CreateSceneryEntity()
+        internal void CreateSceneryEntity()
         {
             Entity sceneryEntity = new Entity();
-            sceneryEntity["meshResource"]["uri"] = SceneryURL;
-            sceneryEntity["position"]["x"] = OffsetX;
-            sceneryEntity["position"]["y"] = OffsetY;
-            sceneryEntity["position"]["z"] = OffsetZ;
+            sceneryEntity["mesh"]["uri"].Suggest(SceneryURL);
+            sceneryEntity["location"]["position"].Suggest(new Vector(OffsetX, OffsetY, OffsetZ));
             World.Instance.Add(sceneryEntity);
         }
 

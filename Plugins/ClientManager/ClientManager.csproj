@@ -31,17 +31,29 @@
     <ConsolePause>False</ConsolePause>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="KIARA, Version=1.0.5513.20794, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\ThirdParty\KIARA\KIARA.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json, Version=4.5.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\ThirdParty\KIARA\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="NLog, Version=3.2.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\packages\NLog.3.2.0.0\lib\net40\NLog.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Configuration" />
     <Reference Include="Microsoft.CSharp" />
-    <Reference Include="NLog">
-      <HintPath>..\..\packages\NLog.2.0.1.2\lib\net40\NLog.dll</HintPath>
-    </Reference>
     <Reference Include="nunit.framework">
       <HintPath>..\..\packages\NUnit.2.6.2\lib\nunit.framework.dll</HintPath>
     </Reference>
     <Reference Include="Moq">
       <HintPath>..\..\packages\Moq.4.1.1309.1617\lib\net40\Moq.dll</HintPath>
+    </Reference>
+    <Reference Include="WebSocket">
+      <HintPath>..\..\ThirdParty\KIARA\WebSocket.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -49,6 +61,8 @@
     <Compile Include="ClientManager.cs" />
     <Compile Include="ClientManagerPluginInitializer.cs" />
     <Compile Include="ClientUpdateQueue.cs" />
+    <Compile Include="ClientConnectionEventArgs.cs" />
+    <Compile Include="UpdateInfo.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -72,9 +86,9 @@
       <Project>{CCDA8021-971D-4703-A4BD-325248EF9499}</Project>
       <Name>Auth</Name>
     </ProjectReference>
-    <ProjectReference Include="..\KIARA\KIARA.csproj">
-      <Project>{EEFDDD48-1795-4D62-A255-29167B0A3BC3}</Project>
-      <Name>KIARA</Name>
+    <ProjectReference Include="..\KIARA\KIARAPlugin.csproj">
+      <Project>{d5b8e5d2-a427-4985-b885-9eac5bddab06}</Project>
+      <Name>KIARAPlugin</Name>
     </ProjectReference>
     <ProjectReference Include="..\Terminal\Terminal.csproj">
       <Project>{fdf2de99-68cf-4947-952c-2d2bcc846f3e}</Project>
@@ -82,8 +96,8 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <None Include="clientManagerServer.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    <None Include="clientManager.kiara">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="packages.config" />
   </ItemGroup>

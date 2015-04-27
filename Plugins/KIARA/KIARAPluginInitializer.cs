@@ -1,86 +1,52 @@
-using System;
+﻿// This file is part of FiVES.
+//
+// FiVES is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// FiVES is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with FiVES.  If not, see <http://www.gnu.org/licenses/>.
+
 using FIVES;
+using System;
 using System.Collections.Generic;
-using System.Configuration;
-using NLog;
-using System.IO;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace KIARAPlugin
 {
     public class KIARAPluginInitializer : IPluginInitializer
     {
-        #region IPluginInitializer implementation
-
         public string Name
         {
-            get
-            {
-                return "KIARA";
-            }
+            get { return "KIARA"; }
         }
 
         public List<string> PluginDependencies
         {
-            get
-            {
-                return new List<string>();
-            }
+            get { return new List<string>(); }
         }
 
         public List<string> ComponentDependencies
         {
-            get
-            {
-                return new List<string>();
-            }
+            get { return new List<string>(); }
         }
 
         public void Initialize()
         {
-            var protocolDir = GetProtocolDir();
-            LoadProtocols(protocolDir);
+            KIARAServerManager.Instance = new KIARAServerManager();
         }
 
         public void Shutdown()
         {
+            KIARAServerManager.Instance.KiaraServer.ShutDown();
         }
-
-        #endregion
-
-        static void LoadProtocols(string protocolDir)
-        {
-            logger.Info("Loading protocols");
-        
-            if (protocolDir != null && Directory.Exists(protocolDir))
-            {
-                ProtocolRegistry.Instance.LoadProtocolsFrom(protocolDir);
-            }
-            else
-            {
-                logger.Error("Protocol dir is not specified or does not exist");
-            }
-
-            logger.Info("Finished loading protocols");
-        }
-
-        static string GetProtocolDir()
-        {
-            string protocolDir = null;
-            ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
-
-            try
-            {
-                protocolDir = ConfigurationManager.AppSettings["ProtocolDir"].ToString();
-            }
-            catch (ConfigurationErrorsException cee)
-            {
-                logger.Error("KIARA configuration is missing or corrupt.");
-                throw cee;
-            }
-
-            return protocolDir;
-        }
-
-        private static Logger logger = LogManager.GetCurrentClassLogger();
     }
 }

@@ -1,10 +1,24 @@
+// This file is part of FiVES.
+//
+// FiVES is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// FiVES is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with FiVES.  If not, see <http://www.gnu.org/licenses/>.
 using System;
 using System.Collections.Generic;
 using FIVES;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Collections.Concurrent;
-using KIARAPlugin;
+using KIARA;
 
 namespace ClientManagerPlugin
 {
@@ -13,15 +27,6 @@ namespace ClientManagerPlugin
     /// </summary>
     internal class ClientUpdateQueue
     {
-        internal struct UpdateInfo
-        {
-            public Guid entityGuid;
-            public string componentName;
-            public string attributeName;
-            //public int timeStamp; /* not used yet */
-            public object value;
-        }
-
         /// <summary>
         /// Initializes a new instance of the <see cref="ClientManager.ClientUpdateQueue"/> class.
         /// </summary>
@@ -68,7 +73,7 @@ namespace ClientManagerPlugin
         {
             lock (CallbackRegistryLock)
             {
-                foreach (Action<List<UpdateInfo>> callback in ClientCallbacks.Values)
+                foreach (ClientFunction callback in ClientCallbacks.Values)
                     callback(UpdateQueue);
             }
         }
@@ -78,7 +83,7 @@ namespace ClientManagerPlugin
         /// </summary>
         /// <param name="connection">Client connection</param>
         /// <param name="clientCallback">Callback to be invoked on client to process updates</param>
-        internal void RegisterToClientUpdates(Connection connection, Action<List<UpdateInfo>> clientCallback)
+        internal void RegisterToClientUpdates(Connection connection, ClientFunction clientCallback)
         {
             lock (CallbackRegistryLock)
             {
@@ -170,7 +175,7 @@ namespace ClientManagerPlugin
         /// <param name="e">Event arguments</param>
         private UpdateInfo CreateUpdateInfoFromEventArgs(Entity entity, ChangedAttributeEventArgs e) {
             UpdateInfo newUpdateInfo = new UpdateInfo();
-            newUpdateInfo.entityGuid = entity.Guid;
+            newUpdateInfo.entityGuid = entity.Guid.ToString();
             newUpdateInfo.componentName = e.Component.Name;
             newUpdateInfo.attributeName = e.AttributeName;
             newUpdateInfo.value = e.NewValue;
@@ -201,8 +206,7 @@ namespace ClientManagerPlugin
         /// <summary>
         /// Callback to be called on updates, provided by the client
         /// </summary>
-        private Dictionary<Connection, Action<List<UpdateInfo>>> ClientCallbacks =
-            new Dictionary<Connection, Action<List<UpdateInfo>>>();
+        private Dictionary<Connection, ClientFunction> ClientCallbacks = new Dictionary<Connection, ClientFunction>();
 
         /// <summary>
         /// Mutex Object for the update queue

@@ -1,8 +1,26 @@
+// This file is part of FiVES.
+//
+// FiVES is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// FiVES is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with FiVES.  If not, see <http://www.gnu.org/licenses/>.
 using System;
 using FIVES;
 using System.Collections.Generic;
 using AuthPlugin;
 using ClientManagerPlugin;
+using KIARA;
+using System.Net;
+using System.Reflection;
+using System.IO;
 using KIARAPlugin;
 
 namespace AvatarPlugin
@@ -23,7 +41,7 @@ namespace AvatarPlugin
         {
             get
             {
-                return new List<string> { "ClientManager", "Auth", "KIARA" };
+                return new List<string> { "KIARA", "ClientManager", "Auth"};
             }
         }
 
@@ -31,16 +49,31 @@ namespace AvatarPlugin
         {
             get
             {
-                return new List<string> { "meshResource", "scale", "velocity", "rotVelocity" };
+                return new List<string> { "mesh", "motion" };
             }
         }
 
         public void Initialize ()
         {
+            RegisterComponent();
+            RegisterEvents();
+            RegisterKiaraService();
+        }
+
+        public void Shutdown()
+        {
+        }
+
+        void RegisterComponent()
+        {
             ComponentDefinition avatar = new ComponentDefinition("avatar");
             avatar.AddAttribute<string>("userLogin", null);
             ComponentRegistry.Instance.Register(avatar);
+        }
 
+        void RegisterKiaraService()
+        {
+            AmendKiaraServiceIdl();
             ClientManager.Instance.RegisterClientService("avatar", true, new Dictionary<string, Delegate> {
                 {"getAvatarEntityGuid", (Func<Connection, string>)GetAvatarEntityGuid},
                 {"changeAppearance", (Action<Connection, string, Vector>)ChangeAppearance},
@@ -49,8 +82,18 @@ namespace AvatarPlugin
                 {"setAvatarLeftRightMotion", (Action<Connection, float>)SetLeftRightMotion},
                 {"setAvatarSpinAroundAxis",(Action<Connection, Vector, float>)SetAvatarSpinAroundAxis}
             });
+        }
 
-            ClientManager.Instance.NotifyWhenAnyClientAuthenticated(delegate(Connection connection) {
+        void AmendKiaraServiceIdl()
+        {
+            var idlContent = File.ReadAllText("avatar.kiara");
+            KIARAServerManager.Instance.KiaraServer.AmendIDL(idlContent);
+        }
+
+        void RegisterEvents()
+        {
+            ClientManager.Instance.NotifyWhenAnyClientAuthenticated(delegate(Connection connection)
+            {
                 Activate(connection);
                 connection.Closed += (sender, e) => Deactivate(connection);
             });
@@ -59,10 +102,6 @@ namespace AvatarPlugin
 
             foreach (var entity in World.Instance)
                 CheckAndRegisterAvatarEntity(entity);
-        }
-
-        public void Shutdown()
-        {
         }
 
         void HandleAddedEntity (object sender, EntityEventArgs e)
@@ -91,7 +130,7 @@ namespace AvatarPlugin
         {
             if (entity.ContainsComponent("avatar"))
             {
-                avatarEntities[(string)entity["avatar"]["userLogin"]] = entity;
+                avatarEntities[(string)entity["avatar"]["userLogin"].Value] = entity;
                 return true;
             }
 
@@ -105,9 +144,10 @@ namespace AvatarPlugin
             var userLogin = Authentication.Instance.GetLoginName(connection);
             if (!avatarEntities.ContainsKey(userLogin)) {
                 Entity newAvatar = new Entity();
-                newAvatar["avatar"]["userLogin"] = userLogin;
-                newAvatar["meshResource"]["uri"] = defaultAvatarMesh;
-                newAvatar["meshResource"]["visible"] = true;
+                newAvatar["avatar"]["userLogin"].Suggest(userLogin);
+                newAvatar["mesh"]["uri"].Suggest(defaultAvatarMesh);
+                newAvatar["mesh"]["visible"].Suggest(true);
+                newAvatar["location"]["position"].Suggest(new Vector(0, 10, 0));
                 World.Instance.Add(newAvatar);
             }
 
@@ -132,7 +172,7 @@ namespace AvatarPlugin
         void Activate(Connection connection)
         {
             var avatarEntity = GetAvatarEntityByConnection(connection);
-            avatarEntity["meshResource"]["visible"] = true;
+            avatarEntity["mesh"]["visible"].Suggest(true);
         }
 
         /// <summary>
@@ -142,7 +182,7 @@ namespace AvatarPlugin
         void Deactivate(Connection connection)
         {
             var avatarEntity = GetAvatarEntityByConnection(connection);
-            avatarEntity["meshResource"]["visible"] = false;
+            avatarEntity["mesh"]["visible"].Suggest(false);
         }
 
         /// <summary>
@@ -155,45 +195,40 @@ namespace AvatarPlugin
         {
             var avatarEntity = GetAvatarEntityByConnection(connection);
 
-            avatarEntity["meshResource"]["uri"] = meshURI;
-
-            avatarEntity["scale"]["x"] = scale.x;
-            avatarEntity["scale"]["y"] = scale.y;
-            avatarEntity["scale"]["z"] = scale.z;
+            avatarEntity["mesh"]["uri"].Suggest(meshURI);
+            avatarEntity["mesh"]["scale"].Suggest(scale);
         }
 
         void StartAvatarMotionInDirection(Connection connection, Vector velocity)
         {
             var avatarEntity = GetAvatarEntityByConnection(connection);
 
-            avatarEntity["velocity"]["x"] = (float)velocity.x;
-            avatarEntity["velocity"]["y"] = (float)velocity.y;
-            avatarEntity["velocity"]["z"] = (float)velocity.z;
+            avatarEntity["motion"]["velocity"].Suggest(velocity);
         }
 
         void SetForwardBackwardMotion(Connection connection, float amount)
         {
             var avatarEntity = GetAvatarEntityByConnection(connection);
-            avatarEntity["velocity"]["x"] = amount;
+            Vector oldVelocity = (Vector)avatarEntity["motion"]["velocity"].Value;
+            Vector newVelocity = new Vector(amount, oldVelocity.y, oldVelocity.z);
+            avatarEntity["motion"]["velocity"].Suggest(newVelocity); 
         }
 
         void SetLeftRightMotion(Connection connection, float amount)
         {
             var avatarEntity = GetAvatarEntityByConnection(connection);
-            avatarEntity["velocity"]["z"] = amount;
+            Vector oldVelocity = (Vector)avatarEntity["motion"]["velocity"].Value;
+            Vector newVelocity =  new Vector(oldVelocity.x, oldVelocity.y, amount);
+            avatarEntity["motion"]["velocity"].Suggest(newVelocity);
         }
 
         void SetAvatarSpinAroundAxis(Connection connection, Vector axis, float angle)
         {
             var avatarEntity = GetAvatarEntityByConnection(connection);
-            avatarEntity["rotVelocity"]["x"] = axis.x;
-            avatarEntity["rotVelocity"]["y"] = axis.y;
-            avatarEntity["rotVelocity"]["z"] = axis.z;
-            avatarEntity["rotVelocity"]["r"] = angle;
+            avatarEntity["motion"]["rotVelocity"].Suggest(new AxisAngle(axis, angle));
         }
-		
+
         Dictionary<string, Entity> avatarEntities = new Dictionary<string, Entity>();
-        // string defaultAvatarMesh = "resources/models/defaultAvatar/avatar.xml3d";
-        string defaultAvatarMesh = "resources/proprietary/natalieFives/xml3d/natalie.xml";
+        string defaultAvatarMesh = "resources/models/firetruck/xml3d/firetruck.xml";
     }
 }

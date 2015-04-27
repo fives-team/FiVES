@@ -1,4 +1,18 @@
-﻿using System;
+﻿// This file is part of FiVES.
+//
+// FiVES is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// FiVES is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with FiVES.  If not, see <http://www.gnu.org/licenses/>.
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -11,14 +25,22 @@ namespace KeyframeAnimationPlugin
     /// KeyframeAnimationManager maintains keyframe animations of entities for server side animation computation.
     /// KeyframeManager subscribes to EventLoopPlugin for recurring computation of animation keyframes
     /// </summary>
-    internal class KeyframeAnimationManager
+    public class KeyframeAnimationManager
     {
-        public KeyframeAnimationManager() {}
+        public static KeyframeAnimationManager Instance;
+
+        internal KeyframeAnimationManager() {}
 
         internal void Initialize()
         {
             EventLoop.Instance.TickFired += new EventHandler<TickEventArgs>(HandleEventTick);
             LastTick = new TimeSpan(DateTime.Now.Ticks);
+        }
+
+        internal void Initialize(KeyframeAnimationPluginInitializer plugin)
+        {
+            this.animationPlugin = plugin;
+            Initialize();
         }
 
         /// <summary>
@@ -46,7 +68,7 @@ namespace KeyframeAnimationPlugin
                         animationKeyframes += runningAnimation.Key + ":" + newKey + ";";
                     }
                     Entity entity = World.Instance.FindEntity(animatedEntity.Key);
-                    entity["animation"]["animationKeyframes"] = animationKeyframes;
+                    entity["animation"]["animationKeyframes"].Suggest(animationKeyframes);
                 }
             }
             FinalizeFinishedAnimations();
@@ -94,7 +116,7 @@ namespace KeyframeAnimationPlugin
         /// </summary>
         /// <param name="entityGuid">Guid of entity for which animation should be played</param>
         /// <param name="animation">Keyframe animation that should be played for the entity</param>
-        internal void StartAnimation(Guid entityGuid, KeyframeAnimation animation)
+        public void StartAnimation(Guid entityGuid, KeyframeAnimation animation)
         {
             lock (RunningAnimationsForEntities)
             {
@@ -113,7 +135,7 @@ namespace KeyframeAnimationPlugin
         /// </summary>
         /// <param name="entityGuid">Guid of the entity for which animation playback should be stopped</param>
         /// <param name="animationName">Name of the animation of which playback should be stopped</param>
-        internal void StopAnimation(Guid entityGuid, string animationName)
+        public void StopAnimation(Guid entityGuid, string animationName)
         {
             lock (RunningAnimationsForEntities)
             {
@@ -141,6 +163,61 @@ namespace KeyframeAnimationPlugin
         }
 
         /// <summary>
+        /// KIARA Service method handler that initiates a server side animation playback for an entity
+        /// </summary>
+        /// <param name="entityGuid">Guid of entity for which animation should be played</param>
+        /// <param name="name">Name of animation that should be played</param>
+        /// <param name="startFrame">Keyframe at which animation playback should start</param>
+        /// <param name="endFrame">Keyframe at which animation playback should end</param>
+        /// <param name="cycles">Number of cycles the animation should be played (-1 for infinite playback)</param>
+        /// <param param name="speed">Speed in which animation should be played</param>
+        public void StartServersideAnimation(Guid entityGuid,
+            string animationName,
+            float startFrame,
+            float endFrame,
+            int cycles,float speed)
+        {
+            animationPlugin.StartServersideAnimation(entityGuid.ToString(), animationName, startFrame, endFrame, cycles, speed);
+        }
+
+        /// <summary>
+        /// Invokes a message to start animations on clients' sides
+        /// </summary>
+        /// <param name="entityGuid">Guid of entity for which animation should be played</param>
+        /// <param name="name">Name of animation that should be played</param>
+        /// <param name="startFrame">Keyframe at which animation playback should start</param>
+        /// <param name="endFrame">Keyframe at which animation playback should end</param>
+        /// <param name="cycles">Number of cycles the animation should be played (-1 for infinite playback)</param>
+        /// <param param name="speed">Speed in which animation should be played</param>
+        public void StartClientsideAnimation(Guid entityGuid,
+            string animationName,
+            float startFrame,
+            float endFrame,
+            int cycles,float speed)
+        {
+            animationPlugin.StartClientsideAnimation(entityGuid.ToString(), animationName, startFrame, endFrame, cycles, speed);
+        }
+
+        /// <summary>
+        /// Handler that stops a server side animation playback for an entity
+        /// </summary>
+        /// <param name="entityGuid">Guid for which playback should be stopped</param>
+        /// <param name="name">Name of animation for which playback should be stopped</param>
+        public void StopServersideAnimation(Guid entityGuid, string name)
+        {
+            animationPlugin.StopServersideAnimation(entityGuid.ToString(), name);
+        }
+
+        /// <summary>
+        /// Invokes a message to stop animations on clients' sides
+        /// </summary>
+        /// <param name="entityGuid">Guid of entity for which animation should be played</param>
+        /// <param name="name">Name of animation that should be played</param>
+        public void StopClientsideAnimation(Guid entityGuid, string name)
+        {
+            animationPlugin.StopClientsideAnimation(entityGuid.ToString(), name);
+        }
+        /// <summary>
         /// Registry of all entities that subscribed to receive tick events from event loop for animation
         /// key frame computation.
         /// Dictionary has stucture Dictionary<EntityGuid,Dictionary<AnimationName, AnimationObject>,
@@ -157,5 +234,7 @@ namespace KeyframeAnimationPlugin
         /// </summary>
         internal Dictionary<Guid, HashSet<string>> FinishedAnimations = new Dictionary<Guid, HashSet<string>>();
         private TimeSpan LastTick;
+
+        KeyframeAnimationPluginInitializer animationPlugin;
     }
 }

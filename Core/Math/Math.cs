@@ -1,4 +1,19 @@
-﻿using System;
+﻿// This file is part of FiVES.
+//
+// FiVES is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// FiVES is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with FiVES.  If not, see <http://www.gnu.org/licenses/>.
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -46,45 +61,45 @@ namespace FIVES
 
         public static Vector CrossProduct(Vector vector1, Vector vector2)
         {
-            Vector result = new Vector();
-            result.x = vector1.y*vector2.z - vector1.z *vector2.y;
-            result.y = vector1.z*vector2.x - vector1.x * vector2.z;
-            result.z = vector1.x*vector2.y - vector1.y * vector2.x;
-            return result;
+            return new Vector(
+                vector1.y * vector2.z - vector1.z * vector2.y,
+                vector1.z * vector2.x - vector1.x * vector2.z,
+                vector1.x * vector2.y - vector1.y * vector2.x
+            );
         }
 
         public static Vector ScaleVector(Vector vector, float scalar)
         {
-            Vector result = new Vector();
-            result.x = vector.x * scalar;
-            result.y = vector.y * scalar;
-            result.z = vector.z * scalar;
-            return result;
+            return new Vector(
+                vector.x * scalar,
+                vector.y * scalar,
+                vector.z * scalar
+            );
         }
 
         public static Vector AddVectors(Vector vector1, Vector vector2)
         {
-            Vector result = new Vector();
-            result.x = vector1.x + vector2.x;
-            result.y = vector1.y + vector2.y;
-            result.z = vector1.z + vector2.z;
-            return result;
+            return new Vector(
+                vector1.x + vector2.x,
+                vector1.y + vector2.y,
+                vector1.z + vector2.z
+            );
         }
 
         public static Vector AxisFromQuaternion(Quat q)
         {
-            Vector axis = new Vector();
             if (q.w * q.w != 1)
             {
-                axis.x = q.x / ((float)System.Math.Sqrt(1 - q.w * q.w));
-                axis.y = q.y / ((float)System.Math.Sqrt(1 - q.w * q.w));
-                axis.z = q.z / ((float)System.Math.Sqrt(1 - q.w * q.w));
+                return new Vector(
+                    q.x / ((float)System.Math.Sqrt(1 - q.w * q.w)),
+                    q.y / ((float)System.Math.Sqrt(1 - q.w * q.w)),
+                    q.z / ((float)System.Math.Sqrt(1 - q.w * q.w))
+                );
             }
             else
             {
-                axis.x = axis.y = axis.z = 0;
+                return new Vector(0, 0, 0);
             }
-            return axis;
         }
 
         public static float AngleFromQuaternion(Quat q)
@@ -94,23 +109,22 @@ namespace FIVES
 
         public static Quat QuaternionFromAxisAngle(Vector axis, float r)
         {
-            Quat q = new Quat();
-            q.x = axis.x * (float)System.Math.Sin(0.5 * r);
-            q.y = axis.y * (float)System.Math.Sin(0.5 * r);
-            q.z = axis.z * (float)System.Math.Sin(0.5 * r);
-            q.w = (float)System.Math.Cos(0.5 * r);
-            return q;
+            return new Quat(
+                axis.x * (float)System.Math.Sin(0.5 * r),
+                axis.y * (float)System.Math.Sin(0.5 * r),
+                axis.z * (float)System.Math.Sin(0.5 * r),
+                (float)System.Math.Cos(0.5 * r)
+            );
         }
 
         public static Quat MultiplyQuaternions(Quat p, Quat q)
         {
-            Quat m = new Quat();
-            m.w = (p.w * q.w - p.x * q.x - p.y * q.y - p.z * q.z);
-            m.x = (p.w * q.x + p.x * q.w + p.y * q.z - p.z * q.y);
-            m.y = (p.w * q.y - p.x * q.z + p.y * q.w + p.z * q.x);
-            m.z = (p.w * q.z + p.x * q.y - p.y * q.x + p.z * q.w);
-
-            return m;
+            return new Quat(
+                p.w * q.x + p.x * q.w + p.y * q.z - p.z * q.y,
+                p.w * q.y - p.x * q.z + p.y * q.w + p.z * q.x,
+                p.w * q.z + p.x * q.y - p.y * q.x + p.z * q.w,
+                p.w * q.w - p.x * q.x - p.y * q.y - p.z * q.z
+            );
         }
     }
 }

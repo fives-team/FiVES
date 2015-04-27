@@ -1,4 +1,20 @@
-﻿using System;
+﻿// This file is part of FiVES.
+//
+// FiVES is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// FiVES is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with FiVES.  If not, see <http://www.gnu.org/licenses/>.
+
+using KIARA;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,9 +27,16 @@ namespace FIVES
     /// </summary>
     public class EntityCollection : ICollection<Entity>
     {
+        public EntityCollection()
+        {
+
+        }
+
         public void Add(Entity entity)
         {
-            entities.Add(entity.Guid, entity);
+            lock(entities)
+                entities.Add(entity.Guid, entity);
+
             HandleAdded(entity);
         }
 
@@ -43,7 +66,12 @@ namespace FIVES
 
         public bool Remove(Entity item)
         {
-            if (entities.Remove(item.Guid))
+            bool didRemoveItem = false;
+
+            lock (entities)
+                didRemoveItem = entities.Remove(item.Guid);
+
+            if (didRemoveItem)
             {
                 HandleRemoved(item);
                 return true;
@@ -101,6 +129,16 @@ namespace FIVES
             return entities[guid];
         }
 
+        /// <summary>
+        /// Returns true of an entity with a given guid is present in the collection.
+        /// </summary>
+        /// <param name="guid">Guid of the searched entity.</param>
+        /// <returns>True of an entity with a given guid is present in the collection, false otherwise.</returns>
+        public bool ContainsEntity(Guid guid)
+        {
+            return entities.ContainsKey(guid);
+        }
+
         // Needed by persistence plugin.
         internal EntityCollection(ICollection<Entity> entityCollection)
         {
@@ -109,9 +147,6 @@ namespace FIVES
                 entities.Add(entity.Guid, entity);
             }
         }
-
-        // Needed for testing.
-        internal EntityCollection() { }
 
         private void HandleAdded(Entity entity)
         {

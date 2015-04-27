@@ -1,7 +1,22 @@
+// This file is part of FiVES.
+//
+// FiVES is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// FiVES is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with FiVES.  If not, see <http://www.gnu.org/licenses/>.
 using System;
 using FIVES;
 using System.Collections.Generic;
 using ClientManagerPlugin;
+using System.IO;
 
 namespace LocationPlugin
 {
@@ -51,27 +66,16 @@ namespace LocationPlugin
 
         void DefineComponents()
         {
-            // Position is represented as a vector (x,y,z) from the default position, which is at (0,0,0).
-            ComponentDefinition position = new ComponentDefinition("position");
-            position.AddAttribute<float> ("x", 0f);
-            position.AddAttribute<float> ("y", 0f);
-            position.AddAttribute<float> ("z", 0f);
-            ComponentRegistry.Instance.Register(position);
-
-            // Orientation is represented as a quaternion, where (x,y,z) is a vector part, and w is a scalar part. The 
-            // orientation of the object is relative to the default orientation. In the default position and 
-            // orientation, the viewer is on the Z-axis looking down the -Z-axis toward the origin with +X to the right 
-            // and +Y straight up.
-            ComponentDefinition orientation = new ComponentDefinition("orientation");
-            orientation.AddAttribute<float>("x", 0f);
-            orientation.AddAttribute<float>("y", 0f);
-            orientation.AddAttribute<float>("z", 0f);
-            orientation.AddAttribute<float>("w", 1f);
-            ComponentRegistry.Instance.Register(orientation);
+            ComponentDefinition location = new ComponentDefinition("location");
+            location.AddAttribute<Vector>("position", new Vector(0, 0, 0));
+            location.AddAttribute<Quat>("orientation", new Quat(0, 0, 0, 1));
+            ComponentRegistry.Instance.Register(location);
         }
 
         void RegisterClientServices()
         {
+            string locationIdl = File.ReadAllText("location.kiara");
+            KIARAPlugin.KIARAServerManager.Instance.KiaraServer.AmendIDL(locationIdl);
             ClientManager.Instance.RegisterClientService("location", true, new Dictionary<string, Delegate> {
                 {"updatePosition", (Action<string, Vector, int>) UpdatePosition},
                 {"updateOrientation", (Action<string, Quat, int>) UpdateOrientation}
@@ -81,9 +85,7 @@ namespace LocationPlugin
         private void UpdatePosition(string guid, Vector position, int timestamp)
         {
             var entity = World.Instance.FindEntity(guid);
-            entity["position"]["x"] = position.x;
-            entity["position"]["y"] = position.y;
-            entity["position"]["z"] = position.z;
+            entity["location"]["position"].Suggest(position);
 
             // We currently ignore timestamp, but may it in the future to implement dead reckoning.
         }
@@ -91,10 +93,7 @@ namespace LocationPlugin
         private void UpdateOrientation(string guid, Quat orientation, int timestamp)
         {
             var entity = World.Instance.FindEntity(guid);
-            entity["orientation"]["x"] = orientation.x;
-            entity["orientation"]["y"] = orientation.y;
-            entity["orientation"]["z"] = orientation.z;
-            entity["orientation"]["w"] = orientation.w;
+            entity["location"]["orientation"].Suggest(orientation);
 
             // We currently ignore timestamp, but may it in the future to implement dead reckoning.
         }

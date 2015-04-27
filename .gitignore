@@ -9,10 +9,13 @@ Docs/libpeerconnection.log
 packages
 Binaries/
 *.v11.suo
+*.suo
 *.mdf
 TestResults
 Core/PluginManager/TestPlugins
 *~
 *.vsp
 *.psess
+*.licenseheader
 WebClient/resources/proprietary
+TestResult.xml

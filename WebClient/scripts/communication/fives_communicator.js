@@ -1,11 +1,17 @@
-/**
- * Created with JetBrains WebStorm.
- * Author: Torsten Spieldenner
- * Date: 9/18/13
- * Time: 9:22 AM
- * (c) DFKI 2013
- * http://www.dfki.de
- */
+// This file is part of FiVES.
+//
+// FiVES is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// FiVES is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with FiVES.  If not, see <http://www.gnu.org/licenses/>.
 
 var FIVES = FIVES || {};
 FIVES.Communication = FIVES.Communication || {};
@@ -15,18 +21,6 @@ FIVES.Communication = FIVES.Communication || {};
 
     var FivesCommunicator = function() {};
     var c = FivesCommunicator.prototype;
-
-    // Function wrappers for KIARA interface provided by FIVES server
-    c.listObjects = function() {};
-    c.getObjectLocation = function() {};
-    c.createEntityAt = function() {};
-    c.createMeshEntity = function() {};
-    c.createServerScriptFor = function() {};
-    c.notifyAboutNewObjects = function() {};
-    c.getObjectMesh = function() {};
-    c.updateEntityLocation = function() {};
-    c.notifyAboutLocationOfEntityChanged = function() {};
-
 
     c.initialize = function(context, service) {
         this.context = context;
@@ -94,8 +88,7 @@ FIVES.Communication = FIVES.Communication || {};
                     }
                 }
 
-                _createFunctionWrappers.call(self);
-                self.connectedTime = new Date().getTime();
+                FIVES.Events.ConnectionEstablished();
                 callback(true);
             }
         };
@@ -106,6 +99,10 @@ FIVES.Communication = FIVES.Communication || {};
     }
 
     var _onOpenedConnection = function(error, conn) {
+        if(!conn) {
+            console.error("Could not establish connection, reason: " + error);
+            return;
+        }
         this.connection = conn;
         this.implements = conn.generateFuncWrapper("kiara.implements");
 
@@ -113,72 +110,16 @@ FIVES.Communication = FIVES.Communication || {};
             this.onConnected();
     };
 
-    var _listObjectsCallback =  function(error, objects) {
-        for (var i = 0; i < objects.length; i++)
-            FIVES.Models.EntityRegistry.addEntityFromServer(objects[i]);
-    };
-
-    var _objectUpdate = function(receivedObjectUpdates) {
-        for(var entry in receivedObjectUpdates) {
-            var handledUpdated = receivedObjectUpdates[entry];
-            var updatedEntity = FIVES.Models.EntityRegistry.getEntity(handledUpdated.entityGuid);
-            updatedEntity.updateAttribute(handledUpdated.componentName, handledUpdated.attributeName, handledUpdated.value);
-        }
-    }
-
-    c._generateTimestamp = function() {
-        var updateTime = new Date().getTime();
-        var timeStamp = this.connectedTime - updateTime;
+    /**
+     * Creates a timestamp that may be used to specify the time at which a message was sent to the server
+     * via a service function
+     * @returns {number} Timestamp in milliseconds since 01.01.2014
+     */
+    c.generateTimestamp = function() {
+        var now = new Date();
+        var startOfDay = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 0, 0, 0);
+        var timeStamp = now.getTime() - startOfDay.getTime();
         return timeStamp;
-    };
-
-    var _createFunctionWrappers = function(error, supported) {
-        this.listObjects = this.connection.generateFuncWrapper("objectsync.listObjects");
-        this.createEntityAt = this.connection.generateFuncWrapper("editing.createEntityAt");
-        this.createMeshEntity = this.connection.generateFuncWrapper("editing.createMeshEntity");
-        this.createServerScriptFor = this.connection.generateFuncWrapper("scripting.createServerScriptFor");
-
-        this.notifyAboutNewObjects = this.connection.generateFuncWrapper("objectsync.notifyAboutNewObjects");
-        this.notifyAboutNewObjects(FIVES.Models.EntityRegistry.addEntityFromServer.bind(FIVES.Models.EntityRegistry));
-
-        this.notifyAboutObjectUpdates = this.connection.generateFuncWrapper("objectsync.notifyAboutObjectUpdates");
-        this.notifyAboutObjectUpdates(_objectUpdate);
-
-        this.updateEntityPosition = this.connection.generateFuncWrapper("location.updatePosition");
-        this.updateEntityOrientation = this.connection.generateFuncWrapper("location.updateOrientation");
-
-        this.updateMotion = this.connection.generateFuncWrapper("motion.update");
-
-        this.getAvatarEntityGuid = this.connection.generateFuncWrapper("avatar.getAvatarEntityGuid");
-        this.startAvatarMotionInDirection = this.connection.generateFuncWrapper("avatar.startAvatarMotionInDirection");
-        this.setAvatarForwardBackwardMotion = this.connection.generateFuncWrapper("avatar.setAvatarForwardBackwardMotion");
-        this.setAvatarLeftRightMotion = this.connection.generateFuncWrapper("avatar.setAvatarLeftRightMotion");
-        this.setAvatarSpinAroundAxis = this.connection.generateFuncWrapper("avatar.setAvatarSpinAroundAxis");
-
-        this.startServersideAnimation = this.connection.generateFuncWrapper("animation.startServersideAnimation");
-        this.stopServersideAnimation = this.connection.generateFuncWrapper("animation.stopServersideAnimation");
-
-        this.startClientsideAnimation = this.connection.generateFuncWrapper("animation.startClientsideAnimation");
-        this.stopClientsideAnimation = this.connection.generateFuncWrapper("animation.stopClientsideAnimation");
-
-        this.notifyAboutClientsideAnimationStart = this.connection.generateFuncWrapper("animation.notifyAboutClientsideAnimationStart");
-        this.notifyAboutClientsideAnimationStop = this.connection.generateFuncWrapper("animation.notifyAboutClientsideAnimationStop");
-        this.notifyAboutClientsideAnimationStart(FIVES.Plugins.Animation.startAnimationPlayback);
-        this.notifyAboutClientsideAnimationStop(FIVES.Plugins.Animation.stopAnimationPlayback);
-
-        this.listObjects().on("result", _listObjectsCallback.bind(this));
-        var getEntityGuidCall = this.getAvatarEntityGuid();
-        getEntityGuidCall.on("success", function(avatarEntityGuid) {
-           FIVES.AvatarEntityGuid = avatarEntityGuid;
-        });
-    };
-
-    c.sendEntityPositionUpdate = function(guid, position) {
-        this.updateEntityPosition(guid, position, this._generateTimestamp());
-    };
-
-    c.sendEntityOrientationUpdate = function(guid, orientation) {
-        this.updateEntityOrientation(guid, orientation, this._generateTimestamp());
     };
 
     // Expose Communicator to namespace

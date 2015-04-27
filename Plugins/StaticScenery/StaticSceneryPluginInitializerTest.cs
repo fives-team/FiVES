@@ -1,10 +1,25 @@
-﻿using System;
+﻿// This file is part of FiVES.
+//
+// FiVES is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// FiVES is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with FiVES.  If not, see <http://www.gnu.org/licenses/>.
+using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Linq;
 using System.Text;
 using NUnit.Framework;
 using FIVES;
+using FIVESServiceBus;
 
 namespace StaticSceneryPlugin
 {
@@ -14,25 +29,21 @@ namespace StaticSceneryPlugin
         StaticSceneryPluginInitializer plugin = new StaticSceneryPluginInitializer();
 
         // Global instances of FIVES Domain Model
-        private ComponentRegistry globalComponentRegistry = ComponentRegistry.Instance;
+        private IComponentRegistry globalComponentRegistry = ComponentRegistry.Instance;
         private World globalWorld = World.Instance;
-
-        // values to mock configfile
-        string SceneryURL = "/static/scenery/url.xml";
-        float OffsetX = 1.0f;
-        float OffsetY = -1.0f;
-        float OffsetZ = 2.0f;
 
         // the initializer of the test corresponds to the intializier of the plugin. Reading Config is mocked by method, as config file is not
         // read by NUnit
         [SetUp()]
         public void Init()
         {
-            World.Instance = new World();
+            ServiceBus.Instance = new ServiceBusImplementation();
+            ServiceBus.Instance.Initialize();
+
+            World.Instance.Clear();
             ComponentRegistry.Instance = new ComponentRegistry();
-            MockReadConfig();
             MockComponentRegistry();
-            plugin.Initialize();
+            plugin.CreateSceneryEntity();
         }
 
         /// <summary>
@@ -46,33 +57,19 @@ namespace StaticSceneryPlugin
         }
 
         /// <summary>
-        /// We need to mock reading the config file here, as NUnit cannot read the external app.config. That's why we simulate setting the
-        /// needed values by setting them directly from the test fixture's respective members
-        /// </summary>
-        void MockReadConfig()
-        {
-            plugin.SceneryURL = SceneryURL;
-            plugin.OffsetX = OffsetX;
-            plugin.OffsetY = OffsetY;
-            plugin.OffsetZ = OffsetZ;
-        }
-
-        /// <summary>
         /// Component Dependencies are not resolved when faced in a test fixture, so we need to manually register the components the plugin needs
         /// to access.
         /// </summary>
         void MockComponentRegistry()
         {
-            ComponentDefinition position = new ComponentDefinition("position");
-            position.AddAttribute<float>("x");
-            position.AddAttribute<float>("y");
-            position.AddAttribute<float>("z");
+            ComponentDefinition position = new ComponentDefinition("location");
+            position.AddAttribute<Vector>("position", new Vector(0, 0, 0));
 
-            ComponentDefinition meshResource = new ComponentDefinition("meshResource");
-            meshResource.AddAttribute<string>("uri");
+            ComponentDefinition mesh = new ComponentDefinition("mesh");
+            mesh.AddAttribute<string>("uri");
 
             FIVES.ComponentRegistry.Instance.Register(position);
-            FIVES.ComponentRegistry.Instance.Register(meshResource);
+            FIVES.ComponentRegistry.Instance.Register(mesh);
         }
         /// <summary>
         /// Checks if the entity for Static scenery is present in the World as specified in the Config file
@@ -82,10 +79,12 @@ namespace StaticSceneryPlugin
         {
             Assert.IsNotEmpty(FIVES.World.Instance);
             var entity = FIVES.World.Instance.ElementAt(0);
-            Assert.AreEqual(entity["position"]["x"], OffsetX);
-            Assert.AreEqual(entity["position"]["y"], OffsetY);
-            Assert.AreEqual(entity["position"]["z"], OffsetZ);
-            Assert.AreEqual(entity["meshResource"]["uri"], SceneryURL);
+
+            var pos = (Vector)entity["location"]["position"].Value;
+            Assert.AreEqual(pos.x, plugin.OffsetX);
+            Assert.AreEqual(pos.y, plugin.OffsetY);
+            Assert.AreEqual(pos.z, plugin.OffsetZ);
+            Assert.AreEqual(entity["mesh"]["uri"].Value, plugin.SceneryURL);
         }
     }
 }

@@ -1,4 +1,19 @@
-﻿using System;
+﻿// This file is part of FiVES.
+//
+// FiVES is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// FiVES is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with FiVES.  If not, see <http://www.gnu.org/licenses/>.
+
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
@@ -42,7 +57,7 @@ namespace FIVES
         /// </summary>
         /// <param name="attributeName">Name of the attribute.</param>
         /// <returns>Value of the attribute.</returns>
-        public object this[string attributeName]
+        public Attribute this[string attributeName]
         {
             get
             {
@@ -51,30 +66,21 @@ namespace FIVES
 
                 return attributes[attributeName];
             }
-            set
-            {
-                if (!Definition.ContainsAttributeDefinition(attributeName))
-                    throw new KeyNotFoundException("Attribute is not present in the component definition.");
-
-                if ((value == null && !CanBeAssignedNull(Definition[attributeName].Type))||
-                    (value != null && !Definition[attributeName].Type.IsAssignableFrom(value.GetType())))
-                    throw new AttributeAssignmentException("Attribute can not be assigned from provided value.");
-
-                var oldValue = attributes[attributeName];
-                attributes[attributeName] = value;
-
-                if (ChangedAttribute != null)
-                {
-                    if ((oldValue == null && value != null) || (oldValue != null && !oldValue.Equals(value)))
-                        ChangedAttribute(this, new ChangedAttributeEventArgs(this, attributeName, oldValue, value));
-                }
-            }
         }
 
         /// <summary>
         /// An event that is raised when any attribute of this component is changed.
         /// </summary>
         public event EventHandler<ChangedAttributeEventArgs> ChangedAttribute;
+
+        internal void raiseChangeEvent(string attributeName, object oldValue, object newValue)
+        {
+            if (ChangedAttribute != null)
+            {
+                if ((oldValue == null && newValue != null) || (oldValue != null && !oldValue.Equals(newValue)))
+                    ChangedAttribute(this, new ChangedAttributeEventArgs(this, attributeName, oldValue, newValue));
+            }
+        }
 
         internal Component(ReadOnlyComponentDefinition definition, Entity containingEntity)
         {
@@ -84,21 +90,17 @@ namespace FIVES
             InitializeAttributes();
         }
 
-        private static bool CanBeAssignedNull(Type type)
-        {
-            if (!type.IsValueType) return true; // ref-type
-            if (Nullable.GetUnderlyingType(type) != null) return true; // Nullable<T>
-            return false; // value-type
-        }
-
         private void InitializeAttributes()
         {
-            attributes = new Dictionary<string, object>();
+            attributes = new Dictionary<string, Attribute>();
             foreach (ReadOnlyAttributeDefinition attributeDefinition in Definition.AttributeDefinitions)
-                attributes.Add(attributeDefinition.Name, attributeDefinition.DefaultValue);
+            {
+                Attribute attribute = new Attribute(attributeDefinition, this);
+                attributes.Add(attributeDefinition.Name, attribute);
+            }
         }
 
-        private IDictionary<string, object> attributes { get; set; }
+        private IDictionary<string, Attribute> attributes { get; set; }
 
         // Needed by persistence plugin.
         internal Component() { }

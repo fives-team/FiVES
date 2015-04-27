@@ -1,3 +1,18 @@
+// This file is part of FiVES.
+//
+// FiVES is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// FiVES is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with FiVES.  If not, see <http://www.gnu.org/licenses/>.
+
 using System;
 using System.IO;
 using System.Reflection;
@@ -11,14 +26,13 @@ namespace FIVES
         private PluginManager pm;
         private string pathToPlugins = "TestPlugins/";
 
-        private ComponentRegistry globalComponentRegistry = ComponentRegistry.Instance;
+        private IComponentRegistry globalComponentRegistry = ComponentRegistry.Instance;
         private World globalWorld = World.Instance;
 
         [SetUp()]
         public void Init()
         {
             ComponentRegistry.Instance = new ComponentRegistry();
-            World.Instance = new World();
             pm = new PluginManager();
         }
 
@@ -50,7 +64,7 @@ namespace FIVES
         [Test()]
         public void ShouldUseWhiteList()
         {
-            pm.LoadPluginsFrom(pathToPlugins, new string[] { "Plugin1" }, null);
+            pm.LoadPluginsFrom(pathToPlugins, new string[] { "ValidPlugin1" }, null);
             Assert.IsFalse(pm.IsPathLoaded(pathToPlugins + "ValidPlugin2.dll"));
             Assert.IsTrue(pm.IsPathLoaded(pathToPlugins + "ValidPlugin1.dll"));
             Assert.IsTrue(pm.IsPluginLoaded("ValidPlugin1"));
@@ -59,7 +73,7 @@ namespace FIVES
         [Test()]
         public void ShouldUseBlackList()
         {
-            pm.LoadPluginsFrom(pathToPlugins, null, new string[] { "Plugin2" });
+            pm.LoadPluginsFrom(pathToPlugins, null, new string[] { "ValidPlugin2" });
             Assert.IsFalse(pm.IsPathLoaded(pathToPlugins + "ValidPlugin2.dll"));
             Assert.IsTrue(pm.IsPathLoaded(pathToPlugins + "ValidPlugin1.dll"));
             Assert.IsTrue(pm.IsPluginLoaded("ValidPlugin1"));

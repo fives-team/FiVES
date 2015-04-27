@@ -1,3 +1,18 @@
+// This file is part of FiVES.
+//
+// FiVES is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// FiVES is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with FiVES.  If not, see <http://www.gnu.org/licenses/>.
+
 using System;
 using System.Configuration;
 using NLog;
@@ -9,7 +24,7 @@ namespace FIVES
 {
     public class Application
     {
-        public static ApplicationController Controller = null;
+        public static ApplicationController Controller = new ApplicationController();
 
         static int Main(string[] args)
         {
@@ -38,11 +53,13 @@ namespace FIVES
 
             PluginManager.Instance.OnAnyPluginInitialized += HandlePluginInitialized;
 
-            if (Controller == null)
+            Controller.NotifyPluginsLoaded();
+
+            if (!Controller.ControlTaken)
             {
                 // Wait for 'q' key to be pressed.
-                Console.WriteLine("The server is up and running. Press 'q' to stop it...");
-                while (Console.ReadKey().KeyChar != 'q');
+                Console.WriteLine("The server is up and running. Press Enter to stop it...");
+                Console.In.ReadLine();
             }
             else
             {

@@ -11,7 +11,7 @@ define(['kiara'], function(KIARA) {
         else
             url += "/";
 
-        KIARA.Protocol.call(self, 'websocket-json');
+        KIARA.Protocol.call(self, 'fives-json');
         self.__url = url;
 
         self.__maxReconnectAttempts = 5;
@@ -226,5 +226,5 @@ define(['kiara'], function(KIARA) {
         }
     }
 
-    KIARA.registerProtocol('websocket-json', JSONWebSocket);
+    KIARA.registerProtocol('fives-json', JSONWebSocket);
 });
