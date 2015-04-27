@@ -54,20 +54,13 @@ The following directories may be generated dynamically:
     <th>Purpose</th>
   </tr>
   <tr>
-    <td>BuiltLibs</td>
+    <td>Binaries</td>
     <td>
       contains compiled plugins and protocols with all required third-party
       dependencies and debug files. New versions of plugins and protocols are
       automatically copied here and FiVES application automatically loads
       plugins and protocols from this directory. This makes edit-compile-test
       cycle easier.
-    </td>
-  </tr>
-  <tr>
-    <td>Binaries</td>
-    <td>
-      designated directory for server and client binaries, must be created
-      manually for now, but may be automated in the future
     </td>
   </tr>
   <tr>
