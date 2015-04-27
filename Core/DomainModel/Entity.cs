@@ -89,9 +89,11 @@ namespace FIVES
         /// <summary>
         /// An event that is raised when any attribute in any of the components of this entity is changed.
         /// </summary>
-        /// TODO
         public event EventHandler<ChangedAttributeEventArgs> ChangedAttribute;
 
+        /// <summary>
+        /// An event that is raised when a change to any attribute in any of the components was suggested.
+        /// </summary>
         public event EventHandler<ProposeAttributeChangeEventArgs> ProposedAttributeChange;
 
         /// <summary>

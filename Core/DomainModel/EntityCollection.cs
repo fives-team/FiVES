@@ -34,7 +34,9 @@ namespace FIVES
 
         public void Add(Entity entity)
         {
-            entities.Add(entity.Guid, entity);
+            lock(entities)
+                entities.Add(entity.Guid, entity);
+
             HandleAdded(entity);
         }
 
@@ -64,7 +66,12 @@ namespace FIVES
 
         public bool Remove(Entity item)
         {
-            if (entities.Remove(item.Guid))
+            bool didRemoveItem = false;
+
+            lock (entities)
+                didRemoveItem = entities.Remove(item.Guid);
+
+            if (didRemoveItem)
             {
                 HandleRemoved(item);
                 return true;
