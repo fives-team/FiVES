@@ -4,5 +4,5 @@
 }
 
 service motion {
-	void Update(string guid, Vector velocity, AxisAngle rotVelocity, i32 timestamp);
+	void update(string guid, Vector velocity, AxisAngle rotVelocity, i32 timestamp);
 }
