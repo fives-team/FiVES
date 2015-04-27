@@ -4,7 +4,7 @@
   "servers": [{
     "services": "*",
     "protocol": {
-      "name": "websocket-json",
+      "name": "fives-json",
       "port": 34837,
       "host": "localhost"
     }

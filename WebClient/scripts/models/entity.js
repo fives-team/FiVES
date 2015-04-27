@@ -20,19 +20,12 @@ FIVES.Models = FIVES.Models || {};
      "use strict";
 
     var Entity = function(entityDocument) {
-        // FIXME: this should assign values to correct attributes, e.g.
-        // meshResouce.meshURI should actually be assigned to mesh.uri.
-        // All uses of these properties must be updated respectively.
+
         this.xml3dView = {};
-        this.guid = entityDocument.guid;
-        this.location = entityDocument.location
-            || {position: {x:0,y:0,z:0}, orientation: {x:0,y:0,z:0,w:1}};
-
-        this.mesh = entityDocument.mesh ||
-            {uri:"",visible:true, scale: {x:1, y:1, z:1 }};
-
-        if(entityDocument.light)
-            this.light = entityDocument.light;
+        for(var componentKey in entityDocument)
+        {
+            this[componentKey] = entityDocument[componentKey];
+        }
 
         this._cachedComponentUpdates = {};
         this._attributeUpdateHandle = setInterval(this._flushUpdates.bind(this), 30);
