@@ -33,10 +33,6 @@ The following directories exist in the repository:
     <td>contains server plugins</td>
   </tr>
   <tr>
-    <td>Protocols</td>
-    <td>contains KIARA protocols</td>
-  </tr>
-  <tr>
     <td>ThirdParty</td>
     <td>contains 3rd-party libraries not available in nuGet</td>
   </tr>
