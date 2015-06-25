@@ -17,6 +17,8 @@ using FIVES;
 using System.Collections.Generic;
 using KIARA;
 using ClientManagerPlugin;
+using System.IO;
+using KIARAPlugin;
 
 namespace AuthPlugin
 {
@@ -51,9 +53,7 @@ namespace AuthPlugin
         public void Initialize ()
         {
             Authentication.Instance = new Authentication();
-            ClientManager.Instance.RegisterClientService("auth", false, new Dictionary<string, Delegate> {
-                {"login", (Func<Connection, string, string, bool>)Authentication.Instance.Authenticate}
-            });
+            RegisterService();
         }
 
         public void Shutdown()
@@ -61,6 +61,15 @@ namespace AuthPlugin
         }
 
         #endregion
+
+        private void RegisterService()
+        {
+            string authIDL = File.ReadAllText("auth.kiara");
+            KIARAServerManager.Instance.KiaraServer.AmendIDL(authIDL);
+            ClientManager.Instance.RegisterClientService("auth", false, new Dictionary<string, Delegate> {
+                {"login", (Func<Connection, string, string, bool>)Authentication.Instance.Authenticate}
+            });
+        }
     }
 }
 
