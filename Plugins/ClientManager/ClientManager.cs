@@ -12,7 +12,6 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with FiVES.  If not, see <http://www.gnu.org/licenses/>.
-using AuthPlugin;
 using FIVES;
 using KIARA;
 using KIARAPlugin;
@@ -52,10 +51,6 @@ namespace ClientManagerPlugin
             RegisterClientService("kiara", false, new Dictionary<string, Delegate>());
             RegisterClientMethod("kiara.implements", false, (Func<List<string>, List<bool>>)Implements);
             RegisterClientMethod("kiara.implements", true, (Func<List<string>, List<bool>>)AuthenticatedImplements);
-
-            RegisterClientService("auth", false, new Dictionary<string, Delegate> {
-                {"login", (Func<Connection, string, string, bool>)Authenticate}
-            });
 
             RegisterClientMethod("getTime", false, (Func<DateTime>)GetTime);
 
@@ -118,8 +113,6 @@ namespace ClientManagerPlugin
 
         bool Authenticate(Connection connection, string login, string password)
         {
-            if (!Authentication.Instance.Authenticate(connection, login, password))
-                return false;
 
             authenticatedClients.Add(connection);
             connection.Closed += HandleAuthenticatedClientDisconnected;

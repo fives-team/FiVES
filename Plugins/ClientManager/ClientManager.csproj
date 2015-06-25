@@ -82,10 +82,6 @@
       <Project>{DB1099A1-B7FE-474F-A03A-41687D6C5C76}</Project>
       <Name>PluginManager</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Auth\Auth.csproj">
-      <Project>{CCDA8021-971D-4703-A4BD-325248EF9499}</Project>
-      <Name>Auth</Name>
-    </ProjectReference>
     <ProjectReference Include="..\KIARA\KIARAPlugin.csproj">
       <Project>{d5b8e5d2-a427-4985-b885-9eac5bddab06}</Project>
       <Name>KIARAPlugin</Name>
