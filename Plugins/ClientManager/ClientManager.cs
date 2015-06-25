@@ -111,7 +111,7 @@ namespace ClientManagerPlugin
             return entityInfo;
         }
 
-        bool Authenticate(Connection connection, string login, string password)
+        public bool ReceiveAuthenticatedClient(Connection connection)
         {
 
             authenticatedClients.Add(connection);
