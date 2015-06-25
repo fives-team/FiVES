@@ -3,10 +3,6 @@
 }
 
 
-service auth {
-	boolean login(string userName, string password);
-}
-
 struct UpdateInfo {
 	string entityGuid;
 	string componentName;
