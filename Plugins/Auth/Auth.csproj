@@ -55,12 +55,23 @@
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
+    <None Include="auth.kiara">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Core\PluginManager\PluginManager.csproj">
       <Project>{DB1099A1-B7FE-474F-A03A-41687D6C5C76}</Project>
       <Name>PluginManager</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\ClientManager\ClientManager.csproj">
+      <Project>{e1955ff2-6109-4c71-9f13-486a48de6c17}</Project>
+      <Name>ClientManager</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\KIARA\KIARAPlugin.csproj">
+      <Project>{d5b8e5d2-a427-4985-b885-9eac5bddab06}</Project>
+      <Name>KIARAPlugin</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

@@ -1,4 +1,5 @@
-﻿// This file is part of FiVES.
+﻿using ClientManagerPlugin;
+// This file is part of FiVES.
 //
 // FiVES is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -36,6 +37,7 @@ namespace AuthPlugin
         {
             // Currently we just accept any login/password combinations.
             connectionToLogin[connection] = login;
+            ClientManager.Instance.ReceiveAuthenticatedClient(connection);
             return true;
         }
 

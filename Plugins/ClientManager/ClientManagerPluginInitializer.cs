@@ -38,7 +38,7 @@ namespace ClientManagerPlugin {
         {
             get
             {
-                return new List<string> {"Auth"};
+                return new List<string> ();
             }
         }
 
