@@ -37,6 +37,7 @@ namespace AuthPlugin
         {
             // Currently we just accept any login/password combinations.
             connectionToLogin[connection] = login;
+            ClientManager.Instance.ReceiveAuthenticatedClient(connection);
             return true;
         }
 
