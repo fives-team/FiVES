@@ -193,17 +193,19 @@ namespace ClientManagerPlugin
 
         private void HandleEntityAdded(object sender, EntityEventArgs e)
         {
-            foreach (ClientFunction clientHandler in onNewEntityHandlers.Values)
+            foreach (KeyValuePair<Connection, ClientFunction> clientHandler in onNewEntityHandlers)
             {
-                clientHandler(ConstructEntityInfo(e.Entity));
+                if(e.Entity.Owner != clientHandler.Key.SessionID)
+                    clientHandler.Value(ConstructEntityInfo(e.Entity));
             }
         }
 
         private void HandleEntityRemoved(object sender, EntityEventArgs e)
         {
-            foreach (ClientFunction clientHandler in onRemovedEntityHandlers.Values)
+            foreach (KeyValuePair<Connection, ClientFunction> clientHandler in onRemovedEntityHandlers)
             {
-                clientHandler(ConstructEntityInfo(e.Entity));
+                if(e.Entity.Owner != clientHandler.Key.SessionID)
+                    clientHandler.Value(e.Entity.Guid.ToString());
             }
         }
 
