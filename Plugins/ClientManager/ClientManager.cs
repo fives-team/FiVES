@@ -55,7 +55,9 @@ namespace ClientManagerPlugin
             RegisterClientMethod("getTime", false, (Func<DateTime>)GetTime);
 
             RegisterClientService("objectsync", true, new Dictionary<string, Delegate> {
-                {"listObjects", (Func<List<Dictionary<string, object>>>) ListObjects}
+                {"listObjects", (Func<List<Dictionary<string, object>>>) ListObjects},
+                {"receiveNewObjects", (Action<Connection, Dictionary<string, object>>)HandleRemoteEntityAdded},
+                {"removeObject", (Action<string>)HandleRemoteEntityRemoved}
             });
         }
 
@@ -150,6 +152,43 @@ namespace ClientManagerPlugin
             authenticatedClients.Remove(connection);
             if (ClientDisconnected != null)
                 ClientDisconnected(this, new ClientConnectionEventArgs(connection));
+        }
+
+        private void HandleRemoteEntityAdded(Connection connection, Dictionary<string, object> EntityInfo)
+        {
+            if (EntityInfo["guid"] == null
+                || EntityInfo["owner"] == null
+                || EntityInfo["owner"].Equals(World.Instance.ID.ToString())
+                || World.Instance.ContainsEntity(new Guid((string)EntityInfo["guid"]))
+                )
+                // Ignore added entity if it is either not correctly assigned to an owner, or when it was created by
+                // the same instance, or when the entity was already added in a previous update
+                return;
+
+            Entity receivedEntity
+                = new Entity(new Guid((string)EntityInfo["guid"]), connection.SessionID);
+
+            foreach (KeyValuePair<string, object> entityComponent in EntityInfo)
+            {
+                string key = entityComponent.Key;
+                if (key != "guid" && key != "owner")
+                    ApplyComponent(receivedEntity, key, (Dictionary<string, object>)entityComponent.Value);
+            }
+
+            World.Instance.Add(receivedEntity);
+        }
+
+        private void HandleRemoteEntityRemoved(string entityGuid)
+        {
+            World.Instance.Remove(World.Instance.FindEntity(entityGuid));
+        }
+
+        private void ApplyComponent(Entity entity, string componentName, Dictionary<string, object> attributes)
+        {
+            foreach (KeyValuePair<string, object> attribute in attributes)
+            {
+                entity[componentName][attribute.Key].Suggest(attribute.Value);
+            }
         }
 
         private void HandleEntityAdded(object sender, EntityEventArgs e)
