@@ -36,14 +36,14 @@ namespace ServerSyncPlugin
             doi = new EmptyDoI();
             syncID = Guid.NewGuid();
 
-            server = new KIARAServer(KIARAServerManager.Instance.ServerURI,
-                KIARAServerManager.Instance.ServerPort,
+            server = new KIARAServer(SINFONIServerManager.Instance.ServerURI,
+                SINFONIServerManager.Instance.ServerPort,
                 "/serversync/",
                 "serverSync.kiara");
 
             Configuration serverSyncConfig = ConfigurationManager.OpenExeConfiguration(this.GetType().Assembly.Location);
             int syncPort = int.Parse(serverSyncConfig.AppSettings.Settings["serverSyncPort"].Value);
-            service = server.StartService(KIARAServerManager.Instance.ServerURI, syncPort, "/", "ws", "fives-json");
+            service = server.StartService(SINFONIServerManager.Instance.ServerURI, syncPort, "/", "ws", "fives-json");
             service.OnNewClient += ServerSyncTools.ConfigureJsonSerializer;
 
             RegisterSyncIDAPI(service);

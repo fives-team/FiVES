@@ -94,8 +94,8 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="KIARAPluginInitializer.cs" />
-    <Compile Include="KIARAServerManager.cs" />
+    <Compile Include="SINFONIPluginInitializer.cs" />
+    <Compile Include="SINFONIServerManager.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

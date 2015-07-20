@@ -70,7 +70,7 @@ namespace KeyframeAnimationPlugin
         private void RegisterClientServices()
         {
             string animationIdl = File.ReadAllText("keyframeAnimation.kiara");
-            KIARAPlugin.KIARAServerManager.Instance.KiaraServer.AmendIDL(animationIdl);
+            KIARAPlugin.SINFONIServerManager.Instance.KiaraServer.AmendIDL(animationIdl);
             ClientManager.Instance.RegisterClientService("animation", false, new Dictionary<string, Delegate>
             {
                 {"startServersideAnimation",

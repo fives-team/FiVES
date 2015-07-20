@@ -65,7 +65,7 @@ namespace AuthPlugin
         private void RegisterService()
         {
             string authIDL = File.ReadAllText("auth.kiara");
-            KIARAServerManager.Instance.KiaraServer.AmendIDL(authIDL);
+            SINFONIServerManager.Instance.KiaraServer.AmendIDL(authIDL);
             ClientManager.Instance.RegisterClientService("auth", false, new Dictionary<string, Delegate> {
                 {"login", (Func<Connection, string, string, bool>)Authentication.Instance.Authenticate}
             });

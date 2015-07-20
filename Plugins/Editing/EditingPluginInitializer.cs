@@ -99,7 +99,7 @@ namespace EditingNamespace
         /// </summary>
         private void RegisterEditingAPI() {
             string idlContents = File.ReadAllText("editing.kiara");
-            KIARAPlugin.KIARAServerManager.Instance.KiaraServer.AmendIDL(idlContents);
+            KIARAPlugin.SINFONIServerManager.Instance.KiaraServer.AmendIDL(idlContents);
 
             ClientManager.Instance.RegisterClientService("editing", true, new Dictionary<string, Delegate> {
                 {"createEntityAt", (Func<Vector, string>)CreateEntityAt},

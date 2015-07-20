@@ -22,7 +22,7 @@ using System.Threading.Tasks;
 
 namespace KIARAPlugin
 {
-    public class KIARAPluginInitializer : IPluginInitializer
+    public class SINFONIPluginInitializer : IPluginInitializer
     {
         public string Name
         {
@@ -41,12 +41,12 @@ namespace KIARAPlugin
 
         public void Initialize()
         {
-            KIARAServerManager.Instance = new KIARAServerManager();
+            SINFONIServerManager.Instance = new SINFONIServerManager();
         }
 
         public void Shutdown()
         {
-            KIARAServerManager.Instance.KiaraServer.ShutDown();
+            SINFONIServerManager.Instance.KiaraServer.ShutDown();
         }
     }
 }

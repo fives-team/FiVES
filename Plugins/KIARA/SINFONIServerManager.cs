@@ -25,9 +25,9 @@ using System.Xml;
 
 namespace KIARAPlugin
 {
-    public class KIARAServerManager
+    public class SINFONIServerManager
     {
-        public static KIARAServerManager Instance;
+        public static SINFONIServerManager Instance;
 
         public string ServerURI { get; private set; }
         public string ServerPath { get; private set; }
@@ -37,7 +37,7 @@ namespace KIARAPlugin
         public int ServicePort { get; private set; }
         public SINFONIServer KiaraServer { get; private set; }
         public ServiceImplementation KiaraService { get; private set; }
-        public KIARAServerManager()
+        public SINFONIServerManager()
         {
             ReadConfig();
             RegisterModules();
