@@ -33,12 +33,12 @@ namespace ClientManagerPlugin
 
         public ClientManager()
         {
-            InitializeKIARA();
+            InitializeSINFONI();
             RegisterClientServices();
             RegisterEventHandlers();
         }
 
-        private void InitializeKIARA()
+        private void InitializeSINFONI()
         {
             clientService = SINFONIServerManager.Instance.SinfoniService;
 

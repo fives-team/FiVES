@@ -57,7 +57,7 @@ namespace AvatarPlugin
         {
             RegisterComponent();
             RegisterEvents();
-            RegisterKiaraService();
+            RegisterSinfoniService();
         }
 
         public void Shutdown()
@@ -71,9 +71,9 @@ namespace AvatarPlugin
             ComponentRegistry.Instance.Register(avatar);
         }
 
-        void RegisterKiaraService()
+        void RegisterSinfoniService()
         {
-            AmendKiaraServiceIdl();
+            AmendSinfoniServiceIdl();
             ClientManager.Instance.RegisterClientService("avatar", true, new Dictionary<string, Delegate> {
                 {"getAvatarEntityGuid", (Func<Connection, string>)GetAvatarEntityGuid},
                 {"changeAppearance", (Action<Connection, string, Vector>)ChangeAppearance},
@@ -84,7 +84,7 @@ namespace AvatarPlugin
             });
         }
 
-        void AmendKiaraServiceIdl()
+        void AmendSinfoniServiceIdl()
         {
             var idlContent = File.ReadAllText("avatar.kiara");
             SINFONIServerManager.Instance.SinfoniServer.AmendIDL(idlContent);
