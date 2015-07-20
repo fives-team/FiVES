@@ -38,7 +38,7 @@ namespace ServerSyncPlugin
         }
 
         /// <summary>
-        /// KIARA connection to the remote server.
+        /// SINFONI connection to the remote server.
         /// </summary>
         public Connection Connection
         {

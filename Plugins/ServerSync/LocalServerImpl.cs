@@ -54,7 +54,7 @@ namespace ServerSyncPlugin
             server.ShutDown();
         }
         /// <summary>
-        /// KIARA service on the local service.
+        /// SINFONI service on the local service.
         /// </summary>
         public ServiceImplementation Service
         {

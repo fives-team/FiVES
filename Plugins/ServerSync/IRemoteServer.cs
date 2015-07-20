@@ -24,7 +24,7 @@ namespace ServerSyncPlugin
     public interface IRemoteServer
     {
         /// <summary>
-        /// KIARA connection to the remote server.
+        /// SINFONI connection to the remote server.
         /// </summary>
         Connection Connection { get; }
 
