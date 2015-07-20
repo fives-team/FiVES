@@ -15,10 +15,10 @@
 using System;
 using FIVES;
 using System.Collections.Generic;
-using KIARA;
 using ClientManagerPlugin;
 using System.IO;
 using KIARAPlugin;
+using SINFONI;
 
 namespace AuthPlugin
 {

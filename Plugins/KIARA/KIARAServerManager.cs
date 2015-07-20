@@ -14,9 +14,9 @@
 // along with FiVES.  If not, see <http://www.gnu.org/licenses/>.
 
 using FiVESJson;
-using KIARA;
-using KIARA.Protocols.JsonRPC;
-using KIARA.Transport.WebSocketTransport;
+using SINFONI;
+using SINFONI.Protocols.JsonRPC;
+using SINFONI.Transport.WebSocketTransport;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -35,7 +35,7 @@ namespace KIARAPlugin
         public string ServiceTransport { get; private set; }
         public string ServiceProtocol { get; private set; }
         public int ServicePort { get; private set; }
-        public KIARAServer KiaraServer { get; private set; }
+        public SINFONIServer KiaraServer { get; private set; }
         public ServiceImplementation KiaraService { get; private set; }
         public KIARAServerManager()
         {
@@ -76,14 +76,14 @@ namespace KIARAPlugin
             var JsonRPCProtocol = new JsonRpcProtocol();
             var FiVESJsonProtocol = new FiVESJsonProtocol();
             var WebsocketTransport = new WebSocketTransport();
-            KIARA.ProtocolRegistry.Instance.RegisterProtocol(JsonRPCProtocol);
-            KIARA.ProtocolRegistry.Instance.RegisterProtocol(FiVESJsonProtocol);
-            KIARA.TransportRegistry.Instance.RegisterTransport(WebsocketTransport);
+            SINFONI.ProtocolRegistry.Instance.RegisterProtocol(JsonRPCProtocol);
+            SINFONI.ProtocolRegistry.Instance.RegisterProtocol(FiVESJsonProtocol);
+            SINFONI.TransportRegistry.Instance.RegisterTransport(WebsocketTransport);
         }
 
         private void StartKiaraServer()
         {
-            KiaraServer = new KIARAServer(ServerURI, ServerPort, ServerPath, "fives.kiara");
+            KiaraServer = new SINFONIServer(ServerURI, ServerPort, ServerPath, "fives.kiara");
             KiaraService = KiaraServer.StartService(ServerURI, ServicePort, "/service/", ServiceTransport, ServiceProtocol);
         }
     }

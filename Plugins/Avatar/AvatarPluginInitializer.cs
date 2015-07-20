@@ -17,7 +17,7 @@ using FIVES;
 using System.Collections.Generic;
 using AuthPlugin;
 using ClientManagerPlugin;
-using KIARA;
+using SINFONI;
 using System.Net;
 using System.Reflection;
 using System.IO;

@@ -18,7 +18,7 @@ using FIVES;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Collections.Concurrent;
-using KIARA;
+using SINFONI;
 
 namespace ClientManagerPlugin
 {

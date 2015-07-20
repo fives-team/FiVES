@@ -1,4 +1,18 @@
-﻿using KIARA;
+﻿// This file is part of FiVES.
+//
+// FiVES is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// FiVES is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with FiVES.  If not, see <http://www.gnu.org/licenses/>.
+using SINFONI;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -73,9 +87,9 @@ namespace FIVES
             if (value == null || value.GetType() == this.Type)
                 return value;
 
-            if (World.Instance.Ktd != null && World.Instance.Ktd.ContainsType(this.Type.Name))
+            if (World.Instance.SinTd != null && World.Instance.SinTd.ContainsType(this.Type.Name))
             {
-                KtdType typeAsKtdType = World.Instance.Ktd.GetKtdType(this.Type.Name);
+                SinTDType typeAsKtdType = World.Instance.SinTd.GetSinTDType(this.Type.Name);
                 return typeAsKtdType.AssignValuesToNativeType(value, this.Type);
             }
 
@@ -84,9 +98,9 @@ namespace FIVES
 
         public T As<T>()
         {
-            if (!CurrentValue.GetType().IsAssignableFrom(typeof(T)) && World.Instance.Ktd.ContainsType(Type.Name))
+            if (!CurrentValue.GetType().IsAssignableFrom(typeof(T)) && World.Instance.SinTd.ContainsType(Type.Name))
             {
-                KtdType typeAsKtdType = World.Instance.Ktd.GetKtdType(Type.Name);
+                SinTDType typeAsKtdType = World.Instance.SinTd.GetSinTDType(Type.Name);
                 Type t = typeof(T);
                 return (T)typeAsKtdType.AssignValuesToNativeType(Value, t);
             }
