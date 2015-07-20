@@ -20,7 +20,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace KIARAPlugin
+namespace SINFONIPlugin
 {
     public class SINFONIPluginInitializer : IPluginInitializer
     {
@@ -46,7 +46,7 @@ namespace KIARAPlugin
 
         public void Shutdown()
         {
-            SINFONIServerManager.Instance.KiaraServer.ShutDown();
+            SINFONIServerManager.Instance.SinfoniServer.ShutDown();
         }
     }
 }

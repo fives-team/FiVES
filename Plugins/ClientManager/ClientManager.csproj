@@ -81,7 +81,7 @@
       <Project>{DB1099A1-B7FE-474F-A03A-41687D6C5C76}</Project>
       <Name>PluginManager</Name>
     </ProjectReference>
-    <ProjectReference Include="..\KIARA\SINFONIPlugin.csproj">
+    <ProjectReference Include="..\SINFONI\SINFONIPlugin.csproj">
       <Project>{d5b8e5d2-a427-4985-b885-9eac5bddab06}</Project>
       <Name>SINFONIPlugin</Name>
     </ProjectReference>

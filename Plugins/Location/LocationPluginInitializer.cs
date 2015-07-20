@@ -75,7 +75,7 @@ namespace LocationPlugin
         void RegisterClientServices()
         {
             string locationIdl = File.ReadAllText("location.kiara");
-            KIARAPlugin.SINFONIServerManager.Instance.KiaraServer.AmendIDL(locationIdl);
+            SINFONIPlugin.SINFONIServerManager.Instance.SinfoniServer.AmendIDL(locationIdl);
             ClientManager.Instance.RegisterClientService("location", true, new Dictionary<string, Delegate> {
                 {"updatePosition", (Action<string, Vector, int>) UpdatePosition},
                 {"updateOrientation", (Action<string, Quat, int>) UpdateOrientation}

@@ -23,7 +23,7 @@ using System.Linq;
 using System.Text;
 using System.Xml;
 
-namespace KIARAPlugin
+namespace SINFONIPlugin
 {
     public class SINFONIServerManager
     {
@@ -35,13 +35,13 @@ namespace KIARAPlugin
         public string ServiceTransport { get; private set; }
         public string ServiceProtocol { get; private set; }
         public int ServicePort { get; private set; }
-        public SINFONIServer KiaraServer { get; private set; }
-        public ServiceImplementation KiaraService { get; private set; }
+        public SINFONIServer SinfoniServer { get; private set; }
+        public ServiceImplementation SinfoniService { get; private set; }
         public SINFONIServerManager()
         {
             ReadConfig();
             RegisterModules();
-            StartKiaraServer();
+            StartSinfoniServer();
         }
 
         private void ReadConfig()
@@ -81,10 +81,10 @@ namespace KIARAPlugin
             SINFONI.TransportRegistry.Instance.RegisterTransport(WebsocketTransport);
         }
 
-        private void StartKiaraServer()
+        private void StartSinfoniServer()
         {
-            KiaraServer = new SINFONIServer(ServerURI, ServerPort, ServerPath, "fives.kiara");
-            KiaraService = KiaraServer.StartService(ServerURI, ServicePort, "/service/", ServiceTransport, ServiceProtocol);
+            SinfoniServer = new SINFONIServer(ServerURI, ServerPort, ServerPath, "fives.kiara");
+            SinfoniService = SinfoniServer.StartService(ServerURI, ServicePort, "/service/", ServiceTransport, ServiceProtocol);
         }
     }
 }

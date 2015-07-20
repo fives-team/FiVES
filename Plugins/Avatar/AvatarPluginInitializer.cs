@@ -21,7 +21,7 @@ using SINFONI;
 using System.Net;
 using System.Reflection;
 using System.IO;
-using KIARAPlugin;
+using SINFONIPlugin;
 
 namespace AvatarPlugin
 {
@@ -41,7 +41,7 @@ namespace AvatarPlugin
         {
             get
             {
-                return new List<string> { "KIARA", "ClientManager", "Auth"};
+                return new List<string> { "SINFONI", "ClientManager", "Auth"};
             }
         }
 

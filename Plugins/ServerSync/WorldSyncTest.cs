@@ -17,7 +17,7 @@ using NUnit.Framework;
 using FIVES;
 using Moq;
 using System.Collections.Generic;
-using KIARA;
+using SINFONI;
 using FIVESServiceBus;
 
 namespace ServerSyncPlugin

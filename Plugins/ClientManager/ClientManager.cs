@@ -14,7 +14,7 @@
 // along with FiVES.  If not, see <http://www.gnu.org/licenses/>.
 using FIVES;
 using SINFONI;
-using KIARAPlugin;
+using SINFONIPlugin;
 using System;
 using System.Collections.Generic;
 using System.IO;

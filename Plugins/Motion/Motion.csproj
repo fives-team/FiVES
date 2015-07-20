@@ -84,7 +84,7 @@
       <Project>{6cd0fe0e-7d56-4e24-8568-625a13c37130}</Project>
       <Name>EventLoop</Name>
     </ProjectReference>
-    <ProjectReference Include="..\KIARA\SINFONIPlugin.csproj">
+    <ProjectReference Include="..\SINFONI\SINFONIPlugin.csproj">
       <Project>{d5b8e5d2-a427-4985-b885-9eac5bddab06}</Project>
       <Name>SINFONIPlugin</Name>
     </ProjectReference>

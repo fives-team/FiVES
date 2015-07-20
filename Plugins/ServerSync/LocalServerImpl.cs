@@ -12,11 +12,11 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with FiVES.  If not, see <http://www.gnu.org/licenses/>.
-using KIARA;
+using SINFONI;
 using System;
 using System.IO;
 using Newtonsoft.Json;
-using KIARAPlugin;
+using SINFONIPlugin;
 using System.Xml;
 using System.Configuration;
 
@@ -36,7 +36,7 @@ namespace ServerSyncPlugin
             doi = new EmptyDoI();
             syncID = Guid.NewGuid();
 
-            server = new KIARAServer(SINFONIServerManager.Instance.ServerURI,
+            server = new SINFONIServer(SINFONIServerManager.Instance.ServerURI,
                 SINFONIServerManager.Instance.ServerPort,
                 "/serversync/",
                 "serverSync.kiara");
@@ -151,7 +151,7 @@ namespace ServerSyncPlugin
             return syncID;
         }
 
-        KIARAServer server;
+        SINFONIServer server;
         ServiceImplementation service;
         IDomainOfResponsibility dor;
         IDomainOfInterest doi;

@@ -93,7 +93,7 @@ namespace MotionPlugin
         void RegisterClientServices()
         {
             string motionIdl = File.ReadAllText("motion.kiara");
-            KIARAPlugin.SINFONIServerManager.Instance.KiaraServer.AmendIDL(motionIdl);
+            SINFONIPlugin.SINFONIServerManager.Instance.SinfoniServer.AmendIDL(motionIdl);
             ClientManager.Instance.RegisterClientService("motion", true, new Dictionary<string, Delegate> {
                 {"update", (Action<string, Vector, AxisAngle, int>) Update}
             });

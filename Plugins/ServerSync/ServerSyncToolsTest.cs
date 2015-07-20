@@ -12,7 +12,7 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with FiVES.  If not, see <http://www.gnu.org/licenses/>.
-using KIARA;
+using SINFONI;
 using Moq;
 using Newtonsoft.Json;
 using NUnit.Framework;

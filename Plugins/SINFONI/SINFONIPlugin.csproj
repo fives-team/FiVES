@@ -7,8 +7,8 @@
     <ProjectGuid>{D5B8E5D2-A427-4985-B885-9EAC5BDDAB06}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>KIARAPlugin</RootNamespace>
-    <AssemblyName>KIARAPlugin</AssemblyName>
+    <RootNamespace>SINFONIPlugin</RootNamespace>
+    <AssemblyName>SINFONIPlugin</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />

@@ -20,7 +20,7 @@ using FIVES;
 namespace ClientManagerPlugin {
 
     /// <summary>
-    /// Implements a plugin that can be used to communicate with clients using KIARA.
+    /// Implements a plugin that can be used to communicate with clients using SINFONI.
     /// </summary>
     public class ClientManagerPluginInitializer : IPluginInitializer
     {
@@ -38,7 +38,7 @@ namespace ClientManagerPlugin {
         {
             get
             {
-                return new List<string> ();
+                return new List<string> {"SINFONI"};
             }
         }
 

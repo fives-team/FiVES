@@ -21,7 +21,7 @@ using ClientManagerPlugin;
 using FIVES;
 using FIVESServiceBus;
 using System.IO;
-using KIARAPlugin;
+using SINFONIPlugin;
 
 namespace AvatarCollisionPlugin
 {
@@ -42,7 +42,7 @@ namespace AvatarCollisionPlugin
 
         public List<string> PluginDependencies
         {
-            get { return new List<string> {"KIARA"}; }
+            get { return new List<string> {"SINFONI"}; }
         }
 
         public List<string> ComponentDependencies

@@ -33,7 +33,7 @@ namespace WebTests
             server1 = new FIVESServerInstance();
             server1.ConfigureServerSyncPorts(43745, new int[] {});
             server1.ConfigureClientManagerPorts(34837);
-            server1.ConfigurePluginsAndProtocols(new string[] { "Auth", "Avatar", "ClientManager", "KIARA", "Location",
+            server1.ConfigurePluginsAndProtocols(new string[] { "Auth", "Avatar", "ClientManager", "SINFONI", "Location",
                 "Motion", "Testing", "Renderable", "EventLoop", "Editing", "ServerSync", "ConfigScalability",
                 "Scalability", "KeyframeAnimation" }, new string[] { "WebSocketJSON" });
             server1.Start();
@@ -41,7 +41,7 @@ namespace WebTests
             server2 = new FIVESServerInstance();
             server2.ConfigureServerSyncPorts(43746, new int[] { 43745 });
             server2.ConfigureClientManagerPorts(34839);
-            server2.ConfigurePluginsAndProtocols(new string[] { "Auth", "Avatar", "ClientManager", "KIARA", "Location",
+            server2.ConfigurePluginsAndProtocols(new string[] { "Auth", "Avatar", "ClientManager", "SINFONI", "Location",
                 "Testing", "Renderable", "EventLoop", "Editing", "ServerSync", "ConfigScalability",
                 "Scalability", "KeyframeAnimation" }, new string[] { "WebSocketJSON" });
             server2.Start();
