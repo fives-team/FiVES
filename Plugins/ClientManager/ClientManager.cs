@@ -40,10 +40,10 @@ namespace ClientManagerPlugin
 
         private void InitializeKIARA()
         {
-            clientService = SINFONIServerManager.Instance.KiaraService;
+            clientService = SINFONIServerManager.Instance.SinfoniService;
 
             string clientManagerIDL = File.ReadAllText("clientManager.kiara");
-            KIARAPlugin.SINFONIServerManager.Instance.KiaraServer.AmendIDL(clientManagerIDL);
+            SINFONIPlugin.SINFONIServerManager.Instance.SinfoniServer.AmendIDL(clientManagerIDL);
         }
 
         private void RegisterClientServices()

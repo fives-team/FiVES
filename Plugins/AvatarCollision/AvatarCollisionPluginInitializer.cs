@@ -75,7 +75,7 @@ namespace AvatarCollisionPlugin
         private void RegisterService()
         {
             string idlContents = File.ReadAllText("avatarCollision.kiara");
-            SINFONIServerManager.Instance.KiaraServer.AmendIDL(idlContents);
+            SINFONIServerManager.Instance.SinfoniServer.AmendIDL(idlContents);
             ClientManager.Instance.RegisterClientService("avatarCollision", false, new Dictionary<string, Delegate>
             {
                 {"setGroundlevel", (Action<string, float>)SetGroundlevel}

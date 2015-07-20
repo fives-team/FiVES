@@ -87,7 +87,7 @@ namespace AvatarPlugin
         void AmendKiaraServiceIdl()
         {
             var idlContent = File.ReadAllText("avatar.kiara");
-            SINFONIServerManager.Instance.KiaraServer.AmendIDL(idlContent);
+            SINFONIServerManager.Instance.SinfoniServer.AmendIDL(idlContent);
         }
 
         void RegisterEvents()
