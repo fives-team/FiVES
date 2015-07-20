@@ -74,7 +74,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{32339A
 		.nuget\packages.config = .nuget\packages.config
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KIARAPlugin", "Plugins\KIARA\KIARAPlugin.csproj", "{D5B8E5D2-A427-4985-B885-9EAC5BDDAB06}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SINFONIPlugin", "Plugins\KIARA\SINFONIPlugin.csproj", "{D5B8E5D2-A427-4985-B885-9EAC5BDDAB06}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Light", "Plugins\Light\Light.csproj", "{54CAE0FA-90C2-4AA0-B008-25F0A5218300}"
 EndProject

@@ -115,9 +115,9 @@
       <Project>{6c4c01e3-2f44-462f-bf63-a9d5d288c662}</Project>
       <Name>ServiceBus</Name>
     </ProjectReference>
-    <ProjectReference Include="..\KIARA\KIARAPlugin.csproj">
+    <ProjectReference Include="..\KIARA\SINFONIPlugin.csproj">
       <Project>{d5b8e5d2-a427-4985-b885-9eac5bddab06}</Project>
-      <Name>KIARAPlugin</Name>
+      <Name>SINFONIPlugin</Name>
     </ProjectReference>
     <ProjectReference Include="..\Terminal\Terminal.csproj">
       <Project>{fdf2de99-68cf-4947-952c-2d2bcc846f3e}</Project>

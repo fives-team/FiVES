@@ -26,7 +26,7 @@ namespace KIARAPlugin
     {
         public string Name
         {
-            get { return "KIARA"; }
+            get { return "SINFONI"; }
         }
 
         public List<string> PluginDependencies

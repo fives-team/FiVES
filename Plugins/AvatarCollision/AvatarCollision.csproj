@@ -73,9 +73,9 @@
       <Project>{e1955ff2-6109-4c71-9f13-486a48de6c17}</Project>
       <Name>ClientManager</Name>
     </ProjectReference>
-    <ProjectReference Include="..\KIARA\KIARAPlugin.csproj">
+    <ProjectReference Include="..\KIARA\SINFONIPlugin.csproj">
       <Project>{d5b8e5d2-a427-4985-b885-9eac5bddab06}</Project>
-      <Name>KIARAPlugin</Name>
+      <Name>SINFONIPlugin</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
