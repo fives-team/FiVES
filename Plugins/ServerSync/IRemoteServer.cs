@@ -13,7 +13,7 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with FiVES.  If not, see <http://www.gnu.org/licenses/>.
-using KIARA;
+using SINFONI;
 using System;
 
 namespace ServerSyncPlugin
@@ -24,7 +24,7 @@ namespace ServerSyncPlugin
     public interface IRemoteServer
     {
         /// <summary>
-        /// KIARA connection to the remote server.
+        /// SINFONI connection to the remote server.
         /// </summary>
         Connection Connection { get; }
 

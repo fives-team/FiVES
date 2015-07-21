@@ -33,9 +33,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="KIARA, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="SINFONI, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\ThirdParty\KIARA\KIARA.dll</HintPath>
+      <HintPath>..\..\ThirdParty\SINFONI\SINFONI.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -72,9 +72,9 @@
       <Project>{6CD0FE0E-7D56-4E24-8568-625A13C37130}</Project>
       <Name>EventLoop</Name>
     </ProjectReference>
-    <ProjectReference Include="..\KIARA\KIARAPlugin.csproj">
+    <ProjectReference Include="..\SINFONI\SINFONIPlugin.csproj">
       <Project>{d5b8e5d2-a427-4985-b885-9eac5bddab06}</Project>
-      <Name>KIARAPlugin</Name>
+      <Name>SINFONIPlugin</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

@@ -19,8 +19,8 @@ using System.Text;
 using System.Threading.Tasks;
 using ClientManagerPlugin;
 using FIVES;
-using KIARA;
 using System.IO;
+using SINFONI;
 
 namespace KeyframeAnimationPlugin
 {
@@ -70,7 +70,7 @@ namespace KeyframeAnimationPlugin
         private void RegisterClientServices()
         {
             string animationIdl = File.ReadAllText("keyframeAnimation.kiara");
-            KIARAPlugin.KIARAServerManager.Instance.KiaraServer.AmendIDL(animationIdl);
+            SINFONIPlugin.SINFONIServerManager.Instance.SinfoniServer.AmendIDL(animationIdl);
             ClientManager.Instance.RegisterClientService("animation", false, new Dictionary<string, Delegate>
             {
                 {"startServersideAnimation",
@@ -85,7 +85,7 @@ namespace KeyframeAnimationPlugin
         }
 
         /// <summary>
-        /// KIARA Service method handler that initiates a server side animation playback for an entity
+        /// SINFONI Service method handler that initiates a server side animation playback for an entity
         /// </summary>
         /// <param name="entityGuid">Guid of entity for which animation should be played</param>
         /// <param name="name">Name of animation that should be played</param>

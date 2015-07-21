@@ -17,11 +17,11 @@ using FIVES;
 using System.Collections.Generic;
 using AuthPlugin;
 using ClientManagerPlugin;
-using KIARA;
+using SINFONI;
 using System.Net;
 using System.Reflection;
 using System.IO;
-using KIARAPlugin;
+using SINFONIPlugin;
 
 namespace AvatarPlugin
 {
@@ -41,7 +41,7 @@ namespace AvatarPlugin
         {
             get
             {
-                return new List<string> { "KIARA", "ClientManager", "Auth"};
+                return new List<string> { "SINFONI", "ClientManager", "Auth"};
             }
         }
 
@@ -57,7 +57,7 @@ namespace AvatarPlugin
         {
             RegisterComponent();
             RegisterEvents();
-            RegisterKiaraService();
+            RegisterSinfoniService();
         }
 
         public void Shutdown()
@@ -71,9 +71,9 @@ namespace AvatarPlugin
             ComponentRegistry.Instance.Register(avatar);
         }
 
-        void RegisterKiaraService()
+        void RegisterSinfoniService()
         {
-            AmendKiaraServiceIdl();
+            AmendSinfoniServiceIdl();
             ClientManager.Instance.RegisterClientService("avatar", true, new Dictionary<string, Delegate> {
                 {"getAvatarEntityGuid", (Func<Connection, string>)GetAvatarEntityGuid},
                 {"changeAppearance", (Action<Connection, string, Vector>)ChangeAppearance},
@@ -84,10 +84,10 @@ namespace AvatarPlugin
             });
         }
 
-        void AmendKiaraServiceIdl()
+        void AmendSinfoniServiceIdl()
         {
             var idlContent = File.ReadAllText("avatar.kiara");
-            KIARAServerManager.Instance.KiaraServer.AmendIDL(idlContent);
+            SINFONIServerManager.Instance.SinfoniServer.AmendIDL(idlContent);
         }
 
         void RegisterEvents()

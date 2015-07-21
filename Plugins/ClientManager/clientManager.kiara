@@ -14,7 +14,7 @@ service objectsync {
 	array<map<string, any>> listObjects();
 
 	/* * TODO: These service functions are implemented in terms of push messages
-	// to invoke a RPC from server to client. The current implementation of KIARA does
+	// to invoke a RPC from server to client. The current implementation of SINFONI does
 	// not consider or parse push annotations yet. As soon as the push message feature
 	// is fully implemented, these functions should be annotated accordingly
 	*/

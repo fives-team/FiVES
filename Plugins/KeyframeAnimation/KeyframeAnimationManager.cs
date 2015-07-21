@@ -163,7 +163,7 @@ namespace KeyframeAnimationPlugin
         }
 
         /// <summary>
-        /// KIARA Service method handler that initiates a server side animation playback for an entity
+        /// SINFONI Service method handler that initiates a server side animation playback for an entity
         /// </summary>
         /// <param name="entityGuid">Guid of entity for which animation should be played</param>
         /// <param name="name">Name of animation that should be played</param>

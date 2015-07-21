@@ -13,8 +13,8 @@
 // You should have received a copy of the GNU General Public License
 // along with FiVES.  If not, see <http://www.gnu.org/licenses/>.
 using FIVES;
-using KIARA;
-using KIARAPlugin;
+using SINFONI;
+using SINFONIPlugin;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -33,17 +33,17 @@ namespace ClientManagerPlugin
 
         public ClientManager()
         {
-            InitializeKIARA();
+            InitializeSINFONI();
             RegisterClientServices();
             RegisterEventHandlers();
         }
 
-        private void InitializeKIARA()
+        private void InitializeSINFONI()
         {
-            clientService = KIARAServerManager.Instance.KiaraService;
+            clientService = SINFONIServerManager.Instance.SinfoniService;
 
             string clientManagerIDL = File.ReadAllText("clientManager.kiara");
-            KIARAPlugin.KIARAServerManager.Instance.KiaraServer.AmendIDL(clientManagerIDL);
+            SINFONIPlugin.SINFONIServerManager.Instance.SinfoniServer.AmendIDL(clientManagerIDL);
         }
 
         private void RegisterClientServices()

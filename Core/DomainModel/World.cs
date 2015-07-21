@@ -13,7 +13,7 @@
 // You should have received a copy of the GNU General Public License
 // along with FiVES.  If not, see <http://www.gnu.org/licenses/>.
 
-using KIARA;
+using SINFONI;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -30,7 +30,7 @@ namespace FIVES
     public sealed class World : EntityCollection
     {
         public Guid ID { get; private set; }
-        public KTD Ktd { get; internal set; }
+        public SinTD SinTd { get; internal set; }
 
         internal World()
         {

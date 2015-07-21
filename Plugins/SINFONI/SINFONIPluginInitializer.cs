@@ -20,13 +20,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace KIARAPlugin
+namespace SINFONIPlugin
 {
-    public class KIARAPluginInitializer : IPluginInitializer
+    public class SINFONIPluginInitializer : IPluginInitializer
     {
         public string Name
         {
-            get { return "KIARA"; }
+            get { return "SINFONI"; }
         }
 
         public List<string> PluginDependencies
@@ -41,12 +41,12 @@ namespace KIARAPlugin
 
         public void Initialize()
         {
-            KIARAServerManager.Instance = new KIARAServerManager();
+            SINFONIServerManager.Instance = new SINFONIServerManager();
         }
 
         public void Shutdown()
         {
-            KIARAServerManager.Instance.KiaraServer.ShutDown();
+            SINFONIServerManager.Instance.SinfoniServer.ShutDown();
         }
     }
 }

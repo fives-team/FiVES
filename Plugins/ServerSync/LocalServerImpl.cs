@@ -12,11 +12,11 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with FiVES.  If not, see <http://www.gnu.org/licenses/>.
-using KIARA;
+using SINFONI;
 using System;
 using System.IO;
 using Newtonsoft.Json;
-using KIARAPlugin;
+using SINFONIPlugin;
 using System.Xml;
 using System.Configuration;
 
@@ -36,14 +36,14 @@ namespace ServerSyncPlugin
             doi = new EmptyDoI();
             syncID = Guid.NewGuid();
 
-            server = new KIARAServer(KIARAServerManager.Instance.ServerURI,
-                KIARAServerManager.Instance.ServerPort,
+            server = new SINFONIServer(SINFONIServerManager.Instance.ServerURI,
+                SINFONIServerManager.Instance.ServerPort,
                 "/serversync/",
                 "serverSync.kiara");
 
             Configuration serverSyncConfig = ConfigurationManager.OpenExeConfiguration(this.GetType().Assembly.Location);
             int syncPort = int.Parse(serverSyncConfig.AppSettings.Settings["serverSyncPort"].Value);
-            service = server.StartService(KIARAServerManager.Instance.ServerURI, syncPort, "/", "ws", "fives-json");
+            service = server.StartService(SINFONIServerManager.Instance.ServerURI, syncPort, "/", "ws", "fives-json");
             service.OnNewClient += ServerSyncTools.ConfigureJsonSerializer;
 
             RegisterSyncIDAPI(service);
@@ -54,7 +54,7 @@ namespace ServerSyncPlugin
             server.ShutDown();
         }
         /// <summary>
-        /// KIARA service on the local service.
+        /// SINFONI service on the local service.
         /// </summary>
         public ServiceImplementation Service
         {
@@ -151,7 +151,7 @@ namespace ServerSyncPlugin
             return syncID;
         }
 
-        KIARAServer server;
+        SINFONIServer server;
         ServiceImplementation service;
         IDomainOfResponsibility dor;
         IDomainOfInterest doi;

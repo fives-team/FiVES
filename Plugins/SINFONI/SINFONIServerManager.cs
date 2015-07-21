@@ -14,20 +14,20 @@
 // along with FiVES.  If not, see <http://www.gnu.org/licenses/>.
 
 using FiVESJson;
-using KIARA;
-using KIARA.Protocols.JsonRPC;
-using KIARA.Transport.WebSocketTransport;
+using SINFONI;
+using SINFONI.Protocols.JsonRPC;
+using SINFONI.Transport.WebSocketTransport;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Xml;
 
-namespace KIARAPlugin
+namespace SINFONIPlugin
 {
-    public class KIARAServerManager
+    public class SINFONIServerManager
     {
-        public static KIARAServerManager Instance;
+        public static SINFONIServerManager Instance;
 
         public string ServerURI { get; private set; }
         public string ServerPath { get; private set; }
@@ -35,13 +35,13 @@ namespace KIARAPlugin
         public string ServiceTransport { get; private set; }
         public string ServiceProtocol { get; private set; }
         public int ServicePort { get; private set; }
-        public KIARAServer KiaraServer { get; private set; }
-        public ServiceImplementation KiaraService { get; private set; }
-        public KIARAServerManager()
+        public SINFONIServer SinfoniServer { get; private set; }
+        public ServiceImplementation SinfoniService { get; private set; }
+        public SINFONIServerManager()
         {
             ReadConfig();
             RegisterModules();
-            StartKiaraServer();
+            StartSinfoniServer();
         }
 
         private void ReadConfig()
@@ -76,15 +76,15 @@ namespace KIARAPlugin
             var JsonRPCProtocol = new JsonRpcProtocol();
             var FiVESJsonProtocol = new FiVESJsonProtocol();
             var WebsocketTransport = new WebSocketTransport();
-            KIARA.ProtocolRegistry.Instance.RegisterProtocol(JsonRPCProtocol);
-            KIARA.ProtocolRegistry.Instance.RegisterProtocol(FiVESJsonProtocol);
-            KIARA.TransportRegistry.Instance.RegisterTransport(WebsocketTransport);
+            SINFONI.ProtocolRegistry.Instance.RegisterProtocol(JsonRPCProtocol);
+            SINFONI.ProtocolRegistry.Instance.RegisterProtocol(FiVESJsonProtocol);
+            SINFONI.TransportRegistry.Instance.RegisterTransport(WebsocketTransport);
         }
 
-        private void StartKiaraServer()
+        private void StartSinfoniServer()
         {
-            KiaraServer = new KIARAServer(ServerURI, ServerPort, ServerPath, "fives.kiara");
-            KiaraService = KiaraServer.StartService(ServerURI, ServicePort, "/service/", ServiceTransport, ServiceProtocol);
+            SinfoniServer = new SINFONIServer(ServerURI, ServerPort, ServerPath, "fives.kiara");
+            SinfoniService = SinfoniServer.StartService(ServerURI, ServicePort, "/service/", ServiceTransport, ServiceProtocol);
         }
     }
 }
