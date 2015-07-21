@@ -69,6 +69,8 @@ The following directories may be generated dynamically:
   </tr>
 </table>
 
+The Plugins folder in this project contains a base set of plugins that may be helpful to get started with creating interactive 3D virtual world applications. An additional set of more specialised, experimental plugins is published separately at https://github.com/fives-team/fives-experimental-plugins.
+
 Third-party libraries
 =====================
 
