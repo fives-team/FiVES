@@ -70,6 +70,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Light", "Plugins\Light\Ligh
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SINFONIPlugin", "Plugins\SINFONI\SINFONIPlugin.csproj", "{D5B8E5D2-A427-4985-B885-9EAC5BDDAB06}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RESTService", "Plugins\RESTService\RESTService.csproj", "{42DAE0C6-5F97-4FBA-8147-57E5998178B5}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -184,6 +186,10 @@ Global
 		{D5B8E5D2-A427-4985-B885-9EAC5BDDAB06}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D5B8E5D2-A427-4985-B885-9EAC5BDDAB06}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D5B8E5D2-A427-4985-B885-9EAC5BDDAB06}.Release|Any CPU.Build.0 = Release|Any CPU
+		{42DAE0C6-5F97-4FBA-8147-57E5998178B5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{42DAE0C6-5F97-4FBA-8147-57E5998178B5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{42DAE0C6-5F97-4FBA-8147-57E5998178B5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{42DAE0C6-5F97-4FBA-8147-57E5998178B5}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -217,6 +223,7 @@ Global
 		{6C4C01E3-2F44-462F-BF63-A9D5D288C662} = {8E636E4B-A4AB-44B2-A2D4-821E73CCA455}
 		{54CAE0FA-90C2-4AA0-B008-25F0A5218300} = {C73EDE56-1E63-400F-A694-9158687895DD}
 		{D5B8E5D2-A427-4985-B885-9EAC5BDDAB06} = {C73EDE56-1E63-400F-A694-9158687895DD}
+		{42DAE0C6-5F97-4FBA-8147-57E5998178B5} = {C73EDE56-1E63-400F-A694-9158687895DD}
 	EndGlobalSection
 	GlobalSection(MonoDevelopProperties) = preSolution
 		StartupItem = Core\FIVES\FIVES.csproj
