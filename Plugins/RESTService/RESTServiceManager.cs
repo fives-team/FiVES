@@ -63,14 +63,7 @@ namespace RESTServicePlugin
                 HttpListenerRequest request = context.Request;
                 string httpMethod = request.HttpMethod;
                 string rawUrl = request.RawUrl;
-
-                System.IO.Stream body = request.InputStream;
-                System.Text.Encoding encoding = request.ContentEncoding;
-                System.IO.StreamReader reader = new System.IO.StreamReader(body, encoding);
-
-                string content = reader.ReadToEnd();
-                body.Close();
-                reader.Close();
+                string content = readRequestContent(request);
 
                 JObject jObject = null;
                 if (!content.Equals(""))
@@ -90,6 +83,19 @@ namespace RESTServicePlugin
                 // always close the stream
                 context.Response.OutputStream.Close();
             }
+        }
+
+        private string readRequestContent(HttpListenerRequest request)
+        {
+            System.IO.Stream body = request.InputStream;
+            System.Text.Encoding encoding = request.ContentEncoding;
+            System.IO.StreamReader reader = new System.IO.StreamReader(body, encoding);
+
+            string content = reader.ReadToEnd();
+            body.Close();
+            reader.Close();
+
+            return content;
         }
 
         private JObject JsonParser(string json)
