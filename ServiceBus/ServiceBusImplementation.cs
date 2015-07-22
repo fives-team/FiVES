@@ -34,7 +34,7 @@ namespace FIVESServiceBus
             {
                 ReadConfig();
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 return;
             }
