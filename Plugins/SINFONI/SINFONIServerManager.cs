@@ -12,11 +12,7 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with FiVES.  If not, see <http://www.gnu.org/licenses/>.
-
-using FiVESJson;
 using SINFONI;
-using SINFONI.Protocols.JsonRPC;
-using SINFONI.Transport.WebSocketTransport;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -37,6 +33,7 @@ namespace SINFONIPlugin
         public int ServicePort { get; private set; }
         public SINFONIServer SinfoniServer { get; private set; }
         public ServiceImplementation SinfoniService { get; private set; }
+
         public SINFONIServerManager()
         {
             ReadConfig();
