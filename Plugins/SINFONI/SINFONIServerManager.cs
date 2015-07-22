@@ -72,12 +72,10 @@ namespace SINFONIPlugin
 
         private void RegisterModules()
         {
-            var JsonRPCProtocol = new JsonRpcProtocol();
-            var FiVESJsonProtocol = new FiVESJsonProtocol();
-            var WebsocketTransport = new WebSocketTransport();
-            SINFONI.ProtocolRegistry.Instance.RegisterProtocol(JsonRPCProtocol);
-            SINFONI.ProtocolRegistry.Instance.RegisterProtocol(FiVESJsonProtocol);
-            SINFONI.TransportRegistry.Instance.RegisterTransport(WebsocketTransport);
+            var protocolPathNode = configDocument.SelectSingleNode("configuration/Paths/ProtocolPath");
+            var transportPathNode = configDocument.SelectSingleNode("configuration/Paths/TransportPath");
+            moduleLoader.LoadModulesFrom<IProtocol>(protocolPathNode.Attributes["value"].Value);
+            moduleLoader.LoadModulesFrom<ITransport>(protocolPathNode.Attributes["value"].Value);
         }
 
         private void StartSinfoniServer()
@@ -85,6 +83,8 @@ namespace SINFONIPlugin
             SinfoniServer = new SINFONIServer(ServerURI, ServerPort, ServerPath, "fives.kiara");
             SinfoniService = SinfoniServer.StartService(ServerURI, ServicePort, "/service/", ServiceTransport, ServiceProtocol);
         }
+
+        private ModuleLoader moduleLoader = new ModuleLoader();
         private XmlDocument configDocument = new XmlDocument();
     }
 }
