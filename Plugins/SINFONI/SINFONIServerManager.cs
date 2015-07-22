@@ -47,7 +47,6 @@ namespace SINFONIPlugin
         private void ReadConfig()
         {
             string pluginConfigPath = this.GetType().Assembly.Location;
-            XmlDocument configDocument = new XmlDocument();
             configDocument.Load(pluginConfigPath + ".config");
             var serverConfig = configDocument.SelectSingleNode("configuration/ServerConfiguration");
 
@@ -86,5 +85,6 @@ namespace SINFONIPlugin
             SinfoniServer = new SINFONIServer(ServerURI, ServerPort, ServerPath, "fives.kiara");
             SinfoniService = SinfoniServer.StartService(ServerURI, ServicePort, "/service/", ServiceTransport, ServiceProtocol);
         }
+        private XmlDocument configDocument = new XmlDocument();
     }
 }
