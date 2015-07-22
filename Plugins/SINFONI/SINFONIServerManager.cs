@@ -12,11 +12,7 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with FiVES.  If not, see <http://www.gnu.org/licenses/>.
-
-using FiVESJson;
 using SINFONI;
-using SINFONI.Protocols.JsonRPC;
-using SINFONI.Transport.WebSocketTransport;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -37,6 +33,7 @@ namespace SINFONIPlugin
         public int ServicePort { get; private set; }
         public SINFONIServer SinfoniServer { get; private set; }
         public ServiceImplementation SinfoniService { get; private set; }
+
         public SINFONIServerManager()
         {
             ReadConfig();
@@ -47,7 +44,6 @@ namespace SINFONIPlugin
         private void ReadConfig()
         {
             string pluginConfigPath = this.GetType().Assembly.Location;
-            XmlDocument configDocument = new XmlDocument();
             configDocument.Load(pluginConfigPath + ".config");
             var serverConfig = configDocument.SelectSingleNode("configuration/ServerConfiguration");
 
@@ -73,12 +69,10 @@ namespace SINFONIPlugin
 
         private void RegisterModules()
         {
-            var JsonRPCProtocol = new JsonRpcProtocol();
-            var FiVESJsonProtocol = new FiVESJsonProtocol();
-            var WebsocketTransport = new WebSocketTransport();
-            SINFONI.ProtocolRegistry.Instance.RegisterProtocol(JsonRPCProtocol);
-            SINFONI.ProtocolRegistry.Instance.RegisterProtocol(FiVESJsonProtocol);
-            SINFONI.TransportRegistry.Instance.RegisterTransport(WebsocketTransport);
+            var protocolPathNode = configDocument.SelectSingleNode("configuration/Paths/ProtocolPath");
+            var transportPathNode = configDocument.SelectSingleNode("configuration/Paths/TransportPath");
+            moduleLoader.LoadModulesFrom<IProtocol>(protocolPathNode.Attributes["value"].Value);
+            moduleLoader.LoadModulesFrom<ITransport>(protocolPathNode.Attributes["value"].Value);
         }
 
         private void StartSinfoniServer()
@@ -86,5 +80,8 @@ namespace SINFONIPlugin
             SinfoniServer = new SINFONIServer(ServerURI, ServerPort, ServerPath, "fives.kiara");
             SinfoniService = SinfoniServer.StartService(ServerURI, ServicePort, "/service/", ServiceTransport, ServiceProtocol);
         }
+
+        private ModuleLoader moduleLoader = new ModuleLoader();
+        private XmlDocument configDocument = new XmlDocument();
     }
 }
