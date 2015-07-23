@@ -38,7 +38,6 @@ namespace RESTServicePlugin
 
             baseURL = prefixes;
             Listener.Prefixes.Add(prefixes);
-
             Listener.Start();
         }
 
@@ -67,9 +66,8 @@ namespace RESTServicePlugin
             }, tokenSource.Token);
         }
 
-        private void handleRequest(object ctx)
+        private void handleRequest(HttpListenerContext context)
         {
-            var context = ctx as HttpListenerContext;
             try
             {
                 HttpListenerRequest request = context.Request;
