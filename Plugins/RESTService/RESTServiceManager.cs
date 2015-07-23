@@ -26,16 +26,16 @@ namespace RESTServicePlugin
     class RESTServiceManager
     {
         public static RESTServiceManager Instance;
-        private  HttpListener _listener = new HttpListener();
+        private  HttpListener Listener = new HttpListener();
 
         public RESTServiceManager(string prefixes)
         {
             if (prefixes == null || prefixes.Length == 0)
                 throw new ArgumentException("prefixes");
 
-            _listener.Prefixes.Add(prefixes);
+            Listener.Prefixes.Add(prefixes);
 
-            _listener.Start();
+            Listener.Start();
         }
 
         internal void Initialize()
@@ -47,10 +47,10 @@ namespace RESTServicePlugin
         {
             ThreadPool.QueueUserWorkItem( _ =>
             {
-                while (_listener.IsListening)
+                while (Listener.IsListening)
                 {
                     ThreadPool.QueueUserWorkItem( context =>
-                    handleRequest(context), _listener.GetContext());
+                    handleRequest(context), Listener.GetContext());
                 }
             });
         }
@@ -61,8 +61,6 @@ namespace RESTServicePlugin
             try
             {
                 HttpListenerRequest request = context.Request;
-                string httpMethod = request.HttpMethod;
-                string rawUrl = request.RawUrl;
                 string content = readRequestContent(request);
 
                 JObject jObject = null;
