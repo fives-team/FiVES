@@ -74,15 +74,10 @@ namespace RESTServicePlugin
             {
                 HttpListenerRequest request = context.Request;
                 string content = readRequestContent(request);
-
-                JObject jObject = null;
-                if (!content.Equals(""))
-                {
-                    jObject = JsonParser(content);
-                }
-
-                // TODO:
-                // Here would be the point to dispatch the request to some registered handler
+                string path = getRequestPath(request.Url);
+                var response = RequestDispatcher.Instance.DispatchRequest(path, request.HttpMethod, content);
+                context.Response.StatusCode = response.ReturnCode;
+                context.Response.OutputStream.Write(response.ResponseBuffer, 0, response.ResponseBuffer.Length);
             }
             catch
             {
@@ -106,6 +101,11 @@ namespace RESTServicePlugin
             reader.Close();
 
             return content;
+        }
+
+        private string getRequestPath(Uri fullPath)
+        {
+            return fullPath.ToString().Replace(baseURL, "/");
         }
 
         private JObject JsonParser(string json)
