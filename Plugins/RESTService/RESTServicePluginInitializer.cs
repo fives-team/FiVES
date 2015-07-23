@@ -18,6 +18,7 @@ using System.Text;
 using System.Threading.Tasks;
 using FIVES;
 using System.Net;
+using System.Xml;
 
 namespace RESTServicePlugin
 {
@@ -48,7 +49,7 @@ namespace RESTServicePlugin
 
         public void Initialize()
         {
-            RESTServiceManager.Instance = new RESTServiceManager("http://localhost:8090/RestService/");
+            RESTServiceManager.Instance = new RESTServiceManager(ReadServiceEndpoint());
             RESTServiceManager.Instance.Initialize();
         }
 
@@ -58,5 +59,25 @@ namespace RESTServicePlugin
         }
 
         #endregion
+
+        private string ReadServiceEndpoint()
+        {
+            XmlDocument configDoc = new XmlDocument();
+            configDoc.Load(this.GetType().Assembly.Location + ".config");
+            var restService = configDoc.SelectSingleNode("configuration/restservice");
+            string host = restService.Attributes["host"].Value;
+            string port = restService.Attributes["port"].Value;
+            string baseURL = GetValidBaseUrl(restService.Attributes["baseurl"].Value);
+            return "http://" + host + ":" + port + baseURL;
+        }
+
+        private string GetValidBaseUrl(string baseurl)
+        {
+            if (!baseurl.StartsWith("/"))
+                baseurl = String.Concat("/", baseurl);
+            if (!baseurl.EndsWith("/"))
+                baseurl = String.Concat(baseurl, "/");
+            return baseurl;
+        }
     }
 }
