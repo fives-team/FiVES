@@ -48,7 +48,7 @@ namespace RESTServicePlugin
 
         internal void Shutdown()
         {
-            isListening = false;            ;
+            isListening = false;
         }
 
         private void Run()
