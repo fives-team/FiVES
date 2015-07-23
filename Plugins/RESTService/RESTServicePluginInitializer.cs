@@ -54,6 +54,7 @@ namespace RESTServicePlugin
 
         public void Shutdown()
         {
+            RESTServiceManager.Instance.Shutdown();
         }
 
         #endregion

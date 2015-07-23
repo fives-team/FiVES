@@ -27,6 +27,8 @@ namespace RESTServicePlugin
     {
         public static RESTServiceManager Instance;
         private  HttpListener Listener = new HttpListener();
+        private Task ListenerLoop;
+        private CancellationTokenSource tokenSource = new CancellationTokenSource();
 
         public RESTServiceManager(string prefixes)
         {
@@ -43,16 +45,24 @@ namespace RESTServicePlugin
             this.Run();
         }
 
+        internal void Shutdown()
+        {
+            tokenSource.Cancel();
+            Listener.Close();
+        }
+
         private void Run()
         {
-            ThreadPool.QueueUserWorkItem( _ =>
+            ListenerLoop = Task.Factory.StartNew( () =>
             {
                 while (Listener.IsListening)
                 {
-                    ThreadPool.QueueUserWorkItem( context =>
+                    ThreadPool.QueueUserWorkItem(context =>
                     handleRequest(context), Listener.GetContext());
                 }
-            });
+            }, tokenSource.Token);
+
+            ListenerLoop.Start();
         }
 
         private void handleRequest(object ctx)
@@ -101,5 +111,6 @@ namespace RESTServicePlugin
             JObject o = JObject.Parse(json);
             return o;
         }
+
     }
 }
