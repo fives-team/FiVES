@@ -49,13 +49,13 @@ namespace RESTServicePlugin
 
         public void Initialize()
         {
-            RESTServiceManager.Instance = new RESTServiceManager(ReadServiceEndpoint());
-            RESTServiceManager.Instance.Initialize();
+            RequestListener = new RESTRequestListener(ReadServiceEndpoint());
+            RequestListener.Initialize();
         }
 
         public void Shutdown()
         {
-            RESTServiceManager.Instance.Shutdown();
+            RequestListener.Shutdown();
         }
 
         #endregion
@@ -79,5 +79,7 @@ namespace RESTServicePlugin
                 baseurl = String.Concat(baseurl, "/");
             return baseurl;
         }
+
+        private RESTRequestListener RequestListener;
     }
 }

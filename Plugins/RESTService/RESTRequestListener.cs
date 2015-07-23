@@ -23,15 +23,14 @@ using Newtonsoft.Json.Linq;
 
 namespace RESTServicePlugin
 {
-    class RESTServiceManager
+    class RESTRequestListener
     {
-        public static RESTServiceManager Instance;
         private  HttpListener Listener = new HttpListener();
         private Task ListenerLoop;
         private CancellationTokenSource tokenSource = new CancellationTokenSource();
         private bool isListening = false;
 
-        public RESTServiceManager(string prefixes)
+        public RESTRequestListener(string prefixes)
         {
             if (prefixes == null || prefixes.Length == 0)
                 throw new ArgumentException("prefixes");

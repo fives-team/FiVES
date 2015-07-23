@@ -46,7 +46,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="RESTServiceManager.cs" />
+    <Compile Include="RESTRequestListener.cs" />
     <Compile Include="RESTServicePluginInitializer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
