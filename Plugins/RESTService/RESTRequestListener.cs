@@ -29,12 +29,14 @@ namespace RESTServicePlugin
         private Task ListenerLoop;
         private CancellationTokenSource tokenSource = new CancellationTokenSource();
         private bool isListening = false;
+        private string baseURL;
 
         public RESTRequestListener(string prefixes)
         {
             if (prefixes == null || prefixes.Length == 0)
                 throw new ArgumentException("prefixes");
 
+            baseURL = prefixes;
             Listener.Prefixes.Add(prefixes);
 
             Listener.Start();
