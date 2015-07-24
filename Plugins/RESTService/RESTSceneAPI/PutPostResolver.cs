@@ -23,7 +23,7 @@ namespace RESTServicePlugin
     public class PutPostResolver
     {
         private XmlDocument ResponseDocument;
-        private Entity AddedEntity;
+        private Entity UpdatedEntity;
 
         public PutPostResolver(XmlDocument responseDocumet)
         {
@@ -46,17 +46,17 @@ namespace RESTServicePlugin
         {
             var receivedGuid = entityNode.Attributes["guid"];
             if (receivedGuid != null && !World.Instance.ContainsEntity(new Guid(receivedGuid.Value)))
-                AddedEntity = new Entity(new Guid(entityNode.Attributes["guid"].Value), World.Instance.ID);
+                UpdatedEntity = new Entity(new Guid(entityNode.Attributes["guid"].Value), World.Instance.ID);
             else
-                AddedEntity = new Entity();
+                UpdatedEntity = new Entity();
 
             foreach (XmlNode component in entityNode.ChildNodes)
             {
                 ApplyComponent(component);
             }
 
-            World.Instance.Add(AddedEntity);
-            return new SceneWriter(ResponseDocument).WriteEntity(AddedEntity);
+            World.Instance.Add(UpdatedEntity);
+            return new SceneWriter(ResponseDocument).WriteEntity(UpdatedEntity);
         }
 
         private void ApplyComponent(XmlNode componentNode)
@@ -71,9 +71,9 @@ namespace RESTServicePlugin
         private void SetAttributeValue(string componentName, XmlNode attributeNode)
         {
             string attributeName = attributeNode.Attributes["name"].Value;
-            Type attributeType = AddedEntity[componentName][attributeName].Type;
+            Type attributeType = UpdatedEntity[componentName][attributeName].Type;
             var attributeValue = parseAttributeValue (attributeNode.Attributes["value"].Value, attributeType);
-            AddedEntity[componentName][attributeName].Suggest(attributeValue);
+            UpdatedEntity[componentName][attributeName].Suggest(attributeValue);
         }
 
         private object parseAttributeValue(string value, Type attributeType)
