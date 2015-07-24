@@ -54,7 +54,12 @@ namespace RESTServicePlugin
 
         protected override RequestResponse HandlePOST(string requestPath, string content)
         {
-            throw new NotImplementedException();
+            var response = new RequestResponse();
+            responseDocument = new XmlDocument();
+            responseDocument.AppendChild(new PostResolver(responseDocument).AddEntity(requestPath, content));
+            response.SetResponseBuffer(XmlToString(responseDocument));
+            response.ReturnCode = 201;
+            return response;
         }
 
         protected override RequestResponse HandlePUT(string requestPath)
