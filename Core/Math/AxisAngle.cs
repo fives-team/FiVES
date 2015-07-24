@@ -15,8 +15,9 @@ using System;
 
 namespace FIVES
 {
-    public struct AxisAngle
+    public class AxisAngle
     {
+        public AxisAngle() { }
         public AxisAngle(float x, float y, float z, float angle)
             : this(new Vector(x, y, z), angle)
         {
@@ -27,6 +28,11 @@ namespace FIVES
         {
             this.axis = axis;
             this.angle = angle;
+        }
+
+        public override string ToString()
+        {
+            return "axisangle(" + axis.ToString() + ", " + angle + ")";
         }
 
         public Vector axis { get; private set; }

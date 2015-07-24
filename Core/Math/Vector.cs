@@ -15,14 +15,20 @@ using System;
 
 namespace FIVES
 {
-    public struct Vector
+    public class Vector
     {
+        public Vector() { }
         public Vector(float x, float y, float z)
             : this()
         {
             this.x = x;
             this.y = y;
             this.z = z;
+        }
+
+        public override string ToString()
+        {
+            return "vector(" + this.x + " " + this.y + " " + this.z + ")";
         }
 
         public float x { get; private set; }
