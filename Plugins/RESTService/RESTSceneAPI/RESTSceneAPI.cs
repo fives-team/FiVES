@@ -64,7 +64,29 @@ namespace RESTServicePlugin
 
         protected override RequestResponse HandlePUT(string requestPath, string content)
         {
-            throw new NotImplementedException();
+            var response = new RequestResponse();
+            responseDocument = new XmlDocument();
+
+            try
+            {
+                responseDocument.AppendChild(
+                    new PutPostResolver(responseDocument).UpdateEntity(requestPath.TrimStart('/').TrimEnd('/'), content)
+                );
+                response.ReturnCode = 200;
+                response.SetResponseBuffer(XmlToString(responseDocument));
+            }
+            catch (EntityNotFoundException)
+            {
+                response.ReturnCode = 404;
+                response.SetResponseBuffer("Entity with given GUID is not present in World");
+            }
+            catch (FormatException e)
+            {
+                response.ReturnCode = 400;
+                response.SetResponseBuffer(e.Message);
+            }
+
+            return response;
         }
 
         protected override RequestResponse HandleDELETE(string requestPath)
