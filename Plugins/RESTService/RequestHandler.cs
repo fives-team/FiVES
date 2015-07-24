@@ -30,7 +30,7 @@ namespace RESTServicePlugin
         protected abstract RequestResponse HandlePUT();
         protected abstract RequestResponse HandleDELETE();
 
-        public RequestResponse HandleRequest(string httpMethod, string content)
+        public RequestResponse HandleRequest(string httpMethod, string path, string content)
         {
             currentRequestContent = content;
 
