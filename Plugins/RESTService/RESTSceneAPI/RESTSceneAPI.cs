@@ -52,7 +52,7 @@ namespace RESTServicePlugin
             return response;
         }
 
-        protected override RequestResponse HandlePOST(string requestPath)
+        protected override RequestResponse HandlePOST(string requestPath, string content)
         {
             throw new NotImplementedException();
         }

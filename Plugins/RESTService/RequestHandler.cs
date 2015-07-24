@@ -26,7 +26,7 @@ namespace RESTServicePlugin
         public abstract string Path { get; }
         public abstract string ContentType { get; }
         protected abstract RequestResponse HandleGET(string requestPath);
-        protected abstract RequestResponse HandlePOST(string requestPath);
+        protected abstract RequestResponse HandlePOST(string requestPath, string content);
         protected abstract RequestResponse HandlePUT(string requestPath);
         protected abstract RequestResponse HandleDELETE(string requestPath);
 
@@ -39,7 +39,7 @@ namespace RESTServicePlugin
             switch(httpMethod)
             {
                 case "GET": response = HandleGET(truncatedPath); break;
-                case "POST": response = HandlePOST(truncatedPath); break;
+                case "POST": response = HandlePOST(truncatedPath, content); break;
                 case "PUT": response = HandlePUT(truncatedPath); break;
                 case "DELETE": response = HandleDELETE(truncatedPath); break;
                 default: return ConstructServerError();
