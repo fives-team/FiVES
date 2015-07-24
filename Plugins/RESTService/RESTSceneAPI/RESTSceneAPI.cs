@@ -62,7 +62,7 @@ namespace RESTServicePlugin
             return response;
         }
 
-        protected override RequestResponse HandlePUT(string requestPath)
+        protected override RequestResponse HandlePUT(string requestPath, string content)
         {
             throw new NotImplementedException();
         }
