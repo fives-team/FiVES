@@ -42,6 +42,23 @@ namespace RESTServicePlugin
             return CreateEntityFromXML(receivedDocument.FirstChild);
         }
 
+        public XmlElement UpdateEntity(string requestPath, string requestBody)
+        {
+            if (requestPath.Length == 0)
+                throw new FormatException("Invalid request: need GUID of object to update");
+
+            if (!requestPath.Contains('/'))
+                return OverrideEntity(requestPath, requestBody);
+
+            string entityGuid = PathParser.Instance.GetFirstPathObject(requestPath);
+
+            UpdatedEntity = World.Instance.FindEntity(entityGuid);
+            string remainingPath = PathParser.Instance.GetRemainingPath(requestPath);
+            UpdateEntityComponent(remainingPath, requestBody);
+
+            return new SceneWriter(ResponseDocument).WriteEntity(UpdatedEntity);
+        }
+
         private XmlElement CreateEntityFromXML(XmlNode entityNode)
         {
             var receivedGuid = entityNode.Attributes["guid"];
