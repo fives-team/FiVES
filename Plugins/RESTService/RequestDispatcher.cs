@@ -19,11 +19,28 @@ using System.Text;
 
 namespace RESTServicePlugin
 {
+    /// <summary>
+    /// The RequestDispatcher can be used to register new REST Services. For this, implement a class that is derived
+    /// from the <see cref="RequestHandler">RequestHandler</see> class. Each incoming request is handed to a respective
+    /// handler implementation that is registered for the request's base URL
+    /// </summary>
     public class RequestDispatcher
     {
         private static RequestDispatcher instance = new RequestDispatcher();
+
+        /// <summary>
+        /// Singleton Instance of the Request dispatcher that can be used by other plugins to register own
+        /// REST services
+        /// </summary>
         public static RequestDispatcher Instance { get { return instance;} }
 
+        /// <summary>
+        /// Checks the path of the incoming request and hands to the respective request handler
+        /// </summary>
+        /// <param name="path">Path that was requested</param>
+        /// <param name="httpmethod">The HTTP method of the request</param>
+        /// <param name="content">Content that was submitted with the request (the body)</param>
+        /// <returns></returns>
         public RequestResponse DispatchRequest(string path, string httpmethod, string content)
         {
             RequestHandler handler = registeredHandlers.Find(h => path.StartsWith(h.Path));
@@ -34,6 +51,10 @@ namespace RESTServicePlugin
             return handler.HandleRequest(httpmethod, path, content);
         }
 
+        /// <summary>
+        /// Registers a new <seealso cref="RequestHandler">RequestHandler</seealso> implementation
+        /// </summary>
+        /// <param name="newHandler">The request handler to register.</param>
         public void RegisterHandler(RequestHandler newHandler)
         {
             RequestHandler handler = registeredHandlers.Find(h => h.Path == newHandler.Path);

@@ -18,12 +18,31 @@ using System.Text;
 
 namespace RESTServicePlugin
 {
+    /// <summary>
+    /// Response object that contains all data about the outcome of a requested operation
+    /// </summary>
     public class RequestResponse
     {
+        /// <summary>
+        /// HTTP Return code of the operation
+        /// </summary>
         public int ReturnCode { get; set; }
+
+        /// <summary>
+        /// Content Type of the response message. By default content type of the <see cref="RequestHandler" />
+        /// that sent the response
+        /// </summary>
         public string ContentType { get; set; }
+
+        /// <summary>
+        /// Buffer that contains the response message
+        /// </summary>
         public byte[] ResponseBuffer { get; set; }
 
+        /// <summary>
+        /// Convenience method to set the response buffer directly from a string typed message
+        /// </summary>
+        /// <param name="responseText">Message that should be included as response text</param>
         public void SetResponseBuffer(string responseText)
         {
             byte[] textAsByte = System.Text.Encoding.UTF8.GetBytes(responseText);

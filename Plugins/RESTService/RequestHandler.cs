@@ -19,17 +19,41 @@ using System.Text;
 
 namespace RESTServicePlugin
 {
+    /// <summary>
+    /// Abstract base class that can be used to implement own REST Services. Specify the base path under
+    /// which the service should be accessible. It can then be requested via
+    /// [$RESTServicePlugin Base URL]/[$REQUEST_PATH]/[optional fields]
+    /// </summary>
     public abstract class RequestHandler
     {
         private string currentRequestContent;
 
+        /// <summary>
+        /// Base path of the new service. The new service will then be accessible via the URL
+        /// [$RESTServicePlugin Base URL]/[$REQUEST_PATH]/[optional fields]
+        /// </summary>
         public abstract string Path { get; }
+
+        /// <summary>
+        /// Content type of the response that is usually returned by the service. Usually "text/xml" or
+        /// "application/json"
+        /// </summary>
         public abstract string ContentType { get; }
         protected abstract RequestResponse HandleGET(string requestPath);
         protected abstract RequestResponse HandlePOST(string requestPath, string content);
         protected abstract RequestResponse HandlePUT(string requestPath, string content);
         protected abstract RequestResponse HandleDELETE(string requestPath);
 
+        /// <summary>
+        /// Called by the RequestDispatcher when a request for the specific REST service was received.
+        /// Delegates the request to the GET, POST, PUT or DELETE handler, depending on the http type
+        /// of the received request
+        /// </summary>
+        /// <param name="httpMethod">The HTTP method that was used for the request</param>
+        /// <param name="path">The path within the service that was requested</param>
+        /// <param name="content">Content that was received together with the request</param>
+        /// <returns>A request response object with the return code of the outcome of the operation and
+        /// a response message (optional)</returns>
         public RequestResponse HandleRequest(string httpMethod, string path, string content)
         {
             currentRequestContent = content;

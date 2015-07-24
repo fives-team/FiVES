@@ -22,6 +22,10 @@ using System.Xml;
 
 namespace RESTServicePlugin
 {
+    /// <summary>
+    /// This Plugin provides basic Scene operation via an HTTP REST Interface. In addition, it exposes
+    /// an API to other plugins that allows to extend the rest interface by own services.
+    /// </summary>
     public class RESTServicePluginInitializer : IPluginInitializer
     {
         #region IPluginInitializer implementation

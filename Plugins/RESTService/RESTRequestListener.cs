@@ -23,6 +23,10 @@ using Newtonsoft.Json.Linq;
 
 namespace RESTServicePlugin
 {
+    /// <summary>
+    /// Used by the REST Plugin to open an HTTP Listener, receive incoming requests and hand them to the
+    /// <see cref="RequestDispatcher">RequestDispatcher</see>
+    /// </summary>
     class RESTRequestListener
     {
         private  HttpListener Listener = new HttpListener();
