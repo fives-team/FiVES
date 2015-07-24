@@ -31,7 +31,7 @@ namespace RESTServicePlugin
             if (handler == null)
                 return SendErrorResponse();
 
-            return handler.HandleRequest(httpmethod, content);
+            return handler.HandleRequest(httpmethod, path, content);
         }
 
         public void RegisterHandler(RequestHandler newHandler)
