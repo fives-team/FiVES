@@ -78,7 +78,16 @@ namespace RESTServicePlugin
                 if (response.ResponseBuffer != null && response.ResponseBuffer.Length > 0)
                     context.Response.OutputStream.Write(response.ResponseBuffer, 0, response.ResponseBuffer.Length);
             }
-            catch(Exception e)
+            catch (NotImplementedException e)
+            {
+                context.Response.StatusCode = 501;
+                context.Response.OutputStream.Flush();
+                string error =
+                    "The requested service is currently not implemented. The server returned code: 501\n"
+                    + "'" + e.Message + "'";
+                context.Response.OutputStream.Write(System.Text.Encoding.UTF8.GetBytes(error), 0, error.Length);
+            }
+            catch (Exception e)
             {
                 context.Response.StatusCode = 500;
                 context.Response.OutputStream.Flush();
@@ -87,6 +96,7 @@ namespace RESTServicePlugin
                     + "'" + e.Message + "'";
                 context.Response.OutputStream.Write(System.Text.Encoding.UTF8.GetBytes(error), 0, error.Length);
             }
+
             finally
             {
                 // always close the stream
