@@ -53,7 +53,7 @@
     <Compile Include="RESTSceneAPI\DeleteResolver.cs" />
     <Compile Include="RESTSceneAPI\GetResolver.cs" />
     <Compile Include="RESTSceneAPI\PathParser.cs" />
-    <Compile Include="RESTSceneAPI\PostResolver.cs" />
+    <Compile Include="RESTSceneAPI\PutPostResolver.cs" />
     <Compile Include="RESTSceneAPI\RESTSceneAPI.cs" />
     <Compile Include="RESTSceneAPI\SceneWriter.cs" />
     <Compile Include="RESTServicePluginInitializer.cs" />

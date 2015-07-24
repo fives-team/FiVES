@@ -56,7 +56,7 @@ namespace RESTServicePlugin
         {
             var response = new RequestResponse();
             responseDocument = new XmlDocument();
-            responseDocument.AppendChild(new PostResolver(responseDocument).AddEntity(requestPath, content));
+            responseDocument.AppendChild(new PutPostResolver(responseDocument).AddEntity(requestPath, content));
             response.SetResponseBuffer(XmlToString(responseDocument));
             response.ReturnCode = 201;
             return response;

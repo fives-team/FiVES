@@ -20,12 +20,12 @@ using System.Xml;
 
 namespace RESTServicePlugin
 {
-    public class PostResolver
+    public class PutPostResolver
     {
         private XmlDocument ResponseDocument;
         private Entity AddedEntity;
 
-        public PostResolver(XmlDocument responseDocumet)
+        public PutPostResolver(XmlDocument responseDocumet)
         {
             this.ResponseDocument = responseDocumet;
         }
