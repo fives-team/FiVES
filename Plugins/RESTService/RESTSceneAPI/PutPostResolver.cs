@@ -50,13 +50,7 @@ namespace RESTServicePlugin
             if (!requestPath.Contains('/'))
                 return OverrideEntity(requestPath, requestBody);
 
-            string entityGuid = PathParser.Instance.GetFirstPathObject(requestPath);
-
-            UpdatedEntity = World.Instance.FindEntity(entityGuid);
-            string remainingPath = PathParser.Instance.GetRemainingPath(requestPath);
-            UpdateEntityComponent(remainingPath, requestBody);
-
-            return new SceneWriter(ResponseDocument).WriteEntity(UpdatedEntity);
+            return HandleEntityComponentUpdate(requestPath, requestBody);
         }
 
         private XmlElement CreateEntityFromXML(XmlNode entityNode)
@@ -80,6 +74,17 @@ namespace RESTServicePlugin
         {
             World.Instance.Remove(World.Instance.FindEntity(entityGuid));
             return AddEntity(entityGuid, requestBody);
+        }
+
+        private XmlElement HandleEntityComponentUpdate(string requestPath, string requestBody)
+        {
+            string entityGuid = PathParser.Instance.GetFirstPathObject(requestPath);
+
+            UpdatedEntity = World.Instance.FindEntity(entityGuid);
+            string remainingPath = PathParser.Instance.GetRemainingPath(requestPath);
+            UpdateEntityComponent(remainingPath, requestBody);
+
+            return new SceneWriter(ResponseDocument).WriteEntity(UpdatedEntity);
         }
 
         private void UpdateEntityComponent(string remainingPath, string requestBody)
