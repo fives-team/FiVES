@@ -50,6 +50,7 @@
     <Compile Include="RequestDispatcher.cs" />
     <Compile Include="RequestResponse.cs" />
     <Compile Include="RESTRequestListener.cs" />
+    <Compile Include="RESTSceneAPI\DeleteResolver.cs" />
     <Compile Include="RESTSceneAPI\GetResolver.cs" />
     <Compile Include="RESTSceneAPI\PathParser.cs" />
     <Compile Include="RESTSceneAPI\RESTSceneAPI.cs" />
