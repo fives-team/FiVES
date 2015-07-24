@@ -73,7 +73,6 @@ namespace RESTServicePlugin
         {
             string host = restService.Attributes["host"].Value;
             string port = restService.Attributes["port"].Value;
-            string baseURL = GetValidBaseUrl(restService.Attributes["baseurl"].Value);
             return "http://" + host + ":" + port;
         }
 
