@@ -35,12 +35,10 @@ namespace RESTServicePlugin
         private bool isListening = false;
         private string baseURL;
 
-        public RESTRequestListener(string prefixes)
+        public RESTRequestListener(string host, string path)
         {
-            if (prefixes == null || prefixes.Length == 0)
-                throw new ArgumentException("prefixes");
-
-            baseURL = prefixes;
+            this.baseURL = path;
+            string prefixes = host + path;
             Listener.Prefixes.Add(prefixes);
             Listener.Start();
         }

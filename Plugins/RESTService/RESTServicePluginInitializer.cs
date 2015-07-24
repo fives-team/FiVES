@@ -53,7 +53,11 @@ namespace RESTServicePlugin
 
         public void Initialize()
         {
-            RequestListener = new RESTRequestListener(ReadServiceEndpoint());
+            XmlDocument configDoc = new XmlDocument();
+            configDoc.Load(this.GetType().Assembly.Location + ".config");
+            XmlNode restService = configDoc.SelectSingleNode("configuration/restservice");
+
+            RequestListener = new RESTRequestListener(ReadHost(restService), ReadBaseURL(restService));
             RequestListener.Initialize();
             RequestDispatcher.Instance.RegisterHandler(new RESTSceneAPI());
         }
@@ -65,15 +69,17 @@ namespace RESTServicePlugin
 
         #endregion
 
-        private string ReadServiceEndpoint()
+        private string ReadHost(XmlNode restService)
         {
-            XmlDocument configDoc = new XmlDocument();
-            configDoc.Load(this.GetType().Assembly.Location + ".config");
-            var restService = configDoc.SelectSingleNode("configuration/restservice");
             string host = restService.Attributes["host"].Value;
             string port = restService.Attributes["port"].Value;
             string baseURL = GetValidBaseUrl(restService.Attributes["baseurl"].Value);
-            return "http://" + host + ":" + port + baseURL;
+            return "http://" + host + ":" + port;
+        }
+
+        private string ReadBaseURL(XmlNode restService)
+        {
+            return GetValidBaseUrl(restService.Attributes["baseurl"].Value);
         }
 
         private string GetValidBaseUrl(string baseurl)
