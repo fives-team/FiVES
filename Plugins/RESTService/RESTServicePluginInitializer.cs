@@ -78,7 +78,7 @@ namespace RESTServicePlugin
 
         private string ReadBaseURL(XmlNode restService)
         {
-            return GetValidBaseUrl(restService.Attributes["baseurl"].Value);
+            return GetValidBaseUrl(restService.Attributes["path"].Value);
         }
 
         private string GetValidBaseUrl(string baseurl)
