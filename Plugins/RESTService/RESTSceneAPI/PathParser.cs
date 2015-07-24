@@ -18,17 +18,34 @@ using System.Text;
 
 namespace RESTServicePlugin
 {
+    /// <summary>
+    /// PathParser provides convenience methods to operate on request paths
+    /// </summary>
     public class PathParser
     {
         private static PathParser instance = new PathParser();
 
+        /// <summary>
+        /// Singleton instance of the PathParser that can be used by other plugins
+        /// </summary>
         public static PathParser Instance { get { return instance; } }
 
+        /// <summary>
+        /// Gets the part of the request uri up to the first '/'
+        /// </summary>
+        /// <param name="requestPath">Full path</param>
+        /// <returns>Part of the request uri up to the first '/'</returns>
         public string GetFirstPathObject(string requestPath)
         {
             int delimiterIndex = requestPath.IndexOf("/");
             return requestPath.Substring(0, delimiterIndex);
         }
+
+        /// <summary>
+        /// Gets the remaining part of the full request uri after the first '/'
+        /// </summary>
+        /// <param name="requestPath">Full path</param>
+        /// <returns>Gets the remaining part of the full request uri after the first '/'</returns>
         public string GetRemainingPath(string requestPath)
         {
             int delimiterIndex = requestPath.IndexOf("/");
