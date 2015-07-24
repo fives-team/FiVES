@@ -25,21 +25,22 @@ namespace RESTServicePlugin
 
         public abstract string Path { get; }
         public abstract string ContentType { get; }
-        protected abstract RequestResponse HandleGET();
-        protected abstract RequestResponse HandlePOST();
-        protected abstract RequestResponse HandlePUT();
-        protected abstract RequestResponse HandleDELETE();
+        protected abstract RequestResponse HandleGET(string requestPath);
+        protected abstract RequestResponse HandlePOST(string requestPath);
+        protected abstract RequestResponse HandlePUT(string requestPath);
+        protected abstract RequestResponse HandleDELETE(string requestPath);
 
         public RequestResponse HandleRequest(string httpMethod, string path, string content)
         {
             currentRequestContent = content;
+            string truncatedPath = path.Remove(0, path.IndexOf(this.Path) + this.Path.Length);
 
             switch(httpMethod)
             {
-                case "GET": return HandleGET();
-                case "POST": return HandlePOST();
-                case "PUT": return HandlePUT();
-                case "DELETE": return HandleDELETE();
+                case "GET": response = HandleGET(truncatedPath); break;
+                case "POST": response = HandlePOST(truncatedPath); break;
+                case "PUT": response = HandlePUT(truncatedPath); break;
+                case "DELETE": response = HandleDELETE(truncatedPath); break;
                 default: return ConstructServerError();
             }
         }
