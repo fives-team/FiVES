@@ -59,6 +59,12 @@ namespace RESTServicePlugin
             return new SceneWriter(ResponseDocument).WriteEntity(UpdatedEntity);
         }
 
+        private XmlElement OverrideEntity(string entityGuid, string requestBody)
+        {
+            World.Instance.Remove(World.Instance.FindEntity(entityGuid));
+            return AddEntity(entityGuid, requestBody);
+        }
+
         private void ApplyComponent(XmlNode componentNode)
         {
             string componentName = componentNode.Attributes["name"].Value;
