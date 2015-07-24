@@ -21,6 +21,7 @@ namespace RESTServicePlugin
     public class RequestResponse
     {
         public int ReturnCode { get; set; }
+        public string ContentType { get; set; }
         public byte[] ResponseBuffer { get; set; }
 
         public void SetResponseBuffer(string responseText)
