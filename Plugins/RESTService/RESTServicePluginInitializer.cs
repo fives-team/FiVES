@@ -51,6 +51,7 @@ namespace RESTServicePlugin
         {
             RequestListener = new RESTRequestListener(ReadServiceEndpoint());
             RequestListener.Initialize();
+            RequestDispatcher.Instance.RegisterHandler(new RESTSceneAPI());
         }
 
         public void Shutdown()
