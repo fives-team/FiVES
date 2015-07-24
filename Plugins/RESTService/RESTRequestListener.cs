@@ -75,7 +75,8 @@ namespace RESTServicePlugin
                 string path = request.RawUrl;
                 var response = RequestDispatcher.Instance.DispatchRequest(path, request.HttpMethod, content);
                 context.Response.StatusCode = response.ReturnCode;
-                context.Response.OutputStream.Write(response.ResponseBuffer, 0, response.ResponseBuffer.Length);
+                if(response.ResponseBuffer != null && response.ResponseBuffer.Length > 0)
+                    context.Response.OutputStream.Write(response.ResponseBuffer, 0, response.ResponseBuffer.Length);
             }
             catch(Exception e)
             {
