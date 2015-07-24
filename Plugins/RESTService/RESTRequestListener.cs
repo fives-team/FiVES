@@ -74,7 +74,8 @@ namespace RESTServicePlugin
             {
                 HttpListenerRequest request = context.Request;
                 string content = readRequestContent(request);
-                string path = request.RawUrl;
+                // we want to keep the first '/'
+                string path = request.RawUrl.Remove(1, baseURL.Length - 1);
                 var response = RequestDispatcher.Instance.DispatchRequest(path, request.HttpMethod, content);
                 context.Response.StatusCode = response.ReturnCode;
                 if (response.ResponseBuffer != null && response.ResponseBuffer.Length > 0)
