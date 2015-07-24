@@ -72,14 +72,19 @@ namespace RESTServicePlugin
             {
                 HttpListenerRequest request = context.Request;
                 string content = readRequestContent(request);
-                string path = getRequestPath(request.Url);
+                string path = request.RawUrl;
                 var response = RequestDispatcher.Instance.DispatchRequest(path, request.HttpMethod, content);
                 context.Response.StatusCode = response.ReturnCode;
                 context.Response.OutputStream.Write(response.ResponseBuffer, 0, response.ResponseBuffer.Length);
             }
-            catch
+            catch(Exception e)
             {
-                Console.WriteLine("not supported");
+                context.Response.StatusCode = 500;
+                context.Response.OutputStream.Flush();
+                string error =
+                    "An internal server error occurred while processing the request. The server returned code: 500\n"
+                    + "'" + e.Message + "'";
+                context.Response.OutputStream.Write(System.Text.Encoding.UTF8.GetBytes(error), 0, error.Length);
             }
             finally
             {
