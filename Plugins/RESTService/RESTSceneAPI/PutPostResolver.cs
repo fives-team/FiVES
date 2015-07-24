@@ -65,6 +65,20 @@ namespace RESTServicePlugin
             return AddEntity(entityGuid, requestBody);
         }
 
+        private void UpdateEntityComponent(string remainingPath, string requestBody)
+        {
+            if (remainingPath.Contains('/') || remainingPath.Contains('?'))
+                throw new NotImplementedException
+                    ("FiVES currently does not support immediate attribute update via query syntax");
+            XmlDocument componentDocument = new XmlDocument();
+            componentDocument.LoadXml(requestBody);
+            string xmlObjectName = componentDocument.FirstChild.Attributes["name"].Value;
+            if (remainingPath != xmlObjectName)
+                throw new FormatException("Request body contains different component name than requested resource:\n"
+                    + "request: /" + remainingPath + " , resource: <component name='" + xmlObjectName + "'>");
+            ApplyComponent(componentDocument.FirstChild);
+        }
+
         private void ApplyComponent(XmlNode componentNode)
         {
             string componentName = componentNode.Attributes["name"].Value;
