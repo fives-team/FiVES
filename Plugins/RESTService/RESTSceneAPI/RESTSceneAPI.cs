@@ -64,7 +64,19 @@ namespace RESTServicePlugin
 
         protected override RequestResponse HandleDELETE(string requestPath)
         {
-            throw new NotImplementedException();
+            RequestResponse response = new RequestResponse();
+            try
+            {
+                bool deleted = new DeleteResolver().DeleteEntity(requestPath.Trim('/').TrimEnd('/'));
+                response.ReturnCode = deleted ? 204 : 202;
+            }
+            catch(InvalidOperationException e)
+            {
+                response.ReturnCode = 501;
+                response.SetResponseBuffer("An error occurred when trying to delete an entity: "
+                    + e.Message);
+            }
+            return response;
         }
 
         private string XmlToString(XmlDocument xml)
