@@ -34,6 +34,7 @@ namespace RESTServicePlugin
         {
             currentRequestContent = content;
             string truncatedPath = path.Remove(0, path.IndexOf(this.Path) + this.Path.Length);
+            RequestResponse response;
 
             switch(httpMethod)
             {
@@ -43,6 +44,9 @@ namespace RESTServicePlugin
                 case "DELETE": response = HandleDELETE(truncatedPath); break;
                 default: return ConstructServerError();
             }
+
+            response.ContentType = this.ContentType;
+            return response;
         }
 
         protected RequestResponse ConstructServerError()
