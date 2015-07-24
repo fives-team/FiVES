@@ -106,16 +106,5 @@ namespace RESTServicePlugin
             return content;
         }
 
-        private string getRequestPath(Uri fullPath)
-        {
-            return fullPath.ToString().Replace(baseURL, "/");
-        }
-
-        private JObject JsonParser(string json)
-        {
-            JObject o = JObject.Parse(json);
-            return o;
-        }
-
     }
 }
