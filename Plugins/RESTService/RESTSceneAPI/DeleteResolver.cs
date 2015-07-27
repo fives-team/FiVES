@@ -1,4 +1,4 @@
-// This file is part of FiVES.
+﻿// This file is part of FiVES.
 //
 // FiVES is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Lesser General Public License as published by
@@ -11,32 +11,21 @@
 //
 // You should have received a copy of the GNU Lesser General Public License
 // along with FiVES.  If not, see <http://www.gnu.org/licenses/>.
+using FIVES;
 using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
 
-namespace FIVES
+namespace RESTServicePlugin
 {
-    public class AxisAngle
+    public class DeleteResolver
     {
-        public AxisAngle() { }
-        public AxisAngle(float x, float y, float z, float angle)
-            : this(new Vector(x, y, z), angle)
+        public bool DeleteEntity(string requestPath)
         {
+            if (requestPath.Contains('/'))
+                throw new InvalidOperationException("FiVES currently does not support dynamic removal of components");
+            return World.Instance.Remove(World.Instance.FindEntity(requestPath));
         }
-
-        public AxisAngle(Vector axis, float angle)
-            : this()
-        {
-            this.axis = axis;
-            this.angle = angle;
-        }
-
-        public override string ToString()
-        {
-            return "axisangle(" + axis.ToString() + ", " + angle + ")";
-        }
-
-        public Vector axis { get; private set; }
-        public float angle { get; private set; }
     }
 }
-

@@ -15,8 +15,10 @@ using System;
 
 namespace FIVES
 {
-    public struct Quat
+    public class Quat
     {
+        public Quat() { }
+
         public Quat(float x, float y, float z, float w)
             : this()
         {
@@ -24,6 +26,11 @@ namespace FIVES
             this.y = y;
             this.z = z;
             this.w = w;
+        }
+
+        public override string ToString()
+        {
+            return "quat(" + this.x + " " + this.y + " " + this.z + " " + this.w + ")";
         }
 
         public float x { get; private set; }
