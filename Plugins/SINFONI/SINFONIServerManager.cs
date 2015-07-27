@@ -62,7 +62,7 @@ namespace SINFONIPlugin
         private void ReadServiceConfiguration(XmlNode serverConfig)
         {
             var serviceConfig = serverConfig.SelectSingleNode("ServiceConfiguration");
-            ServiceHost = serviceConfig.Attributes["publichost"].Value;
+            ServiceHost = serviceConfig.Attributes["host"].Value;
             ServiceTransport = serviceConfig.Attributes["transport"].Value;
             ServiceProtocol = serviceConfig.Attributes["protocol"].Value;
             ServicePort = int.Parse(serviceConfig.Attributes["port"].Value);
