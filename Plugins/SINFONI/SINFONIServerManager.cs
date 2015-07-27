@@ -29,6 +29,7 @@ namespace SINFONIPlugin
         public int ServerPort { get; private set; }
         public string ServiceTransport { get; private set; }
         public string ServiceProtocol { get; private set; }
+        public string ServiceHost { get; private set; }
         public int ServicePort { get; private set; }
         public SINFONIServer SinfoniServer { get; private set; }
         public ServiceImplementation SinfoniService { get; private set; }
@@ -61,6 +62,7 @@ namespace SINFONIPlugin
         private void ReadServiceConfiguration(XmlNode serverConfig)
         {
             var serviceConfig = serverConfig.SelectSingleNode("ServiceConfiguration");
+            ServiceHost = serviceConfig.Attributes["host"].Value;
             ServiceTransport = serviceConfig.Attributes["transport"].Value;
             ServiceProtocol = serviceConfig.Attributes["protocol"].Value;
             ServicePort = int.Parse(serviceConfig.Attributes["port"].Value);
@@ -77,7 +79,7 @@ namespace SINFONIPlugin
         private void StartSinfoniServer()
         {
             SinfoniServer = new SINFONIServer(ServerURI, ServerPort, ServerPath, "fives.kiara");
-            SinfoniService = SinfoniServer.StartService(ServerURI, ServicePort, "/service/", ServiceTransport, ServiceProtocol);
+            SinfoniService = SinfoniServer.StartService(ServiceHost, ServicePort, "/service/", ServiceTransport, ServiceProtocol);
         }
 
         private ModuleLoader moduleLoader = new ModuleLoader();
