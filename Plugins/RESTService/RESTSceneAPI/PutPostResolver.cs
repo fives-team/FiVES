@@ -124,6 +124,8 @@ namespace RESTServicePlugin
                 return parseVector(value);
             else if (value.StartsWith("quat"))
                 return parseQuat(value);
+            else if (value.StartsWith("axisangle"))
+                return parseAxisAngle(value);
             else if (attributeType == typeof(bool))
                 return bool.Parse(value);
             else if (attributeType == typeof(string))
@@ -152,6 +154,28 @@ namespace RESTServicePlugin
                 float.Parse(elements[2]),
                 float.Parse(elements[3])
             );
+        }
+
+        private AxisAngle parseAxisAngle(string axisAngleString)
+        {
+            string vectorString = getVectorStringPart(axisAngleString);
+            string angleValue = getAngleStringPart(axisAngleString);
+            return new AxisAngle(parseVector(vectorString), float.Parse(angleValue));
+        }
+
+        private string getVectorStringPart(string axisAngleString)
+        {
+            int vectorStart = axisAngleString.IndexOf("vector(");
+            int vectorEnd = axisAngleString.IndexOf(")"); // first closing bracket, determines end of vector string
+            int vectorLength = vectorEnd - vectorStart + 1; // we want to capture the closing bracket of vector as well
+            return axisAngleString.Substring(vectorStart, vectorLength);
+        }
+
+        private string getAngleStringPart(string axisAngleString)
+        {
+            int commaIndex = axisAngleString.IndexOf(',');
+            int lastValueLength = axisAngleString.LastIndexOf(')') - commaIndex - 1;
+            return axisAngleString.Substring(commaIndex + 1, lastValueLength);
         }
 
         private string[] getComplexTypeComponents(string complexType)
