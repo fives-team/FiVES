@@ -1,21 +1,19 @@
 ﻿// This file is part of FiVES.
 //
 // FiVES is free software: you can redistribute it and/or modify
-// it under the terms of the GNU General Public License as published by
-// the Free Software Foundation, either version 3 of the License, or
-// (at your option) any later version.
+// it under the terms of the GNU Lesser General Public License as published by
+// the Free Software Foundation (LGPL v3)
 //
 // FiVES is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 //
-// You should have received a copy of the GNU General Public License
+// You should have received a copy of the GNU Lesser General Public License
 // along with FiVES.  If not, see <http://www.gnu.org/licenses/>.
-using AuthPlugin;
 using FIVES;
-using KIARA;
-using KIARAPlugin;
+using SINFONI;
+using SINFONIPlugin;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -34,17 +32,17 @@ namespace ClientManagerPlugin
 
         public ClientManager()
         {
-            InitializeKIARA();
+            InitializeSINFONI();
             RegisterClientServices();
             RegisterEventHandlers();
         }
 
-        private void InitializeKIARA()
+        private void InitializeSINFONI()
         {
-            clientService = KIARAServerManager.Instance.KiaraService;
+            clientService = SINFONIServerManager.Instance.SinfoniService;
 
             string clientManagerIDL = File.ReadAllText("clientManager.kiara");
-            KIARAPlugin.KIARAServerManager.Instance.KiaraServer.AmendIDL(clientManagerIDL);
+            SINFONIPlugin.SINFONIServerManager.Instance.SinfoniServer.AmendIDL(clientManagerIDL);
         }
 
         private void RegisterClientServices()
@@ -53,14 +51,12 @@ namespace ClientManagerPlugin
             RegisterClientMethod("kiara.implements", false, (Func<List<string>, List<bool>>)Implements);
             RegisterClientMethod("kiara.implements", true, (Func<List<string>, List<bool>>)AuthenticatedImplements);
 
-            RegisterClientService("auth", false, new Dictionary<string, Delegate> {
-                {"login", (Func<Connection, string, string, bool>)Authenticate}
-            });
-
             RegisterClientMethod("getTime", false, (Func<DateTime>)GetTime);
 
             RegisterClientService("objectsync", true, new Dictionary<string, Delegate> {
-                {"listObjects", (Func<List<Dictionary<string, object>>>) ListObjects}
+                {"listObjects", (Func<List<Dictionary<string, object>>>) ListObjects},
+                {"receiveNewObjects", (Action<Connection, Dictionary<string, object>>)HandleRemoteEntityAdded},
+                {"removeObject", (Action<string>)HandleRemoteEntityRemoved}
             });
         }
 
@@ -116,10 +112,8 @@ namespace ClientManagerPlugin
             return entityInfo;
         }
 
-        bool Authenticate(Connection connection, string login, string password)
+        public bool ReceiveAuthenticatedClient(Connection connection)
         {
-            if (!Authentication.Instance.Authenticate(connection, login, password))
-                return false;
 
             authenticatedClients.Add(connection);
             connection.Closed += HandleAuthenticatedClientDisconnected;
@@ -159,19 +153,58 @@ namespace ClientManagerPlugin
                 ClientDisconnected(this, new ClientConnectionEventArgs(connection));
         }
 
+        private void HandleRemoteEntityAdded(Connection connection, Dictionary<string, object> EntityInfo)
+        {
+            if (EntityInfo["guid"] == null
+                || EntityInfo["owner"] == null
+                || EntityInfo["owner"].Equals(World.Instance.ID.ToString())
+                || World.Instance.ContainsEntity(new Guid((string)EntityInfo["guid"]))
+                )
+                // Ignore added entity if it is either not correctly assigned to an owner, or when it was created by
+                // the same instance, or when the entity was already added in a previous update
+                return;
+
+            Entity receivedEntity
+                = new Entity(new Guid((string)EntityInfo["guid"]), connection.SessionID);
+
+            foreach (KeyValuePair<string, object> entityComponent in EntityInfo)
+            {
+                string key = entityComponent.Key;
+                if (key != "guid" && key != "owner")
+                    ApplyComponent(receivedEntity, key, (Dictionary<string, object>)entityComponent.Value);
+            }
+
+            World.Instance.Add(receivedEntity);
+        }
+
+        private void HandleRemoteEntityRemoved(string entityGuid)
+        {
+            World.Instance.Remove(World.Instance.FindEntity(entityGuid));
+        }
+
+        private void ApplyComponent(Entity entity, string componentName, Dictionary<string, object> attributes)
+        {
+            foreach (KeyValuePair<string, object> attribute in attributes)
+            {
+                entity[componentName][attribute.Key].Suggest(attribute.Value);
+            }
+        }
+
         private void HandleEntityAdded(object sender, EntityEventArgs e)
         {
-            foreach (ClientFunction clientHandler in onNewEntityHandlers.Values)
+            foreach (KeyValuePair<Connection, ClientFunction> clientHandler in onNewEntityHandlers)
             {
-                clientHandler(ConstructEntityInfo(e.Entity));
+                if(e.Entity.Owner != clientHandler.Key.SessionID)
+                    clientHandler.Value(ConstructEntityInfo(e.Entity));
             }
         }
 
         private void HandleEntityRemoved(object sender, EntityEventArgs e)
         {
-            foreach (ClientFunction clientHandler in onRemovedEntityHandlers.Values)
+            foreach (KeyValuePair<Connection, ClientFunction> clientHandler in onRemovedEntityHandlers)
             {
-                clientHandler(ConstructEntityInfo(e.Entity));
+                if(e.Entity.Owner != clientHandler.Key.SessionID)
+                    clientHandler.Value(e.Entity.Guid.ToString());
             }
         }
 

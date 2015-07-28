@@ -1,16 +1,15 @@
 ﻿// This file is part of FiVES.
 //
 // FiVES is free software: you can redistribute it and/or modify
-// it under the terms of the GNU General Public License as published by
-// the Free Software Foundation, either version 3 of the License, or
-// (at your option) any later version.
+// it under the terms of the GNU Lesser General Public License as published by
+// the Free Software Foundation (LGPL v3)
 //
 // FiVES is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 //
-// You should have received a copy of the GNU General Public License
+// You should have received a copy of the GNU Lesser General Public License
 // along with FiVES.  If not, see <http://www.gnu.org/licenses/>.
 using System;
 using System.Collections.Generic;
@@ -21,7 +20,7 @@ using ClientManagerPlugin;
 using FIVES;
 using FIVESServiceBus;
 using System.IO;
-using KIARAPlugin;
+using SINFONIPlugin;
 
 namespace AvatarCollisionPlugin
 {
@@ -42,7 +41,7 @@ namespace AvatarCollisionPlugin
 
         public List<string> PluginDependencies
         {
-            get { return new List<string> {"KIARA"}; }
+            get { return new List<string> {"SINFONI"}; }
         }
 
         public List<string> ComponentDependencies
@@ -75,7 +74,7 @@ namespace AvatarCollisionPlugin
         private void RegisterService()
         {
             string idlContents = File.ReadAllText("avatarCollision.kiara");
-            KIARAServerManager.Instance.KiaraServer.AmendIDL(idlContents);
+            SINFONIServerManager.Instance.SinfoniServer.AmendIDL(idlContents);
             ClientManager.Instance.RegisterClientService("avatarCollision", false, new Dictionary<string, Delegate>
             {
                 {"setGroundlevel", (Action<string, float>)SetGroundlevel}
@@ -112,6 +111,9 @@ namespace AvatarCollisionPlugin
         /// <returns>Accumulated changes with adaptions added by AvatarCollison</returns>
         internal AccumulatedAttributeTransform Transform(AccumulatedAttributeTransform accumulatedTransforms)
         {
+            if (!accumulatedTransforms.Entity.ContainsComponent("avatar"))
+                return accumulatedTransforms;
+
             Vector entityPosition = (Vector)accumulatedTransforms.CurrentAttributeValue("location", "position");
             Vector adaptedPosition = new Vector (entityPosition.x,
                 (float)accumulatedTransforms.Entity["avatarCollision"]["groundLevel"].Value,

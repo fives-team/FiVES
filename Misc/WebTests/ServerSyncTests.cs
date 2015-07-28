@@ -1,16 +1,15 @@
 ﻿// This file is part of FiVES.
 //
 // FiVES is free software: you can redistribute it and/or modify
-// it under the terms of the GNU General Public License as published by
-// the Free Software Foundation, either version 3 of the License, or
-// (at your option) any later version.
+// it under the terms of the GNU Lesser General Public License as published by
+// the Free Software Foundation (LGPL v3)
 //
 // FiVES is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 //
-// You should have received a copy of the GNU General Public License
+// You should have received a copy of the GNU Lesser General Public License
 // along with FiVES.  If not, see <http://www.gnu.org/licenses/>.
 using NUnit.Framework;
 using OpenQA.Selenium;
@@ -33,7 +32,7 @@ namespace WebTests
             server1 = new FIVESServerInstance();
             server1.ConfigureServerSyncPorts(43745, new int[] {});
             server1.ConfigureClientManagerPorts(34837);
-            server1.ConfigurePluginsAndProtocols(new string[] { "Auth", "Avatar", "ClientManager", "KIARA", "Location",
+            server1.ConfigurePluginsAndProtocols(new string[] { "Auth", "Avatar", "ClientManager", "SINFONI", "Location",
                 "Motion", "Testing", "Renderable", "EventLoop", "Editing", "ServerSync", "ConfigScalability",
                 "Scalability", "KeyframeAnimation" }, new string[] { "WebSocketJSON" });
             server1.Start();
@@ -41,7 +40,7 @@ namespace WebTests
             server2 = new FIVESServerInstance();
             server2.ConfigureServerSyncPorts(43746, new int[] { 43745 });
             server2.ConfigureClientManagerPorts(34839);
-            server2.ConfigurePluginsAndProtocols(new string[] { "Auth", "Avatar", "ClientManager", "KIARA", "Location",
+            server2.ConfigurePluginsAndProtocols(new string[] { "Auth", "Avatar", "ClientManager", "SINFONI", "Location",
                 "Testing", "Renderable", "EventLoop", "Editing", "ServerSync", "ConfigScalability",
                 "Scalability", "KeyframeAnimation" }, new string[] { "WebSocketJSON" });
             server2.Start();

@@ -1,27 +1,27 @@
 // This file is part of FiVES.
 //
 // FiVES is free software: you can redistribute it and/or modify
-// it under the terms of the GNU General Public License as published by
-// the Free Software Foundation, either version 3 of the License, or
-// (at your option) any later version.
+// it under the terms of the GNU Lesser General Public License as published by
+// the Free Software Foundation (LGPL v3)
 //
 // FiVES is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 //
-// You should have received a copy of the GNU General Public License
+// You should have received a copy of the GNU Lesser General Public License
 // along with FiVES.  If not, see <http://www.gnu.org/licenses/>.
 using System;
 using FIVES;
 using System.Collections.Generic;
 using AuthPlugin;
 using ClientManagerPlugin;
-using KIARA;
+using SINFONI;
 using System.Net;
 using System.Reflection;
 using System.IO;
-using KIARAPlugin;
+using System.Xml;
+using SINFONIPlugin;
 
 namespace AvatarPlugin
 {
@@ -41,7 +41,7 @@ namespace AvatarPlugin
         {
             get
             {
-                return new List<string> { "KIARA", "ClientManager", "Auth"};
+                return new List<string> { "SINFONI", "ClientManager", "Auth"};
             }
         }
 
@@ -56,8 +56,9 @@ namespace AvatarPlugin
         public void Initialize ()
         {
             RegisterComponent();
+            ReadConfig();
             RegisterEvents();
-            RegisterKiaraService();
+            RegisterSinfoniService();
         }
 
         public void Shutdown()
@@ -71,9 +72,23 @@ namespace AvatarPlugin
             ComponentRegistry.Instance.Register(avatar);
         }
 
-        void RegisterKiaraService()
+        void ReadConfig()
         {
-            AmendKiaraServiceIdl();
+            try
+            {
+                XmlDocument configDocument = new XmlDocument();
+                configDocument.Load(this.GetType().Assembly.Location + ".config");
+                defaultAvatarMesh = configDocument.SelectSingleNode("configuration/defaultMesh").Attributes["value"].Value;
+            }
+            catch(Exception e)
+            {
+                Console.WriteLine("[AvatarPlugin] An Error occurred while processing config file : " + e.Message);
+            }
+        }
+
+        void RegisterSinfoniService()
+        {
+            AmendSinfoniServiceIdl();
             ClientManager.Instance.RegisterClientService("avatar", true, new Dictionary<string, Delegate> {
                 {"getAvatarEntityGuid", (Func<Connection, string>)GetAvatarEntityGuid},
                 {"changeAppearance", (Action<Connection, string, Vector>)ChangeAppearance},
@@ -84,10 +99,10 @@ namespace AvatarPlugin
             });
         }
 
-        void AmendKiaraServiceIdl()
+        void AmendSinfoniServiceIdl()
         {
             var idlContent = File.ReadAllText("avatar.kiara");
-            KIARAServerManager.Instance.KiaraServer.AmendIDL(idlContent);
+            SINFONIServerManager.Instance.SinfoniServer.AmendIDL(idlContent);
         }
 
         void RegisterEvents()

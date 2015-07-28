@@ -31,13 +31,13 @@
     <ConsolePause>false</ConsolePause>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="KIARA, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\ThirdParty\KIARA\KIARA.dll</HintPath>
-    </Reference>
     <Reference Include="NLog, Version=3.2.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\packages\NLog.3.2.0.0\lib\net40\NLog.dll</HintPath>
+    </Reference>
+    <Reference Include="SINFONI, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\ThirdParty\SINFONI\SINFONI.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="nunit.framework">
@@ -84,9 +84,9 @@
       <Project>{6cd0fe0e-7d56-4e24-8568-625a13c37130}</Project>
       <Name>EventLoop</Name>
     </ProjectReference>
-    <ProjectReference Include="..\KIARA\KIARAPlugin.csproj">
+    <ProjectReference Include="..\SINFONI\SINFONIPlugin.csproj">
       <Project>{d5b8e5d2-a427-4985-b885-9eac5bddab06}</Project>
-      <Name>KIARAPlugin</Name>
+      <Name>SINFONIPlugin</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
