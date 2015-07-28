@@ -20,6 +20,7 @@ using SINFONI;
 using System.Net;
 using System.Reflection;
 using System.IO;
+using System.Xml;
 using SINFONIPlugin;
 
 namespace AvatarPlugin
@@ -55,6 +56,7 @@ namespace AvatarPlugin
         public void Initialize ()
         {
             RegisterComponent();
+            ReadConfig();
             RegisterEvents();
             RegisterSinfoniService();
         }
@@ -68,6 +70,20 @@ namespace AvatarPlugin
             ComponentDefinition avatar = new ComponentDefinition("avatar");
             avatar.AddAttribute<string>("userLogin", null);
             ComponentRegistry.Instance.Register(avatar);
+        }
+
+        void ReadConfig()
+        {
+            try
+            {
+                XmlDocument configDocument = new XmlDocument();
+                configDocument.Load(this.GetType().Assembly.Location + ".config");
+                defaultAvatarMesh = configDocument.SelectSingleNode("configuration/defaultMesh").Attributes["value"].Value;
+            }
+            catch(Exception e)
+            {
+                Console.WriteLine("[AvatarPlugin] An Error occurred while processing config file : " + e.Message);
+            }
         }
 
         void RegisterSinfoniService()
