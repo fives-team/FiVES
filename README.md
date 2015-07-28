@@ -103,6 +103,14 @@ FiVES can be built and run on both Windows and Linux system.
 To run FiVES, just double click _FIVES.exe_ (Windows), or use mono to run FiVES (Linux) by typing `mono FIVES.exe` .
 FiVES requires Administrator rights under Windows to be allowed to open HTTP listener ports.
 
+## Quick Start Guides
+
+There are currently the following resources that allow you to directly dive into the FiVES development:
+
+* The FIWARE User and Programmer's Guide for the FiVES Synchronization GE Implementation: https://forge.fiware.org/plugins/mediawiki/wiki/fiware/index.php?title=FiVES_-_User_and_Programmers_Guide
+* The following Goole Document with a documentation that is kept rather up to date: https://docs.google.com/document/d/163_K5boYohByu8qkdBUxk8Hrp_7QVY5NTzVEzFOCZEQ
+* The FiVES GitHub Wiki: https://github.com/fives-team/FiVES/wiki _This Wiki is currently outdated and under maintenance. It will be back in a revised version soon! Please refer to the other resources in the meantime_
+
 # License
 
 FiVES is provided subject to terms of the GNU LGPL v3 license. Please refer to the LICENSE file for more information. All third-party libraries come with their own licenses. Details about third party licenses are given in the Readme file in the third party folder, and on the project webpages of the different projects.
