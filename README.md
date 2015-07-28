@@ -25,6 +25,10 @@ The following directories exist in the repository:
     <td>Docs</td>
     <td>contains files for generating documentation</td>
   </tr>
+    <tr>
+    <td>Misc</td>
+    <td>Different tools for testing</td>
+  </tr>
   <tr>
     <td>FIVES</td>
     <td>contains the server application</td>
@@ -32,6 +36,10 @@ The following directories exist in the repository:
   <tr>
     <td>Plugins</td>
     <td>contains server plugins</td>
+  </tr>
+  <tr>
+    <td>ServiceBus</td>
+    <td>Contains the Plugin-Service-Orchestration bus</td>
   </tr>
   <tr>
     <td>ThirdParty</td>
