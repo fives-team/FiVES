@@ -6,9 +6,9 @@ The goal of this project is to build a flexible virtual world server that can be
 
 __*FiVES is part of the FIWARE project, funded by the European Union. There, FiVES is provided as alternative implementation if the 'Synchronization' Generic Enabler. For more information, please refer to http://www.fiware.org*__
 
+# Project Structure
 
-
-# Directories
+## Directories
 
 The following directories exist in the repository:
 
@@ -78,9 +78,15 @@ The following directories may be generated dynamically:
   </tr>
 </table>
 
-The Plugins folder in this project contains a base set of plugins that may be helpful to get started with creating interactive 3D virtual world applications. An additional set of more specialised, experimental plugins is published separately at https://github.com/fives-team/fives-experimental-plugins.
+## Overall Architecture
 
-# Third-party libraries
+The FiVES project consists of three main parts:
+
+* The core server application that maintains the world data in an entity-component-attribute like fashion and loads and schedules the set of plugins. (Contained in this Repo, __Core__ folder).
+* A set of plugins that implement specific logic. Whenever you want to enrich your application with new features, these features will be provided by one or more plugins. The Plugins folder in this project contains a base set of plugins that may be helpful to get started with creating interactive 3D virtual world applications. An additional set of more specialised, experimental plugins is published separately at __https://github.com/fives-team/fives-experimental-plugins.__
+* The communication middleware _SINFONI_. In short, SINFONI aims at simplyfing network communication by abstracting from data serialization, marshalling and transport, and hides all this behind a simple, RPC like interface. SINFONI is modular and provides a set of serialization and transport mechanisms. SINFONI is provided in FiVES as precompiled binaries in the ThirdParty/SINFONI folder. The complete source code is provided under LGPL v3 license at https://github.com/tospie/SINFONI
+ 
+## Third-party libraries
 
 
 We use nuGet to manage third-party libraries. If you want to build FIVES, please
