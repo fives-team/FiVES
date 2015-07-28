@@ -1,13 +1,14 @@
-FiVES
-=====
+# FiVES
 
 Flexible Virtual Environment Server
 
-The goal of this project is to build a flexible virtual world server that can
-be used to build various virtual world applications with diverse requirements.
+The goal of this project is to build a flexible virtual world server that can be used to build various synchronized applications with different requirements. Its architecture is highly modular, providing a lightweight base application with a very flexible plugin mechanism.
 
-Directories
-===========
+__*FiVES is part of the FIWARE project, funded by the European Union. There, FiVES is provided as alternative implementation if the 'Synchronization' Generic Enabler. For more information, please refer to http://www.fiware.org*__
+
+
+
+# Directories
 
 The following directories exist in the repository:
 
@@ -71,15 +72,13 @@ The following directories may be generated dynamically:
 
 The Plugins folder in this project contains a base set of plugins that may be helpful to get started with creating interactive 3D virtual world applications. An additional set of more specialised, experimental plugins is published separately at https://github.com/fives-team/fives-experimental-plugins.
 
-Third-party libraries
-=====================
+# Third-party libraries
+
 
 We use nuGet to manage third-party libraries. If you want to build FIVES, please
 install nuGet into your IDE and restore all packages. Some libraries that are
 not available in nuGet are located in ThirdParty directory.
 
-License
-=======
+# License
 
-Please read LICENSE file. All third-party libraries come with their own
-licenses. Please refer to respective projects' websites for more information.
+FiVES is provided subject to terms of the GNU LGPL v3 license. Please refer to the LICENSE file for more information. All third-party libraries come with their own licenses. Details about third party licenses are given in the Readme file in the third party folder, and on the project webpages of the different projects.
