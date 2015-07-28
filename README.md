@@ -88,10 +88,20 @@ The FiVES project consists of three main parts:
  
 ## Third-party libraries
 
-
 We use nuGet to manage third-party libraries. If you want to build FIVES, please
 install nuGet into your IDE and restore all packages. Some libraries that are
 not available in nuGet are located in ThirdParty directory.
+
+# Getting Started
+
+## Building and running FiVES
+
+All third party libraries that are needed to build FiVES are either supplied within the project, or managed by the NuGet package manager: http://www.nuget.org . Simply add NuGet to your IDE, select to restore packages on build, and build the entire solution.
+
+FiVES can be built and run on both Windows and Linux system.
+
+To run FiVES, just double click _FIVES.exe_ (Windows), or use mono to run FiVES (Linux) by typing `mono FIVES.exe` .
+FiVES requires Administrator rights under Windows to be allowed to open HTTP listener ports.
 
 # License
 
