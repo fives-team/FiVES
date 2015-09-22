@@ -263,3 +263,119 @@ In the following example, we are going to take some entity in the World and crea
        World.Instance.Add(newEntity);
    }
 ```
+
+## FiVES Plugin Development
+
+Plugins are the core mechanism in FiVES to add new features and extend the available data structures in terms of components. The Interface that needs to be implemented is kept intentionally small to make it easy to integrate also complex new features into a FiVES application.
+
+For this, a plugin implements one or more component definitions (see also _Registering Components_) and all the logic that makes use of this data in C# code. Using the example of the Motion plugin that we introduced before, Motion would define components to describe velocity on entities, and provide C# code to translate this velocity into continuous position and orientation changes.
+
+### Creating a Plugin
+
+Adding a new functionality to your FiVES application usually means creating a Plugin that implements this functionality. To create a Plugin, just follow these simple steps:
+
+1. Create a new project of type Class Library in the folder <root>/Plugins/<plugin-name>.
+2. Make sure target .NET framework is 4.0
+3. Set its output directory to <root>/Binaries/<configuration>:
+4. In Visual Studio:
+ 1. Open project properties
+ 2. Select Build on the left
+ 3. Set Configuration to Debug
+ 4. Set Output path to ..\..\Binaries\Debug\
+ 5. Set Configuration to Release
+ 6. Set Output path to ..\..\Binaries\Release\
+ 7. Save changes (Ctrl + S) 
+5. In MonoDevelop
+ 1. Open project properties
+ 2. Select Build -> Output on the left
+ 3. Set Configuration to All Configurations
+ 4. Set Output path to ..\..\Binaries\$(Configuration}
+ 5. Click OK 
+6. Set the default namespace for the plugin to <plugin-name>Plugin, e.g. ConsolePlugin.
+7. Add references to the PluginManager, and optionally DomainModel, Collections and Math projects.
+8. Create a class implementing IPluginInitializer:
+  1. Property Name should return a unique plugin name.
+  2. Property PluginDependencies should return a list of other plugin names whose functionality (classes) new plugin uses.
+  3. Property ComponentDependencies should return a list of components on new plugin accesses.
+  4. Method Initialize which will be called when all dependencies are satisfied. Note that plugin may also be initialized after the server is started, e.g. when a component
+  5. dependency is satisfied by a plugin on a different server or a plugin dependency is satisfied using PluginManager.LoadPlugin method. 
+
+As soon as the Plugin was compiled to a .dll and copied to the folder FiVES loads the Plugins from, it will be available when the server starts for the next time.
+```
+   public interface IPluginInitializer
+   {
+       /// The name of the plugin.
+       string Name { get; }
+      
+       /// List of names of the plugins on whose functionality
+       /// (classes) this plugin depends on.
+       List<string> PluginDependencies { get; }
+      
+       /// List of names of the components that this plugin accesses.
+       List<string> ComponentDependencies { get; }
+      
+       /// Initializes the plugin. This method will be called by the plugin manager
+       /// when all dependency plugins have
+       /// been satisfied.
+       void Initialize();
+      
+       /// Called when the Plugin is shut down gracefully
+       void Shutdown();
+   }
+```
+The IPluginInitializer interface from which each plugin is derived. 
+
+### Registering Components
+
+Components that can be written on and read from entities need to be registered to the global FiVES Component Registry before they can be accessed. Please refer to #The FiVES ECA Data Model for further information of the Entity Component Attribute model that is used by FiVES, and on how to read or write components and attributes.
+
+The idea of defining components before making them available is to provide some kind of type and name binding check. The next section will introduce the concept of plugin dependencies. Having plugins define components on which to depend explicitly avoids semantic errors in the code which may be hard to track, like typos in attribute names, or using attributes with wrong types.
+
+Plugins introduce new Components by creating component's definition and then registering it with the ComponentRegistry. A component definition defines a set of attributes that form the component by specifying the attributes' types, names and optional default value. Attributes can be of any standard type that supports IConvertible interface. When the default value is omitted, a default value default(T) will be used instead, where T is the type of the attribute
+
+As soon as the new component is registered, it can be accessed along with it's attributes via the square bracket operator as described above.
+
+```
+   // create new component
+   ComponentDefinition meshResource= new ComponentDefinition("meshResource");
+  
+   // add a string attribute "uri" with default value default(string), which is null
+   meshResource.AddAttribute("uri");
+  
+   // add a bool attribute "visible" of type bool with default value true
+   meshResource.AddAttribute("visible", true);
+  
+   // register component
+   ComponentRegistry.Instance.Register(meshResource);
+```
+
+### Plugin Dependencies
+
+The idea behind the FiVES plugins also includes to have a set of reusable pieces of code that can be assembled to new applications. This can include reusing a component that is defined in another plugin, as well as reusing C#-Code that is exposed via a public interface of a Plugin. However, this also introduces dependencies between plugins. In the first case, the new plugin will depend on a component that was previously defined (in our old example of Motion, the plugin will depend on the components defined by Location), in the second case, the plugin will depend immediately on Plugin code. In our example Motion depends on the code of a plugin called EventLoop, that provides a very basic implementation of a simulation loop.
+
+To make sure that the Plugin libraries are loaded in the correct order, the IPluginIntializer interface from which a new Plugin is derived contains two fields: PluginDependencies and ComponentDependencies, which describe exactly what the name is stating. If your Plugin happens to depend on another Plugin, not just a component, you will also have to link the respective Plugin library (or Project within the solution) to the resources of your new Plugin project.
+
+Both return a List of Names of Components or Plugins. These are simply lists of strings, i.e. of all names of plugins or components the new plugin depends on. These names are case sensitive, so make sure there is no Typo, otherwise the dependency cannot be resolved correctly!
+
+In the often mentioned case of Motion, these dependencies thus look like this:
+```
+    public List<string> PluginDependencies
+    {
+        get
+        {
+            return new List<string> {"EventLoop"};
+        }
+    }
+   
+    public List<string> ComponentDependencies
+    {
+        get
+        {
+            return new List<string> { "location" };
+        }
+    }
+```
+
+The FiVES Plugin Manager will resolve the dependencies when the server is starting. All plugins that define dependencies that are not yet loaded, they are put into a deferred state, and a new attempt to initialize them is made as soon as the other plugin got loaded.
+
+When running FiVES with the Terminal plugin, you can type ‘plugins’ after the server finished the startup procedure. This will prompt you with a list of all successfully initialised plugins, as well as which plugins could not be initialized due to missing dependencies. 
