@@ -379,3 +379,200 @@ In the often mentioned case of Motion, these dependencies thus look like this:
 The FiVES Plugin Manager will resolve the dependencies when the server is starting. All plugins that define dependencies that are not yet loaded, they are put into a deferred state, and a new attempt to initialize them is made as soon as the other plugin got loaded.
 
 When running FiVES with the Terminal plugin, you can type ‘plugins’ after the server finished the startup procedure. This will prompt you with a list of all successfully initialised plugins, as well as which plugins could not be initialized due to missing dependencies. 
+
+
+## Web Client development
+
+The Web Client is split into a core application and several plugin-like scripts similar to the FiVES server application. By this, implementing logic that is needed to cover features of a server side plugin on client side should be nothing more than adding a new JavaScript file that implements the respective logic. 
+
+### The Web Client Project
+
+The Web Client is divided into different subfolders, containing configuration files, script files and some folders for example resources for XML3D scenes. Within the script folder, you will subfolders for all the files that implement Client-Server-communication (communication), external libraries, like xml3d.js and kiara (lib), all the files that implement the FiVES ECA datamodel (model), and all the scripts that implement the client-side features of all the FiVES plugins (plugins). There are more folders, containing examples or code for e.g. user input.
+
+The overall namespace that we are using the Web Client is FIVES. Each of the above modules - communication, domain model, plugins … - build their own sub namespace, e.g. FIVES.Models. Convention is to model these namespaces at the beginning of each file using JavaScript objects:
+
+```
+   var FIVES = FIVES || {};
+   FIVES.Models = FIVES.Models || {};
+```
+
+Code within a script file should be contained in a JavaScript function closure and enforce strict mode:
+
+```
+   (function (){
+        "use strict";
+             
+       // YOUR CODE HERE
+   }());
+```
+
+When receiving an entity from the server that carries a reference to XML3D geometry in the mesh component, XML3D elements are created automatically that describe model and transformation of the respective entity. These element are also accessible on the entity’s JavaScript object representation via entity.xml3dView. 
+
+### Adding features to the web client
+
+New Features are usually added because data that emerges from some new plugin on server side needs to be interpreted correctly by the client. This logic that interprets a server side plugin should be added as single script file, following the above conventions, being contained in a subfolder of the plugins folder. Please have a look at existing script files for reference.
+
+Similar to the Server, all entities are contained in a shared set, called FIVES.Models.EntityRegistry, and entities are queried from this set via
+
+```
+   FIVES.Models.EntityRegistry.getEntity( entityGuid );
+```
+
+Components are accessed on entities like on server side with square bracket operators:
+```
+   var entityPosition = e[“location”][“position”];
+```
+
+Note that setting attributes directly in the client is strongly discouraged, as there is no immediate update mechanism implemented on client side yet! Instead, please update attributes of entities directly on the server, using a SINFONI function wrapper. How to do this will be explained in more detail in #Connecting to FiVES with SINFONI.
+
+To add your plugin script to the list of scripts used when starting the client, you have to add a script reference to the client.xhtml file:
+```
+   <script type="text/javascript" src="scripts/plugins/myPlugin/plugin.js"></script>
+```
+
+Make sure to include your script after having included other plugins on which your new plugin may depend, and in particular after the core scripts from models and communication! There is no dependency resolution of plugins like on server side yet. 
+
+### Web Client Events
+
+The client offers a number of events for plugins to subscribe to in order to be informed about changes that happened. These events are implemented in /scripts/communication/fives_event.js and are in detail:
+
+* FIVES.Events.ConnectionEstablished()
+* FIVES.Events.ComponentUpdated(entity, componentName,attributeName)
+* FIVES.Events.EntityAdded(entity)
+* FIVES.Events.EntityGeometryCreated(entity) 
+
+Connection established: Fires when the connection to the server was established successfully. This event should be used to to register SINFONI Function Wrappers after a successful connection
+
+Component updated: Fired whenever new data for a component arrived. The event calls the event handler with the entity on which the update happened, and names of component and attribute that changed. When the event is fired, the update was already applied to the attribute, and the new value is already contained there.
+
+EntityAdded: Is fired when a new entity was received from the server and added to the entity registry. The handler for this event is fired with the newly added entity as argument.
+
+EntityGeometryCreated: Is fired when the XML3D geometry for an entity was created successfully, that is, as soon as the referenced model was retrieved from the remote repository, elements for transformation and model are created, and the elements were added to the website’s DOM.
+
+Plugins can register to the different events by using the .Add[Event]Handler on FIVES.Events, for example
+
+```
+   FIVES.Events.AddOnComponentUpdatedHandler( _myHandler );
+```
+
+, with _myHandler being some JavaScript function that expects the arguments with which the handler function is called as arguments. Plugins can unregister from events by using the respective FIVES.Events.Remove[Event]Handler.
+
+### Connecting to FiVES with SINFONI
+
+The interface for SINFONI functions is provided by the FIVES.Communication.FivesCommunicator object. The main two functions you will be using here are .generateFuncWrapper and .registerFuncImplementation that are provided by the connection object of the communicator, and only available after the connection to the server was established successfully.
+
+First one is used to create an RPC call to the server. For example:
+```
+   var c = _fivesCommunicator.connection;
+   var updatePosition = c.generateFuncWrapper("location.updatePosition");
+```
+The above code creates an object that can be used to send RPC calls to the FiVES server and stores this object in the variable updatePosition. updatePosition can then be called like a function, with parameters that match to the parameters specified in the FiVES IDL document for the respective function:
+```
+   updatePosition(“123aef”, {x: 1.0, y: 0.0, z: 0.0}, 12345);
+```
+Note that the service function that is wrapped, in this case location.updatePosition, needs to be implemented by some plugin on server side and appear in the server’s IDL document. If the function you are wrapping is a one-way function, i.e. of return type void you are done. If you are expecting some return value, though, the above line will return a function call object that will trigger a success on error event, depending on the outcome of the call. This can be handled by registering an event handler, for example:
+```
+   // call some authentication function wrapper that calls
+   // an authentication service on server side
+   var authRequest = auth(“myName”, “myPassword”);
+   authRequest.on(“success”, function(result) { // handle result });
+```
+Providing an implementation of a service function that can be wrapped by the server is done via
+```
+   Connection.registerFuncImplementation(qualifiedMethodName, typeMapping, nativeMethod)
+```
+This binds a KIARA (SINFONI) service description as given in the IDL document to a JavaScript function implementation. typeMapping is currently ignored, qualifiedMethodName is build from [service].[method], e.g. “location.updatePosition”. The local JavaScript implementation is passed as parameter for nativeMethod . For example:
+```
+   registerFuncImplementation("objectsync.receiveObjectUpdates", null, _applyUpdates);
+```
+, binds the local JavaScript function _applyUpdates to the SINFONI (KIARA) service function objectsync.receiveObjectUpdates. The FiVES server can now wrap this method and perform a remote procedure call from server to client.
+
+Important Note: There is NO automatic update of attributes from client to server, as it is for the other direction. Currently, if you would like your client to have attributes that are defined by your client, on the server, you need add a SINFONI service to your server side plugin that allows you to change the new attribute. The client then needs to wrap this function and call the particular setter when changing this attribute, as it is for example the case for location.updatePosition in the example above.
+
+Another Important Note: The JavaScript binding of KIARA / SINFONI does currently not parse the IDL correctly. This needs to be tackled urgently in one of the next updates! Due to some conveniences that JavaScript brings, features like type mapping work nevertheless (as there are no types in JavaScript). And if something goes wrong, server side SINFONI still catches and handles the error. But: JS Sinfoni is also not capable to determine a method’s return type, in particular, whether a function is one way or not. Calling one way functions from server on client side will cause KIARA errors claiming Invalid CallIDs! The reason is simply that the client is not aware that its function is one way, and tries to send a reply for a method that should not. You can either ignore the KIARA Call errors, or add them manually to the list of all one way functions. For this, open the file ``scripts/lib/websocket-json.js``. Find the function ``Connection.prototype._isOneWay`` and add all functions that are one way and implemented on clientside to this list in the form ``servicename.methodname`` . 
+
+### FiVES Scene API
+
+The client-side plugins provide wrappers to the server-side SINFONI services that can be used to interact with the scene. This includes creation of entities, updating their positions and orientations, and some more. Following are the most common functions that are used to interact with a FiVES scene: 
+
+#### Entities
+```
+   // Returns a list of all entities currently maintained by the server   
+   FIVES.Plugins.ClientSync.listObjects();
+  
+   // Creates an entity at specified position. Returns GUID of new entity upon successful creation
+   FIVES.Plugins.Editing.createEntityAt(Vector position);
+   
+   // Creates an entity at respective position and orientation that is rendered using
+   // the given mesh resource. Returns GUID of new entity upon successful creation
+   FIVES.Plugins.Editing.createMeshEntity(Vector position, Quat rotation, Vector scale, MeshResource mesh);
+```
+
+#### Position, Orientation and Velocity
+
+The client-side plugin "Location" provides functions to send position and orientation updates for an entity to the server:
+```
+   // Update position of an Entity on the server
+   FIVES.Plugins.Location.sendEntityPositionUpdate(string entityGuid, Vector newPosition);
+   
+   // Update orientation of an Entity on the server
+   FIVES.Plugins.Location.sendEntityOrientationUpdate(string entityGuid, Quat newOrientation);
+```
+The client-side pluginmotion can be used to update velocity and rotational velocity on an entity. Setting these values to something different from a null vector will start a continuous motion, i.e. position and orientation updates, on the respective entity.
+```
+   // Updates values of velocity and rotational velocity of an entity. Timestamp specifies the time when the update occurred.
+   FIVES.Plugins.Motion.updateMotion(string guid, Vector velocity, AxisAngle rotVelocity, i32 timestamp);
+```
+
+#### Animation
+
+The Plugin KeyframeAnimation provides a service animation to manage animation playback on entities. Animations can either be running on server side, creating new keyframe values which are then synchronized to the clients, or just send a message to every client to invoke a client side animation playback there. In this case, animations will be running on each client, but animations may not be necessarily be in synch w.r.t. keyframes. However, client side animation playback reduces the number of messages sent over network significantly.
+```
+   // Starts an Xflow animation with a given name on specified entity, playing animation in specified key range for number of cycles.
+   // Choose 0 for cycles for infinite playback.
+   FIVES.Plugins.Animation.startServersideAnimation(string entityGuid, string animationName, float startFrame, float endFrame, i32 cycles, float speed);
+         
+   // Stops animation on specified entity
+   FIVES.Plugins.Animation.stopServersideAnimation(string entityGuid, string animationName);
+      
+   // Invokes playback of animation with given name on all connected clients
+   FIVES.Plugins.Animation.startClientsideAnimation(string entityGuid, string animationName, float startFrame, float endFrame, i32 cycles, float speed);
+      
+   // Stops client side playback of named animation on all clients
+   FIVES.Plugins.Animation.stopClientsideAnimation(string entityGuid, string animationName);
+```
+
+#### Data Structures used for Synchronization
+
+* Vector: 3D Vector with components x, y and z of type float 
+
+```
+   struct Vector {
+       float x;
+       float y;
+       float z;
+   }
+```
+* Quat: Quaternion to describe orientations and rotations. 
+```
+   struct Quat {
+       float x;
+       float y;
+       float z;
+       float w;
+   }
+```
+* AxisAngle: Rotation in Axis Angle - notation, used to describe rotational velocity of an entity 
+```
+   struct AxisAngle {
+       Vector axis;
+       float angle;
+   }
+```
+* MeshResource: Small container class that contains information about used XML3D resource and visibility flag 
+```
+   struct MeshResource {
+       string uri;
+       boolean visible;
+   }
+```
