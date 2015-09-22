@@ -4,11 +4,11 @@ Flexible Virtual Environment Server
 
 The goal of this project is to build a flexible virtual world server that can be used to build various synchronized applications with different requirements. Its architecture is highly modular, providing a lightweight base application with a very flexible plugin mechanism.
 
-__*FiVES is part of the FIWARE project, funded by the European Union. There, FiVES is provided as alternative implementation if the 'Synchronization' Generic Enabler. For more information, please refer to http://www.fiware.org*__
+__*FiVES is part of the FIWARE project, funded by the European Union. There, FiVES is provided as alternative implementation if the 'Synchronization' Generic Enabler. For more information, please refer to [https://www.fiware.org/](https://www.fiware.org/)*__
 
-* FIWARE Catalogue entry: <a href="http://catalogue.fiware.org/enablers/synchronization-fives">Synchronization / FiVES</a>
-* <a href="https://github.com/fives-team/FiVES/blob/develop/doc/user_guide.md">User & Programmer Guide</a>
-* <a href="https://github.com/fives-team/FiVES/blob/develop/doc/installation_guide.md">Installation & Administration Guide</a>
+* FIWARE Catalogue entry: [Synchronization / FiVES](http://catalogue.fiware.org/enablers/synchronization-fives)
+* [User & Programmer Guide](user_guide.md)
+* [Installation & Admin Guide](install_guide.md)
 
 # Project Structure
 
