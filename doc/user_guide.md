@@ -122,7 +122,7 @@ A Component is a data structure that in turn forms a container for a set of Attr
 The key message to take home at this point is: What role an Entity plays in your world is entirely determined by what components it carries, and by what values are stored in the attributes. All the actual data is contained in some attribute, and all synchronization of data between FiVES and connected applications is solely done by synchronising attribute values (and which entities are part of the World, of course). 
 
 <center>
- <img src="https://github.com/fives-team/FiVES/blob/develop/doc/eca.jpg"></img>
+ <img src="https://github.com/fives-team/FiVES/blob/develop/doc/eca.jpg?raw=true"></img>
 </center>
 
 ### Entities and the World
