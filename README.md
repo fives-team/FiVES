@@ -6,6 +6,10 @@ The goal of this project is to build a flexible virtual world server that can be
 
 __*FiVES is part of the FIWARE project, funded by the European Union. There, FiVES is provided as alternative implementation if the 'Synchronization' Generic Enabler. For more information, please refer to http://www.fiware.org*__
 
+* FIWARE Catalogue entry: <a href="http://catalogue.fiware.org/enablers/synchronization-fives">Synchronization / FiVES</a>
+* <a href="https://github.com/fives-team/FiVES/blob/develop/doc/user_guide.md">User & Programmer Guide</a>
+* <a href="https://github.com/fives-team/FiVES/blob/develop/doc/installation_guide.md">Installation & Administration Guide</a>
+
 # Project Structure
 
 ## Directories
