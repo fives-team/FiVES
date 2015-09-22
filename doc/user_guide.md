@@ -66,7 +66,7 @@ FiVES uses the SINFONI, an adapted version of the KIARA middleware, for Server-C
 
 The place to look for network configuration is the file ``SINFONIPlugin.dll.config`` in the Binaries folder, or the ``app.cfg`` file of the _SINFONIPlugin_ project within the Plugins folder of the FiVES solution in the IDE. The configuration file looks like this:
 
-````
+```
 <configuration>
   <ServerConfiguration>
     <!-- Specifies the listener to which clients connect in order retrieve …  -->
