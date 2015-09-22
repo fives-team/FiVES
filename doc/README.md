@@ -8,7 +8,7 @@ __*FiVES is part of the FIWARE project, funded by the European Union. There, FiV
 
 * FIWARE Catalogue entry: [Synchronization / FiVES](http://catalogue.fiware.org/enablers/synchronization-fives)
 * [User & Programmer Guide](user_guide.md)
-* [Installation & Admin Guide](install_guide.md)
+* [Installation & Admin Guide](installation_guide.md)
 
 # Project Structure
 
