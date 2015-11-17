@@ -11,27 +11,25 @@ namespace ComponentInterface
     {
         public string Name
         {
-            get { throw new NotImplementedException(); }
+            get { return "ComponentInterface"; }
         }
 
         public List<string> PluginDependencies
         {
-            get { throw new NotImplementedException(); }
+            get { return new List<string>{"ClientManager"}; }
         }
 
         public List<string> ComponentDependencies
         {
-            get { throw new NotImplementedException(); }
+            get { return new List<string>(); }
         }
 
         public void Initialize()
         {
-            throw new NotImplementedException();
         }
 
         public void Shutdown()
         {
-            throw new NotImplementedException();
         }
     }
 }
