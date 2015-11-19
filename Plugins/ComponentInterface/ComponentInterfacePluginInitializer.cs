@@ -13,6 +13,7 @@
 // along with FiVES.  If not, see <http://www.gnu.org/licenses/>.
 using ClientManagerPlugin;
 using FIVES;
+using SINFONI;
 using System;
 using System.Collections.Generic;
 using System.Linq;
