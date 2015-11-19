@@ -41,6 +41,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ComponentInterfacePluginInitializer.cs" />
+    <Compile Include="ExternalAttributeDefinition.cs" />
+    <Compile Include="ExternalComponentDefinition.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
