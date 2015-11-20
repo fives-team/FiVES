@@ -1,0 +1,16 @@
+﻿struct ExternalAttributeDefinition {
+	string Name;
+	string Type;
+	any DefaultValue;
+}
+
+
+struct ExternalComponentDefinition {
+	string Name;
+	array<ExternalAttributeDefinition> Attributes;
+}
+
+
+service component {
+	void registerComponent(ExternalComponentDefinition definition);
+}
