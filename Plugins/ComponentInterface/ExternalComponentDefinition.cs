@@ -21,6 +21,6 @@ namespace ComponentInterfacePlugin
     struct ExternalComponentDefinition
     {
         public string Name;
-        public Dictionary<string, ExternalAttributeDefinition> Attributes;
+        public HashSet<ExternalAttributeDefinition> Attributes;
     }
 }
