@@ -71,13 +71,13 @@ namespace ComponentInterfacePlugin
             }
         }
 
-        private ComponentDefinition RegisterExternalComponent(ExternalComponentDefinition definition)
+        private ComponentDefinition RegisterExternalComponent(Connection conn, ExternalComponentDefinition definition)
         {
             ComponentDefinition c = new ComponentDefinition(definition.Name);
-            foreach (ExternalAttributeDefinition attribute in definition.Attributes.Values)
+            foreach (ExternalAttributeDefinition attribute in definition.Attributes)
             {
-                Type t = Type.GetType(attribute.Type);
-                c.AddAttribute(attribute.Name, t, attribute.defaultValue);
+                Type t = conn.SinTD.GetSinTDType(attribute.Type).InstanceType;
+                c.AddAttribute(attribute.Name, t, attribute.DefaultValue);
             }
             ComponentRegistry.Instance.Register(c);
             return c;
