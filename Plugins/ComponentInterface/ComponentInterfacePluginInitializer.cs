@@ -42,6 +42,8 @@ namespace ComponentInterfacePlugin
 
         public void Initialize()
         {
+            SINFONIPlugin.SINFONIServerManager.Instance.SinfoniServer.AmendIDL(File.ReadAllText("component.sinfoni"));
+            RegisterSinfoniService();
         }
 
         public void Shutdown()
@@ -51,7 +53,8 @@ namespace ComponentInterfacePlugin
         private void RegisterSinfoniService()
         {
             ClientManager.Instance.RegisterClientService("component", true, new Dictionary<string, Delegate> {
-                    { "registerComponent", (Action<ExternalComponentDefinition>)HandleExternalRegisterRequest }
+                    { "registerComponent",
+                        (Action<Connection, ExternalComponentDefinition>)HandleExternalRegisterRequest }
                 });
         }
 
