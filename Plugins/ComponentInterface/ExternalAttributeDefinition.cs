@@ -22,6 +22,6 @@ namespace ComponentInterfacePlugin
     {
         public string Name;
         public string Type;
-        public object defaultValue;
+        public object DefaultValue;
     }
 }
