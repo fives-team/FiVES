@@ -55,11 +55,11 @@ namespace ComponentInterfacePlugin
                 });
         }
 
-        private void HandleExternalRegisterRequest(ExternalComponentDefinition definition)
+        private void HandleExternalRegisterRequest(Connection connection, ExternalComponentDefinition definition)
         {
             try
             {
-                ComponentDefinition c = RegisterExternalComponent(definition);
+                ComponentDefinition c = RegisterExternalComponent(connection, definition);
                 registeredExternalComponents.Add(c);
             }
             catch(Exception e)
