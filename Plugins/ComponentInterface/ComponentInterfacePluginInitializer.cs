@@ -70,7 +70,8 @@ namespace ComponentInterfacePlugin
                 // SINFONI NEEDS A HANDLE TO PROCESS EXCEPTIONS TO THE CLIENT !!
                 // https://github.com/tospie/SINFONI/issues/3
                 // Until then, we log the error in the console
-                Console.WriteLine("Cannot Register Component: " + e.Message + "\n" + e.InnerException);
+                Console.WriteLine("Cannot Register Component " + definition.Name + " : "
+                    + e.Message + "\n" + e.InnerException);
             }
         }
 
