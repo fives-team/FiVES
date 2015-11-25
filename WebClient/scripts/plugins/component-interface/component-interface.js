@@ -18,5 +18,17 @@ FIVES.Plugins = FIVES.Plugins || {};
 (function(){
     "use strict";
 
+
+    c.initializeComponent = function(componentName) {
+        return { Name: componentName, Attributes: [], addAttribute: addAttribute};
+    };
+
+    var addAttribute = function(attributeName, sinfoniType, defaultValue)
+    {
+        var attr = {Name: attributeName, Type: sinfoniType};
+        if(defaultValue)
+            attr.DefaultValue = defaultValue;
+        this.Attributes.push(attr);
+    };
 }());
 
