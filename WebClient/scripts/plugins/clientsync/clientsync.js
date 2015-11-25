@@ -33,6 +33,7 @@ FIVES.Plugins = FIVES.Plugins || {};
         _fivesCommunicator.connection.registerFuncImplementation("objectsync.removeObject", null,
             FIVES.Models.EntityRegistry.removeEntity);
         this.listObjects = _fivesCommunicator.connection.generateFuncWrapper("objectsync.listObjects");
+        this.updateAttribute = _fivesCommunicator.connection.generateFuncWrapper("objectsync.updateAttribute");
         this.listObjects().on("result", this._listObjectsCallback);
     };
 
