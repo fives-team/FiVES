@@ -42,5 +42,7 @@ FIVES.Plugins = FIVES.Plugins || {};
             attr.DefaultValue = defaultValue;
         this.Attributes.push(attr);
     };
+
+    FIVES.Plugins.ComponentInterface = new component_interface();
 }());
 
