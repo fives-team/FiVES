@@ -18,6 +18,18 @@ FIVES.Plugins = FIVES.Plugins || {};
 (function(){
     "use strict";
 
+    var _communicator = FIVES.Communication.FivesCommunicator;
+
+    var component_interface = function() {
+        FIVES.Events.AddConnectionEstablishedHandler(this._registerSinfoniFunctions.bind(this));
+    };
+
+    var c = component_interface.prototype;
+
+    c._registerSinfoniFunctions = function() {
+
+        this.registerComponent = _communicator.connection.generateFuncWrapper("component.registerComponent");
+    };
 
     c.initializeComponent = function(componentName) {
         return { Name: componentName, Attributes: [], addAttribute: addAttribute};
