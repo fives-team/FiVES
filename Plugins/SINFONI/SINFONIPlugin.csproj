@@ -79,7 +79,9 @@
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>xcopy "$(SolutionDir)ThirdParty\SINFONI\*.*" "$(OutDir)SINFONI\" /S /Y /E</PostBuildEvent>
+    <PostBuildEvent Condition=" '$(OS)' == 'Windows_NT' ">xcopy /y /s /e  "$(SolutionDir)ThirdParty\SINFONI\*.*" "$(OutDir)SINFONI\"</PostBuildEvent>
+    <PostBuildEvent Condition=" '$(OS)' != 'Windows_NT' ">mkdir -p "$(OutDir)SINFONI/" &amp;&amp; cp -r  "$(SolutionDir)ThirdParty/SINFONI/"* "$(OutDir)SINFONI/"</PostBuildEvent>
+
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
