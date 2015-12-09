@@ -13,10 +13,12 @@
 // along with FiVES.  If not, see <http://www.gnu.org/licenses/>.
 using SINFONI;
 using System;
+using System.ComponentModel;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
+using System.Collections.Specialized;
 
 [assembly: InternalsVisibleTo("ServiceBus")]
 
@@ -29,7 +31,7 @@ namespace FIVES
             ParentComponent = parentComponent;
             Definition = definition;
             Value = definition.DefaultValue;
-        }
+		}
 
         public Component ParentComponent { get; private set; }
 
@@ -113,8 +115,26 @@ namespace FIVES
         {
             var oldValue = CurrentValue;
             CurrentValue = value;
-            ParentComponent.raiseChangeEvent(Definition.Name, oldValue, CurrentValue);
+			registerChangedEventHandlers();
+			ParentComponent.raiseChangeEvent(Definition.Name, oldValue, CurrentValue);
         }
+
+		private void registerChangedEventHandlers() {
+			if (Definition.HasNotifyCollectionChangedNotification) {
+				( (INotifyCollectionChanged)Value ).CollectionChanged += OnCollectionChanged;
+			} else if (Definition.HasPropertyChangedNotification) {
+				( (INotifyPropertyChanged)Value ).PropertyChanged += OnPropertyChanged;
+			}
+		}
+
+		void OnCollectionChanged(object sender, NotifyCollectionChangedEventArgs args) {
+			ParentComponent.raiseCollectionChangeEvent(Definition.Name, CurrentValue);
+		}
+
+		void OnPropertyChanged(object sender, PropertyChangedEventArgs args) {
+			ParentComponent.raisePropertyChangeEvent(Definition.Name, CurrentValue);
+		}
+
 
         private static bool CanBeAssignedNull(Type type)
         {
