@@ -119,8 +119,8 @@ namespace FIVES
             }
             var oldValue = CurrentValue;
             CurrentValue = value;
-			registerChangedEventHandlers();
-			ParentComponent.raiseChangeEvent(Definition.Name, oldValue, CurrentValue);
+            registerChangedEventHandlers();
+            ParentComponent.raiseChangeEvent(Definition.Name, oldValue, CurrentValue);
         }
 
         private void deRegisterEventHandler()
