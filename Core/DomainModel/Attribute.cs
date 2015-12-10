@@ -135,22 +135,27 @@ namespace FIVES
             }
         }
 
-		private void registerChangedEventHandlers() {
-			if (Definition.HasNotifyCollectionChangedNotification) {
-				( (INotifyCollectionChanged)Value ).CollectionChanged += OnCollectionChanged;
-			} else if (Definition.HasPropertyChangedNotification) {
-				( (INotifyPropertyChanged)Value ).PropertyChanged += OnPropertyChanged;
-			}
-		}
+        private void registerChangedEventHandlers()
+        {
+            if (Definition.HasNotifyCollectionChangedNotification)
+            {
+                ( (INotifyCollectionChanged)Value ).CollectionChanged += OnCollectionChanged;
+            }
+            else if (Definition.HasPropertyChangedNotification)
+            {
+                ( (INotifyPropertyChanged)Value ).PropertyChanged += OnPropertyChanged;
+            }
+        }
 
-		void OnCollectionChanged(object sender, NotifyCollectionChangedEventArgs args) {
-			ParentComponent.raiseCollectionChangeEvent(Definition.Name, CurrentValue);
-		}
+        void OnCollectionChanged(object sender, NotifyCollectionChangedEventArgs args)
+        {
+            ParentComponent.raiseCollectionChangeEvent(Definition.Name, CurrentValue);
+        }
 
-		void OnPropertyChanged(object sender, PropertyChangedEventArgs args) {
-			ParentComponent.raisePropertyChangeEvent(Definition.Name, CurrentValue);
-		}
-
+        void OnPropertyChanged(object sender, PropertyChangedEventArgs args)
+        {
+            ParentComponent.raisePropertyChangeEvent(Definition.Name, CurrentValue);
+        }
 
         private static bool CanBeAssignedNull(Type type)
         {
