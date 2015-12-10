@@ -149,12 +149,12 @@ namespace FIVES
 
         void OnCollectionChanged(object sender, NotifyCollectionChangedEventArgs args)
         {
-            ParentComponent.raiseCollectionChangeEvent(Definition.Name, CurrentValue);
+            ParentComponent.raiseChangeEventFromInternalChange(Definition.Name, CurrentValue);
         }
 
         void OnPropertyChanged(object sender, PropertyChangedEventArgs args)
         {
-            ParentComponent.raisePropertyChangeEvent(Definition.Name, CurrentValue);
+            ParentComponent.raiseChangeEventFromInternalChange(Definition.Name, CurrentValue);
         }
 
         private static bool CanBeAssignedNull(Type type)

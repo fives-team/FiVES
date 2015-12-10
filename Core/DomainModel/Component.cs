@@ -80,13 +80,7 @@ namespace FIVES
             }
         }
 
-		internal void raiseCollectionChangeEvent(string attributeName, object newValue) {
-			if (ChangedAttribute != null) {
-				ChangedAttribute(this, new ChangedAttributeEventArgs(this, attributeName, newValue, newValue));
-			}
-		}
-
-		internal void raisePropertyChangeEvent(string attributeName, object newValue) {
+		internal void raiseChangeEventFromInternalChange(string attributeName, object newValue) {
 			if (ChangedAttribute != null) {
 				ChangedAttribute(this, new ChangedAttributeEventArgs(this, attributeName, newValue, newValue));
 			}
