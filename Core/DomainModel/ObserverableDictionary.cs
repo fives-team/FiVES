@@ -8,7 +8,8 @@ using System.Text;
 
 namespace FIVES {
 
-	// this class is from: https://richardwilburn.wordpress.com/2009/07/13/observable-dictionary/
+	// This class is based on: https://richardwilburn.wordpress.com/2009/07/13/observable-dictionary/
+    // License: CC-0
 	public class ObservableDictionary<TKey, TValue> :
 		IDictionary<TKey, TValue>,
 		INotifyCollectionChanged,
