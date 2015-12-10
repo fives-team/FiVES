@@ -29,6 +29,8 @@ namespace FIVES
             Guid = guid;
             Name = name;
             Type = type;
+
+            // The Has* attributes are assigned here for caching reasons.
             var interfaces = type.GetInterfaces();
             HasNotifyCollectionChangedNotification = interfaces.Contains(typeof(System.Collections.Specialized.INotifyCollectionChanged));
             HasPropertyChangedNotification = interfaces.Contains(typeof(System.ComponentModel.INotifyPropertyChanged));
