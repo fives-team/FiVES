@@ -29,9 +29,9 @@ namespace FIVES
             Guid = guid;
             Name = name;
             Type = type;
-			var interfaces = type.GetInterfaces();
-			HasNotifyCollectionChangedNotification = interfaces.Contains(typeof(System.Collections.Specialized.INotifyCollectionChanged));
-			HasPropertyChangedNotification = interfaces.Contains(typeof(System.ComponentModel.INotifyPropertyChanged));
+            var interfaces = type.GetInterfaces();
+            HasNotifyCollectionChangedNotification = interfaces.Contains(typeof(System.Collections.Specialized.INotifyCollectionChanged));
+            HasPropertyChangedNotification = interfaces.Contains(typeof(System.ComponentModel.INotifyPropertyChanged));
 
             try
             {
@@ -73,15 +73,15 @@ namespace FIVES
         /// </summary>
         public Type Type { get; private set; }
 
-		/// <summary>
-		/// Attribute implements System.Collections.Specialized.INotifyCollectionChanged
-		/// </summary>
-		public bool HasNotifyCollectionChangedNotification {get; private set;}
+        /// <summary>
+        /// Attribute implements System.Collections.Specialized.INotifyCollectionChanged
+        /// </summary>
+        public bool HasNotifyCollectionChangedNotification {get; private set;}
 
-		/// <summary>
-		/// Attribute implements System.ComponentModel.INotifyPropertyChanged
-		/// </summary>
-		public bool HasPropertyChangedNotification {get; private set;}
+        /// <summary>
+        /// Attribute implements System.ComponentModel.INotifyPropertyChanged
+        /// </summary>
+        public bool HasPropertyChangedNotification {get; private set;}
 
         private static T Cast<T>(object o)
         {
