@@ -1,161 +1,171 @@
-﻿using System;
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.ComponentModel;
-using System.Linq;
-using System.Text;
 
 namespace FIVES {
 
-	// This class is based on: https://richardwilburn.wordpress.com/2009/07/13/observable-dictionary/
+    // This class is based on: https://richardwilburn.wordpress.com/2009/07/13/observable-dictionary/
     // License: CC-0
-	public class ObservableDictionary<TKey, TValue> :
-		IDictionary<TKey, TValue>,
-		INotifyCollectionChanged,
-		INotifyPropertyChanged {
-		public event NotifyCollectionChangedEventHandler CollectionChanged;
-		public event PropertyChangedEventHandler PropertyChanged;
+    public class ObservableDictionary<TKey, TValue> :
+        IDictionary<TKey, TValue>,
+        INotifyCollectionChanged,
+        INotifyPropertyChanged
+    {
 
-		readonly IDictionary<TKey, TValue> _dictionary = new Dictionary<TKey, TValue>();
+        public event NotifyCollectionChangedEventHandler CollectionChanged;
 
-		public IEnumerator<KeyValuePair<TKey, TValue>> GetEnumerator() {
-			return _dictionary.GetEnumerator();
-		}
+        public event PropertyChangedEventHandler PropertyChanged;
 
-		IEnumerator IEnumerable.GetEnumerator() {
-			return GetEnumerator();
-		}
+        private readonly IDictionary<TKey, TValue> _dictionary = new Dictionary<TKey, TValue>();
 
-		public void Add(KeyValuePair<TKey, TValue> item) {
-			_dictionary.Add(item);
+        public IEnumerator<KeyValuePair<TKey, TValue>> GetEnumerator()
+        {
+            return _dictionary.GetEnumerator();
+        }
 
-			if (CollectionChanged != null)
-				CollectionChanged(this, new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add));
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return GetEnumerator();
+        }
 
-			if (PropertyChanged != null) {
-				PropertyChanged(this, new PropertyChangedEventArgs("Keys"));
-				PropertyChanged(this, new PropertyChangedEventArgs("Values"));
-			}
-		}
+        public void Add(KeyValuePair<TKey, TValue> item)
+        {
+            _dictionary.Add(item);
 
-		public void Clear() {
-			int keysCount = _dictionary.Keys.Count;
+            if (CollectionChanged != null)
+            {
+                CollectionChanged(this, new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add));
+            }
+            if (PropertyChanged != null)
+            {
+                PropertyChanged(this, new PropertyChangedEventArgs("Keys"));
+                PropertyChanged(this, new PropertyChangedEventArgs("Values"));
+            }
+        }
 
-			_dictionary.Clear();
+        public void Clear()
+        {
+            int keysCount = _dictionary.Keys.Count;
 
-			if (keysCount == 0) return; //dont trigger changed event if there was no change.
+            _dictionary.Clear();
 
-			if (CollectionChanged != null)
-				CollectionChanged(this, new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset));
+            if (keysCount == 0) return; //dont trigger changed event if there was no change.
 
-			if (PropertyChanged != null) {
-				PropertyChanged(this, new PropertyChangedEventArgs("Keys"));
-				PropertyChanged(this, new PropertyChangedEventArgs("Values"));
-			}
-		}
+            if (CollectionChanged != null)
+            {
+                CollectionChanged(this, new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset));
+            }
 
-		public bool Contains(KeyValuePair<TKey, TValue> item) {
-			return _dictionary.Contains(item);
-		}
+            if (PropertyChanged != null)
+            {
+                PropertyChanged(this, new PropertyChangedEventArgs("Keys"));
+                PropertyChanged(this, new PropertyChangedEventArgs("Values"));
+            }
+        }
 
-		public void CopyTo(KeyValuePair<TKey, TValue>[] array, int arrayIndex) {
-			_dictionary.CopyTo(array, arrayIndex);
-		}
+        public bool Contains(KeyValuePair<TKey, TValue> item)
+        {
+            return _dictionary.Contains(item);
+        }
 
-		public bool Remove(KeyValuePair<TKey, TValue> item) {
-			bool remove = _dictionary.Remove(item);
+        public void CopyTo(KeyValuePair<TKey, TValue>[] array, int arrayIndex) {
+            _dictionary.CopyTo(array, arrayIndex);
+        }
 
-			if (!remove) return false; //don’t trigger change events if there was no change.
+        public bool Remove(KeyValuePair<TKey, TValue> item) {
+            bool remove = _dictionary.Remove(item);
 
-			if (CollectionChanged != null)
-				CollectionChanged(this, new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Remove, item.Value));
+            if (!remove) return false; //don’t trigger change events if there was no change.
 
-			if (PropertyChanged != null) {
-				PropertyChanged(this, new PropertyChangedEventArgs("Keys"));
-				PropertyChanged(this, new PropertyChangedEventArgs("Values"));
-			}
+            if (CollectionChanged != null)
+                CollectionChanged(this, new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Remove, item.Value));
 
-			return true;
-		}
+            if (PropertyChanged != null) {
+                PropertyChanged(this, new PropertyChangedEventArgs("Keys"));
+                PropertyChanged(this, new PropertyChangedEventArgs("Values"));
+            }
 
-		public int Count {
-			get { return _dictionary.Count; }
-		}
+            return true;
+        }
 
-		public bool IsReadOnly {
-			get { return _dictionary.IsReadOnly; }
-		}
+        public int Count {
+            get { return _dictionary.Count; }
+        }
 
-		public bool ContainsKey(TKey key) {
-			return _dictionary.ContainsKey(key);
-		}
+        public bool IsReadOnly {
+            get { return _dictionary.IsReadOnly; }
+        }
 
-		public void Add(TKey key, TValue value) {
-			_dictionary.Add(key, value);
+        public bool ContainsKey(TKey key) {
+            return _dictionary.ContainsKey(key);
+        }
 
-			if (CollectionChanged != null)
-				CollectionChanged(this, new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, value));
+        public void Add(TKey key, TValue value) {
+            _dictionary.Add(key, value);
 
-			if (PropertyChanged != null) {
-				PropertyChanged(this, new PropertyChangedEventArgs("Keys"));
-				PropertyChanged(this, new PropertyChangedEventArgs("Values"));
-			}
-		}
+            if (CollectionChanged != null)
+                CollectionChanged(this, new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, value));
 
-		public bool Remove(TKey key) {
-			var value = _dictionary[key];
-			bool remove = _dictionary.Remove(key);
+            if (PropertyChanged != null) {
+                PropertyChanged(this, new PropertyChangedEventArgs("Keys"));
+                PropertyChanged(this, new PropertyChangedEventArgs("Values"));
+            }
+        }
 
-			if (!remove) return false;
+        public bool Remove(TKey key) {
+            var value = _dictionary[key];
+            bool remove = _dictionary.Remove(key);
 
-			if (CollectionChanged != null)
-				CollectionChanged(this, new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Remove, value));
+            if (!remove) return false;
 
-			if (PropertyChanged != null) {
-				PropertyChanged(this, new PropertyChangedEventArgs("Keys"));
-				PropertyChanged(this, new PropertyChangedEventArgs("Values"));
-			}
+            if (CollectionChanged != null)
+                CollectionChanged(this, new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Remove, value));
 
-			return true;
-		}
+            if (PropertyChanged != null) {
+                PropertyChanged(this, new PropertyChangedEventArgs("Keys"));
+                PropertyChanged(this, new PropertyChangedEventArgs("Values"));
+            }
 
-		public bool TryGetValue(TKey key, out TValue value) {
-			return _dictionary.TryGetValue(key, out value);
-		}
+            return true;
+        }
 
-		public TValue this[TKey key] {
-			get { return _dictionary[key]; }
-			set {
-				if (!_dictionary.ContainsKey(key)) {
-					_dictionary.Add(key, value);
-					return;
-				}
+        public bool TryGetValue(TKey key, out TValue value) {
+            return _dictionary.TryGetValue(key, out value);
+        }
 
-				var oldValue = _dictionary[key];
-				if (oldValue.Equals(value)) {
-					return; //if there are no changes then we don’t need to update the value or trigger changed events.
-				}
+        public TValue this[TKey key] {
+            get { return _dictionary[key]; }
+            set {
+                if (!_dictionary.ContainsKey(key)) {
+                    _dictionary.Add(key, value);
+                    return;
+                }
 
-				_dictionary[key] = value;
+                var oldValue = _dictionary[key];
+                if (oldValue.Equals(value)) {
+                    return; //if there are no changes then we don’t need to update the value or trigger changed events.
+                }
 
-				if (CollectionChanged != null) {
-					CollectionChanged(this, new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Replace, oldValue, value));
-				}
+                _dictionary[key] = value;
 
-				if (PropertyChanged != null) {
-					PropertyChanged(this, new PropertyChangedEventArgs("Keys"));
-					PropertyChanged(this, new PropertyChangedEventArgs("Values"));
-				}
-			}
-		}
+                if (CollectionChanged != null) {
+                    CollectionChanged(this, new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Replace, oldValue, value));
+                }
 
-		public ICollection<TKey> Keys {
-			get { return _dictionary.Keys; }
-		}
+                if (PropertyChanged != null) {
+                    PropertyChanged(this, new PropertyChangedEventArgs("Keys"));
+                    PropertyChanged(this, new PropertyChangedEventArgs("Values"));
+                }
+            }
+        }
 
-		public ICollection<TValue> Values {
-			get { return _dictionary.Values; }
-		}
-	}
+        public ICollection<TKey> Keys {
+            get { return _dictionary.Keys; }
+        }
+
+        public ICollection<TValue> Values {
+            get { return _dictionary.Values; }
+        }
+    }
 }
