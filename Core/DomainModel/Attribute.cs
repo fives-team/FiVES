@@ -113,10 +113,26 @@ namespace FIVES
 
         internal void Set(object value)
         {
+            if (value!= null && CurrentValue!= null && !value.Equals(CurrentValue))
+            {
+                deRegisterEventHandler();
+            }
             var oldValue = CurrentValue;
             CurrentValue = value;
 			registerChangedEventHandlers();
 			ParentComponent.raiseChangeEvent(Definition.Name, oldValue, CurrentValue);
+        }
+
+        private void deRegisterEventHandler()
+        {
+            if (Definition.HasNotifyCollectionChangedNotification)
+            {
+                ( (INotifyCollectionChanged)Value ).CollectionChanged -= OnCollectionChanged;
+            }
+            else if (Definition.HasPropertyChangedNotification)
+            {
+                ( (INotifyPropertyChanged)Value ).PropertyChanged -= OnPropertyChanged;
+            }
         }
 
 		private void registerChangedEventHandlers() {
