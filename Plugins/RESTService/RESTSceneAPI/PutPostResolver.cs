@@ -16,6 +16,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Web.Script.Serialization;
 using System.Xml;
 
 namespace RESTServicePlugin
@@ -114,29 +115,8 @@ namespace RESTServicePlugin
         {
             string attributeName = attributeNode.Attributes["name"].Value;
             Type attributeType = UpdatedEntity[componentName][attributeName].Type;
-            var attributeValue = parseAttributeValue (attributeNode.Attributes["value"].Value, attributeType);
+            var attributeValue = serializer.DeserializeObject(attributeNode.Attributes["value"].Value);
             UpdatedEntity[componentName][attributeName].Suggest(attributeValue);
-        }
-
-        private object parseAttributeValue(string value, Type attributeType)
-        {
-            if (value.StartsWith("vector"))
-                return parseVector(value);
-            else if (value.StartsWith("quat"))
-                return parseQuat(value);
-            else if (value.StartsWith("axisangle"))
-                return parseAxisAngle(value);
-            else if (attributeType == typeof(bool))
-                return bool.Parse(value);
-            else if (attributeType == typeof(string))
-                return value;
-            else if (attributeType == typeof(float))
-                return float.Parse(value);
-            else if (attributeType == typeof(int))
-                return int.Parse(value);
-
-            else throw new ArgumentException("FiVES currently does not support updates to attributes of Type "
-                + attributeType.ToString() + " via REST");
         }
 
         private Vector parseVector(string vectorString)
@@ -185,5 +165,7 @@ namespace RESTServicePlugin
             return complexType.Substring(openBracket + 1, closingBracket - openBracket - 1)
                 .Trim().Split(' ');
         }
+
+        JavaScriptSerializer serializer = new JavaScriptSerializer();
     }
 }
