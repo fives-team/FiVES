@@ -16,6 +16,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Web.Script.Serialization;
 using System.Xml;
 
 namespace RESTServicePlugin
@@ -185,5 +186,7 @@ namespace RESTServicePlugin
             return complexType.Substring(openBracket + 1, closingBracket - openBracket - 1)
                 .Trim().Split(' ');
         }
+
+        JavaScriptSerializer serializer = new JavaScriptSerializer();
     }
 }
