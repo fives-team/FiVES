@@ -1,4 +1,3 @@
-
 [![License badge](https://img.shields.io/badge/license-LGPLv3-blue.svg)](https://opensource.org/licenses/LGPL-3.0)
 [![Documentation badge](https://readthedocs.org/projects/fives/badge/?version=latest)](http://fives.readthedocs.org/en/latest/?badge=latest)
 [![Docker badge](https://img.shields.io/docker/pulls/tospie/fives.svg)](https://hub.docker.com/r/tospie/fives/)
