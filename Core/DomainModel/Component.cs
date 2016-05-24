@@ -80,11 +80,13 @@ namespace FIVES
             }
         }
 
-		internal void raiseChangeEventFromInternalChange(string attributeName, object newValue) {
-			if (ChangedAttribute != null) {
-				ChangedAttribute(this, new ChangedAttributeEventArgs(this, attributeName, newValue, newValue));
-			}
-		}
+        internal void raiseChangeEventFromInternalChange(string attributeName, object newValue)
+        {
+            if (ChangedAttribute != null)
+            {
+                ChangedAttribute(this, new ChangedAttributeEventArgs(this, attributeName, newValue, newValue));
+            }
+        }
 
         internal Component(ReadOnlyComponentDefinition definition, Entity containingEntity)
         {

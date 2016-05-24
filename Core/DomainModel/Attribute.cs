@@ -31,7 +31,7 @@ namespace FIVES
             ParentComponent = parentComponent;
             Definition = definition;
             Value = definition.DefaultValue;
-		}
+        }
 
         public Component ParentComponent { get; private set; }
 
