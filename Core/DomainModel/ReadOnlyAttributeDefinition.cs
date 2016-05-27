@@ -30,6 +30,11 @@ namespace FIVES
             Name = name;
             Type = type;
 
+            // The Has* attributes are assigned here for caching reasons.
+            var interfaces = type.GetInterfaces();
+            HasNotifyCollectionChangedNotification = interfaces.Contains(typeof(System.Collections.Specialized.INotifyCollectionChanged));
+            HasPropertyChangedNotification = interfaces.Contains(typeof(System.ComponentModel.INotifyPropertyChanged));
+
             try
             {
                 MethodInfo castMethod = GetType().GetMethod("Cast", BindingFlags.NonPublic | BindingFlags.Static);
@@ -69,6 +74,16 @@ namespace FIVES
         /// Type of the attribute.
         /// </summary>
         public Type Type { get; private set; }
+
+        /// <summary>
+        /// Attribute implements System.Collections.Specialized.INotifyCollectionChanged
+        /// </summary>
+        public bool HasNotifyCollectionChangedNotification {get; private set;}
+
+        /// <summary>
+        /// Attribute implements System.ComponentModel.INotifyPropertyChanged
+        /// </summary>
+        public bool HasPropertyChangedNotification {get; private set;}
 
         private static T Cast<T>(object o)
         {

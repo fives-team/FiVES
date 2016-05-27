@@ -13,10 +13,12 @@
 // along with FiVES.  If not, see <http://www.gnu.org/licenses/>.
 using SINFONI;
 using System;
+using System.ComponentModel;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
+using System.Collections.Specialized;
 
 [assembly: InternalsVisibleTo("ServiceBus")]
 
@@ -111,9 +113,48 @@ namespace FIVES
 
         internal void Set(object value)
         {
+            if (value!= null && CurrentValue!= null && !value.Equals(CurrentValue))
+            {
+                deRegisterEventHandler();
+            }
             var oldValue = CurrentValue;
             CurrentValue = value;
+            registerChangedEventHandlers();
             ParentComponent.raiseChangeEvent(Definition.Name, oldValue, CurrentValue);
+        }
+
+        private void deRegisterEventHandler()
+        {
+            if (Definition.HasNotifyCollectionChangedNotification)
+            {
+                ( (INotifyCollectionChanged)Value ).CollectionChanged -= OnCollectionChanged;
+            }
+            else if (Definition.HasPropertyChangedNotification)
+            {
+                ( (INotifyPropertyChanged)Value ).PropertyChanged -= OnPropertyChanged;
+            }
+        }
+
+        private void registerChangedEventHandlers()
+        {
+            if (Definition.HasNotifyCollectionChangedNotification)
+            {
+                ( (INotifyCollectionChanged)Value ).CollectionChanged += OnCollectionChanged;
+            }
+            else if (Definition.HasPropertyChangedNotification)
+            {
+                ( (INotifyPropertyChanged)Value ).PropertyChanged += OnPropertyChanged;
+            }
+        }
+
+        void OnCollectionChanged(object sender, NotifyCollectionChangedEventArgs args)
+        {
+            ParentComponent.raiseChangeEventFromInternalChange(Definition.Name, CurrentValue);
+        }
+
+        void OnPropertyChanged(object sender, PropertyChangedEventArgs args)
+        {
+            ParentComponent.raiseChangeEventFromInternalChange(Definition.Name, CurrentValue);
         }
 
         private static bool CanBeAssignedNull(Type type)
