@@ -19,6 +19,7 @@ using System.Linq;
 using NLog;
 using SINFONI;
 using System.Configuration;
+using System.Net;
 
 namespace FIVES
 {
@@ -146,7 +147,16 @@ namespace FIVES
                     try {
                         // Initialize plugin.
                         info.Initializer.Initialize();
-                    } catch (Exception e) {
+                    }
+                    catch (HttpListenerException)
+                    {
+                        Logger.Error("Failed to initialize HttpListener in Plugin " + name + " from " + path + ". This problem may occur when the "
+                            + " URL registered for the listener is not admitted to the invoking user. To solve this problem, FiVES can either "
+                            + "be run with administrator privileges, or by configuring the respective URI to be allowed for any user using netsh. "
+                            + "Please research for netsh urlacl configuration for exact details.");
+                    }
+                    catch (Exception e)
+                    {
                         Logger.WarnException("Exception occured during initialization of " + name + " plugin.", e);
                         return;
                     }
@@ -264,8 +274,17 @@ namespace FIVES
             }
             ConfigurationManager.OpenExeConfiguration(this.GetType().Assembly.Location);
             string ServerIDLUri = ConfigurationManager.AppSettings["ServerIDL"];
-            if(ServerIDLUri != null)
-                World.Instance.SinTd = IDLParser.Instance.ParseIDLFromUri(ServerIDLUri);
+            try
+            {
+                if (ServerIDLUri != null)
+                    World.Instance.SinTd = IDLParser.Instance.ParseIDLFromUri(ServerIDLUri);
+            }
+            catch(Exception)
+            {
+                Logger.Error("Failed to load IDL file from " + ServerIDLUri + ". Please make sure that "
+                    + "SINFONI was initialized correctly, and the URI that is specified in the FiVES "
+                    + "configuration points to the correct location of the IDL file");
+            }
         }
 
         /// <summary>
