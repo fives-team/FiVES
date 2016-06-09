@@ -55,15 +55,10 @@ namespace FIVES
 
             if (!Controller.ControlTaken)
             {
-                // Wait for 'q' key to be pressed.
-                Console.WriteLine("The server is up and running. Press Enter to stop it...");
-                Console.In.ReadLine();
-            }
-            else
-            {
-                Controller.WaitForTerminate();
+                Console.WriteLine("The server is up and running. Send a shutdown signal, use CTRL+C, or close this window to stop it");
             }
 
+            Controller.WaitForTerminate();
             PluginManager.Instance.ShutdownAllPlugins();
 
             return 0;
