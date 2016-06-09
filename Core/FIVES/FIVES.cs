@@ -30,18 +30,24 @@ namespace FIVES
             string pluginDir = null;
             string[] pluginWhiteList = null;
             string[] pluginBlackList = null;
-            try {
+            try
+            {
                 pluginDir = LoadPluginConfig(ref pluginWhiteList, ref pluginBlackList);
-            } catch (ConfigurationErrorsException) {
+            }
+            catch (ConfigurationErrorsException)
+            {
                 logger.Error("Configuration is missing or corrupt.");
             }
 
             logger.Info("Loading plugins");
-            if (pluginDir != null && Directory.Exists(pluginDir)) {
+            if (pluginDir != null && Directory.Exists(pluginDir))
+            {
                 PluginManager.Instance.LoadPluginsFrom(pluginDir, pluginWhiteList, pluginBlackList);
                 if (PluginManager.Instance.DeferredPlugins.Count > 0)
                     logger.Info(CreateDeferredPluginsLogEntry());
-            } else {
+            }
+            else
+            {
                 logger.Error("Plugin dir is not specified or does not exist");
             }
 
@@ -59,6 +65,7 @@ namespace FIVES
             }
 
             Controller.WaitForTerminate();
+
             PluginManager.Instance.ShutdownAllPlugins();
 
             return 0;
