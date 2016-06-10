@@ -48,6 +48,9 @@
       <HintPath>..\..\packages\NUnit.2.6.2\lib\nunit.framework.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="SINFONI">
+      <HintPath>..\..\ThirdParty\SINFONI\SINFONI.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.configuration" />
     <Reference Include="System.Core" />
@@ -107,6 +110,32 @@
   </ItemGroup>
   <ItemGroup>
     <Service Include="{82A7F48D-3B50-4B1E-B82E-3ADA8210C358}" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\Core\Collections\Collections.csproj">
+      <Project>{9c2af21f-4d8c-4ade-a5c4-135a6f50e18a}</Project>
+      <Name>Collections</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Core\DomainModel\DomainModel.csproj">
+      <Project>{79ef699d-6a88-4054-af04-f22486db47fa}</Project>
+      <Name>DomainModel</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Core\PluginManager\PluginManager.csproj">
+      <Project>{db1099a1-b7fe-474f-a03a-41687d6c5c76}</Project>
+      <Name>PluginManager</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\ServiceBus\ServiceBus.csproj">
+      <Project>{6c4c01e3-2f44-462f-bf63-a9d5d288c662}</Project>
+      <Name>ServiceBus</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\SINFONI\SINFONIPlugin.csproj">
+      <Project>{d5b8e5d2-a427-4985-b885-9eac5bddab06}</Project>
+      <Name>SINFONIPlugin</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Terminal\Terminal.csproj">
+      <Project>{fdf2de99-68cf-4947-952c-2d2bcc846f3e}</Project>
+      <Name>Terminal</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it.
