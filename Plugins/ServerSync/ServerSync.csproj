@@ -30,40 +30,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Collections">
-      <HintPath>..\Lib\FiVES\Collections.dll</HintPath>
-    </Reference>
-    <Reference Include="DomainModel">
-      <HintPath>..\Lib\FiVES\DomainModel.dll</HintPath>
-    </Reference>
-    <Reference Include="FiVESMath">
-      <HintPath>..\Lib\FiVES\FiVESMath.dll</HintPath>
-    </Reference>
-    <Reference Include="Moq">
-      <HintPath>..\packages\Moq.4.2.1507.0118\lib\net40\Moq.dll</HintPath>
-    </Reference>
     <Reference Include="Newtonsoft.Json, Version=4.5.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\ThirdParty\SINFONI\Newtonsoft.Json.dll</HintPath>
-    </Reference>
-    <Reference Include="NLog, Version=4.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c, processorArchitecture=MSIL">
-      <HintPath>..\packages\NLog.4.3.4\lib\net40\NLog.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="nunit.framework">
-      <HintPath>..\packages\NUnit.2.6.4\lib\nunit.framework.dll</HintPath>
-    </Reference>
-    <Reference Include="PluginManager">
-      <HintPath>..\Lib\FiVES\PluginManager.dll</HintPath>
-    </Reference>
-    <Reference Include="ServiceBus">
-      <HintPath>..\Lib\FiVES\ServiceBus.dll</HintPath>
-    </Reference>
-    <Reference Include="SINFONI">
-      <HintPath>..\Lib\FiVES\SINFONI.dll</HintPath>
-    </Reference>
-    <Reference Include="SINFONIPlugin">
-      <HintPath>..\Lib\FiVES\SINFONIPlugin.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.configuration" />
@@ -73,9 +42,6 @@
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
-    <Reference Include="Terminal">
-      <HintPath>..\Lib\FiVES\Terminal.dll</HintPath>
-    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AttributeDef.cs" />
