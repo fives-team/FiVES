@@ -32,6 +32,8 @@ namespace ServerSyncPlugin
     /// </summary>
     class AttributeSyncInfo
     {
+        public AttributeSyncInfo() {}
+
         public AttributeSyncInfo(string lastSyncID, object lastValue)
         {
             // We use number ticks passed since 12:00:00 midnight, January 1, 0001 in UTC timezeon. One tick equals to
