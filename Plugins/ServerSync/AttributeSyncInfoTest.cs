@@ -23,8 +23,8 @@ namespace ServerSyncPlugin
         [Test]
         public void ShouldCorrectlyResolveSyncConflicts()
         {
-            var guid1 = Guid.Parse("38d6f8c5-ded5-405a-9f7d-80ebd36d7a26");
-            var guid2 = Guid.Parse("e0021595-ead4-4a70-825b-749175c0d9b9");
+            var guid1 = "38d6f8c5-ded5-405a-9f7d-80ebd36d7a26";
+            var guid2 = "e0021595-ead4-4a70-825b-749175c0d9b9";
 
             var info1 = new AttributeSyncInfo(guid2, 1);
             var info2 = new AttributeSyncInfo(guid2, 2);

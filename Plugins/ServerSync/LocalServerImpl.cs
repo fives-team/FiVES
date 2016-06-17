@@ -130,7 +130,7 @@ namespace ServerSyncPlugin
 
         public void RegisterSyncIDAPI(Service service)
         {
-            service["serverSync.getSyncID"] = (Func<Guid>)GetSyncID;
+            service["serverSync.getSyncID"] = (Func<string>)GetSyncID;
         }
 
         void HandleDoIChanged(object sender, EventArgs e)
@@ -145,9 +145,9 @@ namespace ServerSyncPlugin
                 DoRChanged(this, new EventArgs());
         }
 
-        Guid GetSyncID()
+        string GetSyncID()
         {
-            return syncID;
+            return syncID.ToString();
         }
 
         SINFONIServer server;

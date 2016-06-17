@@ -145,11 +145,11 @@ namespace ServerSyncPlugin
                     AddRemoteServer(connection, dor, doi, syncID);
             });
 
-            connection["serverSync.getSyncID"]().OnSuccess<Guid>(delegate(Guid remoteSyncID)
+            connection["serverSync.getSyncID"]().OnSuccess<string>(delegate(string remoteSyncID)
             {
-                syncID = remoteSyncID;
+                syncID = new Guid(remoteSyncID);
                 if (dor != null && doi != null)
-                    AddRemoteServer(connection, dor, doi, remoteSyncID);
+                    AddRemoteServer(connection, dor, doi, syncID);
             });
         }
 

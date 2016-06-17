@@ -185,8 +185,8 @@ namespace ServerSyncPlugin
         [Test]
         public void ShouldAddEntityOnUpdate()
         {
-            var guid = Guid.NewGuid();
-            var owner = Guid.NewGuid();
+            var guid = Guid.NewGuid().ToString();
+            var owner = Guid.NewGuid().ToString();
             var worldSync = new WorldSync();
             worldSync.HandleRemoteAddedEntity(remoteConnectionMock.Object, guid, owner, new EntitySyncInfo());
 
@@ -202,7 +202,7 @@ namespace ServerSyncPlugin
             World.Instance.Add(entity);
 
             var worldSync = new WorldSync();
-            worldSync.HandleRemoteRemovedEntity(remoteConnectionMock.Object, entity.Guid);
+            worldSync.HandleRemoteRemovedEntity(remoteConnectionMock.Object, entity.Guid.ToString());
 
             World.Instance.FindEntity(entity.Guid);
         }
@@ -214,10 +214,10 @@ namespace ServerSyncPlugin
             World.Instance.Add(entity);
 
             var changedAttributes = new EntitySyncInfo();
-            changedAttributes["test"]["a"] = new AttributeSyncInfo(Guid.NewGuid(), 99);
+            changedAttributes["test"]["a"] = new AttributeSyncInfo(Guid.NewGuid().ToString(), 99);
 
             var worldSync = new WorldSync();
-            worldSync.HandleRemoteChangedAttributes(remoteConnectionMock.Object, entity.Guid, changedAttributes);
+            worldSync.HandleRemoteChangedAttributes(remoteConnectionMock.Object, entity.Guid.ToString(), changedAttributes);
 
             Assert.AreEqual(entity["test"]["a"].Value, 99);
         }
@@ -235,13 +235,13 @@ namespace ServerSyncPlugin
         public void ShouldNotSendUpdatesWhenTheyResultFromRemoteUpdate()
         {
             var changedAttributes = new EntitySyncInfo();
-            changedAttributes["test"]["a"] = new AttributeSyncInfo(Guid.NewGuid(), 99);
+            changedAttributes["test"]["a"] = new AttributeSyncInfo(Guid.NewGuid().ToString(), 99);
 
             var entity = new Entity();
             var worldSync = new WorldSync();
-            worldSync.HandleRemoteAddedEntity(remoteConnectionMock.Object, entity.Guid, entity.Owner, new EntitySyncInfo());
-            worldSync.HandleRemoteChangedAttributes(remoteConnectionMock.Object, entity.Guid, new EntitySyncInfo());
-            worldSync.HandleRemoteRemovedEntity(remoteConnectionMock.Object, entity.Guid);
+            worldSync.HandleRemoteAddedEntity(remoteConnectionMock.Object, entity.Guid.ToString(), entity.Owner.ToString(), new EntitySyncInfo());
+            worldSync.HandleRemoteChangedAttributes(remoteConnectionMock.Object, entity.Guid.ToString(), new EntitySyncInfo());
+            worldSync.HandleRemoteRemovedEntity(remoteConnectionMock.Object, entity.Guid.ToString());
 
             handlers.Verify(h => h.AddEntity(entity.Guid, It.IsAny<EntitySyncInfo>()), Times.Never());
             handlers.Verify(h => h.ChangeAttributes(entity.Guid, It.IsAny<EntitySyncInfo>()), Times.Never());
@@ -268,13 +268,13 @@ namespace ServerSyncPlugin
                 new List<IRemoteServer> { remoteServer, remoteServer2 });
 
             var changedAttributes = new EntitySyncInfo();
-            changedAttributes["test"]["a"] = new AttributeSyncInfo(Guid.NewGuid(), 99);
+            changedAttributes["test"]["a"] = new AttributeSyncInfo(Guid.NewGuid().ToString(), 99);
 
             var entity = new Entity();
             var worldSync = new WorldSync();
-            worldSync.HandleRemoteAddedEntity(remoteConnectionMock.Object, entity.Guid, entity.Owner, new EntitySyncInfo());
-            worldSync.HandleRemoteChangedAttributes(remoteConnectionMock.Object, entity.Guid, changedAttributes);
-            worldSync.HandleRemoteRemovedEntity(remoteConnectionMock.Object, entity.Guid);
+            worldSync.HandleRemoteAddedEntity(remoteConnectionMock.Object, entity.Guid.ToString(), entity.Owner.ToString(), new EntitySyncInfo());
+            worldSync.HandleRemoteChangedAttributes(remoteConnectionMock.Object, entity.Guid.ToString(), changedAttributes);
+            worldSync.HandleRemoteRemovedEntity(remoteConnectionMock.Object, entity.Guid.ToString());
 
             handlers.Verify(h => h.AddEntity(entity.Guid, It.IsAny<EntitySyncInfo>()), Times.Never());
             handlers.Verify(h => h.ChangeAttributes(entity.Guid, It.IsAny<EntitySyncInfo>()), Times.Never());

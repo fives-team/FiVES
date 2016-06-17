@@ -32,7 +32,7 @@ namespace ServerSyncPlugin
     /// </summary>
     class AttributeSyncInfo
     {
-        public AttributeSyncInfo(Guid lastSyncID, object lastValue)
+        public AttributeSyncInfo(string lastSyncID, object lastValue)
         {
             // We use number ticks passed since 12:00:00 midnight, January 1, 0001 in UTC timezeon. One tick equals to
             // 100 nanoseconds. This should be precise enough.
@@ -50,7 +50,7 @@ namespace ServerSyncPlugin
         /// <summary>
         /// SyncID of the sync node which assigned this value. This is used to break ties when timestamps are the same.
         /// </summary>
-        public Guid LastSyncID { get; private set; }
+        public string LastSyncID { get; private set; }
 
         /// <summary>
         /// This hold the last value of attribute.

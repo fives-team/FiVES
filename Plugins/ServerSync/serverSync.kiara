@@ -36,7 +36,7 @@ service serverSync
     // synchronized.
     // @param guid Guid of the added entity.
     // @param syncInfo Initial sync info of the added entity.
-    void addEntity(string guid, EntitySyncInfo initialSyncInfo);
+    void addEntity(string guid, string owner, EntitySyncInfo initialSyncInfo);
 
     // Called to notify that an entity has been removed from the caller's world. If the entity is not present on the
     // receiving side, this messages should be ignored (except relay nodes, which still should relay it further).

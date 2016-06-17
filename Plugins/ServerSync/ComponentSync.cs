@@ -91,7 +91,7 @@ namespace ServerSyncPlugin
         {
             lock (ignoredComponentRegistrations)
             {
-                if (ignoredComponentRegistrations.Remove(e.ComponentDefinition.Guid))
+                if (ignoredComponentRegistrations.Remove(e.ComponentDefinition.Guid.ToString()))
                     return;
             }
 
@@ -99,6 +99,6 @@ namespace ServerSyncPlugin
                 server.Connection["serverSync.registerComponentDefinition"]((ComponentDef)e.ComponentDefinition);
         }
 
-        private List<Guid> ignoredComponentRegistrations = new List<Guid>();
+        private List<string> ignoredComponentRegistrations = new List<string>();
     }
 }

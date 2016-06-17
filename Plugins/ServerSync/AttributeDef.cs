@@ -20,7 +20,7 @@ namespace ServerSyncPlugin
 {
     class AttributeDef
     {
-        public Guid Guid;
+        public string Guid;
         public string Name;
         public object DefaultValue;
         public string Type;  // contains AssemblyQualifiedName of the type
