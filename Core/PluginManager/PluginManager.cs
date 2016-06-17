@@ -51,7 +51,8 @@ namespace FIVES
             ComponentRegistry.Instance.RegisteredComponent += HandleRegistredComponent;
         }
 
-        public struct PluginInfo {
+        public struct PluginInfo
+        {
             public string Name;
             public string Path;
             public IPluginInitializer Initializer;
@@ -101,8 +102,10 @@ namespace FIVES
         {
             string canonicalPath = GetCanonicalPath(path);
             string name;
-            if (!attemptedFilenames.Contains(canonicalPath)) {
-                try {
+            if (!attemptedFilenames.Contains(canonicalPath))
+            {
+                try
+                {
                     // Add this plugin to the list of loaded paths.
                     attemptedFilenames.Add(canonicalPath);
 
@@ -113,7 +116,8 @@ namespace FIVES
                     List<Type> types = new List<Type>(assembly.GetTypes());
                     Type interfaceType = typeof(IPluginInitializer);
                     Type initializerType = types.Find(t => interfaceType.IsAssignableFrom(t));
-                    if (initializerType == null || initializerType.Equals(interfaceType)) {
+                    if (initializerType == null || initializerType.Equals(interfaceType))
+                    {
                         Logger.Info("Assembly in file " + path +
                                     " doesn't contain any class implementing IPluginInitializer.");
                         return;
@@ -127,7 +131,8 @@ namespace FIVES
                     // Check if plugin with the same name was already loaded.
                     name = info.Initializer.Name;
                     info.Name = name;
-                    if (loadedPlugins.ContainsKey(name)) {
+                    if (loadedPlugins.ContainsKey(name))
+                    {
                         Logger.Warn("Cannot load plugin from " + path + ". Plugin with the same name '" + name +
                                     "' was already loaded from " + loadedPlugins[name].Path + ".");
                         return;
@@ -139,12 +144,14 @@ namespace FIVES
                     info.RemainingComponentDeps = info.Initializer.ComponentDependencies.FindAll(
                         component => ComponentRegistry.Instance.FindComponentDefinition(component) == null);
 
-                    if (info.RemainingPluginDeps.Count > 0 || info.RemainingComponentDeps.Count > 0) {
+                    if (info.RemainingPluginDeps.Count > 0 || info.RemainingComponentDeps.Count > 0)
+                    {
                         deferredPlugins.Add(name, info);
                         return;
                     }
 
-                    try {
+                    try
+                    {
                         // Initialize plugin.
                         info.Initializer.Initialize();
                     }
@@ -161,10 +168,14 @@ namespace FIVES
                         return;
                     }
                     loadedPlugins.Add(name, info);
-                } catch (BadImageFormatException e) {
+                }
+                catch (BadImageFormatException e)
+                {
                     Logger.InfoException(path + " is not a valid assembly and thus cannot be loaded as a plugin.", e);
                     return;
-                } catch (Exception e) {
+                }
+                catch (Exception e)
+                {
                     Logger.WarnException("Failed to load file " + path + " as a plugin", e);
                     return;
                 }
@@ -277,7 +288,9 @@ namespace FIVES
             try
             {
                 if (ServerIDLUri != null)
+                {
                     World.Instance.SinTd = IDLParser.Instance.ParseIDLFromUri(ServerIDLUri);
+                }
             }
             catch (Exception e)
             {
@@ -301,7 +314,8 @@ namespace FIVES
                 return false;
 
             // Check if the plugin was loaded.
-            foreach (var plugin in loadedPlugins) {
+            foreach (var plugin in loadedPlugins)
+            {
                 if (plugin.Value.Path == canonicalPath)
                     return true;
             }
@@ -332,12 +346,17 @@ namespace FIVES
         /// <param name="handler">Handler to be executed.</param>
         public void AddPluginLoadedHandler(string pluginName, Action handler)
         {
-            if (IsPluginLoaded(pluginName)) {
+            if (IsPluginLoaded(pluginName))
+            {
                 handler();
-            } else {
+            }
+            else
+            {
                 PluginInitialized customPluginInitializedHandler = null;
-                customPluginInitializedHandler = delegate(object sender, PluginInitializedEventArgs args) {
-                    if (args.pluginName == pluginName) {
+                customPluginInitializedHandler = delegate(object sender, PluginInitializedEventArgs args)
+                {
+                    if (args.pluginName == pluginName)
+                    {
                         OnAnyPluginInitialized -= customPluginInitializedHandler;
                         handler();
                     }
