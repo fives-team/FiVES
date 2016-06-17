@@ -279,11 +279,12 @@ namespace FIVES
                 if (ServerIDLUri != null)
                     World.Instance.SinTd = IDLParser.Instance.ParseIDLFromUri(ServerIDLUri);
             }
-            catch(Exception)
+            catch (Exception e)
             {
                 Logger.Error("Failed to load IDL file from " + ServerIDLUri + ". Please make sure that "
                     + "SINFONI was initialized correctly, and the URI that is specified in the FiVES "
-                    + "configuration points to the correct location of the IDL file");
+                    + "configuration points to the correct location of the IDL file. The exception thrown was: "
+                    + e.Message);
             }
         }
 
