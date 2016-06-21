@@ -32,6 +32,11 @@ namespace ServerSyncPlugin
         ILocalServer LocalServer { get; }
 
         /// <summary>
+        /// Should be called when plugin shuts down. Closes all existing connection
+        /// </summary>
+        void ShutDown();
+
+        /// <summary>
         /// Triggered when a remote server is added to the RemoteServers collection.
         /// </summary>
         event EventHandler<ServerEventArgs> AddedServer;

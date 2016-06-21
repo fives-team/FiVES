@@ -34,6 +34,7 @@ namespace ServerSyncPlugin
         {
             localServer = new LocalServerImpl();
             remoteServers = new Dictionary<Connection, IRemoteServer>();
+            AttemptedConnections = new HashSet<Connection>();
 
             domainSync = new DomainSync();
             worldSync = new WorldSync();
@@ -78,6 +79,16 @@ namespace ServerSyncPlugin
         /// </summary>
         public event EventHandler<ServerEventArgs> RemovedServer;
 
+        public void ShutDown()
+        {
+            foreach (Connection connection in AttemptedConnections)
+            {
+                connection.Disconnect();
+            }
+
+            localServer.ShutDown();
+        }
+
         void RegisterTerminalCommands()
         {
             Terminal.Instance.RegisterCommand("print-server-info", "Prints info on all remote servers", false,
@@ -115,7 +126,7 @@ namespace ServerSyncPlugin
             List<string> remoteServers = new List<string>();
             Configuration serverSyncConfig = ConfigurationManager.OpenExeConfiguration(this.GetType().Assembly.Location);
             RemoteServerCollection remoteServersCollection = ((RemoteServersSection)serverSyncConfig.GetSection("RemoteServers")).Servers;
-            foreach(RemoteServerElement server in remoteServersCollection)
+            foreach (RemoteServerElement server in remoteServersCollection)
             {
                 remoteServers.Add(server.Url);
             }
@@ -128,7 +139,9 @@ namespace ServerSyncPlugin
             IDomainOfResponsibility dor = null;
             Guid syncID = Guid.Empty;
 
-            connection["serverSync.getDoR"]().OnSuccess<string>(delegate(string serializedDoR) {
+            AttemptedConnections.Add(connection);
+
+            connection["serverSync.getDoR"]().OnSuccess<string>(delegate(string serializedDoR)
                 dor = StringSerialization.DeserializeObject<IDomainOfResponsibility>(serializedDoR);
                 if (doi != null && syncID != Guid.Empty)
                     AddRemoteServer(connection, dor, doi, syncID);
@@ -172,6 +185,7 @@ namespace ServerSyncPlugin
             };
         }
 
+        HashSet<Connection> AttemptedConnections;
         Dictionary<Connection, IRemoteServer> remoteServers;
         LocalServerImpl localServer;
         WorldSync worldSync;

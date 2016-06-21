@@ -51,7 +51,7 @@ namespace ServerSyncPlugin
 
         public void Shutdown()
         {
-            ServerSync.LocalServer.ShutDown();
+            ServerSync.Instance.ShutDown();
         }
     }
 }
