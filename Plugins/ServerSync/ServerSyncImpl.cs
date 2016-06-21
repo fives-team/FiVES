@@ -132,21 +132,21 @@ namespace ServerSyncPlugin
                 dor = StringSerialization.DeserializeObject<IDomainOfResponsibility>(serializedDoR);
                 if (doi != null && syncID != Guid.Empty)
                     AddRemoteServer(connection, dor, doi, syncID);
-            });
+            }).OnError(m => { Console.WriteLine("Could not retrieve DoR of remote server, reason: " + m); });
 
             connection["serverSync.getDoI"]().OnSuccess<string>(delegate(string serializedDoI)
             {
                 doi = StringSerialization.DeserializeObject<IDomainOfInterest>(serializedDoI);
                 if (dor != null && syncID != Guid.Empty)
                     AddRemoteServer(connection, dor, doi, syncID);
-            });
+            }).OnError(m => { Console.WriteLine("Could not retrieve DoI of remote server, reason: " + m); }); ;
 
             connection["serverSync.getSyncID"]().OnSuccess<string>(delegate(string remoteSyncID)
             {
                 syncID = new Guid(remoteSyncID);
                 if (dor != null && doi != null)
                     AddRemoteServer(connection, dor, doi, syncID);
-            });
+            }).OnError(m => { Console.WriteLine("Could not retrieve SyncID of remote server, reason: " + m); }); ;
         }
 
         void AddRemoteServer(Connection connection, IDomainOfResponsibility dor, IDomainOfInterest doi, Guid syncID)
