@@ -142,6 +142,7 @@ namespace ServerSyncPlugin
             AttemptedConnections.Add(connection);
 
             connection["serverSync.getDoR"]().OnSuccess<string>(delegate(string serializedDoR)
+            {
                 dor = StringSerialization.DeserializeObject<IDomainOfResponsibility>(serializedDoR);
                 if (doi != null && syncID != Guid.Empty)
                     AddRemoteServer(connection, dor, doi, syncID);
