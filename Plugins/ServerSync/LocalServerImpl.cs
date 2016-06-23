@@ -38,7 +38,7 @@ namespace ServerSyncPlugin
             server = new SINFONIServer(SINFONIServerManager.Instance.ServerURI,
                 SINFONIServerManager.Instance.ServerPort,
                 "/serversync/",
-                "serverSync.kiara");
+                "serverSync.sinfoni");
 
             Configuration serverSyncConfig = ConfigurationManager.OpenExeConfiguration(this.GetType().Assembly.Location);
             int syncPort = int.Parse(serverSyncConfig.AppSettings.Settings["serverSyncPort"].Value);
