@@ -21,7 +21,7 @@ using FIVESServiceBus;
 
 namespace ServerSyncPlugin
 {
-    [TestFixture]
+    [TestFixture()]
     public class WorldSyncTest
     {
         IServerSync originalServerSync = ServerSync.Instance;
@@ -54,7 +54,7 @@ namespace ServerSyncPlugin
 
         public Mock<IHandlers> handlers;
 
-        [SetUp]
+        [SetUp()]
         public void MockGlobalObjects()
         {
             handlers = new Mock<IHandlers>();
@@ -107,7 +107,7 @@ namespace ServerSyncPlugin
             ServiceBus.Instance.Initialize();
         }
 
-        [TearDown]
+        [TearDown()]
         public void RestoreGlobalObjects()
         {
             ServerSync.Instance = originalServerSync;
@@ -116,7 +116,7 @@ namespace ServerSyncPlugin
             World.Instance = originalWorld;
         }
 
-        [Test]
+        [Test()]
         public void ShouldRegisterWorldSyncAPI()
         {
             var worldSync = new WorldSync();
@@ -125,7 +125,7 @@ namespace ServerSyncPlugin
             localServiceMock.VerifySet(ls => ls["serverSync.changeAttributes"] = It.IsAny<Delegate>());
         }
 
-        [Test]
+        [Test()]
         public void ShouldSendUpdatesAccordingToDoI()
         {
             var entity1 = new Entity();
@@ -137,13 +137,13 @@ namespace ServerSyncPlugin
             worldSync.HandleLocalAddedEntity(this, new EntityEventArgs(entity1));
             worldSync.HandleLocalAddedEntity(this, new EntityEventArgs(entity2));
 
-            handlers.Verify(h => h.AddEntity(entity1.Guid, It.Is<EntitySyncInfo>(
+            handlers.Verify(h => h.AddEntity(entity1.Guid.ToString(), World.Instance.ID.ToString(), It.Is<EntitySyncInfo>(
                 esi => esi.Components.Count == 0)), Times.Once());
-            handlers.Verify(h => h.AddEntity(entity2.Guid, It.Is<EntitySyncInfo>(
+            handlers.Verify(h => h.AddEntity(entity2.Guid.ToString(), World.Instance.ID.ToString(), It.Is<EntitySyncInfo>(
                 esi => esi.Components.Count == 0)), Times.Never());
         }
 
-        [Test]
+        [Test()]
         public void ShouldSendEntityAdditions()
         {
             var entity = new Entity();
@@ -152,22 +152,22 @@ namespace ServerSyncPlugin
             var worldSync = new WorldSync();
             worldSync.HandleLocalAddedEntity(this, new EntityEventArgs(entity));
 
-            handlers.Verify(h => h.AddEntity(entity.Guid, It.Is<EntitySyncInfo>(esi =>
+            handlers.Verify(h => h.AddEntity(entity.Guid.ToString(), World.Instance.ID.ToString(), It.Is<EntitySyncInfo>(esi =>
                 esi.Components.Count == 1 &&
                 esi.Components["test"]["a"].LastValue.Equals(33))), Times.Once());
         }
 
-        [Test]
+        [Test()]
         public void ShouldSendEntityRemovals()
         {
             var entity = new Entity();
             var worldSync = new WorldSync();
             worldSync.HandleLocalRemovedEntity(this, new EntityEventArgs(entity));
 
-            handlers.Verify(h => h.RemoveEntity(entity.Guid), Times.Once());
+            handlers.Verify(h => h.RemoveEntity(entity.Guid.ToString()), Times.Once());
         }
 
-        [Test]
+        [Test()]
         public void ShouldSendAttributeChanges()
         {
             var entity = new Entity();
@@ -177,12 +177,12 @@ namespace ServerSyncPlugin
             var worldSync = new WorldSync();
             worldSync.HandleLocalChangedAttribute(this, new ChangedAttributeEventArgs(entity["test"], "a", 33, 55));
 
-            handlers.Verify(h => h.ChangeAttributes(entity.Guid, It.Is<EntitySyncInfo>(esi =>
+            handlers.Verify(h => h.ChangeAttributes(entity.Guid.ToString(), It.Is<EntitySyncInfo>(esi =>
                 esi.Components.Count == 1 &&
                 esi.Components["test"]["a"].LastValue.Equals(55))), Times.Once());
         }
 
-        [Test]
+        [Test()]
         public void ShouldAddEntityOnUpdate()
         {
             var guid = Guid.NewGuid().ToString();
@@ -194,8 +194,7 @@ namespace ServerSyncPlugin
             World.Instance.FindEntity(guid);
         }
 
-        [Test]
-        [ExpectedException(typeof(EntityNotFoundException))]
+        [Test()]
         public void ShouldRemoveEntityOnUpdate()
         {
             var entity = new Entity();
@@ -204,10 +203,10 @@ namespace ServerSyncPlugin
             var worldSync = new WorldSync();
             worldSync.HandleRemoteRemovedEntity(remoteConnectionMock.Object, entity.Guid.ToString());
 
-            World.Instance.FindEntity(entity.Guid);
+            Assert.Throws<EntityNotFoundException>(()=>World.Instance.FindEntity(entity.Guid));
         }
 
-        [Test]
+        [Test()]
         public void ShouldChangeAttributesOnUpdate()
         {
             var entity = new Entity();
@@ -222,7 +221,7 @@ namespace ServerSyncPlugin
             Assert.AreEqual(entity["test"]["a"].Value, 99);
         }
 
-        [Test]
+        [Test()]
         public void ShouldCreateInitialSyncInfoForExistingEntities()
         {
             var entity = new Entity();
@@ -231,7 +230,7 @@ namespace ServerSyncPlugin
             worldSync.syncInfo.ContainsKey(entity.Guid);
         }
 
-        [Test]
+        [Test()]
         public void ShouldNotSendUpdatesWhenTheyResultFromRemoteUpdate()
         {
             var changedAttributes = new EntitySyncInfo();
@@ -243,13 +242,13 @@ namespace ServerSyncPlugin
             worldSync.HandleRemoteChangedAttributes(remoteConnectionMock.Object, entity.Guid.ToString(), new EntitySyncInfo());
             worldSync.HandleRemoteRemovedEntity(remoteConnectionMock.Object, entity.Guid.ToString());
 
-            handlers.Verify(h => h.AddEntity(entity.Guid, It.IsAny<EntitySyncInfo>()), Times.Never());
-            handlers.Verify(h => h.ChangeAttributes(entity.Guid, It.IsAny<EntitySyncInfo>()), Times.Never());
-            handlers.Verify(h => h.RemoveEntity(entity.Guid), Times.Never());
+            handlers.Verify(h => h.AddEntity(entity.Guid.ToString(), It.IsAny<EntitySyncInfo>()), Times.Never());
+            handlers.Verify(h => h.ChangeAttributes(entity.Guid.ToString(), It.IsAny<EntitySyncInfo>()), Times.Never());
+            handlers.Verify(h => h.RemoveEntity(entity.Guid.ToString()), Times.Never());
         }
 
 
-        [Test]
+        [Test()]
         public void ShouldForwardUpdatesToServersOtherThanTheSource()
         {
             var otherConnectionMock = new Mock<Connection>();
@@ -276,13 +275,13 @@ namespace ServerSyncPlugin
             worldSync.HandleRemoteChangedAttributes(remoteConnectionMock.Object, entity.Guid.ToString(), changedAttributes);
             worldSync.HandleRemoteRemovedEntity(remoteConnectionMock.Object, entity.Guid.ToString());
 
-            handlers.Verify(h => h.AddEntity(entity.Guid, It.IsAny<EntitySyncInfo>()), Times.Never());
-            handlers.Verify(h => h.ChangeAttributes(entity.Guid, It.IsAny<EntitySyncInfo>()), Times.Never());
-            handlers.Verify(h => h.RemoveEntity(entity.Guid), Times.Never());
+            handlers.Verify(h => h.AddEntity(entity.Guid.ToString(), It.IsAny<EntitySyncInfo>()), Times.Never());
+            handlers.Verify(h => h.ChangeAttributes(entity.Guid.ToString(), It.IsAny<EntitySyncInfo>()), Times.Never());
+            handlers.Verify(h => h.RemoveEntity(entity.Guid.ToString()), Times.Never());
 
-            handlers2.Verify(h => h.AddEntity(entity.Guid, It.IsAny<EntitySyncInfo>()), Times.Once());
-            handlers2.Verify(h => h.ChangeAttributes(entity.Guid, It.IsAny<EntitySyncInfo>()), Times.Once());
-            handlers2.Verify(h => h.RemoveEntity(entity.Guid), Times.Once());
+            handlers2.Verify(h => h.AddEntity(entity.Guid.ToString(), entity.Owner.ToString(), It.IsAny<EntitySyncInfo>()), Times.Once());
+            handlers2.Verify(h => h.ChangeAttributes(entity.Guid.ToString(), It.IsAny<EntitySyncInfo>()), Times.Once());
+            handlers2.Verify(h => h.RemoveEntity(entity.Guid.ToString()), Times.Once());
         }
     }
 }
