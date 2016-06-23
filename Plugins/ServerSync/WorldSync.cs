@@ -93,7 +93,7 @@ namespace ServerSyncPlugin
                 Entity entity = World.Instance.FindEntity(guid);
                 foreach (IRemoteServer server in ServerSync.RemoteServers)
                     if (server.Connection != connection && server.DoI.IsInterestedInEntity(entity))
-                        server.Connection["serverSync.addEntity"](guid, World.Instance.ID.ToString(), initialSyncInfo);
+                        server.Connection["serverSync.addEntity"](id, owner, initialSyncInfo);
             }
         }
 
@@ -109,7 +109,7 @@ namespace ServerSyncPlugin
                 Entity entity = World.Instance.FindEntity(guid);
                 foreach (IRemoteServer server in ServerSync.RemoteServers)
                     if (server.Connection != connection && server.DoI.IsInterestedInEntity(entity))
-                        server.Connection["serverSync.removeEntity"](guid);
+                        server.Connection["serverSync.removeEntity"](id);
 
                 if (!syncInfo.ContainsKey(guid))
                 {
