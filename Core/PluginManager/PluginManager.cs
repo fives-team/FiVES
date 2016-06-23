@@ -289,7 +289,7 @@ namespace FIVES
             {
                 if (ServerIDLUri != null)
                 {
-                    World.Instance.SinTd = IDLParser.Instance.ParseIDLFromUri(ServerIDLUri);
+                    World.Instance.SinTd = new IDLParser().ParseIDLFromUri(ServerIDLUri);
                 }
             }
             catch (Exception e)
