@@ -18,7 +18,8 @@ using System.Text;
 
 namespace ServerSyncPlugin
 {
-    interface IServerDiscovery
+    public interface IServerDiscovery
     {
+        ICollection<string> DiscoverRemoteEndpoints();
     }
 }
