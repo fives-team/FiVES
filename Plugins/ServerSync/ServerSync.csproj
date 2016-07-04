@@ -61,6 +61,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ServerDiscovery\ConfigDiscovery.cs" />
     <Compile Include="ServerDiscovery\IServerDiscovery.cs" />
     <Compile Include="SyncObjects\AttributeDef.cs" />
     <Compile Include="SyncObjects\AttributeSyncInfo.cs" />
