@@ -42,6 +42,9 @@ namespace ServerSyncPlugin
 
             localServer.Service.OnNewClient += HandleNewServerConnected;
 
+            if (ServerDiscovery == null)
+                ServerDiscovery = new ConfigDiscovery();
+
             ConnectToRemoteServers();
 
             PluginManager.Instance.AddPluginLoadedHandler("Terminal", RegisterTerminalCommands);
@@ -106,7 +109,7 @@ namespace ServerSyncPlugin
 
         void ConnectToRemoteServers()
         {
-            List<string> remoteServerUris = GetListOfRemoteServers();
+            ICollection<string> remoteServerUris = ServerDiscovery.DiscoverRemoteEndpoints();
             foreach (string uri in remoteServerUris)
             {
                 ServiceWrapper remoteService = ServiceFactory.Discover(uri);
@@ -119,18 +122,6 @@ namespace ServerSyncPlugin
                 remoteService.OnConnected += ServerSyncTools.ConfigureJsonSerializer;
                 remoteService.OnConnected += HandleNewServerConnected;
             }
-        }
-
-        List<string> GetListOfRemoteServers()
-        {
-            List<string> remoteServers = new List<string>();
-            Configuration serverSyncConfig = ConfigurationManager.OpenExeConfiguration(this.GetType().Assembly.Location);
-            RemoteServerCollection remoteServersCollection = ((RemoteServersSection)serverSyncConfig.GetSection("RemoteServers")).Servers;
-            foreach (RemoteServerElement server in remoteServersCollection)
-            {
-                remoteServers.Add(server.Url);
-            }
-            return remoteServers;
         }
 
         void HandleNewServerConnected(Connection connection)
@@ -187,6 +178,7 @@ namespace ServerSyncPlugin
         }
 
         HashSet<Connection> AttemptedConnections;
+        IServerDiscovery ServerDiscovery;
         Dictionary<Connection, IRemoteServer> remoteServers;
         LocalServerImpl localServer;
         WorldSync worldSync;
