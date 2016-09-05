@@ -16,6 +16,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Web.Script.Serialization;
 using System.Xml;
 
 namespace RESTServicePlugin
@@ -75,9 +76,11 @@ namespace RESTServicePlugin
         public string WriteAttributeValue(Entity entity, string componentName, string attributeName)
         {
             if (entity[componentName][attributeName].Value != null)
-                return entity[componentName][attributeName].Value.ToString();
+                return serializer.Serialize(entity[componentName][attributeName].Value);
             else
                 return "null";
         }
+
+        JavaScriptSerializer serializer = new JavaScriptSerializer();
     }
 }

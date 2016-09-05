@@ -1,0 +1,14 @@
+site_name: FIWARE Synchronization (FiVES)
+site_url: https://fives.readthedocs.org
+repo_url: https://github.com/fives-team/fives.git
+site_description: Synchronization FiVES - Documentation
+docs_dir: doc
+markdown_extensions: [toc,fenced_code]
+use_directory_urls: false
+theme: readthedocs
+extra_css: ["https://fiware.org/style/fiware_readthedocs.css"]
+pages:
+  - Home: index.md  
+  - 'User & Programmers Manual': 'user_guide.md'      
+  - 'Installation & Administration Manual': 'installation_guide.md'
+      

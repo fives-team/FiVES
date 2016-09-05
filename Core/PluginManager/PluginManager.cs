@@ -19,6 +19,7 @@ using System.Linq;
 using NLog;
 using SINFONI;
 using System.Configuration;
+using System.Net;
 
 namespace FIVES
 {
@@ -50,7 +51,8 @@ namespace FIVES
             ComponentRegistry.Instance.RegisteredComponent += HandleRegistredComponent;
         }
 
-        public struct PluginInfo {
+        public struct PluginInfo
+        {
             public string Name;
             public string Path;
             public IPluginInitializer Initializer;
@@ -100,8 +102,10 @@ namespace FIVES
         {
             string canonicalPath = GetCanonicalPath(path);
             string name;
-            if (!attemptedFilenames.Contains(canonicalPath)) {
-                try {
+            if (!attemptedFilenames.Contains(canonicalPath))
+            {
+                try
+                {
                     // Add this plugin to the list of loaded paths.
                     attemptedFilenames.Add(canonicalPath);
 
@@ -112,7 +116,8 @@ namespace FIVES
                     List<Type> types = new List<Type>(assembly.GetTypes());
                     Type interfaceType = typeof(IPluginInitializer);
                     Type initializerType = types.Find(t => interfaceType.IsAssignableFrom(t));
-                    if (initializerType == null || initializerType.Equals(interfaceType)) {
+                    if (initializerType == null || initializerType.Equals(interfaceType))
+                    {
                         Logger.Info("Assembly in file " + path +
                                     " doesn't contain any class implementing IPluginInitializer.");
                         return;
@@ -126,7 +131,8 @@ namespace FIVES
                     // Check if plugin with the same name was already loaded.
                     name = info.Initializer.Name;
                     info.Name = name;
-                    if (loadedPlugins.ContainsKey(name)) {
+                    if (loadedPlugins.ContainsKey(name))
+                    {
                         Logger.Warn("Cannot load plugin from " + path + ". Plugin with the same name '" + name +
                                     "' was already loaded from " + loadedPlugins[name].Path + ".");
                         return;
@@ -138,23 +144,38 @@ namespace FIVES
                     info.RemainingComponentDeps = info.Initializer.ComponentDependencies.FindAll(
                         component => ComponentRegistry.Instance.FindComponentDefinition(component) == null);
 
-                    if (info.RemainingPluginDeps.Count > 0 || info.RemainingComponentDeps.Count > 0) {
+                    if (info.RemainingPluginDeps.Count > 0 || info.RemainingComponentDeps.Count > 0)
+                    {
                         deferredPlugins.Add(name, info);
                         return;
                     }
 
-                    try {
+                    try
+                    {
                         // Initialize plugin.
                         info.Initializer.Initialize();
-                    } catch (Exception e) {
+                    }
+                    catch (HttpListenerException)
+                    {
+                        Logger.Error("Failed to initialize HttpListener in Plugin " + name + " from " + path + ". This problem may occur when the "
+                            + " URL registered for the listener is not admitted to the invoking user. To solve this problem, FiVES can either "
+                            + "be run with administrator privileges, or by configuring the respective URI to be allowed for any user using netsh. "
+                            + "Please research for netsh urlacl configuration for exact details.");
+                    }
+                    catch (Exception e)
+                    {
                         Logger.WarnException("Exception occured during initialization of " + name + " plugin.", e);
                         return;
                     }
                     loadedPlugins.Add(name, info);
-                } catch (BadImageFormatException e) {
+                }
+                catch (BadImageFormatException e)
+                {
                     Logger.InfoException(path + " is not a valid assembly and thus cannot be loaded as a plugin.", e);
                     return;
-                } catch (Exception e) {
+                }
+                catch (Exception e)
+                {
                     Logger.WarnException("Failed to load file " + path + " as a plugin", e);
                     return;
                 }
@@ -264,8 +285,20 @@ namespace FIVES
             }
             ConfigurationManager.OpenExeConfiguration(this.GetType().Assembly.Location);
             string ServerIDLUri = ConfigurationManager.AppSettings["ServerIDL"];
-            if(ServerIDLUri != null)
-                World.Instance.SinTd = IDLParser.Instance.ParseIDLFromUri(ServerIDLUri);
+            try
+            {
+                if (ServerIDLUri != null)
+                {
+                    World.Instance.SinTd = new IDLParser().ParseIDLFromUri(ServerIDLUri);
+                }
+            }
+            catch (Exception e)
+            {
+                Logger.Error("Failed to load IDL file from " + ServerIDLUri + ". Please make sure that "
+                    + "SINFONI was initialized correctly, and the URI that is specified in the FiVES "
+                    + "configuration points to the correct location of the IDL file. The exception thrown was: "
+                    + e.Message);
+            }
         }
 
         /// <summary>
@@ -281,7 +314,8 @@ namespace FIVES
                 return false;
 
             // Check if the plugin was loaded.
-            foreach (var plugin in loadedPlugins) {
+            foreach (var plugin in loadedPlugins)
+            {
                 if (plugin.Value.Path == canonicalPath)
                     return true;
             }
@@ -312,12 +346,17 @@ namespace FIVES
         /// <param name="handler">Handler to be executed.</param>
         public void AddPluginLoadedHandler(string pluginName, Action handler)
         {
-            if (IsPluginLoaded(pluginName)) {
+            if (IsPluginLoaded(pluginName))
+            {
                 handler();
-            } else {
+            }
+            else
+            {
                 PluginInitialized customPluginInitializedHandler = null;
-                customPluginInitializedHandler = delegate(object sender, PluginInitializedEventArgs args) {
-                    if (args.pluginName == pluginName) {
+                customPluginInitializedHandler = delegate(object sender, PluginInitializedEventArgs args)
+                {
+                    if (args.pluginName == pluginName)
+                    {
                         OnAnyPluginInitialized -= customPluginInitializedHandler;
                         handler();
                     }

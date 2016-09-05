@@ -56,7 +56,8 @@ namespace ClientManagerPlugin
             RegisterClientService("objectsync", true, new Dictionary<string, Delegate> {
                 {"listObjects", (Func<List<Dictionary<string, object>>>) ListObjects},
                 {"receiveNewObjects", (Action<Connection, Dictionary<string, object>>)HandleRemoteEntityAdded},
-                {"removeObject", (Action<string>)HandleRemoteEntityRemoved}
+                {"removeObject", (Action<string>)HandleRemoteEntityRemoved},
+                {"updateAttribute", (Action<string, string, string, object>)HandleAttributeUpdated}
             });
         }
 
@@ -180,6 +181,12 @@ namespace ClientManagerPlugin
         private void HandleRemoteEntityRemoved(string entityGuid)
         {
             World.Instance.Remove(World.Instance.FindEntity(entityGuid));
+        }
+
+        private void HandleAttributeUpdated(string entityGuid, string componentName, string attributeName, object value)
+        {
+            var e = World.Instance.FindEntity(entityGuid);
+            e[componentName][attributeName].Suggest(value);
         }
 
         private void ApplyComponent(Entity entity, string componentName, Dictionary<string, object> attributes)

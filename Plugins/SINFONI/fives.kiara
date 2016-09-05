@@ -1,4 +1,4 @@
-﻿struct Vector {
+struct Vector {
 	float x;
 	float y;
 	float z;
@@ -18,3 +18,4 @@ struct Component {
 struct Entity {
 	map<string, Component> Components;
 }
+
