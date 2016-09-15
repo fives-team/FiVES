@@ -1,6 +1,7 @@
 site_name: FIWARE Synchronization (FiVES)
 site_url: https://fives.readthedocs.org
 repo_url: https://github.com/fives-team/fives.git
+google_analytics: ['UA-84207637-1', 'fives.readthedocs.io']
 site_description: Synchronization FiVES - Documentation
 docs_dir: doc
 markdown_extensions: [toc,fenced_code]
