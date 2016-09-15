@@ -48,6 +48,8 @@ A prebuilt binary version of FiVES can be downloaded from the FIWARE Forge Repos
 The files in the archive need to be unzipped in a folder on the hard drive.
 Building from source
 
+### Building from source
+
 The FiVES source code is available on GitHub under LGPL v3 License:
 
 * http://github.com/fives-team/fives 
@@ -87,6 +89,18 @@ FiVES uses a slightly adapted version of the KIARA Advanced Middleware GE for se
 ```
 
 This configuration file defines two connection endpoints: The first one, ConnectionListener, is used by clients to request information about the server. The second one specifies the actual address for the realtime synchronization service. Please note that the host address may have to be changed from "Any" to the actual public IP of the machine on which the server is running.
+
+### Using the NGSIv2 message plugin
+
+FIWARE Release 5 of FiVES comes with a basic NGSIv2 communication plugin. The source code of the plugin can be found here: https://github.com/fives-team/fives-ngsiv2-plugin . The build process for the plugin is the same as for the FiVES main project.
+After the successful built, copy all files from the plugin's build folder to the path were the FiVES server runtime is located. Starting the server will automatically load the plugin.
+With the plugin comes a configuration file (NGSIv2.dll.config) that allows you to specify the URL to the remote endpoint with which you would like to exchange NGSIv2 message (e.g. a Context Broker instance):
+
+```
+<configuration>
+  <ngsi-endpoint host="localhost" port="1026"></ngsi-endpoint>
+</configuration>
+```
 
 ### Testing the installation (all methods)
 
