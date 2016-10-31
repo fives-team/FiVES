@@ -40,19 +40,19 @@ namespace ClientManagerPlugin
         /// <summary>
         /// Flushs the update queue. Takes the list of all updates queued for the client and calls the client's callback, passing this list as parameter
         /// </summary>
-        private void FlushUpdateQueue() {
+        private void FlushUpdateQueue()
+        {
             while (true)
             {
                 bool gotLock = false;
+                if (UpdateQueue.Count > 0)
+                {
+                    InvokeClientCallbacks();
+                }
                 try
                 {
                     QueueLock.Enter(ref gotLock);
-
-                    if (UpdateQueue.Count > 0)
-                    {
-                        InvokeClientCallbacks();
-                        UpdateQueue.Clear();
-                    }
+                    UpdateQueue.Clear();
                 }
                 finally
                 {
@@ -73,10 +73,27 @@ namespace ClientManagerPlugin
             lock (CallbackRegistryLock)
             {
                 foreach (ClientFunction callback in ClientCallbacks.Values)
-                    callback(UpdateQueue);
+                    Task.Factory.StartNew(() =>
+                    {
+                        InvokeCallbackOnClient(callback);
+                    });
             }
         }
 
+        private void InvokeCallbackOnClient(ClientFunction callback)
+        {
+            bool gotLock = false;
+            try
+            {
+                QueueLock.Enter(ref gotLock);
+                callback(UpdateQueue);
+            }
+            finally
+            {
+                if (gotLock)
+                    QueueLock.Exit();
+            }
+        }
         /// <summary>
         /// Registers a new client for updates by adding its update callback to the list of callbacks
         /// </summary>
