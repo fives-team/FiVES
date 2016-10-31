@@ -115,19 +115,21 @@ namespace ClientManagerPlugin
 
         public bool ReceiveAuthenticatedClient(Connection connection)
         {
+            lock (authenticatedClients)
+            {
+                authenticatedClients.Add(connection);
+                connection.Closed += HandleAuthenticatedClientDisconnected;
 
-            authenticatedClients.Add(connection);
-            connection.Closed += HandleAuthenticatedClientDisconnected;
+                if (OnAuthenticated != null)
+                    OnAuthenticated(connection);
 
-            if (OnAuthenticated != null)
-                OnAuthenticated(connection);
-
-            foreach (var entry in authenticatedMethods)
-                connection.RegisterFuncImplementation(entry.Key, entry.Value);
-
-            WrapUpdateMethods(connection);
-            if (NewClientConnected != null)
-                NewClientConnected(this, new ClientConnectionEventArgs(connection));
+                foreach (var entry in authenticatedMethods)
+                    connection.RegisterFuncImplementation(entry.Key, entry.Value);
+                Console.WriteLine("[ClientManager] Client connected, now serving {0}", authenticatedClients.Count);
+                WrapUpdateMethods(connection);
+                if (NewClientConnected != null)
+                    NewClientConnected(this, new ClientConnectionEventArgs(connection));
+            }
             return true;
         }
 
@@ -143,13 +145,14 @@ namespace ClientManagerPlugin
             UpdateQueue.RegisterToClientUpdates(connection, updatedObjectUpdates);
         }
 
-        private void HandleAuthenticatedClientDisconnected(object sender, EventArgs e)
+        private void HandleAuthenticatedClientDisconnected(object sender, ClosedEventArgs e)
         {
             Connection connection = sender as Connection;
             onNewEntityHandlers.Remove(connection);
             onRemovedEntityHandlers.Remove(connection);
             UpdateQueue.StopClientUpdates(connection);
             authenticatedClients.Remove(connection);
+            Console.WriteLine("[ClientManager] Connection to {0} was closed, reason: {1}", connection.SessionID, e.Reason);
             if (ClientDisconnected != null)
                 ClientDisconnected(this, new ClientConnectionEventArgs(connection));
         }
