@@ -167,7 +167,7 @@ namespace ServerSyncPlugin
             if (AddedServer != null)
                 AddedServer(this, new ServerEventArgs(newServer));
 
-            connection.Closed += delegate(object sender, EventArgs args)
+            connection.Closed += delegate(object sender, ClosedEventArgs args)
             {
                 lock (remoteServers)
                     remoteServers.Remove(connection);
