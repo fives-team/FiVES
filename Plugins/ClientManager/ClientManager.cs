@@ -145,13 +145,14 @@ namespace ClientManagerPlugin
             UpdateQueue.RegisterToClientUpdates(connection, updatedObjectUpdates);
         }
 
-        private void HandleAuthenticatedClientDisconnected(object sender, EventArgs e)
+        private void HandleAuthenticatedClientDisconnected(object sender, ClosedEventArgs e)
         {
             Connection connection = sender as Connection;
             onNewEntityHandlers.Remove(connection);
             onRemovedEntityHandlers.Remove(connection);
             UpdateQueue.StopClientUpdates(connection);
             authenticatedClients.Remove(connection);
+            Console.WriteLine("[ClientManager] Connection to {0} was closed, reason: {1}", connection.SessionID, e.Reason);
             if (ClientDisconnected != null)
                 ClientDisconnected(this, new ClientConnectionEventArgs(connection));
         }
