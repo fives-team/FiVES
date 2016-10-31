@@ -115,19 +115,21 @@ namespace ClientManagerPlugin
 
         public bool ReceiveAuthenticatedClient(Connection connection)
         {
+            lock (authenticatedClients)
+            {
+                authenticatedClients.Add(connection);
+                connection.Closed += HandleAuthenticatedClientDisconnected;
 
-            authenticatedClients.Add(connection);
-            connection.Closed += HandleAuthenticatedClientDisconnected;
+                if (OnAuthenticated != null)
+                    OnAuthenticated(connection);
 
-            if (OnAuthenticated != null)
-                OnAuthenticated(connection);
-
-            foreach (var entry in authenticatedMethods)
-                connection.RegisterFuncImplementation(entry.Key, entry.Value);
-
-            WrapUpdateMethods(connection);
-            if (NewClientConnected != null)
-                NewClientConnected(this, new ClientConnectionEventArgs(connection));
+                foreach (var entry in authenticatedMethods)
+                    connection.RegisterFuncImplementation(entry.Key, entry.Value);
+                Console.WriteLine("[ClientManager] Client connected, now serving {0}", authenticatedClients.Count);
+                WrapUpdateMethods(connection);
+                if (NewClientConnected != null)
+                    NewClientConnected(this, new ClientConnectionEventArgs(connection));
+            }
             return true;
         }
 
