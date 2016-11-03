@@ -44,22 +44,12 @@ namespace ClientManagerPlugin
         {
             while (true)
             {
-                bool gotLock = false;
+
                 if (UpdateQueue.Count > 0)
                 {
-                    InvokeClientCallbacks();
+                    FlushQueueToClients();
+                    ClearQueue();
                 }
-                try
-                {
-                    QueueLock.Enter(ref gotLock);
-                    UpdateQueue.Clear();
-                }
-                finally
-                {
-                    if (gotLock)
-                        QueueLock.Exit();
-                }
-
                 // Wait for updates to accumulate (to send them in batches)
                 Thread.Sleep(10);
             }
@@ -82,12 +72,14 @@ namespace ClientManagerPlugin
             }
         }
 
+
+        private void ClearQueue()
         {
             bool gotLock = false;
             try
             {
                 QueueLock.Enter(ref gotLock);
-                callback(UpdateQueue);
+                UpdateQueue.Clear();
             }
             finally
             {
