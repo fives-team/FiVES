@@ -125,7 +125,6 @@ namespace ClientManagerPlugin
 
                 foreach (var entry in authenticatedMethods)
                     connection.RegisterFuncImplementation(entry.Key, entry.Value);
-                Console.WriteLine("[ClientManager] Client connected, now serving {0}", authenticatedClients.Count);
                 WrapUpdateMethods(connection);
                 if (NewClientConnected != null)
                     NewClientConnected(this, new ClientConnectionEventArgs(connection));
