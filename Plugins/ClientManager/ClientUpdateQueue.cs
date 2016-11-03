@@ -65,22 +65,23 @@ namespace ClientManagerPlugin
             }
         }
 
-        /// <summary>
-        /// Loops over all registered client callbacks and invokes them to inform clients about updates
-        /// </summary>
-        private void InvokeClientCallbacks()
+        private void FlushQueueToClients()
         {
-            lock (CallbackRegistryLock)
+            bool gotLock = false;
+            try
             {
-                foreach (ClientFunction callback in ClientCallbacks.Values)
-                    Task.Factory.StartNew(() =>
-                    {
-                        InvokeCallbackOnClient(callback);
-                    });
+                QueueLock.Enter(ref gotLock);
+                UpdateInfo[] queueSnapshot = new UpdateInfo[UpdateQueue.Count];
+                UpdateQueue.CopyTo(queueSnapshot);
+                InvokeClientCallbacks(queueSnapshot);
+            }
+            finally
+            {
+                if (gotLock)
+                    QueueLock.Exit();
             }
         }
 
-        private void InvokeCallbackOnClient(ClientFunction callback)
         {
             bool gotLock = false;
             try
@@ -94,6 +95,21 @@ namespace ClientManagerPlugin
                     QueueLock.Exit();
             }
         }
+        /// <summary>
+        /// Loops over all registered client callbacks and invokes them to inform clients about updates
+        /// </summary>
+        private void InvokeClientCallbacks(UpdateInfo[] updates)
+        {
+            lock (CallbackRegistryLock)
+            {
+                foreach (ClientFunction callback in ClientCallbacks.Values)
+                    Task.Factory.StartNew(() =>
+                    {
+                        callback(updates);
+                    });
+            }
+        }
+
         /// <summary>
         /// Registers a new client for updates by adding its update callback to the list of callbacks
         /// </summary>
