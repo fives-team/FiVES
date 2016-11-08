@@ -187,6 +187,9 @@ namespace DiagnosisPlugin
                 text = text.Replace("[[rpcButtons]]", "");
             }
             text = text.Replace("[[additionalPlugins]]", "");
+
+            // FOREACH (context in CONTEXTS) -> APPEND (context.GetWidget) ( XML -> Html DOM String)
+
             return text;
         }
 
