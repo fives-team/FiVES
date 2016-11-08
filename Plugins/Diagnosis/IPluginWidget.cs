@@ -6,7 +6,7 @@ using System.Xml;
 
 namespace DiagnosisPlugin
 {
-    abstract class IPluginWidget
+    public abstract class IPluginWidget
     {
         XmlNode Render()
         {
@@ -16,8 +16,8 @@ namespace DiagnosisPlugin
             return Root;
         }
 
-        virtual XmlNode RenderValues();
-        virtual XmlNode RenderActions();
+        public abstract XmlNode RenderValues();
+        public abstract XmlNode RenderActions();
 
         XmlDocument Root;
         HashSet<PluginValue> Values;

@@ -8,7 +8,7 @@ namespace DiagnosisPlugin
 {
     public class PluginContext
     {
-        IDiagnosablePlugin Plugin { get; private set; }
+        public IDiagnosablePlugin Plugin { get; private set; }
 
         public PluginContext(IDiagnosablePlugin plugin)
         {
