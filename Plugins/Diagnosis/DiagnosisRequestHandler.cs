@@ -177,5 +177,26 @@ namespace DiagnosisPlugin
         {
             throw new NotImplementedException();
         }
+
+        private string pluginString = "<div class=\"panel panel-primary\" id=\"content\">" +
+            "\n\t<div class=\"panel-heading\">[[pluginName]]</div>" +
+            "\n\t<div class=\"panel-body\">" +
+            "\n\t\t[[pluginValues]]" +
+            "\n\t\t[[rpcButtons]]" +
+            "\n\t</div>" +
+            "\n</div>" +
+            "\n[[additionalPlugins]]";
+
+        private string valueString = "<div class=\"panel-group col-md-6 col-lg-3\">" +
+            "\n\t<div class=\"panel panel-info\">" +
+            "\n\t\t<div class=\"panel-heading\">[[registeredKey]]</div>" +
+            "\n\t\t<div class=\"panel-body\">" +
+            "\n\t\t\t[[registeredValue]]" +
+            "\n\t\t</div>" +
+            "\n\t</div>" +
+            "\n</div>" +
+            "\n[[pluginValues]]";
+
+        private string rpcString = "[[rpcButtons]]";
     }
 }
