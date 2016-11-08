@@ -45,6 +45,7 @@
     <Compile Include="DiagnosisRequestHandler.cs" />
     <Compile Include="DiagnosisPluginInitializer.cs" />
     <Compile Include="IDiagnosablePlugin.cs" />
+    <Compile Include="Interface.cs" />
     <Compile Include="PluginAction.cs" />
     <Compile Include="PluginContext.cs" />
     <Compile Include="PluginValue.cs" />
