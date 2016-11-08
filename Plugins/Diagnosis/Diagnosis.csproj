@@ -41,6 +41,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DiagnosisInterface.cs" />
     <Compile Include="DiagnosisRequestHandler.cs" />
     <Compile Include="DiagnosisPluginInitializer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
