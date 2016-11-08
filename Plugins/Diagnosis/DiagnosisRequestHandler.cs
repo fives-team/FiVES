@@ -63,7 +63,6 @@ namespace DiagnosisPlugin
 
         private RequestResponse createResponse(string requestPath)
         {
-            // TODO: Set the different mime types
             // All accessible Files have to be in the DiagnosisWebpage folder
             RequestResponse reqResponse = new RequestResponse();
 
@@ -71,6 +70,7 @@ namespace DiagnosisPlugin
             string response;
             if (File.Exists(requestPath))
             {
+                reqResponse.ContentType = getMimeType(requestPath);
                 response = File.ReadAllText(requestPath);
                 reqResponse.ReturnCode = 200;
             }
@@ -85,6 +85,37 @@ namespace DiagnosisPlugin
 
             reqResponse.SetResponseBuffer(response);
             return reqResponse;
+        }
+
+        private string getMimeType(string requestPath)
+        {
+            if (requestPath.EndsWith(".html")){
+                return "text/html";
+            }
+            else if (requestPath.EndsWith(".css"))
+            {
+                return "text/css";
+            }
+            else if (requestPath.EndsWith(".js"))
+            {
+                return "application/javascript";
+            }
+            else if (requestPath.EndsWith(".ttf"))
+            {
+                return "application/octet-stream";
+            }
+            else if (requestPath.EndsWith(".woff"))
+            {
+                return "application/x-font-woff";
+            }
+            else if (requestPath.EndsWith(".woff2"))
+            {
+                return "application/font-woff2";
+            }
+            else
+            {
+                return null;
+            }
         }
 
         private string injectValues(string text)
