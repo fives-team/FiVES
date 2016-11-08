@@ -6,27 +6,38 @@ using System.Text;
 
 namespace DiagnosisPlugin
 {
-    class DiagnosisInterface
+    public class DiagnosisInterface
     {
-        public static DiagnosisInterface Instance = new DiagnosisInterface();
+        private static DiagnosisInterface instance;
 
-        public void IntroducePlugin(IPluginInitializer pluginInitializer)
+        public PluginContext[] Contexts { get { return registeredPlugins.Values.ToArray(); } }
+
+        public static DiagnosisInterface Instance
         {
-            registeredPlugins.Add(pluginInitializer.Name);
+            get
+            {
+                if (instance == null)
+                    instance = new DiagnosisInterface();
+                return instance;
+            }
         }
 
-        public void IntroduceValue(string valueName, object value)
+        private DiagnosisInterface() { }
+
+        PluginContext IntroduceSelf(IDiagnosablePlugin self)
         {
-            registeredValues.Add(valueName, value);
+            PluginContext context = new PluginContext(self);
+            registeredPlugins.Add(self.Name, context);
+            return context;
         }
 
-        public void IntroduceRPC(string methodName, Delegate handler)
+        // POST /diagnosis/action/$PLUGINNAME/$METHODNAME ; [params]
+        void CallPluginMethod(string pluginName, string methodName, object[] parameters)
         {
-            registeredRPCs.Add(methodName, handler);
+            registeredPlugins[pluginName].CallMethod(methodName, parameters);
         }
 
-        public List<string> registeredPlugins { get; private set; } = new List<string>();
-        public Dictionary<string, object> registeredValues { get; private set; } = new Dictionary<string, object>();
-        public Dictionary<string, Delegate> registeredRPCs { get; private set; } = new Dictionary<string, Delegate>();
+        Dictionary<string, PluginContext> registeredPlugins = new Dictionary<string, PluginContext>();
+
     }
 }

@@ -41,11 +41,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="DiagnosisInterface.cs" />
     <Compile Include="DiagnosisRequestHandler.cs" />
     <Compile Include="DiagnosisPluginInitializer.cs" />
     <Compile Include="IDiagnosablePlugin.cs" />
-    <Compile Include="Interface.cs" />
+    <Compile Include="DiagnosisInterface.cs" />
     <Compile Include="PluginAction.cs" />
     <Compile Include="PluginContext.cs" />
     <Compile Include="PluginValue.cs" />
