@@ -50,6 +50,7 @@
     <Compile Include="PluginValue.cs" />
     <Compile Include="IPluginWidget.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="XmlTemplate.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Core\Collections\Collections.csproj">
