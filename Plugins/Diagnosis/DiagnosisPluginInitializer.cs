@@ -37,10 +37,6 @@ namespace DiagnosisPlugin
         public void Initialize()
         {
             Console.WriteLine("[Diagnosis] Diagnosis Website available at :8081/diagnosis/");
-            DiagnosisInterface.Instance.IntroducePlugin(this);
-            DiagnosisInterface.Instance.IntroduceValue("Registered Plugins", DiagnosisInterface.Instance.registeredPlugins);
-            DiagnosisInterface.Instance.IntroduceValue("Registered Values", DiagnosisInterface.Instance.registeredValues);
-            DiagnosisInterface.Instance.IntroduceRPC("hello", (Action)helloWorld);
             RequestDispatcher.Instance.RegisterHandler(new DiagnosisRequestHandler());
         }
 

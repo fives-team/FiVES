@@ -165,30 +165,10 @@ namespace DiagnosisPlugin
 
             text = text.Replace("[[deferredPlugins]]", deferredPlugins);
 
-            foreach(string pluginName in DiagnosisInterface.Instance.registeredPlugins)
+            foreach (PluginContext c in DiagnosisInterface.Instance.Contexts)
             {
-                text = text.Replace("[[additionalPlugins]]", pluginString);
-                text = text.Replace("[[pluginName]]", pluginName);
-
-                foreach(KeyValuePair<string,object> registeredValue in DiagnosisInterface.Instance.registeredValues)
-                {
-                    text = text.Replace("[[pluginValues]]", valueString);
-                    text = text.Replace("[[registeredKey]]", registeredValue.Key);
-                    text = text.Replace("[[registeredValue]]", registeredValue.Value.ToString());
-                }
-                text = text.Replace("[[pluginValues]]", "");
-
-                foreach(KeyValuePair<string, Delegate> registeredRPC in DiagnosisInterface.Instance.registeredRPCs)
-                {
-                    text = text.Replace("[[rpcButtons]]", rpcString);
-                    text = text.Replace("[[rpcPluginName]]", pluginName);
-                    text = text.Replace("[[rpcMethodName]]", registeredRPC.Key);
-                }
-                text = text.Replace("[[rpcButtons]]", "");
+                //Render (c.GetPluginWidget());
             }
-            text = text.Replace("[[additionalPlugins]]", "");
-
-            // FOREACH (context in CONTEXTS) -> APPEND (context.GetWidget) ( XML -> Html DOM String)
 
             return text;
         }
