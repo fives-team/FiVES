@@ -1,0 +1,78 @@
+﻿<!DOCTYPE html>
+
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>FiVES-Diagnosis</title>
+    <link rel="stylesheet" href="DiagnosisWebpage/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="DiagnosisWebpage/css/diag.css">
+</head>
+<body>
+    <div class="container-fluid">
+        <div class="">
+            <div class="panel panel-primary" id="content">
+                <div class="panel-heading">FiVES Diagnosis Page</div>
+                <div class="panel-body">
+                    <div class="panel-group col-md-6 col-lg-3">
+                        <div class="panel panel-info" id="content">
+                            <div class="panel-heading">Entities</div>
+                            <div class="panel-body">
+                                [[numOfEntities]]
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="panel-group col-md-6 col-lg-3" style="[[clientManagerStyle]]">
+                        <div class="panel panel-info" id="content">
+                            <div class="panel-heading">Clients</div>
+                            <div class="panel-body">
+                                [[numOfClients]]
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="panel-group col-md-6 col-lg-3">
+                        <div class="panel panel-info" id="content">
+                            <div class="panel-heading">Leer</div>
+                            <div class="panel-body">
+                                [[leer]]
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="panel-group col-md-6 col-lg-3">
+                        <div class="panel panel-info" id="content">
+                            <div class="panel-heading">Leer</div>
+                            <div class="panel-body">
+                                [[leer]]
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="panel-group col-md-6">
+                        <div class="panel panel-success" id="content">
+                            <div class="panel-heading">Plugins (loaded)</div>
+                            <div class="panel-body">
+                                <textarea rows="15" id="loadedPlugins" class="plugins" readonly>[[loadedPlugins]]</textarea>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="panel-group col-md-6">
+                        <div class="panel panel-danger" id="content">
+                            <div class="panel-heading">Plugins (deferred)</div>
+                            <div class="panel-body">
+                                <textarea rows="15" id="deferredPlugins" class="plugins" readonly>[[deferredPlugins]]</textarea>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="DiagnosisWebpage/jquery-3.1.1.min.js"></script>
+    <script src="DiagnosisWebpage/bootstrap/js/bootstrap.min.js"></script>
+</body>
+</html>

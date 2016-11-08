@@ -1,0 +1,19 @@
+﻿body
+{
+    padding-top: 3px;
+}
+
+a{
+    text-decoration: none;
+}
+
+textarea.plugins{
+	font-family: "Lucida Console", Monaco, monospace;
+	font-size: 12px;
+    resize: none;
+    width: 100%;
+
+    -moz-tab-size: 2;
+    -o-tab-size: 2;
+    tab-size: 2;
+}
