@@ -46,6 +46,7 @@
     <Compile Include="DiagnosisPluginInitializer.cs" />
     <Compile Include="PluginAction.cs" />
     <Compile Include="PluginValue.cs" />
+    <Compile Include="IPluginWidget.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
