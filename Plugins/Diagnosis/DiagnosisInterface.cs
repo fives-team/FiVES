@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Xml;
 
 namespace DiagnosisPlugin
 {
@@ -11,6 +12,7 @@ namespace DiagnosisPlugin
         private static DiagnosisInterface instance;
 
         public PluginContext[] Contexts { get { return registeredPlugins.Values.ToArray(); } }
+        public XmlDocument WidgetTemplate { get; private set; }
 
         public static DiagnosisInterface Instance
         {
@@ -22,7 +24,11 @@ namespace DiagnosisPlugin
             }
         }
 
-        private DiagnosisInterface() { }
+        private DiagnosisInterface()
+        {
+            WidgetTemplate = new XmlDocument();
+            WidgetTemplate.Load("DiagnosisWebpage/dynamic/widget_template.html");
+        }
 
         PluginContext IntroduceSelf(IDiagnosablePlugin self)
         {
