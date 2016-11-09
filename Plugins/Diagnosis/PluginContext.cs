@@ -15,7 +15,7 @@ namespace DiagnosisPlugin
             this.Plugin = plugin;
         }
 
-        public IPluginWidget GetPluginWidget()
+        public PluginWidget GetPluginWidget()
         {
             return Plugin.Widget;
         }

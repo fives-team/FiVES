@@ -6,7 +6,7 @@ using System.Xml;
 
 namespace DiagnosisPlugin
 {
-    public abstract class IPluginWidget
+    public abstract class PluginWidget
     {
         XmlNode Render()
         {

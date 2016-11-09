@@ -10,6 +10,6 @@ namespace DiagnosisPlugin
     public interface IDiagnosablePlugin : IPluginInitializer
     {
         bool RegisterWidget();
-        IPluginWidget Widget { get; }
+        PluginWidget Widget { get; }
     }
 }
