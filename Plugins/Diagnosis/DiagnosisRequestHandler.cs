@@ -122,7 +122,10 @@ namespace DiagnosisPlugin
                 string returnMessage = "So net";
             }
 
-            throw new NotImplementedException();
+            string[] fragments = requestPath.Split('/');
+            DiagnosisInterface.Instance.CallPluginMethod(fragments[2], fragments[3], null);
+            response.ReturnCode = 202;
+            return response;
         }
 
         protected override RequestResponse HandlePUT(string requestPath, string content)
