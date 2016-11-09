@@ -16,6 +16,7 @@ namespace DiagnosisPlugin
 
         public XmlDocument RenderResponse()
         {
+            ParseTemplateAsXml();
             RenderBaseInfo();
             RenderPluginWidgets();
             return ResponseDocument;
