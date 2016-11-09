@@ -30,9 +30,9 @@ namespace DiagnosisPlugin
         protected void RenderWidgetContainer()
         {
             Root = DiagnosisInterface.Instance.WidgetTemplate.Clone() as XmlDocument;
-            Root.SelectSingleNode("/div/div[@name='plugin-label']").InnerText = ParentPlugin.Name;
-            ValueTable = Root.SelectSingleNode("/div/div/[@class='panel-body']/table");
-            ActionButtonList = Root.SelectSingleNode("/div/div/[@class='panel-body']/div");
+            Root.SelectSingleNode("//*[@name='plugin-label']").InnerText = ParentPlugin.Name;
+            ValueTable = Root.SelectSingleNode("//*[@name='value-table']");
+            ActionButtonList = Root.SelectSingleNode("//*[@name=action-button-list]");
         }
 
         protected void renderTableRow(string label, object value)
