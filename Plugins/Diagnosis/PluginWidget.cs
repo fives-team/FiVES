@@ -16,8 +16,8 @@ namespace DiagnosisPlugin
             return Root;
         }
 
-        public abstract XmlNode RenderValues();
-        public abstract XmlNode RenderActions();
+        protected abstract XmlNode RenderValues();
+        protected abstract XmlNode RenderActions();
 
         protected void renderWidgetContainer()
         {
