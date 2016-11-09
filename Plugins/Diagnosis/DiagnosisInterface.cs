@@ -30,7 +30,7 @@ namespace DiagnosisPlugin
             WidgetTemplate.Load("DiagnosisWebpage/dynamic/widget_template.html");
         }
 
-        PluginContext IntroduceSelf(IDiagnosablePlugin self)
+        public PluginContext IntroduceSelf(IDiagnosablePlugin self)
         {
             PluginContext context = new PluginContext(self);
             registeredPlugins.Add(self.Name, context);
