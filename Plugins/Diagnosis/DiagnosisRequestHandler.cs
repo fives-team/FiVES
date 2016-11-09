@@ -118,56 +118,6 @@ namespace DiagnosisPlugin
             }
         }
 
-        private string injectValues(string text)
-        {
-            text = text.Replace("[[numOfEntities]]", World.Instance.Count.ToString());
-
-            // we dont know if these plugins are loaded yet.
-            string clientManagerStyle = "display: none;";
-
-            string loadedPlugins = "";
-            // read all loaded plugins and check for specific plugins whether if they are loaded
-            foreach (PluginManager.PluginInfo pi in PluginManager.Instance.LoadedPlugins)
-            {
-                loadedPlugins += pi.Name + '\n';
-                if(pi.Name == "ClientManager")
-                {
-                    clientManagerStyle = "visibility: show;";
-                }
-            }
-
-            // apply visibility for specific plugin fields
-            text = text.Replace("[[clientManagerStyle]]", clientManagerStyle);
-
-            text = text.Replace("[[loadedPlugins]]", loadedPlugins);
-
-            string deferredPlugins = "";
-            foreach (PluginManager.PluginInfo pi in PluginManager.Instance.DeferredPlugins)
-            {
-                deferredPlugins += pi.Name + '\n';
-                if (pi.RemainingComponentDeps.Count > 0)
-                {
-                    deferredPlugins += "\tmissing components:\n";
-                    foreach (string component in pi.RemainingComponentDeps)
-                    {
-                        deferredPlugins += "\t\t" + component + '\n';
-                    }
-                }
-                if (pi.RemainingPluginDeps.Count > 0)
-                {
-                    deferredPlugins += "\tmissing plugins:\n";
-                    foreach (string plugin in pi.RemainingPluginDeps)
-                    {
-                        deferredPlugins += "\t\t" + plugin + '\n';
-                    }
-                }
-            }
-
-            text = text.Replace("[[deferredPlugins]]", deferredPlugins);
-
-            return text;
-        }
-
         protected override RequestResponse HandlePOST(string requestPath, string content)
         {
             throw new NotImplementedException();
