@@ -32,6 +32,41 @@ namespace DiagnosisPlugin
             ResponseDocument.SelectSingleNode("//*[@id='loaded-plugins-area']").InnerText = loadedPlugins;
             ResponseDocument.SelectSingleNode("//*[@id='deferred-plugins-area']").InnerText = deferredPlugins;
         }
+
+        private string getLoadedPlugins()
+        {
+            string loadedPlugins = "";
+            foreach (PluginManager.PluginInfo pi in PluginManager.Instance.LoadedPlugins)
+            {
+                loadedPlugins += pi.Name + '\n';
+            }
+            return loadedPlugins;
+        }
+
+        private string getDeferredPlugins()
+        {
+            string deferredPlugins = "";
+            foreach (PluginManager.PluginInfo pi in PluginManager.Instance.DeferredPlugins)
+            {
+                deferredPlugins += pi.Name + '\n';
+                if (pi.RemainingComponentDeps.Count > 0)
+                {
+                    deferredPlugins += '\t' + "missing components:" + '\n';
+                    foreach (string component in pi.RemainingComponentDeps)
+                    {
+                        deferredPlugins += "\t\t" + component + '\n';
+                    }
+                }
+                if (pi.RemainingPluginDeps.Count > 0)
+                {
+                    deferredPlugins += '\t' + "missing plugins:" + '\n';
+                    foreach (string plugin in pi.RemainingPluginDeps)
+                    {
+                        deferredPlugins += "\t\t" + plugin + '\n';
+                    }
+                }
+            }
+            return deferredPlugins;
         }
 
         private void RenderPluginWidgets()
