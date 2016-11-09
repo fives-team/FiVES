@@ -19,8 +19,8 @@ namespace DiagnosisPlugin
         {
             Root = new XmlDocument();
             RenderWidgetContainer();
-            Root.AppendChild(RenderValues());
-            Root.AppendChild(RenderActions());
+            RenderValues();
+            RenderActions();
             return Root;
         }
 
