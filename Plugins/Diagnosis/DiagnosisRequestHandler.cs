@@ -81,7 +81,7 @@ namespace DiagnosisPlugin
             }
 
             if (requestPath.Contains("/dynamic/"))
-                response = injectValues(response);
+                response = responseBuilder.RenderResponse().OuterXml;
 
             reqResponse.SetResponseBuffer(response);
             return reqResponse;
@@ -178,5 +178,6 @@ namespace DiagnosisPlugin
             throw new NotImplementedException();
         }
 
+        private XmlResponseBuilder responseBuilder = new XmlResponseBuilder();
     }
 }
