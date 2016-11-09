@@ -8,6 +8,13 @@ namespace DiagnosisPlugin
 {
     public abstract class PluginWidget
     {
+        private IDiagnosablePlugin ParentPlugin { get; set; }
+
+        public PluginWidget(IDiagnosablePlugin plugin)
+        {
+            this.ParentPlugin = plugin;
+        }
+
         XmlNode Render()
         {
             Root = new XmlDocument();
