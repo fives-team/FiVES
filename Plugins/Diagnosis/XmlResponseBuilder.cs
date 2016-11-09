@@ -25,6 +25,13 @@ namespace DiagnosisPlugin
         private void RenderBaseInfo()
         {
             // TODO: Base info direkt in XML injecten
+            string loadedPlugins = getLoadedPlugins();
+            string deferredPlugins = getDeferredPlugins();
+
+            ResponseDocument.SelectSingleNode("//*[@id='entities-body']").InnerText = World.Instance.Count.ToString();
+            ResponseDocument.SelectSingleNode("//*[@id='loaded-plugins-area']").InnerText = loadedPlugins;
+            ResponseDocument.SelectSingleNode("//*[@id='deferred-plugins-area']").InnerText = deferredPlugins;
+        }
         }
 
         private void RenderPluginWidgets()
