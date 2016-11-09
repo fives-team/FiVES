@@ -1,11 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using RESTServicePlugin;
 using System.IO;
-using FIVES;
-using ClientManagerPlugin;
 
 namespace DiagnosisPlugin
 {
