@@ -38,7 +38,7 @@ namespace DiagnosisPlugin
         }
 
         // POST /diagnosis/action/$PLUGINNAME/$METHODNAME ; [params]
-        void CallPluginMethod(string pluginName, string methodName, object[] parameters)
+        public void CallPluginMethod(string pluginName, string methodName, object[] parameters)
         {
             registeredPlugins[pluginName].CallMethod(methodName, parameters);
         }
