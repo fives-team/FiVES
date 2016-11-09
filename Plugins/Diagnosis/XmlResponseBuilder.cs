@@ -72,12 +72,13 @@ namespace DiagnosisPlugin
 
         private void RenderPluginWidgets()
         {
+            XmlNode widgetParent = ResponseDocument.SelectSingleNode("//*[@id='plugin-widgets']");
             foreach (PluginContext c in DiagnosisInterface.Instance.Contexts)
             {
                 //Render (c.GetPluginWidget());
                 XmlNode widgetNode = c.GetPluginWidget().Render();
                 XmlNode appendedNode = ResponseDocument.ImportNode(widgetNode.FirstChild, true);
-                ResponseDocument.SelectSingleNode("//*[@id='plugin-widgets']").AppendChild(appendedNode);
+                widgetParent.AppendChild(appendedNode);
             }
         }
 
