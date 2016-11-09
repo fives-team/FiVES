@@ -31,9 +31,16 @@ namespace DiagnosisPlugin
 
         }
 
-        protected void renderTableRow()
+        protected void renderTableRow(string label, object value)
         {
-
+            var tableRow = Root.CreateElement("tr");
+            var labelColumn = Root.CreateElement("td");
+            labelColumn.InnerText = label;
+            var valueColumn = Root.CreateElement("td");
+            valueColumn.InnerText = value.ToString();
+            tableRow.AppendChild(labelColumn);
+            tableRow.AppendChild(valueColumn);
+            ValueTable.AppendChild(tableRow);
         }
 
         protected void renderActionButton()
