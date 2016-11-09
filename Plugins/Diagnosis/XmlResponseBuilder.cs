@@ -24,7 +24,6 @@ namespace DiagnosisPlugin
         private void RenderBaseInfo()
         {
             // TODO: Base info direkt in XML injecten
-            RenderPluginWidgets();
         }
 
         private void RenderPluginWidgets()
