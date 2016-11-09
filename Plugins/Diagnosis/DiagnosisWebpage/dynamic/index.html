@@ -59,5 +59,13 @@
 
     <script src="DiagnosisWebpage/jquery-3.1.1.min.js"></script>
     <script src="DiagnosisWebpage/bootstrap/js/bootstrap.min.js"></script>
+    <script>
+        function callAction(plugin, method) {
+            $.ajax({
+                url: "/diagnosis/action/" + plugin + "/" + method,
+                method: "POST"
+            });
+        }
+    </script>
 </body>
 </html>
