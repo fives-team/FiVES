@@ -9,59 +9,36 @@
 </head>
 <body>
     <div class="container-fluid">
-        <div class="panel panel-primary" id="fivesDiagnosis">
-            <div class="panel-heading">FiVES Diagnosis Page</div>
-            <div class="panel-body">
-                <div class="panel-group col-md-6 col-lg-3">
-                    <div class="panel panel-info">
-                        <div class="panel-heading">Entities</div>
-                        <div class="panel-body">
-                            [[numOfEntities]]
+        <div class="panel-group">
+            <div class="panel panel-primary">
+                <div class="panel-heading">FiVES Diagnosis Page</div>
+                <div class="panel-body">
+                    <div class="row">
+                        <div class="panel-group col-md-6 col-lg-3">
+                            <div class="panel panel-info">
+                                <div class="panel-heading">Entities</div>
+                                <div id="entities-body" class="panel-body"></div>
+                            </div>
                         </div>
                     </div>
-                </div>
 
-                <div class="panel-group col-md-6 col-lg-3" style="[[clientManagerStyle]]">
-                    <div class="panel panel-info">
-                        <div class="panel-heading">Clients</div>
-                        <div class="panel-body">
-                            [[numOfClients]]
+                    <div class="row">
+                        <div class="panel-group col-md-6">
+                            <div class="panel panel-success">
+                                <div class="panel-heading">Plugins (loaded)</div>
+                                <div class="panel-body">
+                                    <textarea rows="15" id="loaded-plugins-area" class="plugins" readonly="readonly"></textarea>
+                                </div>
+                            </div>
                         </div>
-                    </div>
-                </div>
 
-                <div class="panel-group col-md-6 col-lg-3">
-                    <div class="panel panel-info">
-                        <div class="panel-heading">Leer</div>
-                        <div class="panel-body">
-                            [[leer]]
-                        </div>
-                    </div>
-                </div>
-
-                <div class="panel-group col-md-6 col-lg-3">
-                    <div class="panel panel-info">
-                        <div class="panel-heading">Leer</div>
-                        <div class="panel-body">
-                            [[leer]]
-                        </div>
-                    </div>
-                </div>
-
-                <div class="panel-group col-md-6">
-                    <div class="panel panel-success">
-                        <div class="panel-heading">Plugins (loaded)</div>
-                        <div class="panel-body">
-                            <textarea rows="15" id="loadedPlugins" class="plugins" readonly>[[loadedPlugins]]</textarea>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="panel-group col-md-6">
-                    <div class="panel panel-danger">
-                        <div class="panel-heading">Plugins (deferred)</div>
-                        <div class="panel-body">
-                            <textarea rows="15" id="deferredPlugins" class="plugins" readonly>[[deferredPlugins]]</textarea>
+                        <div class="panel-group col-md-6">
+                            <div class="panel panel-danger">
+                                <div class="panel-heading">Plugins (deferred)</div>
+                                <div class="panel-body">
+                                    <textarea rows="15" id="deferred-plugins-area" class="plugins" readonly="readonly"></textarea>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -71,7 +48,6 @@
         <div id="plugin-widgets" class="row">
 
         </div>
-
     </div>
             <script src="DiagnosisWebpage/jquery-3.1.1.min.js"></script>
             <script src="DiagnosisWebpage/bootstrap/js/bootstrap.min.js"></script>
