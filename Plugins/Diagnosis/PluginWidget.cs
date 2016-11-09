@@ -15,7 +15,7 @@ namespace DiagnosisPlugin
             this.ParentPlugin = plugin;
         }
 
-        XmlNode Render()
+        public XmlNode Render()
         {
             Root = new XmlDocument();
             Root.AppendChild(RenderValues());
