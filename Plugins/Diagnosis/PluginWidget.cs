@@ -46,9 +46,13 @@ namespace DiagnosisPlugin
             ValueTable.AppendChild(tableRow);
         }
 
-        protected void renderActionButton()
+        protected void renderActionButton(string name, int numParams)
         {
-
+            var buttonElement = Root.CreateElement("button");
+            buttonElement.SetAttribute("class", "btn btn-info");
+            buttonElement.SetAttribute("onclick", String.Format("callMethod({0},{1})", ParentPlugin.Name, name));
+            buttonElement.InnerText = name;
+            ActionButtonList.AppendChild(buttonElement);
         }
 
         XmlDocument Root;
