@@ -115,6 +115,13 @@ namespace DiagnosisPlugin
 
         protected override RequestResponse HandlePOST(string requestPath, string content)
         {
+            RequestResponse response = new RequestResponse();
+            if (!requestPath.StartsWith("/action"))
+            {
+                response.ReturnCode = 400;
+                string returnMessage = "So net";
+            }
+
             throw new NotImplementedException();
         }
 
