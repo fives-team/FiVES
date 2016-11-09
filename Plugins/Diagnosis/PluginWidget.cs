@@ -31,7 +31,7 @@ namespace DiagnosisPlugin
             Root = DiagnosisInterface.Instance.WidgetTemplate.Clone() as XmlDocument;
             Root.SelectSingleNode("//*[@name='plugin-label']").InnerText = ParentPlugin.Name;
             ValueTable = Root.SelectSingleNode("//*[@name='value-table']");
-            ActionButtonList = Root.SelectSingleNode("//*[@name=action-button-list]");
+            ActionButtonList = Root.SelectSingleNode("//*[@name='action-button-list']");
         }
 
         protected void renderTableRow(string label, object value)
@@ -50,7 +50,7 @@ namespace DiagnosisPlugin
         {
             var buttonElement = Root.CreateElement("button");
             buttonElement.SetAttribute("class", "btn btn-info");
-            buttonElement.SetAttribute("onclick", String.Format("callMethod({0},{1})", ParentPlugin.Name, name));
+            buttonElement.SetAttribute("onclick", String.Format("callAction('{0}','{1}')", ParentPlugin.Name, name));
             buttonElement.InnerText = name;
             ActionButtonList.AppendChild(buttonElement);
         }
