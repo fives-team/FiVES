@@ -17,11 +17,10 @@ namespace DiagnosisPlugin
 
         public XmlNode Render()
         {
-            Root = new XmlDocument();
             RenderWidgetContainer();
             RenderValues();
             RenderActions();
-            return Root;
+            return Root as XmlNode;
         }
 
         protected abstract void RenderValues();
