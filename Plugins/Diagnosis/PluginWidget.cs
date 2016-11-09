@@ -18,6 +18,7 @@ namespace DiagnosisPlugin
         public XmlNode Render()
         {
             Root = new XmlDocument();
+            RenderWidgetContainer();
             Root.AppendChild(RenderValues());
             Root.AppendChild(RenderActions());
             return Root;
@@ -26,9 +27,12 @@ namespace DiagnosisPlugin
         protected abstract XmlNode RenderValues();
         protected abstract XmlNode RenderActions();
 
-        protected void renderWidgetContainer()
+        protected void RenderWidgetContainer()
         {
-
+            Root = DiagnosisInterface.Instance.WidgetTemplate.Clone() as XmlDocument;
+            Root.SelectSingleNode("/div/div[@name='plugin-label']").InnerText = ParentPlugin.Name;
+            ValueTable = Root.SelectSingleNode("/div/div/[@class='panel-body']/table");
+            ActionButtonList = Root.SelectSingleNode("/div/div/[@class='panel-body']/div");
         }
 
         protected void renderTableRow(string label, object value)
