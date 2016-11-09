@@ -74,6 +74,7 @@ namespace DiagnosisPlugin
             foreach (PluginContext c in DiagnosisInterface.Instance.Contexts)
             {
                 //Render (c.GetPluginWidget());
+                ResponseDocument.SelectSingleNode(pluginWidgetPath).AppendChild(c.GetPluginWidget().Render());
             }
         }
 
