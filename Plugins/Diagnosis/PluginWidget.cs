@@ -58,7 +58,5 @@ namespace DiagnosisPlugin
         XmlDocument Root;
         XmlNode ValueTable;
         XmlNode ActionButtonList;
-        HashSet<PluginValue> Values;
-        HashSet<PluginAction> Actions;
     }
 }
