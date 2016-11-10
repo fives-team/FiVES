@@ -111,6 +111,13 @@ namespace DiagnosisPlugin
             return input;
         }
 
+        private XmlNode createResponseField(string methodName)
+        {
+            var responeField = Root.CreateElement("div");
+            responeField.SetAttribute("class", "bg-danger bg");
+            responeField.InnerText = "Dies ist ein Format-Test";
+            return responeField;
+        }
         XmlDocument Root;
         XmlNode ValueTable;
         XmlNode ActionButtonList;
