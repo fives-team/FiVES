@@ -20,18 +20,21 @@ namespace DiagnosisPlugin
         {
             RenderWidgetContainer();
             RenderValues();
+            RenderForms();
             RenderActions();
             return Root as XmlNode;
         }
 
         protected abstract void RenderValues();
         protected abstract void RenderActions();
+        protected abstract void RenderForms();
 
         protected void RenderWidgetContainer()
         {
             Root = DiagnosisInterface.Instance.WidgetTemplate.Clone() as XmlDocument;
             Root.SelectSingleNode("//*[@name='plugin-label']").InnerText = ParentPlugin.Name;
             ValueTable = Root.SelectSingleNode("//*[@name='value-table']");
+            UpdateFormList = Root.SelectSingleNode("//*[@name='update-forms']");
             ActionButtonList = Root.SelectSingleNode("//*[@name='action-button-list']");
         }
 
@@ -56,9 +59,55 @@ namespace DiagnosisPlugin
             ActionButtonList.AppendChild(buttonElement);
         }
 
+        protected void renderUpdateForm(string updateFunctionName, Dictionary<string, string> parameters)
+        {
+            formCount++;
+            string formID = ParentPlugin.Name + "-form" + formCount.ToString();
+
+            var form = Root.CreateElement("form");
+            form.SetAttribute("id", formID);
+            form.SetAttribute("class", "form-horizontal");
+            form.SetAttribute("action", String.Format("/diagnosis/action/{0}/{1}", ParentPlugin.Name, updateFunctionName));
+
+            foreach(KeyValuePair<string, string> parameter in parameters)
+            {
+                var formGroup = Root.CreateElement("div");
+                formGroup.SetAttribute("class", "form-group");
+
+                var label = Root.CreateElement("label");
+                label.SetAttribute("for", parameter.Key);
+                label.SetAttribute("class", "col-sm-4 control-label");
+                label.InnerText = parameter.Value;
+
+                var inputDiv = Root.CreateElement("div");
+                inputDiv.SetAttribute("class", "col-sm-8");
+
+                var input = Root.CreateElement("input");
+                input.SetAttribute("id", parameter.Key);
+                input.SetAttribute("type", "text");
+                input.SetAttribute("class", "form-control");
+                input.SetAttribute("value", parameter.Value);
+
+                inputDiv.AppendChild(input);
+
+                formGroup.AppendChild(label);
+                formGroup.AppendChild(inputDiv);
+
+                form.AppendChild(formGroup);
+            }
+
+            var button = Root.CreateElement("button");
+            button.SetAttribute("class", "btn btn-info");
+            button.SetAttribute("onclick", String.Format("sendForm('{0}')"), formID);
+
+            form.AppendChild(button);
+            UpdateFormList.AppendChild(form);
+        }
+
         XmlDocument Root;
         XmlNode ValueTable;
         XmlNode ActionButtonList;
+        XmlNode UpdateFormList;
         int formCount;
     }
 }
