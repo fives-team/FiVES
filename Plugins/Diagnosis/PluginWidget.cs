@@ -77,11 +77,6 @@ namespace DiagnosisPlugin
             form.SetAttribute("id", formID);
             form.SetAttribute("class", "form-horizontal");
 
-            var button = Root.CreateElement("button");
-            button.SetAttribute("class", "btn btn-info");
-            button.SetAttribute("onclick", String.Format("callMethod('{0}','{1}');", ParentPlugin.Name, methodName));
-            button.InnerText = "Update values";
-            UpdateFormList.AppendChild(button);
             foreach(KeyValuePair<string, string> parameter in parameters)
             {
                 attrCount++;
