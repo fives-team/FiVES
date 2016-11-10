@@ -82,6 +82,11 @@ namespace DiagnosisPlugin
             form.SetAttribute("action", String.Format("/diagnosis/action/{0}/{1}", ParentPlugin.Name, updateFunctionName));
             form.SetAttribute("method", "POST");
 
+            var button = Root.CreateElement("button");
+            button.SetAttribute("class", "btn btn-info");
+            button.SetAttribute("onclick", String.Format("callMethod('{0}','{1}');", ParentPlugin.Name, methodName));
+            button.InnerText = "Update values";
+            UpdateFormList.AppendChild(button);
             foreach(KeyValuePair<string, string> parameter in parameters)
             {
                 attrCount++;
@@ -111,11 +116,6 @@ namespace DiagnosisPlugin
                 form.AppendChild(formGroup);
             }
 
-            var button = Root.CreateElement("button");
-            button.SetAttribute("class", "btn btn-info");
-            button.InnerText = "Update values";
-
-            form.AppendChild(button);
             UpdateFormList.AppendChild(form);
         }
 
