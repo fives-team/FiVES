@@ -88,11 +88,7 @@ namespace DiagnosisPlugin
                 var formGroup = Root.CreateElement("div");
                 formGroup.SetAttribute("class", "form-group");
 
-                var label = Root.CreateElement("label");
-                label.SetAttribute("for", parameter.Key);
-                label.SetAttribute("class", "col-sm-3 control-label");
-                label.InnerText = parameter.Key;
-
+                var label = createParamLabel(parameter.Key);
                 var inputDiv = Root.CreateElement("div");
                 inputDiv.SetAttribute("class", "col-sm-9");
 
@@ -112,6 +108,15 @@ namespace DiagnosisPlugin
             }
 
             UpdateFormList.AppendChild(form);
+        private XmlNode createParamLabel(string paramName)
+        {
+            var label = Root.CreateElement("label");
+            label.SetAttribute("for", paramName);
+            label.SetAttribute("class", "col-sm-3 control-label");
+            label.InnerText = paramName;
+            return label;
+        }
+
         }
 
         XmlDocument Root;
