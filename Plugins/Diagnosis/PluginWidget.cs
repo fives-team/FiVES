@@ -64,6 +64,12 @@ namespace DiagnosisPlugin
 
         protected void renderParameterForm(string methodName, Dictionary<string, string> parameters)
         {
+            ActionButtonList.AppendChild(createParameterInputForm(methodName, parameters));
+            ActionButtonList.AppendChild(createResponseField(methodName));
+        }
+
+        private XmlNode createParameterInputForm(string methodName, Dictionary<string, string> parameters)
+        {
             string formID = String.Format("form-{0}-{1}", ParentPlugin.Name, methodName);
             var form = Root.CreateElement("form");
 
@@ -72,22 +78,26 @@ namespace DiagnosisPlugin
 
             foreach(KeyValuePair<string, string> parameter in parameters)
             {
-                var formGroup = Root.CreateElement("div");
-                formGroup.SetAttribute("class", "form-group");
-
-                var label = createParamLabel(parameter.Key);
-                var inputDiv = Root.CreateElement("div");
-                inputDiv.SetAttribute("class", "col-sm-9");
-                var input = createParamInput(methodName, parameter);
-
-                inputDiv.AppendChild(input);
-                formGroup.AppendChild(label);
-                formGroup.AppendChild(inputDiv);
-
-                form.AppendChild(formGroup);
+                form.AppendChild(createParameterFormGroup(methodName, parameter));
             }
+            return form;
+        }
 
-            ActionButtonList.AppendChild(form);
+        private XmlNode createParameterFormGroup(string methodName, KeyValuePair<string, string> parameter)
+        {
+            var formGroup = Root.CreateElement("div");
+            formGroup.SetAttribute("class", "form-group");
+            formGroup.AppendChild(createParamLabel(parameter.Key));
+            formGroup.AppendChild(createInputDiv(methodName, parameter));
+            return formGroup;
+        }
+
+        private XmlNode createInputDiv(string methodName, KeyValuePair<string, string> parameter)
+        {
+            var inputDiv = Root.CreateElement("div");
+            inputDiv.SetAttribute("class", "col-sm-9");
+            inputDiv.AppendChild(createParamInput(methodName, parameter));
+            return inputDiv;
         }
 
         private XmlNode createParamLabel(string paramName)
