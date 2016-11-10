@@ -70,10 +70,10 @@ namespace DiagnosisPlugin
             ActionButtonList.AppendChild(paramElement);
         }
 
-        protected void renderUpdateForm(string updateFunctionName, Dictionary<string, string> parameters)
+        protected void renderUpdateForm(string methodName, Dictionary<string, string> parameters)
         {
             formCount++;
-            string formID = ParentPlugin.Name + "-form" + formCount.ToString();
+            string formID = String.Format("form-{0}-{1}", ParentPlugin.Name, methodName);
             int attrCount = 0;
 
             var form = Root.CreateElement("form");
@@ -100,7 +100,7 @@ namespace DiagnosisPlugin
                 inputDiv.SetAttribute("class", "col-sm-9");
 
                 var input = Root.CreateElement("input");
-                input.SetAttribute("id", formID + "-attr" + attrCount);
+                input.SetAttribute("id", String.Format("param-{0}-{1}-{2}", ParentPlugin.Name, methodName, parameter.Key));
                 input.SetAttribute("name", parameter.Key);
                 input.SetAttribute("type", "text");
                 input.SetAttribute("class", "form-control");
