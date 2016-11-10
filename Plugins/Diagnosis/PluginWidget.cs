@@ -46,30 +46,27 @@ namespace DiagnosisPlugin
             ValueTable.AppendChild(tableRow);
         }
 
-        protected void renderActionButton(string name, bool hasParams)
+        protected void renderActionButton(string name)
+        {
+            renderActionButton(name, new Dictionary<string, string>());
+        }
+
+        protected void renderActionButton(string name, Dictionary<string, string> parameters)
         {
             var buttonElement = Root.CreateElement("button");
             buttonElement.SetAttribute("class", "btn btn-info");
-            buttonElement.SetAttribute("onclick", String.Format("callAction('{0}','{1}')", ParentPlugin.Name, name));
+            buttonElement.SetAttribute("onclick", String.Format("callMethod('{0}','{1}')", ParentPlugin.Name, name));
             buttonElement.InnerText = name;
             ActionButtonList.AppendChild(buttonElement);
-            if (hasParams)
-                renderParamField(name);
-        }
-
-        protected void renderParamField(string name)
-        {
-            var paramElement = Root.CreateElement("input");
-            paramElement.SetAttribute("type", "text");
-            paramElement.SetAttribute("size", "25");
-            paramElement.SetAttribute("id", String.Format("param-{0}-{1}", ParentPlugin.Name, name));
-            ActionButtonList.AppendChild(paramElement);
+            if (parameters.Count > 0)
+                renderUpdateForm(name, parameters);
         }
 
         protected void renderUpdateForm(string methodName, Dictionary<string, string> parameters)
         {
             string formID = String.Format("form-{0}-{1}", ParentPlugin.Name, methodName);
             var form = Root.CreateElement("form");
+
             form.SetAttribute("id", formID);
             form.SetAttribute("class", "form-horizontal");
 
@@ -81,18 +78,18 @@ namespace DiagnosisPlugin
                 var label = createParamLabel(parameter.Key);
                 var inputDiv = Root.CreateElement("div");
                 inputDiv.SetAttribute("class", "col-sm-9");
-
                 var input = createParamInput(methodName, parameter);
 
                 inputDiv.AppendChild(input);
-
                 formGroup.AppendChild(label);
                 formGroup.AppendChild(inputDiv);
 
                 form.AppendChild(formGroup);
             }
 
-            UpdateFormList.AppendChild(form);
+            ActionButtonList.AppendChild(form);
+        }
+
         private XmlNode createParamLabel(string paramName)
         {
             var label = Root.CreateElement("label");
