@@ -50,13 +50,24 @@ namespace DiagnosisPlugin
             ValueTable.AppendChild(tableRow);
         }
 
-        protected void renderActionButton(string name, int numParams)
+        protected void renderActionButton(string name, bool hasParams)
         {
             var buttonElement = Root.CreateElement("button");
             buttonElement.SetAttribute("class", "btn btn-info");
             buttonElement.SetAttribute("onclick", String.Format("callAction('{0}','{1}')", ParentPlugin.Name, name));
             buttonElement.InnerText = name;
             ActionButtonList.AppendChild(buttonElement);
+            if (hasParams)
+                renderParamField(name);
+        }
+
+        protected void renderParamField(string name)
+        {
+            var paramElement = Root.CreateElement("input");
+            paramElement.SetAttribute("type", "text");
+            paramElement.SetAttribute("size", "25");
+            paramElement.SetAttribute("id", String.Format("param-{0}-{1}", ParentPlugin.Name, name));
+            ActionButtonList.AppendChild(paramElement);
         }
 
         protected void renderUpdateForm(string updateFunctionName, Dictionary<string, string> parameters)
