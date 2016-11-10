@@ -79,8 +79,6 @@ namespace DiagnosisPlugin
             var form = Root.CreateElement("form");
             form.SetAttribute("id", formID);
             form.SetAttribute("class", "form-horizontal");
-            form.SetAttribute("action", String.Format("/diagnosis/action/{0}/{1}", ParentPlugin.Name, updateFunctionName));
-            form.SetAttribute("method", "POST");
 
             var button = Root.CreateElement("button");
             button.SetAttribute("class", "btn btn-info");
