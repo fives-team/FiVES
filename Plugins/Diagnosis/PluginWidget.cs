@@ -67,6 +67,7 @@ namespace DiagnosisPlugin
 
         protected void renderActionButton(string name, Dictionary<string, string> parameters)
         {
+            MethodList.AppendChild(Root.CreateElement("hr"));
             MethodList.AppendChild(renderButtonElement(name));
             if (parameters.Count > 0)
                 MethodList.AppendChild(createParameterInputForm(name, parameters));

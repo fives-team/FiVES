@@ -29,3 +29,8 @@ div.bg {
     padding: 10px;
     border-radius: 5px;
 }
+
+hr {
+    border-width: 3px 0;
+    border-color: #bce8f1;
+}
