@@ -1,6 +1,8 @@
 ﻿using System;
 using RESTServicePlugin;
 using System.IO;
+using System.Web.Script.Serialization;
+using System.Collections.Generic;
 
 namespace DiagnosisPlugin
 {
