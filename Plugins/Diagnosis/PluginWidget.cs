@@ -63,27 +63,31 @@ namespace DiagnosisPlugin
         {
             formCount++;
             string formID = ParentPlugin.Name + "-form" + formCount.ToString();
+            int attrCount = 0;
 
             var form = Root.CreateElement("form");
             form.SetAttribute("id", formID);
             form.SetAttribute("class", "form-horizontal");
             form.SetAttribute("action", String.Format("/diagnosis/action/{0}/{1}", ParentPlugin.Name, updateFunctionName));
+            form.SetAttribute("method", "POST");
 
             foreach(KeyValuePair<string, string> parameter in parameters)
             {
+                attrCount++;
                 var formGroup = Root.CreateElement("div");
                 formGroup.SetAttribute("class", "form-group");
 
                 var label = Root.CreateElement("label");
                 label.SetAttribute("for", parameter.Key);
-                label.SetAttribute("class", "col-sm-4 control-label");
-                label.InnerText = parameter.Value;
+                label.SetAttribute("class", "col-sm-3 control-label");
+                label.InnerText = parameter.Key;
 
                 var inputDiv = Root.CreateElement("div");
-                inputDiv.SetAttribute("class", "col-sm-8");
+                inputDiv.SetAttribute("class", "col-sm-9");
 
                 var input = Root.CreateElement("input");
-                input.SetAttribute("id", parameter.Key);
+                input.SetAttribute("id", formID + "-attr" + attrCount);
+                input.SetAttribute("name", parameter.Key);
                 input.SetAttribute("type", "text");
                 input.SetAttribute("class", "form-control");
                 input.SetAttribute("value", parameter.Value);
@@ -98,7 +102,7 @@ namespace DiagnosisPlugin
 
             var button = Root.CreateElement("button");
             button.SetAttribute("class", "btn btn-info");
-            button.SetAttribute("onclick", String.Format("sendForm('{0}')"), formID);
+            button.InnerText = "Update values";
 
             form.AppendChild(button);
             UpdateFormList.AppendChild(form);
