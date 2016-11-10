@@ -59,10 +59,10 @@ namespace DiagnosisPlugin
             buttonElement.InnerText = name;
             ActionButtonList.AppendChild(buttonElement);
             if (parameters.Count > 0)
-                renderUpdateForm(name, parameters);
+                renderParameterForm(name, parameters);
         }
 
-        protected void renderUpdateForm(string methodName, Dictionary<string, string> parameters)
+        protected void renderParameterForm(string methodName, Dictionary<string, string> parameters)
         {
             string formID = String.Format("form-{0}-{1}", ParentPlugin.Name, methodName);
             var form = Root.CreateElement("form");
