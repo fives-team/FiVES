@@ -121,14 +121,23 @@ namespace DiagnosisPlugin
             if (!requestPath.StartsWith("/action"))
             {
                 response.ReturnCode = 400;
-                string returnMessage = "So net";
+                response.SetResponseBuffer("POST requests need to be made to the '/action' sub path of diagnosis");
             }
 
             string[] fragments = requestPath.Split('/');
             var parameters = serializer.Deserialize<List<string>>(content);
 
-            DiagnosisInterface.Instance.CallPluginMethod(fragments[2], fragments[3], parameters.ToArray());
-            response.ReturnCode = 202;
+            try
+            {
+                DiagnosisInterface.Instance.CallPluginMethod(fragments[2], fragments[3], parameters.ToArray());
+                response.ReturnCode = 202;
+            }
+            catch (Exception)
+            {
+                response.ReturnCode = 500;
+                response.SetResponseBuffer("Server returned error, please check parameters for correctness");
+            }
+
             return response;
         }
 
