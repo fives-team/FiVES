@@ -3,7 +3,7 @@
     padding-top: 3px;
 }
 
-a{
+a, a:link, a:visited, a:hover, a:active{
     text-decoration: none;
 }
 
