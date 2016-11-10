@@ -20,19 +20,19 @@ namespace DiagnosisPlugin
             return Plugin.Widget;
         }
 
-        public void RegisterMethod(string methodName, Delegate handler)
+        public void RegisterMethod(string methodName, Action<string[]> handler)
         {            
             methodHandlers.Add(methodName, handler);
         }
 
         // Not sure if this should really be public
-        public bool CallMethod(string methodName, object[] parameters)
+        public bool CallMethod(string methodName, string[] parameters)
         {
-            methodHandlers[methodName].DynamicInvoke(parameters);
+            methodHandlers[methodName].Invoke(parameters);
             // TODO: Was genau?! Bool on success
             return true;
         }
 
-        Dictionary<string, Delegate> methodHandlers = new Dictionary<string, Delegate>();
+        Dictionary<string, Action<string[]>> methodHandlers = new Dictionary<string, Action<string[]>>();
     }
 }

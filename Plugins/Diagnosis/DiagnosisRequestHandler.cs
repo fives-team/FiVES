@@ -125,10 +125,9 @@ namespace DiagnosisPlugin
             }
 
             string[] fragments = requestPath.Split('/');
-            var parameters = serializer.Deserialize<Dictionary<string, object>>(content);
-            object[] parameterArray = new object[parameters.Count];
-            parameters.Values.CopyTo(parameterArray, 0);
-            DiagnosisInterface.Instance.CallPluginMethod(fragments[2], fragments[3], parameterArray);
+            var parameters = serializer.Deserialize<List<string>>(content);
+
+            DiagnosisInterface.Instance.CallPluginMethod(fragments[2], fragments[3], parameters.ToArray());
             response.ReturnCode = 202;
             return response;
         }
