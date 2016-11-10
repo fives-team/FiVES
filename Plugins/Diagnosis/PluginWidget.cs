@@ -45,7 +45,7 @@ namespace DiagnosisPlugin
             pluginLabel.AppendChild(collapseLink);
 
             ValueTable = Root.SelectSingleNode("//*[@name='value-table']");
-            ActionButtonList = Root.SelectSingleNode("//*[@name='action-button-list']");
+            MethodList = Root.SelectSingleNode("//*[@name='action-button-list']");
         }
 
         protected void renderTableRow(string label, object value)
@@ -67,12 +67,11 @@ namespace DiagnosisPlugin
 
         protected void renderActionButton(string name, Dictionary<string, string> parameters)
         {
-
-            ActionButtonList.AppendChild(renderButtonElement(name));
+            MethodList.AppendChild(renderButtonElement(name));
             if (parameters.Count > 0)
-                ActionButtonList.AppendChild(createParameterInputForm(name, parameters));
-            ActionButtonList.AppendChild(createResponseField(name, true));
-            ActionButtonList.AppendChild(createResponseField(name, false));
+                MethodList.AppendChild(createParameterInputForm(name, parameters));
+            MethodList.AppendChild(createResponseField(name, true));
+            MethodList.AppendChild(createResponseField(name, false));
         }
 
         private XmlNode renderButtonElement(string name)
@@ -154,6 +153,6 @@ namespace DiagnosisPlugin
         }
         XmlDocument Root;
         XmlNode ValueTable;
-        XmlNode ActionButtonList;
+        XmlNode MethodList;
     }
 }
