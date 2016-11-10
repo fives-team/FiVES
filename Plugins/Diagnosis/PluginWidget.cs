@@ -67,19 +67,21 @@ namespace DiagnosisPlugin
 
         protected void renderActionButton(string name, Dictionary<string, string> parameters)
         {
+
+            ActionButtonList.AppendChild(renderButtonElement(name));
+            if (parameters.Count > 0)
+                ActionButtonList.AppendChild(createParameterInputForm(name, parameters));
+            ActionButtonList.AppendChild(createResponseField(name, true));
+            ActionButtonList.AppendChild(createResponseField(name, false));
+        }
+
+        private XmlNode renderButtonElement(string name)
+        {
             var buttonElement = Root.CreateElement("button");
             buttonElement.SetAttribute("class", "btn btn-info");
             buttonElement.SetAttribute("onclick", String.Format("callMethod('{0}','{1}')", ParentPlugin.Name, name));
             buttonElement.InnerText = name;
-            ActionButtonList.AppendChild(buttonElement);
-            if (parameters.Count > 0)
-                renderParameterForm(name, parameters);
-        }
-
-        protected void renderParameterForm(string methodName, Dictionary<string, string> parameters)
-        {
-            ActionButtonList.AppendChild(createParameterInputForm(methodName, parameters));
-            ActionButtonList.AppendChild(createResponseField(methodName));
+            return buttonElement;
         }
 
         private XmlNode createParameterInputForm(string methodName, Dictionary<string, string> parameters)
