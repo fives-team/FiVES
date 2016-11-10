@@ -29,7 +29,21 @@ namespace DiagnosisPlugin
         protected void RenderWidgetContainer()
         {
             Root = DiagnosisInterface.Instance.WidgetTemplate.Clone() as XmlDocument;
-            Root.SelectSingleNode("//*[@name='plugin-label']").InnerText = ParentPlugin.Name;
+            XmlNode pluginLabel = Root.SelectSingleNode("//*[@name='plugin-label']");
+
+            XmlElement panelBody = Root.SelectSingleNode("//*[@class='panel-body']") as XmlElement;
+            panelBody.SetAttribute("id", ParentPlugin.Name + "-body");
+            panelBody.SetAttribute("class", "panel-body collapse in");
+
+            XmlElement collapseLink = Root.CreateElement("a");
+            collapseLink.SetAttribute("role", "button");
+            collapseLink.SetAttribute("data-toggle", "collapse");
+            collapseLink.SetAttribute("aria-expanded", "true");
+            collapseLink.SetAttribute("href", "#" + ParentPlugin.Name + "-body");
+            collapseLink.InnerText = ParentPlugin.Name;
+
+            pluginLabel.AppendChild(collapseLink);
+
             ValueTable = Root.SelectSingleNode("//*[@name='value-table']");
             ActionButtonList = Root.SelectSingleNode("//*[@name='action-button-list']");
         }
