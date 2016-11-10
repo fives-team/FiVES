@@ -13,7 +13,6 @@ namespace DiagnosisPlugin
         public PluginWidget(IDiagnosablePlugin plugin)
         {
             this.ParentPlugin = plugin;
-            formCount = 0;
         }
 
         public XmlNode Render()
@@ -69,17 +68,13 @@ namespace DiagnosisPlugin
 
         protected void renderUpdateForm(string methodName, Dictionary<string, string> parameters)
         {
-            formCount++;
             string formID = String.Format("form-{0}-{1}", ParentPlugin.Name, methodName);
-            int attrCount = 0;
-
             var form = Root.CreateElement("form");
             form.SetAttribute("id", formID);
             form.SetAttribute("class", "form-horizontal");
 
             foreach(KeyValuePair<string, string> parameter in parameters)
             {
-                attrCount++;
                 var formGroup = Root.CreateElement("div");
                 formGroup.SetAttribute("class", "form-group");
 
@@ -122,6 +117,5 @@ namespace DiagnosisPlugin
         XmlDocument Root;
         XmlNode ValueTable;
         XmlNode ActionButtonList;
-        int formCount;
     }
 }
