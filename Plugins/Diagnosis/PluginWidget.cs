@@ -20,21 +20,18 @@ namespace DiagnosisPlugin
         {
             RenderWidgetContainer();
             RenderValues();
-            RenderForms();
             RenderActions();
             return Root as XmlNode;
         }
 
         protected abstract void RenderValues();
         protected abstract void RenderActions();
-        protected abstract void RenderForms();
 
         protected void RenderWidgetContainer()
         {
             Root = DiagnosisInterface.Instance.WidgetTemplate.Clone() as XmlDocument;
             Root.SelectSingleNode("//*[@name='plugin-label']").InnerText = ParentPlugin.Name;
             ValueTable = Root.SelectSingleNode("//*[@name='value-table']");
-            UpdateFormList = Root.SelectSingleNode("//*[@name='update-forms']");
             ActionButtonList = Root.SelectSingleNode("//*[@name='action-button-list']");
         }
 
@@ -120,7 +117,6 @@ namespace DiagnosisPlugin
         XmlDocument Root;
         XmlNode ValueTable;
         XmlNode ActionButtonList;
-        XmlNode UpdateFormList;
         int formCount;
     }
 }
