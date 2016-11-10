@@ -13,6 +13,7 @@ namespace DiagnosisPlugin
         public PluginWidget(IDiagnosablePlugin plugin)
         {
             this.ParentPlugin = plugin;
+            formCount = 0;
         }
 
         public XmlNode Render()
@@ -58,5 +59,6 @@ namespace DiagnosisPlugin
         XmlDocument Root;
         XmlNode ValueTable;
         XmlNode ActionButtonList;
+        int formCount;
     }
 }
