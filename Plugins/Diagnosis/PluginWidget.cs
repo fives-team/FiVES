@@ -135,12 +135,20 @@ namespace DiagnosisPlugin
             return input;
         }
 
-        private XmlNode createResponseField(string methodName)
+        private XmlNode createResponseField(string methodName, bool success)
         {
-            var responeField = Root.CreateElement("div");
-            responeField.SetAttribute("class", "bg-danger bg");
-            responeField.InnerText = "Dies ist ein Format-Test";
-            return responeField;
+            var responseField = Root.CreateElement("div");
+            responseField.SetAttribute("class", "bg alert " + (success ? "alert-success" : "alert-danger"));
+            responseField.SetAttribute("style", "display: none");
+            responseField.SetAttribute("id", String.Format("{0}-response-{1}-{2}",
+                (success ? "success" : "error"),
+                ParentPlugin.Name,
+                methodName));
+            if (success)
+                responseField.InnerText = "Success";
+            else
+                responseField.InnerText = "Error";
+            return responseField;
         }
         XmlDocument Root;
         XmlNode ValueTable;
