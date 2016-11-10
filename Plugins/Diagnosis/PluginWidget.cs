@@ -92,12 +92,7 @@ namespace DiagnosisPlugin
                 var inputDiv = Root.CreateElement("div");
                 inputDiv.SetAttribute("class", "col-sm-9");
 
-                var input = Root.CreateElement("input");
-                input.SetAttribute("id", String.Format("param-{0}-{1}-{2}", ParentPlugin.Name, methodName, parameter.Key));
-                input.SetAttribute("name", parameter.Key);
-                input.SetAttribute("type", "text");
-                input.SetAttribute("class", "form-control");
-                input.SetAttribute("value", parameter.Value);
+                var input = createParamInput(methodName, parameter);
 
                 inputDiv.AppendChild(input);
 
@@ -117,6 +112,16 @@ namespace DiagnosisPlugin
             return label;
         }
 
+        private XmlNode createParamInput(string methodName, KeyValuePair<string, string> parameterDefinition)
+        {
+            var input = Root.CreateElement("input");
+            input.SetAttribute("id",
+                String.Format("param-{0}-{1}-{2}", ParentPlugin.Name, methodName, parameterDefinition.Key));
+            input.SetAttribute("name", parameterDefinition.Key);
+            input.SetAttribute("type", "text");
+            input.SetAttribute("class", "form-control");
+            input.SetAttribute("value", parameterDefinition.Value);
+            return input;
         }
 
         XmlDocument Root;
