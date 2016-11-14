@@ -9,7 +9,7 @@ namespace DiagnosisPlugin
 {
     public interface IDiagnosablePlugin : IPluginInitializer
     {
-        bool RegisterWidget();
+        PluginContext RegisterWidget();
         PluginWidget Widget { get; }
     }
 }
