@@ -80,7 +80,7 @@ namespace DiagnosisPlugin
             var buttonElement = Root.CreateElement("button");
             buttonElement.SetAttribute("class", "btn btn-info");
             buttonElement.SetAttribute("onclick", String.Format("callMethod('{0}','{1}')", ParentPlugin.Name, name));
-            buttonElement.InnerText = name;
+            buttonElement.InnerText = name.Replace('_', ' ');
             return buttonElement;
         }
 
