@@ -53,7 +53,6 @@ namespace DiagnosisPlugin
             else if (requestPath.StartsWith("/DiagnosisWebpage/"))
             {
                 sanitizedPath = requestPath.Substring(1);
-                return sanitizedPath;
             }
             return sanitizedPath;
         }
