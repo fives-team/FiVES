@@ -65,7 +65,7 @@ namespace DiagnosisPlugin
 
             reqResponse.ContentType = this.ContentType;
             string response;
-            if (File.Exists(requestPath))
+            if (File.Exists(requestPath) && requestPath != null)
             {
                 reqResponse.ContentType = getMimeType(requestPath);
                 response = File.ReadAllText(requestPath);
@@ -77,7 +77,7 @@ namespace DiagnosisPlugin
                 reqResponse.ReturnCode = 404;
             }
 
-            if (requestPath.Contains("/dynamic/"))
+            if (requestPath != null && requestPath.Contains("/dynamic/"))
                 response = responseBuilder.RenderResponse().OuterXml;
 
             reqResponse.SetResponseBuffer(response);
