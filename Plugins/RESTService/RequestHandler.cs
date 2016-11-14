@@ -69,7 +69,9 @@ namespace RESTServicePlugin
                 default: return ConstructServerError();
             }
 
-            response.ContentType = this.ContentType;
+            if (response.ContentType == null)
+                response.ContentType = this.ContentType;
+
             return response;
         }
 

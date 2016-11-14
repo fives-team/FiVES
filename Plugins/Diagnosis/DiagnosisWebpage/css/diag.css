@@ -1,0 +1,36 @@
+﻿body
+{
+    margin-top: 3px;
+}
+
+a, a:link, a:visited, a:hover, a:active{
+    text-decoration: none;
+}
+
+textarea.plugins{
+	font-family: "Lucida Console", Monaco, monospace;
+	font-size: 12px;
+    resize: none;
+    width: 100%;
+
+    -moz-tab-size: 2;
+    -o-tab-size: 2;
+    tab-size: 2;
+}
+
+.border-radius(@radius: 5px) {
+  -webkit-border-radius: @radius;
+     -moz-border-radius: @radius;
+          border-radius: @radius;
+}
+
+div.bg {
+    margin-bottom: 6px;
+    padding: 10px;
+    border-radius: 5px;
+}
+
+hr {
+    border-width: 3px 0;
+    border-color: #bce8f1;
+}
