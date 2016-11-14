@@ -45,15 +45,20 @@ namespace DiagnosisPlugin
         {
             // register routes here. map return value to file which shall be returned
             string sanitizedPath = null;
-            // TODO: redirects. some of the index paths wont work properly
-            if(requestPath == "" || requestPath == "/" || requestPath == "/index" || requestPath == "/index/")
+            if(requestPath.Equals("/") || requestPath.Equals(""))
             {
                 sanitizedPath = "DiagnosisWebpage/dynamic/index.html";
+            }
+            // this workaround is needed to make the /diagnosis path work
+            else if (requestPath.StartsWith("/diagnosis/"))
+            {
+                sanitizedPath = requestPath.Substring("/diagnosis/".Length);
             }
             else if (requestPath.StartsWith("/DiagnosisWebpage/"))
             {
                 sanitizedPath = requestPath.Substring(1);
             }
+
             return sanitizedPath;
         }
 
