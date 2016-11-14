@@ -46,13 +46,10 @@
     <Compile Include="DiagnosisPluginInitializer.cs" />
     <Compile Include="IDiagnosablePlugin.cs" />
     <Compile Include="DiagnosisInterface.cs" />
-    <Compile Include="PluginAction.cs" />
     <Compile Include="PluginContext.cs" />
-    <Compile Include="PluginValue.cs" />
     <Compile Include="PluginWidget.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="XmlResponseBuilder.cs" />
-    <Compile Include="XmlTemplate.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Core\Collections\Collections.csproj">
