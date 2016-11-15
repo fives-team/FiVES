@@ -94,11 +94,10 @@ namespace ClientManagerPlugin
         {
             lock (CallbackRegistryLock)
             {
-                foreach (ClientFunction callback in ClientCallbacks.Values)
-                    Task.Factory.StartNew(() =>
-                    {
-                        callback(updates);
-                    });
+                foreach (var clientQueue in ClientQueues.Values)
+                {
+                    clientQueue.AddUpdates(updates);
+                }
             }
         }
 
