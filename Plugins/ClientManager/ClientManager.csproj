@@ -56,6 +56,7 @@
     <Compile Include="AssemblyInfo.cs" />
     <Compile Include="ClientManager.cs" />
     <Compile Include="ClientManagerPluginInitializer.cs" />
+    <Compile Include="ClientQueue.cs" />
     <Compile Include="ClientUpdateQueue.cs" />
     <Compile Include="ClientConnectionEventArgs.cs" />
     <Compile Include="UpdateInfo.cs" />
