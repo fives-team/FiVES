@@ -82,7 +82,7 @@ namespace ClientManagerPlugin
 
         private void FlushClientQueue()
         {
-            while (true)
+            while (Running)
             {
                 bool gotLock = false;
                 try
