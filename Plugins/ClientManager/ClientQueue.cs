@@ -87,30 +87,17 @@ namespace ClientManagerPlugin
                 bool gotLock = false;
                 try
                 {
-                    if (!Sending)
-                    {
-                        Sending = true;
-                        queueLock.Enter(ref gotLock);
-                        UpdateInfo[] queueSnapshot = new UpdateInfo[Queue.Count];
-                        Queue.CopyTo(queueSnapshot);
-                        var callbackCall = Callback(queueSnapshot);
-                        callbackCall.OnSuccess((Action<bool>)(c =>
-                        {
-                            Sending = false;
-                            Queue.Clear();
-                        }));
-                        callbackCall.OnFailure(() =>
-                        {
-                            Sending = false;
-                        });
-                    }
+                    queueLock.Enter(ref gotLock);
+                    UpdateInfo[] queueSnapshot = new UpdateInfo[Queue.Count];
+                    Queue.CopyTo(queueSnapshot);
+                    Callback(queueSnapshot);
                 }
                 finally
                 {
                     if (gotLock)
                         queueLock.Exit();
                 }
-                Thread.Sleep(20);
+                Thread.Sleep(15);
             }
         }
 
