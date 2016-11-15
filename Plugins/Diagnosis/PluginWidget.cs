@@ -8,7 +8,7 @@ namespace DiagnosisPlugin
 {
     public abstract class PluginWidget
     {
-        private IDiagnosablePlugin ParentPlugin { get; set; }
+        protected IDiagnosablePlugin ParentPlugin { get; set; }
 
         public PluginWidget(IDiagnosablePlugin plugin)
         {
