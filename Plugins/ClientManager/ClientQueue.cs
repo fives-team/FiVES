@@ -88,6 +88,8 @@ namespace ClientManagerPlugin
                 try
                 {
                     queueLock.Enter(ref gotLock);
+                    if (Queue.Count == 0)
+                        continue;
                     UpdateInfo[] queueSnapshot = new UpdateInfo[Queue.Count];
                     Queue.CopyTo(queueSnapshot);
                     Callback(queueSnapshot);
