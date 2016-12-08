@@ -94,11 +94,10 @@ namespace ClientManagerPlugin
         {
             lock (CallbackRegistryLock)
             {
-                foreach (ClientFunction callback in ClientCallbacks.Values)
-                    Task.Factory.StartNew(() =>
-                    {
-                        callback(updates);
-                    });
+                foreach (var clientQueue in ClientQueues.Values)
+                {
+                    clientQueue.AddUpdates(updates);
+                }
             }
         }
 
@@ -111,8 +110,8 @@ namespace ClientManagerPlugin
         {
             lock (CallbackRegistryLock)
             {
-                if(!ClientCallbacks.ContainsKey(connection))
-                    ClientCallbacks.Add(connection, clientCallback);
+                if (!ClientQueues.ContainsKey(connection))
+                    ClientQueues.Add(connection, new ClientQueue(clientCallback));
             }
         }
 
@@ -124,8 +123,11 @@ namespace ClientManagerPlugin
         {
             lock (CallbackRegistryLock)
             {
-                if (ClientCallbacks.ContainsKey(connection))
-                    ClientCallbacks.Remove(connection);
+                if (ClientQueues.ContainsKey(connection))
+                {
+                    ClientQueues[connection].Abort();
+                    ClientQueues.Remove(connection);
+                }
             }
         }
 
@@ -230,7 +232,7 @@ namespace ClientManagerPlugin
         /// <summary>
         /// Callback to be called on updates, provided by the client
         /// </summary>
-        private Dictionary<Connection, ClientFunction> ClientCallbacks = new Dictionary<Connection, ClientFunction>();
+        private Dictionary<Connection, ClientQueue> ClientQueues = new Dictionary<Connection, ClientQueue>();
 
         /// <summary>
         /// Mutex Object for the update queue
