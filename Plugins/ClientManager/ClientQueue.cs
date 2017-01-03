@@ -35,17 +35,7 @@ namespace ClientManagerPlugin
 
         public void AddUpdates(UpdateInfo[] globalUpdates)
         {
-            bool gotLock = false;
-            try
-            {
-                queueLock.Enter(ref gotLock);
-                copyGlobalUpdatesToLocal(globalUpdates);
-            }
-            finally
-            {
-                if (gotLock)
-                    queueLock.Exit();
-            }
+            copyGlobalUpdatesToLocal(globalUpdates);
         }
 
         public void Abort()
@@ -56,11 +46,14 @@ namespace ClientManagerPlugin
 
         private void copyGlobalUpdatesToLocal(UpdateInfo[] globalUpdates)
         {
-            foreach (UpdateInfo u in globalUpdates)
+            lock (Queue)
             {
-                if (InterestedIn.Length > 0 && !InterestedIn.Contains(u.componentName))
-                    continue;
-                Queue.Add(u);
+                foreach (UpdateInfo u in globalUpdates)
+                {
+                    if (InterestedIn.Length > 0 && !InterestedIn.Contains(u.componentName))
+                        continue;
+                    Queue.Add(u);
+                }
             }
         }
 
@@ -84,25 +77,41 @@ namespace ClientManagerPlugin
         {
             while (Running)
             {
-                bool gotLock = false;
                 try
                 {
-                    queueLock.Enter(ref gotLock);
-                    if (Queue.Count == 0)
-                        continue;
-                    UpdateInfo[] queueSnapshot = new UpdateInfo[Queue.Count];
-                    Queue.CopyTo(queueSnapshot);
-                    Callback(queueSnapshot);
+                    lock (Queue)
+                    {
+                        if (Queue.Count > 0)
+                        {
+                            UpdateInfo[] queueSnapshot = new UpdateInfo[Queue.Count];
+                            Queue.CopyTo(queueSnapshot);
+                            Callback(queueSnapshot);
+                            if (Flushed != null)
+                                Flushed(this, new QueueFlushEventArgs(Queue.Count));
+
+                            Queue.Clear();
+                        }
+                    }
                 }
-                finally
+                catch (Exception e)
                 {
-                    if (gotLock)
-                        queueLock.Exit();
+                    #if debug
+                    Console.WriteLine("Something went wrong when flushing queue to client: " + e);
+                    #endif
                 }
                 Thread.Sleep(15);
             }
         }
+        internal EventHandler<QueueFlushEventArgs> Flushed;
+    }
 
-        SpinLock queueLock = new SpinLock();
+    internal class QueueFlushEventArgs : EventArgs
+    {
+        internal QueueFlushEventArgs(long flushed)
+        {
+            UpdatesFlushed = flushed;
+        }
+
+        internal long UpdatesFlushed { get; private set; }
     }
 }
