@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2013
-VisualStudioVersion = 12.0.31101.0
+# Visual Studio 14
+VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Plugins", "Plugins", "{C73EDE56-1E63-400F-A694-9158687895DD}"
 EndProject
@@ -79,6 +79,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExternalProcess", "Core\ExternalProcess\ExternalProcess.csproj", "{A59B7354-F1FF-4E6F-9929-22FC5D5EB83F}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Diagnosis", "Plugins\Diagnosis\Diagnosis.csproj", "{03201C30-FA3C-42C3-A6E9-9ACC8A83B0EF}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SIXstrichLD", "Plugins\SIXstrichLD\SIXstrichLD.csproj", "{3821E4BF-356A-4978-B968-FBF9336F7B5C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -214,6 +216,10 @@ Global
 		{03201C30-FA3C-42C3-A6E9-9ACC8A83B0EF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{03201C30-FA3C-42C3-A6E9-9ACC8A83B0EF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{03201C30-FA3C-42C3-A6E9-9ACC8A83B0EF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3821E4BF-356A-4978-B968-FBF9336F7B5C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3821E4BF-356A-4978-B968-FBF9336F7B5C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3821E4BF-356A-4978-B968-FBF9336F7B5C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3821E4BF-356A-4978-B968-FBF9336F7B5C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -252,6 +258,7 @@ Global
 		{5782BB3A-3EFF-4787-80D2-81A1E1DBAE7E} = {C73EDE56-1E63-400F-A694-9158687895DD}
 		{A59B7354-F1FF-4E6F-9929-22FC5D5EB83F} = {8E636E4B-A4AB-44B2-A2D4-821E73CCA455}
 		{03201C30-FA3C-42C3-A6E9-9ACC8A83B0EF} = {C73EDE56-1E63-400F-A694-9158687895DD}
+		{3821E4BF-356A-4978-B968-FBF9336F7B5C} = {C73EDE56-1E63-400F-A694-9158687895DD}
 	EndGlobalSection
 	GlobalSection(MonoDevelopProperties) = preSolution
 		StartupItem = Core\FIVES\FIVES.csproj
