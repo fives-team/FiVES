@@ -70,6 +70,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ECADatapointAdapter.cs" />
+    <Compile Include="ECADatapointCreation.cs" />
     <Compile Include="LDContext.cs" />
     <Compile Include="SIXstrichLDPluginInitializer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

@@ -44,28 +44,6 @@ namespace SIXstrichLDPlugin
             entity["location"]["position"].Suggest(new Vector(0, 0, 0));
             World.Instance.Add(entity);
             Server server = new Server();
-            var entityUri = new Uri(baseUri + entity.Guid);
-            server.CreateServerDatapoint(
-                entityUri, new EntityDatapointAdapter<ChangedAttributeEventArgs>(new JsonSerialization(), entity)
-            );
-            Console.WriteLine("created E datapoint: " + entityUri);
-            foreach(var component in entity.Components)
-            {
-                var componentUri = new Uri(entityUri.OriginalString + "/" + component.Name);
-                server.CreateServerDatapoint(
-                    componentUri, new ComponentDatapointAdapter<ChangedAttributeEventArgs>(new JsonSerialization(), entity[component.Name])
-                );
-                Console.WriteLine("created C datapoint: " + componentUri);
-
-                foreach(var attribute in component.Definition.AttributeDefinitions)
-                {
-                    var attributeUri = new Uri(componentUri.OriginalString + "/" + attribute.Name);
-                    server.CreateServerDatapoint(
-                        attributeUri, new AttributeDatapointAdapter<ChangedAttributeEventArgs>(new JsonSerialization(), component[attribute.Name])
-                    );
-                    Console.WriteLine("created A datapoint: " + attributeUri);
-                }
-            }
         }
 
         private void debug()
