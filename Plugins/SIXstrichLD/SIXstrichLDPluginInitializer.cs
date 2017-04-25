@@ -39,7 +39,7 @@ namespace SIXstrichLDPlugin
         {
             debug();
 
-            var baseUri = "http://172.16.7.224:12345/";
+            var baseUri = new Uri("http://172.16.7.224:12345/");
             var entity = new Entity();
             entity["location"]["position"].Suggest(new Vector(0, 0, 0));
             World.Instance.Add(entity);
