@@ -8,6 +8,34 @@ using System.Web.Script.Serialization;
 
 namespace SIXstrichLDPlugin
 {
+    public class EntityCollectionDatapointAdapter<T> : DatapointAdapter<T>
+    {
+        private EntityCollection entityCollection;
+        public EntityCollectionDatapointAdapter(ISerialization serializer, EntityCollection entityCollection) : base(serializer)
+        {
+            this.entityCollection = entityCollection;
+        }
+
+        public override byte[] getAlternativeGETResponse(Uri uri)
+        {
+            return Encoding.UTF8.GetBytes(getLDFromEntityCollection(entityCollection, uri));
+        }
+
+        private string getLDFromEntityCollection(EntityCollection entityCollection, Uri uri)
+        {
+            var serializer = new JavaScriptSerializer();
+            var collectionLDDict = LDContext.getEntityCollectionBase();
+            var datapointUri = uri.OriginalString;
+            var entityUris = new List<string>();
+            foreach(var entity in entityCollection)
+            {
+                entityUris.Add(datapointUri + "/" + entity.Guid);
+            }
+            collectionLDDict.Add("entities", entityUris);
+            return serializer.Serialize(collectionLDDict);
+        }
+    }
+
     public class EntityDatapointAdapter<T> : DatapointAdapter<T>
     {
         private Entity entity;
