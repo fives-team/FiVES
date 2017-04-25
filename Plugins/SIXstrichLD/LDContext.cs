@@ -46,6 +46,16 @@ namespace SIXstrichLDPlugin
             return dict;
         }
 
+        public static Dictionary<string, object> getEntityCollectionBase()
+        {
+            var collectionContext = new Dictionary<string, object>();
+            var context = new Dictionary<string, object>();
+            context.Add("schema", LD.schemaURI);
+            context.Add("entities", getContainerDictForID(LD.URL));
+            collectionContext.Add(LD.CONTEXT, context);
+            return collectionContext;
+        }
+
         public static Dictionary<string, object> getEntityBase()
         {
             var entityContext = new Dictionary<string, object>();
