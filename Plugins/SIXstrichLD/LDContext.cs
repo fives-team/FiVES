@@ -65,6 +65,7 @@ namespace SIXstrichLDPlugin
             context.Add("entity", LD.entityURI);
             context.Add("guid", getTypeStringDictForID("entity:guid"));
             context.Add("owner", getTypeStringDictForID("entity:owner"));
+            context.Add("world", getTypeIDDictForID("entity:world"));
             context.Add("components", getContainerDictForID(LD.URL));
             entityContext.Add(LD.CONTEXT, context);
             return entityContext;

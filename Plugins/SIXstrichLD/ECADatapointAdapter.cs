@@ -63,6 +63,7 @@ namespace SIXstrichLDPlugin
             entityLDDict.Add(LD.TYPE, "http://www.dfki.de/fives/entity");
             entityLDDict.Add("guid", entity.Guid);
             entityLDDict.Add("owner", entity.Owner);
+            entityLDDict.Add("world", datapointUri.RemoveFromTail(entity.Guid.ToString()).TrimEnd('/'));
             entityLDDict.Add("components", componentUris);
             return serializer.Serialize(entityLDDict);
         }
