@@ -39,12 +39,9 @@ namespace SIXstrichLDPlugin
         {
             debug();
 
-            var baseUri = new Uri("http://172.16.7.224:12345/");
-            var worldUri = new Uri(baseUri.OriginalString + "world");
             var entity = new Entity();
             entity["location"]["position"].Suggest(new Vector(0, 0, 0));
             World.Instance.Add(entity);
-            Server server = new Server();
             server.createEntityCollectionDatapoint(worldUri, World.Instance);
         }
 
@@ -61,5 +58,9 @@ namespace SIXstrichLDPlugin
         {
             Console.WriteLine("[SIXstrichLD] shutdown");
         }
+
+        private static Uri baseUri = new Uri("http://172.16.7.224:12345/");
+        private static Uri worldUri = new Uri(baseUri.OriginalString + "world");
+        private static Server server = new Server();
     }
 }
