@@ -37,13 +37,12 @@ namespace SIXstrichLDPlugin
 
         public void Initialize()
         {
-            debug();
-
             debugEntity = new Entity();
             debugEntity["location"]["position"].Suggest(new Vector(0, 0, 0));
             World.Instance.Add(debugEntity);
             server.createEntityCollectionDatapoint(worldUri, World.Instance);
             World.Instance.AddedEntity += createEntityDatapointForNewlyAddedEntities;
+            debug();
         }
 
         private void createEntityDatapointForNewlyAddedEntities(object sender, EntityEventArgs e)
@@ -53,11 +52,20 @@ namespace SIXstrichLDPlugin
 
         private void debug()
         {
-            var eventP = typeof(ChangedAttributeEventArgs).GetProperties();
-            var entityP = typeof(Entity).GetProperties();
-            var componentP = typeof(Component).GetProperties();
-            var attributeP = typeof(FIVES.Attribute).GetProperties();
-            var guidP = typeof(Guid).GetProperties();
+            SIXClient<UpdateInfo> client = new SIXClient<UpdateInfo>(
+                new Uri(worldUri.OriginalString + "/" + debugEntity.Guid + "/location/position"),
+                new JsonSerialization()
+            );
+            client.Observe().Subscribe(onValue);
+        }
+
+        private void onValue(UpdateInfo updateInfo)
+        {
+            Console.WriteLine("Received UpdateInfo:");
+            Console.WriteLine("Entity: " + updateInfo.entityGuid);
+            Console.WriteLine("Component: " + updateInfo.componentName);
+            Console.WriteLine("Attribute: " + updateInfo.attributeName);
+            Console.WriteLine("Value: " + updateInfo.value);
         }
 
         public void Shutdown()
