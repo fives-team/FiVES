@@ -1,10 +1,12 @@
-﻿using FIVES;
+﻿using ClientManagerPlugin;
+using FIVES;
 using SIX;
 using SIXCore.Serializers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace SIXstrichLDPlugin
@@ -42,7 +44,22 @@ namespace SIXstrichLDPlugin
             World.Instance.Add(debugEntity);
             server.createEntityCollectionDatapoint(worldUri, World.Instance);
             World.Instance.AddedEntity += createEntityDatapointForNewlyAddedEntities;
+            Task.Factory.StartNew(fluctuate);
             debug();
+        }
+
+        private void fluctuate()
+        {
+            var vector = new Vector(0, 0, 0);
+            var vector2 = new Vector(1, 1, 1);
+            var i = 0;
+            while (true)
+            {
+                i++;
+                var suggestedValue = i % 2 == 0 ? vector : vector2;
+                debugEntity["location"]["position"].Suggest(suggestedValue);
+                Thread.Sleep(5000);
+            }
         }
 
         private void createEntityDatapointForNewlyAddedEntities(object sender, EntityEventArgs e)
