@@ -1,4 +1,5 @@
-﻿using FIVES;
+﻿using ClientManagerPlugin;
+using FIVES;
 using SIX;
 using SIXCore.Serializers;
 using System;
@@ -14,7 +15,7 @@ namespace SIXstrichLDPlugin
         public static void createEntityCollectionDatapoint(this Server server, Uri collectionUri, EntityCollection entityCollection)
         {
             server.CreateServerDatapoint(
-                collectionUri, new EntityCollectionDatapointAdapter<ChangedAttributeEventArgs>(new JsonSerialization(), entityCollection)
+                collectionUri, new EntityCollectionDatapointAdapter<UpdateInfo>(new JsonSerialization(), entityCollection)
             );
 
             lock (entityCollection)
@@ -31,7 +32,7 @@ namespace SIXstrichLDPlugin
         {
             var entityUri = new Uri(baseUri.OriginalString + "/" + entity.Guid);
             server.CreateServerDatapoint(
-                entityUri, new EntityDatapointAdapter<ChangedAttributeEventArgs>(new JsonSerialization(), entity)
+                entityUri, new EntityDatapointAdapter<UpdateInfo>(new JsonSerialization(), entity)
             );
 
             lock (entity)
@@ -48,7 +49,7 @@ namespace SIXstrichLDPlugin
         {
             var componentUri = new Uri(entityUri.OriginalString + "/" + component.Name);
             server.CreateServerDatapoint(
-                componentUri, new ComponentDatapointAdapter<ChangedAttributeEventArgs>(new JsonSerialization(), component)
+                componentUri, new ComponentDatapointAdapter<UpdateInfo>(new JsonSerialization(), component)
             );
 
             lock (component)
@@ -65,8 +66,8 @@ namespace SIXstrichLDPlugin
         {
             var attributeDefinition = attribute.Definition;
             var attributeUri = new Uri(componentUri.OriginalString + "/" + attributeDefinition.Name);
-            server.CreateServerDatapoint(
-                attributeUri, new AttributeDatapointAdapter<ChangedAttributeEventArgs>(new JsonSerialization(), attribute)
+            var datapoint = server.CreateServerDatapoint(
+                attributeUri, new AttributeDatapointAdapter<UpdateInfo>(new JsonSerialization(), attribute)
             );
             Console.WriteLine("created A datapoint: " + attributeUri);
         }
