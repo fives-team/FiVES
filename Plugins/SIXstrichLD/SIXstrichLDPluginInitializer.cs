@@ -39,9 +39,9 @@ namespace SIXstrichLDPlugin
         {
             debug();
 
-            var entity = new Entity();
-            entity["location"]["position"].Suggest(new Vector(0, 0, 0));
-            World.Instance.Add(entity);
+            debugEntity = new Entity();
+            debugEntity["location"]["position"].Suggest(new Vector(0, 0, 0));
+            World.Instance.Add(debugEntity);
             server.createEntityCollectionDatapoint(worldUri, World.Instance);
             World.Instance.AddedEntity += createEntityDatapointForNewlyAddedEntities;
         }
@@ -68,5 +68,6 @@ namespace SIXstrichLDPlugin
         private static Uri baseUri = new Uri("http://172.16.7.224:12345/");
         private static Uri worldUri = new Uri(baseUri.OriginalString + "world");
         private static Server server = new Server();
+        private static Entity debugEntity;
     }
 }
