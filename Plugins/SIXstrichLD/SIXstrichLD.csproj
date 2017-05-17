@@ -37,6 +37,9 @@
     <Reference Include="SIXstrich-core">
       <HintPath>..\..\ThirdParty\SIXstrich\SIXstrich-core.dll</HintPath>
     </Reference>
+    <Reference Include="SIXstrichClient">
+      <HintPath>..\..\ThirdParty\SIXstrich\SIXstrichClient.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Reactive.Core">
@@ -45,7 +48,8 @@
     <Reference Include="System.Reactive.Interfaces">
       <HintPath>..\..\ThirdParty\SIXstrich\System.Reactive.Interfaces.dll</HintPath>
     </Reference>
-    <Reference Include="System.Reactive.Linq">
+    <Reference Include="System.Reactive.Linq, Version=3.0.3000.0, Culture=neutral, PublicKeyToken=94bc3704cddfc263, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\ThirdParty\SIXstrich\System.Reactive.Linq.dll</HintPath>
     </Reference>
     <Reference Include="System.Reactive.PlatformServices">
@@ -64,7 +68,8 @@
     <Reference Include="Thrift">
       <HintPath>..\..\ThirdParty\SIXstrich\Thrift.dll</HintPath>
     </Reference>
-    <Reference Include="websocket-sharp">
+    <Reference Include="websocket-sharp, Version=1.0.2.26329, Culture=neutral, PublicKeyToken=5660b08a1845a91e, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\ThirdParty\SIXstrich\websocket-sharp.dll</HintPath>
     </Reference>
   </ItemGroup>
@@ -92,6 +97,10 @@
     <ProjectReference Include="..\..\Core\PluginManager\PluginManager.csproj">
       <Project>{DB1099A1-B7FE-474F-A03A-41687D6C5C76}</Project>
       <Name>PluginManager</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\ClientManager\ClientManager.csproj">
+      <Project>{E1955FF2-6109-4C71-9F13-486A48DE6C17}</Project>
+      <Name>ClientManager</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
