@@ -17,7 +17,7 @@ namespace SIXstrichLDPlugin
     {
         public static void createEntityCollectionDatapoint(this Server server, Uri collectionUri, EntityCollection entityCollection)
         {
-            server.CreateServerDatapoint(
+            var datapoint = server.CreateServerDatapoint(
                 collectionUri, new EntityCollectionDatapointAdapter<UpdateInfo>(new JsonSerialization(), entityCollection)
             );
 
@@ -34,7 +34,7 @@ namespace SIXstrichLDPlugin
         public static void createEntityDatapoint(this Server server, Uri baseUri, Entity entity)
         {
             var entityUri = new Uri(baseUri.OriginalString + "/" + entity.Guid);
-            server.CreateServerDatapoint(
+            var datapoint = server.CreateServerDatapoint(
                 entityUri, new EntityDatapointAdapter<UpdateInfo>(new JsonSerialization(), entity)
             );
 
@@ -51,7 +51,7 @@ namespace SIXstrichLDPlugin
         public static void createComponentDatapoint(this Server server, Uri entityUri, Component component)
         {
             var componentUri = new Uri(entityUri.OriginalString + "/" + component.Name);
-            server.CreateServerDatapoint(
+            var datapoint = server.CreateServerDatapoint(
                 componentUri, new ComponentDatapointAdapter<UpdateInfo>(new JsonSerialization(), component)
             );
 
