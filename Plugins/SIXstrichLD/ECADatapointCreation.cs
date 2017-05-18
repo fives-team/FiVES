@@ -5,6 +5,7 @@ using SIXCore.Serializers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reactive.Disposables;
 using System.Reactive.Linq;
 using System.Reactive.Subjects;
 using System.Text;
@@ -98,6 +99,30 @@ namespace SIXstrichLDPlugin
             updateInfo.entityGuid = args.Component.ContainingEntity.Guid.ToString();
             updateInfo.value = args.NewValue;
             return updateInfo;
+        }
+
+        private static IObservable<T> CompleteOnEntityRemoval<T>(this IObservable<T> original, Entity entity)
+        {
+            return Observable.Create<T>(o =>
+            {
+                var subscription = original.Subscribe(o);
+                EventHandler<EntityEventArgs> removalCallback = null;
+                removalCallback = (sender, ev) =>
+                {
+                    if (ev.Entity == entity)
+                    {
+                        subscription.Dispose();
+                        o.OnCompleted();
+                        World.Instance.RemovedEntity -= removalCallback;
+                    }
+                };
+                World.Instance.RemovedEntity += removalCallback;
+                return Disposable.Create(() =>
+                {
+                    subscription.Dispose();
+                    World.Instance.RemovedEntity -= removalCallback;
+                });
+            });
         }
     }
 }
