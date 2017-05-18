@@ -69,8 +69,8 @@ namespace SIXstrichLDPlugin
         {
             var component = attribute.ParentComponent;
             var entity = component.ContainingEntity;
-            var attributeDefinition = attribute.Definition;
-            var attributeUri = new Uri(componentUri.OriginalString + "/" + attributeDefinition.Name);
+            var attributeName = attribute.Definition.Name;
+            var attributeUri = new Uri(componentUri.OriginalString + "/" + attributeName);
             var datapoint = server.CreateServerDatapoint(
                 attributeUri, new AttributeDatapointAdapter<UpdateInfo>(new JsonSerialization(), attribute)
             );
