@@ -50,6 +50,7 @@ namespace SIXstrichLDPlugin
 
         public static void createComponentDatapoint(this Server server, Uri entityUri, Component component)
         {
+            var entity = component.ContainingEntity;
             var componentUri = new Uri(entityUri.OriginalString + "/" + component.Name);
             var datapoint = server.CreateServerDatapoint(
                 componentUri, new ComponentDatapointAdapter<UpdateInfo>(new JsonSerialization(), component)
@@ -62,6 +63,11 @@ namespace SIXstrichLDPlugin
                     server.createAttributeDatapoint(componentUri, component[attribute.Name]);
                 }
             }
+
+            var observable = entity.getUpdateObservable(
+                args => args.Component.Name == component.Name
+            );
+            datapoint.Subscribe(observable);
             Console.WriteLine("created C datapoint: " + componentUri);
         }
 
