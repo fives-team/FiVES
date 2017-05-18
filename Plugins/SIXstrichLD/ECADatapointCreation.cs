@@ -74,13 +74,21 @@ namespace SIXstrichLDPlugin
             var datapoint = server.CreateServerDatapoint(
                 attributeUri, new AttributeDatapointAdapter<UpdateInfo>(new JsonSerialization(), attribute)
             );
-            var observable = entity.getEntityObservable()
-                .Select(args => args.EventArgs)
-                .Where(args => args.Component.Name == component.Name && args.AttributeName == attribute.Definition.Name)
-                .Select(argsToUpdateInfo);
-                // TODO: use completeOnEntityRemoval from INVERSIV
+            var observable = entity.getUpdateObservable(
+                args => args.Component.Name == component.Name && args.AttributeName == attributeName
+            );
             datapoint.Subscribe(observable);
             Console.WriteLine("created A datapoint: " + attributeUri);
+        }
+
+        private static IObservable<UpdateInfo> getUpdateObservable(this Entity entity, Func<ChangedAttributeEventArgs, bool> selector)
+        {
+            var observable = entity.getEntityObservable()
+                .Select(args => args.EventArgs)
+                .Where(selector)
+                .Select(argsToUpdateInfo)
+                .CompleteOnEntityRemoval(entity);
+            return observable;
         }
 
         private static IObservable<System.Reactive.EventPattern<ChangedAttributeEventArgs>> getEntityObservable(this Entity entity)
