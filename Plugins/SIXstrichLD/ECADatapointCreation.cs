@@ -45,6 +45,9 @@ namespace SIXstrichLDPlugin
                     server.createComponentDatapoint(entityUri, component);
                 }
             }
+
+            var observable = entity.getUpdateObservable(args => true);
+            datapoint.Subscribe(observable);
             Console.WriteLine("created E datapoint: " + entityUri);
         }
 
