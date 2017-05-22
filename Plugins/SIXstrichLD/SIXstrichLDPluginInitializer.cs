@@ -69,11 +69,27 @@ namespace SIXstrichLDPlugin
 
         private void debug()
         {
-            SIXClient<UpdateInfo> client = new SIXClient<UpdateInfo>(
+            SIXClient<UpdateInfo> Aclient = new SIXClient<UpdateInfo>(
                 new Uri(worldUri.OriginalString + "/" + debugEntity.Guid + "/location/position"),
                 new JsonSerialization()
             );
-            client.Observe().Subscribe(onValue);
+            SIXClient<UpdateInfo> ECclient = new SIXClient<UpdateInfo>(
+                new Uri(worldUri.OriginalString),
+                new JsonSerialization()
+            );
+            SIXClient<UpdateInfo> Eclient = new SIXClient<UpdateInfo>(
+                new Uri(worldUri.OriginalString + "/" + debugEntity2.Guid),
+                new JsonSerialization()
+            );
+            SIXClient<UpdateInfo> Cclient = new SIXClient<UpdateInfo>(
+                new Uri(worldUri.OriginalString + "/" + debugEntity2.Guid + "/location"),
+                new JsonSerialization()
+            );
+            Aclient.Observe().Subscribe(onValueA);
+            ECclient.Observe().Subscribe(onValueEC);
+            Eclient.Observe().Subscribe(onValueE);
+            Cclient.Observe().Subscribe(onValueC);
+        }
         }
 
         private void logUpdateInfo(UpdateInfo updateInfo)
