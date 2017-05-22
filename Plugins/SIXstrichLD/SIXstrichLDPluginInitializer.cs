@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Web.Script.Serialization;
 
 namespace SIXstrichLDPlugin
 {
@@ -111,35 +112,31 @@ namespace SIXstrichLDPlugin
 
         private void onValueA(UpdateInfo updateInfo)
         {
-            Console.Write("A received update");
-            logUpdateInfo(updateInfo);
+            Console.WriteLine("A  received update" + logUpdateInfo(updateInfo));
         }
 
         private void onValueC(UpdateInfo updateInfo)
         {
-            Console.Write("C received update");
-            logUpdateInfo(updateInfo);
+            Console.WriteLine("C  received update" + logUpdateInfo(updateInfo));
         }
 
         private void onValueE(UpdateInfo updateInfo)
         {
-            Console.Write("E received update");
-            logUpdateInfo(updateInfo);
+            Console.WriteLine("E  received update" + logUpdateInfo(updateInfo));
         }
 
         private void onValueEC(UpdateInfo updateInfo)
         {
-            Console.Write("EC received update");
-            logUpdateInfo(updateInfo);
+            Console.WriteLine("EC received update" + logUpdateInfo(updateInfo));
         }
 
-        private void logUpdateInfo(UpdateInfo updateInfo)
+        private string logUpdateInfo(UpdateInfo updateInfo)
         {
-            Console.Write("Received UpdateInfo:");
-            Console.Write(" / Entity: " + updateInfo.entityGuid);
-            Console.Write(" / Component: " + updateInfo.componentName);
-            Console.Write(" / Attribute: " + updateInfo.attributeName);
-            Console.WriteLine(" / Value: " + updateInfo.value);
+            return "Received UpdateInfo: " +
+                updateInfo.entityGuid +
+                " / " + updateInfo.componentName +
+                " / " + updateInfo.attributeName +
+                " / " + serializer.Serialize(updateInfo.value);
         }
 
         public void Shutdown()
@@ -152,5 +149,6 @@ namespace SIXstrichLDPlugin
         private static Server server = new Server();
         private static Entity debugEntity;
         private static Entity debugEntity2;
+        private static JavaScriptSerializer serializer = new JavaScriptSerializer();
     }
 }
