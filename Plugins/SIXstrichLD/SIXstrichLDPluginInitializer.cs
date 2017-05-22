@@ -90,6 +90,29 @@ namespace SIXstrichLDPlugin
             Eclient.Observe().Subscribe(onValueE);
             Cclient.Observe().Subscribe(onValueC);
         }
+
+        private void onValueA(UpdateInfo updateInfo)
+        {
+            Console.Write("A received update");
+            logUpdateInfo(updateInfo);
+        }
+
+        private void onValueC(UpdateInfo updateInfo)
+        {
+            Console.Write("C received update");
+            logUpdateInfo(updateInfo);
+        }
+
+        private void onValueE(UpdateInfo updateInfo)
+        {
+            Console.Write("E received update");
+            logUpdateInfo(updateInfo);
+        }
+
+        private void onValueEC(UpdateInfo updateInfo)
+        {
+            Console.Write("EC received update");
+            logUpdateInfo(updateInfo);
         }
 
         private void logUpdateInfo(UpdateInfo updateInfo)
