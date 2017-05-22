@@ -149,7 +149,7 @@ namespace SIXstrichLDPlugin
             Console.WriteLine("[SIXstrichLD] shutdown");
         }
 
-        private static Uri baseUri = new Uri("http://172.16.7.224:12345/");
+        private static Uri baseUri = new Uri("http://127.0.0.1:12345/");
         private static Uri worldUri = new Uri(baseUri.OriginalString + "world");
         private static Server server = new Server();
         private static Entity debugEntity;
