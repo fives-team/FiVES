@@ -21,13 +21,25 @@ namespace SIXstrichLDPlugin
                 collectionUri, new EntityCollectionDatapointAdapter<UpdateInfo>(new JsonSerialization(), entityCollection)
             );
 
+            IObservable<UpdateInfo> observable = null;
+
             lock (entityCollection)
             {
                 foreach (var entity in entityCollection)
                 {
+                    var tempObservable = entity.getUpdateObservable(args => true);
+                    observable = observable == null ? tempObservable : observable.Merge(tempObservable);
+                    datapoint.Subscribe(observable);
                     server.createEntityDatapoint(collectionUri, entity);
                 }
             }
+            entityCollection.AddedEntity += (entity, eventArgs) =>
+            {
+                var tempObservable = eventArgs.Entity.getUpdateObservable(args => true);
+                observable = observable == null ? tempObservable : observable.Merge(tempObservable);
+                datapoint.Subscribe(observable);
+                server.createEntityDatapoint(collectionUri, eventArgs.Entity);
+            };
             Console.WriteLine("created EC datapoint: " + collectionUri);
         }
 

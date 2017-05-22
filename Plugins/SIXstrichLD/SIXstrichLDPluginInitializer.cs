@@ -43,7 +43,6 @@ namespace SIXstrichLDPlugin
             debugEntity["location"]["position"].Suggest(new Vector(0, 0, 0));
             World.Instance.Add(debugEntity);
             server.createEntityCollectionDatapoint(worldUri, World.Instance);
-            World.Instance.AddedEntity += createEntityDatapointForNewlyAddedEntities;
             Task.Factory.StartNew(fluctuate);
             debug();
         }
@@ -62,9 +61,7 @@ namespace SIXstrichLDPlugin
             }
         }
 
-        private void createEntityDatapointForNewlyAddedEntities(object sender, EntityEventArgs e)
         {
-            server.createEntityDatapoint(worldUri, e.Entity);
         }
 
         private void debug()
