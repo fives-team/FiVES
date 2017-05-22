@@ -51,12 +51,16 @@ namespace SIXstrichLDPlugin
         {
             var vector = new Vector(0, 0, 0);
             var vector2 = new Vector(1, 1, 1);
+            var orientation = new Quat(0, 0, 0, 1);
+            var orientation2 = new Quat(1, 1, 1, 1);
             var i = 0;
             while (true)
             {
                 i++;
                 var suggestedValue = i % 2 == 0 ? vector : vector2;
+                var suggestedOrientation = i % 2 == 0 ? orientation : orientation2;
                 debugEntity["location"]["position"].Suggest(suggestedValue);
+                debugEntity["location"]["orientation"].Suggest(suggestedOrientation);
                 Thread.Sleep(5000);
             }
         }
