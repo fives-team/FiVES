@@ -76,13 +76,13 @@ namespace SIXstrichLDPlugin
             client.Observe().Subscribe(onValue);
         }
 
-        private void onValue(UpdateInfo updateInfo)
+        private void logUpdateInfo(UpdateInfo updateInfo)
         {
-            Console.WriteLine("Received UpdateInfo:");
-            Console.WriteLine("Entity: " + updateInfo.entityGuid);
-            Console.WriteLine("Component: " + updateInfo.componentName);
-            Console.WriteLine("Attribute: " + updateInfo.attributeName);
-            Console.WriteLine("Value: " + updateInfo.value);
+            Console.Write("Received UpdateInfo:");
+            Console.Write(" / Entity: " + updateInfo.entityGuid);
+            Console.Write(" / Component: " + updateInfo.componentName);
+            Console.Write(" / Attribute: " + updateInfo.attributeName);
+            Console.WriteLine(" / Value: " + updateInfo.value);
         }
 
         public void Shutdown()
