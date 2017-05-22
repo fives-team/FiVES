@@ -44,6 +44,10 @@ namespace SIXstrichLDPlugin
             World.Instance.Add(debugEntity);
             server.createEntityCollectionDatapoint(worldUri, World.Instance);
             Task.Factory.StartNew(fluctuate);
+            debugEntity2 = new Entity();
+            debugEntity2["location"]["position"].Suggest(new Vector(0, 0, 0));
+            World.Instance.Add(debugEntity2);
+            Task.Factory.StartNew(fluctuate2);
             debug();
         }
 
@@ -65,7 +69,22 @@ namespace SIXstrichLDPlugin
             }
         }
 
+        private void fluctuate2()
         {
+            var vector = new Vector(0, 0, 0);
+            var vector2 = new Vector(1, 1, 1);
+            var orientation = new Quat(0, 0, 0, 1);
+            var orientation2 = new Quat(1, 1, 1, 1);
+            var i = 0;
+            while (true)
+            {
+                i++;
+                var suggestedValue = i % 2 == 0 ? vector : vector2;
+                var suggestedOrientation = i % 2 == 0 ? orientation : orientation2;
+                debugEntity2["location"]["position"].Suggest(suggestedValue);
+                debugEntity2["location"]["orientation"].Suggest(suggestedOrientation);
+                Thread.Sleep(10000);
+            }
         }
 
         private void debug()
@@ -134,5 +153,6 @@ namespace SIXstrichLDPlugin
         private static Uri worldUri = new Uri(baseUri.OriginalString + "world");
         private static Server server = new Server();
         private static Entity debugEntity;
+        private static Entity debugEntity2;
     }
 }
