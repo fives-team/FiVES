@@ -110,34 +110,6 @@ namespace SIXstrichLDPlugin
             Cclient.Observe().Subscribe(onValueC);
         }
 
-        private void onValueA(UpdateInfo updateInfo)
-        {
-            Console.WriteLine("A  received update" + logUpdateInfo(updateInfo));
-        }
-
-        private void onValueC(UpdateInfo updateInfo)
-        {
-            Console.WriteLine("C  received update" + logUpdateInfo(updateInfo));
-        }
-
-        private void onValueE(UpdateInfo updateInfo)
-        {
-            Console.WriteLine("E  received update" + logUpdateInfo(updateInfo));
-        }
-
-        private void onValueEC(UpdateInfo updateInfo)
-        {
-            Console.WriteLine("EC received update" + logUpdateInfo(updateInfo));
-        }
-
-        private string logUpdateInfo(UpdateInfo updateInfo)
-        {
-            return "Received UpdateInfo: " +
-                updateInfo.entityGuid +
-                " / " + updateInfo.componentName +
-                " / " + updateInfo.attributeName +
-                " / " + serializer.Serialize(updateInfo.value);
-        }
 
         public void Shutdown()
         {
