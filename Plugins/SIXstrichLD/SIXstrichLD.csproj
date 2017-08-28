@@ -75,6 +75,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Debug.cs" />
+    <Compile Include="Demo.cs" />
     <Compile Include="ECADatapointAdapter.cs" />
     <Compile Include="ECADatapointCreation.cs" />
     <Compile Include="LDContext.cs" />
