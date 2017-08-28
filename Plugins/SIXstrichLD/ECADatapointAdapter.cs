@@ -11,6 +11,7 @@ namespace SIXstrichLDPlugin
     public class EntityCollectionDatapointAdapter<T> : DatapointAdapter<T>
     {
         private EntityCollection entityCollection;
+
         public EntityCollectionDatapointAdapter(ISerialization serializer, EntityCollection entityCollection) : base(serializer)
         {
             this.entityCollection = entityCollection;
