@@ -18,11 +18,11 @@ namespace SIXstrichLDPlugin
 
         public static void startDemo(Server server, Uri worldUri)
         {
-            initializeDebugEntities(server, worldUri);
-            startDemoDatapoints(worldUri);
+            startDemoDatapoints(server, worldUri);
+            startDemoClients(worldUri);
         }
 
-        private static void initializeDebugEntities(Server server, Uri worldUri)
+        private static void startDemoDatapoints(Server server, Uri worldUri)
         {
             debugEntity = new Entity();
             debugEntity["location"]["position"].Suggest(new Vector(0, 0, 0));
@@ -36,7 +36,7 @@ namespace SIXstrichLDPlugin
             Task.Factory.StartNew(fluctuate2);
         }
 
-        private static void startDemoDatapoints(Uri worldUri)
+        private static void startDemoClients(Uri worldUri)
         {
             SIXClient<UpdateInfo> Aclient = new SIXClient<UpdateInfo>(
                 new Uri(worldUri.OriginalString + "/" + debugEntity.Guid + "/location/position"),
