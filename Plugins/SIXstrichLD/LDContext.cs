@@ -16,7 +16,13 @@ namespace SIXstrichLDPlugin
         public const string CONTAINER = "@container";
 
         public const string URL = "schema:url";
+        public const string ANY = "xsd:any";
+        public const string INT = "xsd:int";
+        public const string BYTE = "xsd:byte";
+        public const string FLOAT = "xsd:float";
+        public const string DOUBLE = "xsd:double";
         public const string STRING = "xsd:string";
+        public const string BOOLEAN = "xsd:boolean";
         public const string CONTEXT = "@context";
     }
 
