@@ -88,9 +88,12 @@ namespace SIXstrichLDPlugin
             var entity = component.ContainingEntity;
             var attributeName = attribute.Definition.Name;
             var attributeUri = new Uri(componentUri.OriginalString + "/" + attributeName);
+            // FIXME: attribute type has to be accessible even if there is no value (yet) :(
+            var attributeType = attribute?.Value?.GetType() ?? typeof(object);
             var datapoint = server.CreateServerDatapoint(
-                attributeUri, new AttributeDatapointAdapter<UpdateInfo>(new JsonSerialization(), attribute)
+                attributeUri, new AttributeDatapointAdapter<UpdateInfo>(new JsonSerialization(), attribute, server.typeBaseUri, attributeType)
             );
+            server.registerDatapointType(attributeType, server.typeBaseUri);
             var observable = entity.getUpdateObservable(
                 args => args.Component.Name == component.Name && args.AttributeName == attributeName
             );
