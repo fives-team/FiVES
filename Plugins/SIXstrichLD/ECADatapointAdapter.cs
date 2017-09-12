@@ -172,5 +172,15 @@ namespace SIXstrichLDPlugin
             attributeLDDict.Add("currentValue", attribute.Value);
             return serializer.Serialize(attributeLDDict);
         }
+
+        public override string getAlternativeOPTIONSResponse()
+        {
+            var descriptionSerializer = new JavaScriptSerializer();
+            var dict = SIXCore.Description.LDContext.getDatapointBase();
+            dict.Add("serializer", serializer.getName());
+            dict.Add("typeDescription", new Uri(typeBaseUri.OriginalString + typeof(T).Name));
+            dict.Add("actualType", new Uri(typeBaseUri.OriginalString + actualType.Name));
+            return descriptionSerializer.Serialize(dict);
+        }
     }
 }
