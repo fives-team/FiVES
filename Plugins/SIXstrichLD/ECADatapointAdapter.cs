@@ -160,20 +160,13 @@ namespace SIXstrichLDPlugin
             attributeLDDict.Add(LD.TYPE, "http://www.dfki.de/fives/attribute");
             attributeLDDict.Add("name", attribute.Definition.Name);
             attributeLDDict.Add("parentComponent", datapointUri.RemoveFromTail(attribute.Definition.Name).TrimEnd('/'));
-            // the next part crashes if the serializer has to serialize an entity. We create a link to the entity instead
-            if(attribute.Value is Entity)
-            {
-                Guid guid = ((Entity)attribute.Value).Guid;
-                var splitUri = uri.OriginalString.Split('/');
-                foreach(string s in splitUri)
-                {
-                    Console.WriteLine(s);
-                }
-            }
-            else
-            {
-                attributeLDDict.Add("currentValue", serializer.Serialize(attribute.Value));
-            }
+            // the next part crashes if the serializer has to serialize an entity
+            // therefore an entity should be referenced by its Guid. We create a link to the entity
+            var worldUri = datapointUri.RemoveFromTail(attribute.Definition.Name).TrimEnd('/')
+                .RemoveFromTail(attribute.ParentComponent.Name).TrimEnd('/')
+                .RemoveFromTail(attribute.ParentComponent.ContainingEntity.Guid.ToString()).TrimEnd('/');
+            serializer.RegisterConverters(new List<JavaScriptConverter> { new EntityConverter(worldUri) });
+            attributeLDDict.Add("currentValue", serializer.Serialize(attribute.Value));
             return serializer.Serialize(attributeLDDict);
         }
     }
