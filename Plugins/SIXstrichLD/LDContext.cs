@@ -36,6 +36,36 @@ namespace SIXstrichLDPlugin
             dict.Add(LD.ID, id);
             dict.Add(LD.TYPE, LD.ID);
             return dict;
+        private static string getLDType(Type type)
+        {
+            if (type.Equals(typeof(string)))
+            {
+                return LD.STRING;
+            }
+            else if (type.Equals(typeof(bool)))
+            {
+                return LD.BOOLEAN;
+            }
+            else if (type.Equals(typeof(byte)))
+            {
+                return LD.BYTE;
+            }
+            else if (type.Equals(typeof(int)))
+            {
+                return LD.INT;
+            }
+            else if (type.Equals(typeof(float)))
+            {
+                return LD.FLOAT;
+            }
+            else if (type.Equals(typeof(double)))
+            {
+                return LD.DOUBLE;
+            }
+            else
+            {
+                return LD.ANY;
+            }
         }
 
         private static Dictionary<string, string> getContainerDictForID(string id)
