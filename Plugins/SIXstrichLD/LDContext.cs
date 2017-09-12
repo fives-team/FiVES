@@ -28,11 +28,11 @@ namespace SIXstrichLDPlugin
 
     public static class LDContext
     {
-        private static Dictionary<string, string> getTypeStringDictForID(string id)
+        private static Dictionary<string, string> getTypeDictForID(string id, string LDType)
         {
             var dict = new Dictionary<string, string>();
             dict.Add(LD.ID, id);
-            dict.Add(LD.TYPE, LD.STRING);
+            dict.Add(LD.TYPE, LDType);
             return dict;
         }
 
@@ -99,9 +99,9 @@ namespace SIXstrichLDPlugin
             context.Add("xsd", LD.xsdURI);
             context.Add("schema", LD.schemaURI);
             context.Add("entity", LD.entityURI);
-            context.Add("guid", getTypeStringDictForID("entity:guid"));
-            context.Add("owner", getTypeStringDictForID("entity:owner"));
-            context.Add("world", getTypeIDDictForID("entity:world"));
+            context.Add("guid", getTypeDictForID("entity:guid", LD.STRING));
+            context.Add("owner", getTypeDictForID("entity:owner", LD.STRING));
+            context.Add("world", getTypeDictForID("entity:world", LD.ID));
             context.Add("components", getContainerDictForID(LD.URL));
             entityContext.Add(LD.CONTEXT, context);
             return entityContext;
@@ -114,8 +114,8 @@ namespace SIXstrichLDPlugin
             context.Add("xsd", LD.xsdURI);
             context.Add("schema", LD.schemaURI);
             context.Add("component", LD.componentURI);
-            context.Add("name", getTypeStringDictForID("component:name"));
-            context.Add("containingEntity", getTypeIDDictForID("component:containingEntity"));
+            context.Add("name", getTypeDictForID("component:name", LD.STRING));
+            context.Add("containingEntity", getTypeDictForID("component:containingEntity", LD.ID));
             context.Add("attributes", getContainerDictForID(LD.URL));
             componentContext.Add(LD.CONTEXT, context);
             return componentContext;
@@ -127,8 +127,8 @@ namespace SIXstrichLDPlugin
             var context = new Dictionary<string, object>();
             context.Add("xsd", LD.xsdURI);
             context.Add("attribute", LD.attributeURI);
-            context.Add("name", getTypeStringDictForID("attribute:name"));
-            context.Add("parentComponent", getTypeIDDictForID("attribute:parentComponent"));
+            context.Add("name", getTypeDictForID("attribute:name", LD.STRING));
+            context.Add("parentComponent", getTypeDictForID("attribute:parentComponent", LD.TYPE));
             context.Add("currentValue", getTypeStringDictForID("attribute:currentValue"));
             attributeContext.Add(LD.CONTEXT, context);
             return attributeContext;
