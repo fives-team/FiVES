@@ -121,7 +121,7 @@ namespace SIXstrichLDPlugin
             return componentContext;
         }
 
-        public static Dictionary<string, object> getAttributeBase()
+        public static Dictionary<string, object> getAttributeBase(Type attributeType)
         {
             var attributeContext = new Dictionary<string, object>();
             var context = new Dictionary<string, object>();
@@ -129,7 +129,7 @@ namespace SIXstrichLDPlugin
             context.Add("attribute", LD.attributeURI);
             context.Add("name", getTypeDictForID("attribute:name", LD.STRING));
             context.Add("parentComponent", getTypeDictForID("attribute:parentComponent", LD.TYPE));
-            context.Add("currentValue", getTypeStringDictForID("attribute:currentValue"));
+            context.Add("currentValue", getDictForTypeAndID("attribute:currentValue", attributeType));
             attributeContext.Add(LD.CONTEXT, context);
             return attributeContext;
         }
