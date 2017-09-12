@@ -8,6 +8,42 @@ using System.Web.Script.Serialization;
 
 namespace SIXstrichLDPlugin
 {
+    public class EntityConverter : JavaScriptConverter
+    {
+        private string worldUri;
+
+        public EntityConverter(string worldUri)
+        {
+            this.worldUri = worldUri;
+        }
+
+        public override IEnumerable<Type> SupportedTypes
+        {
+            get { return new List<Type>() { typeof(Entity) }; }
+        }
+
+        public override IDictionary<string, object> Serialize(object obj, JavaScriptSerializer serializer)
+        {
+            Dictionary<string, object> result = new Dictionary<string, object>();
+            if (obj == null)
+            {
+                return result;
+            }
+
+            Entity e = (Entity)obj;
+            result["Guid"] = e.Guid;
+            result["Entity"] = worldUri + "/" + e.Guid;
+            return result;
+        }
+
+        public override object Deserialize(IDictionary<string, object> dictionary, Type type, JavaScriptSerializer serializer)
+        {
+            if (dictionary.ContainsKey("Guid"))
+                return World.Instance.FindEntity((Guid)dictionary["Guid"]);
+            return null;
+        }
+    }
+
     public class EntityCollectionDatapointAdapter<T> : DatapointAdapter<T>
     {
         private EntityCollection entityCollection;
