@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections;
+using System.Collections.Generic;
 
 namespace SIXstrichLDPlugin
 {
@@ -36,12 +38,23 @@ namespace SIXstrichLDPlugin
             return dict;
         }
 
-        private static Dictionary<string, string> getTypeIDDictForID(string id)
+        private static Dictionary<string, string> getDictForTypeAndID(string id, Type type)
         {
-            var dict = new Dictionary<string, string>();
-            dict.Add(LD.ID, id);
-            dict.Add(LD.TYPE, LD.ID);
-            return dict;
+            string typeString = getLDType(type);
+            if(typeString == LD.ANY)
+            {
+                if (typeof(IDictionary).IsAssignableFrom(type))
+                {
+                    return getTypeDictForID(id, LD.ANY);
+                }
+                else if (typeof(IEnumerable).IsAssignableFrom(type))
+                {
+                    return getContainerDictForID(id);
+                }
+            }
+            return getTypeDictForID(id, typeString);
+        }
+
         private static string getLDType(Type type)
         {
             if (type.Equals(typeof(string)))
