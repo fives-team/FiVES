@@ -141,9 +141,13 @@ namespace SIXstrichLDPlugin
     public class AttributeDatapointAdapter<T> : DatapointAdapter<T>
     {
         private FIVES.Attribute attribute;
+        private Uri typeBaseUri;
+        private Type actualType;
 
-        public AttributeDatapointAdapter(ISerialization serializer, FIVES.Attribute attribute) : base(serializer) {
+        public AttributeDatapointAdapter(ISerialization serializer, FIVES.Attribute attribute, Uri typeBaseUri, Type actualType) : base(serializer) {
             this.attribute = attribute;
+            this.typeBaseUri = typeBaseUri;
+            this.actualType = actualType;
         }
 
         public override byte[] getAlternativeGETResponse(Uri uri)
