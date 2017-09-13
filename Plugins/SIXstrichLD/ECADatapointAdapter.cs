@@ -179,7 +179,7 @@ namespace SIXstrichLDPlugin
             var dict = SIXCore.Description.LDContext.getDatapointBase();
             dict.Add("serializer", serializer.getName());
             dict.Add("typeDescription", new Uri(typeBaseUri.OriginalString + typeof(T).Name));
-            dict.Add("actualType", new Uri(typeBaseUri.OriginalString + actualType.Name));
+            dict.Add("attributeType", new Uri(typeBaseUri.OriginalString + actualType.Name));
             return descriptionSerializer.Serialize(dict);
         }
     }
