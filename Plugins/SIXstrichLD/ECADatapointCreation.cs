@@ -88,8 +88,7 @@ namespace SIXstrichLDPlugin
             var entity = component.ContainingEntity;
             var attributeName = attribute.Definition.Name;
             var attributeUri = new Uri(componentUri.OriginalString + "/" + attributeName);
-            // FIXME: attribute type has to be accessible even if there is no value (yet) :(
-            var attributeType = attribute?.Value?.GetType() ?? typeof(object);
+            var attributeType = attribute.Type;
             var datapoint = server.CreateServerDatapoint(
                 attributeUri, new AttributeDatapointAdapter<UpdateInfo>(new JsonSerialization(), attribute, server.typeBaseUri, attributeType)
             );
