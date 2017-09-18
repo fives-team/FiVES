@@ -180,29 +180,7 @@ namespace SIXstrichLDPlugin
             dict.Add("serializer", serializer.getName());
             dict.Add("typeDescription", new Uri(typeBaseUri.OriginalString + typeof(T).Name));
             dict.Add("attributeType", new Uri(typeBaseUri.OriginalString + actualType.Name));
-            /*for(int i = 0; i < actualType.GenericTypeArguments.Length; i++)
-            {
-                dict.Add("genericType" + i, new Uri(typeBaseUri.OriginalString + actualType.GenericTypeArguments[i].Name));
-                dict = genericTypeRecursion(dict, i.ToString(), actualType.GenericTypeArguments[i]);
-            }*/
-            dict = genericTypeRecursion(dict, "", actualType);
             return descriptionSerializer.Serialize(dict);
-        }
-
-        // TODO: move this into SIX' type description
-        private Dictionary<string, object> genericTypeRecursion(Dictionary<string, object> dict, string level, Type type)
-        {
-            string delimiter = "";
-            if(level.Length > 0)
-            {
-                delimiter = "-";
-            }
-            for(int i = 0; i < type.GenericTypeArguments.Length; i++)
-            {
-                dict.Add("genericType" + level + delimiter + i, new Uri(typeBaseUri.OriginalString + type.GenericTypeArguments[i].Name));
-                dict = genericTypeRecursion(dict, level+delimiter+i.ToString(), type.GenericTypeArguments[i]);
-            }
-            return dict;
         }
     }
 }
