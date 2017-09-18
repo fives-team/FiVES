@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Web.Script.Serialization;
+using static SIXCore.Description.TypeDescription;
 
 namespace SIXstrichLDPlugin
 {
@@ -179,7 +180,7 @@ namespace SIXstrichLDPlugin
             var dict = SIXCore.Description.LDContext.getDatapointBase();
             dict.Add("serializer", serializer.getName());
             dict.Add("typeDescription", new Uri(typeBaseUri.OriginalString + typeof(T).Name));
-            dict.Add("attributeType", new Uri(typeBaseUri.OriginalString + actualType.Name));
+            dict.Add("attributeType", new Uri(typeBaseUri.OriginalString + getTypeUriName(actualType)));
             return descriptionSerializer.Serialize(dict);
         }
     }
