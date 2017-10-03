@@ -53,6 +53,11 @@ namespace FIVES
         public Guid Owner { get; private set; }
 
         /// <summary>
+        /// The list of tags the entity is tagged with
+        /// </summary>
+        public List<string> Tags { get; private set; }
+
+        /// <summary>
         /// A read-only collection of components that this entity has. New components are added automatically when 
         /// accessed via [] operator, however components must be registered using ComponentRegistry before they are     
         /// accessed.
