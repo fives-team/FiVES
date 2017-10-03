@@ -132,6 +132,30 @@ namespace FIVES
             return components.ContainsKey(name);
         }
 
+        /// <summary>
+        /// Add a tag, if it is not already present
+        /// </summary>
+        /// <param name="tag">The tag to be added</param>
+        public void addTag(string tag)
+        {
+            if (!Tags.Contains(tag))
+            {
+                Tags.Add(tag);
+            }
+        }
+
+        /// <summary>
+        /// Remove a tag, if it is present
+        /// </summary>
+        /// <param name="tag">The tag to be removed</param>
+        public void removeTag(string tag)
+        {
+            if (Tags.Contains(tag))
+            {
+                Tags.Remove(tag);
+            }
+        }
+
         internal void PublishAttributeChangeSuggestion(ProposeAttributeChangeEventArgs e)
         {
             if (this.ProposedAttributeChange != null)
