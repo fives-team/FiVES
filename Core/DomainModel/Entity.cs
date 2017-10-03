@@ -32,6 +32,15 @@ namespace FIVES
         }
 
         /// <summary>
+        /// Constructor for a tagged entity
+        /// </summary>
+        /// <param name="guid">Unique Identifier of the entity object</param>
+        public Entity(List<string> tags) : this()
+        {
+            Tags = tags;
+        }
+
+        /// <summary>
         /// Copy constructor for an existing entity that may come from a remote server in a cluster.
         /// As the entity was already created somewhere, it has assigned both ID and Owner
         /// </summary>
