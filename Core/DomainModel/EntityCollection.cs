@@ -127,6 +127,32 @@ namespace FIVES
             return entities[guid];
         }
 
+        public List<Entity> FindEntitiesByTag(string tag)
+        {
+            List<Entity> results = new List<Entity>();
+            lock (entities)
+            {
+                foreach(var entry in entities)
+                {
+                    if (entry.Value.Tags.Contains(tag))
+                    {
+                        results.Add(entry.Value);
+                    }
+                }
+            }
+            return results;
+        }
+
+        public List<Entity> FindEntitiesByTags(List<string> tags)
+        {
+            List<Entity> results = new List<Entity>();
+            foreach(string tag in tags)
+            {
+                results = (List<Entity>)results.Union(FindEntitiesByTag(tag));
+            }
+            return results;
+        }
+
         /// <summary>
         /// Returns true of an entity with a given guid is present in the collection.
         /// </summary>
