@@ -28,6 +28,7 @@ namespace FIVES
         {
             Guid = Guid.NewGuid();
             Owner = World.Instance.ID;
+            Tags = new List<string>();
         }
 
         /// <summary>
@@ -40,6 +41,7 @@ namespace FIVES
         {
             Guid = guid;
             Owner = owner;
+            Tags = new List<string>();
         }
 
         /// <summary>
