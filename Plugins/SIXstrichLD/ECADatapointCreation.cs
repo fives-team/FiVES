@@ -1,13 +1,26 @@
-﻿using ClientManagerPlugin;
+﻿// This file is part of FiVES.
+//
+// FiVES is free software: you can redistribute it and/or modify
+// it under the terms of the GNU Lesser General Public License as published by
+// the Free Software Foundation (LGPL v3)
+//
+// FiVES is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU Lesser General Public License
+// along with FiVES.  If not, see <http://www.gnu.org/licenses/>.
+using ClientManagerPlugin;
 using FIVES;
-using SIX;
-using SIXCore.Serializers;
+using SIXPrime.Core.Serialization;
+using SIXPrime.Server;
 using System;
 using System.Linq;
 using System.Reactive.Disposables;
 using System.Reactive.Linq;
 
-namespace SIXstrichLDPlugin
+namespace SIXPrimeLDPlugin
 {
     public static class ECADatapointCreation
     {
@@ -36,7 +49,6 @@ namespace SIXstrichLDPlugin
                 datapoint.Subscribe(observable);
                 server.createEntityDatapoint(collectionUri, eventArgs.Entity);
             };
-            Console.WriteLine("created EC datapoint: " + collectionUri);
         }
 
         public static void createEntityDatapoint(this Server server, Uri baseUri, Entity entity)
@@ -56,7 +68,6 @@ namespace SIXstrichLDPlugin
 
             var observable = entity.getUpdateObservable(args => true);
             datapoint.Subscribe(observable);
-            Console.WriteLine("created E datapoint: " + entityUri);
         }
 
         public static void createComponentDatapoint(this Server server, Uri entityUri, Component component)
@@ -79,7 +90,6 @@ namespace SIXstrichLDPlugin
                 args => args.Component.Name == component.Name
             );
             datapoint.Subscribe(observable);
-            Console.WriteLine("created C datapoint: " + componentUri);
         }
 
         public static void createAttributeDatapoint(this Server server, Uri componentUri, FIVES.Attribute attribute)
@@ -97,7 +107,6 @@ namespace SIXstrichLDPlugin
                 args => args.Component.Name == component.Name && args.AttributeName == attributeName
             );
             datapoint.Subscribe(observable);
-            Console.WriteLine("created A datapoint: " + attributeUri);
         }
 
         private static IObservable<UpdateInfo> getUpdateObservable(this Entity entity, Func<ChangedAttributeEventArgs, bool> selector)

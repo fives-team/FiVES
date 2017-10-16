@@ -1,13 +1,26 @@
-﻿using FIVES;
-using SIX;
-using SIXCore.Serializers;
+﻿// This file is part of FiVES.
+//
+// FiVES is free software: you can redistribute it and/or modify
+// it under the terms of the GNU Lesser General Public License as published by
+// the Free Software Foundation (LGPL v3)
+//
+// FiVES is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU Lesser General Public License
+// along with FiVES.  If not, see <http://www.gnu.org/licenses/>.
+using FIVES;
+using SIXPrime.Core.Serialization;
+using static SIXPrime.Core.Description.TypeDescription;
+using SIXPrime.Server;
 using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Web.Script.Serialization;
-using static SIXCore.Description.TypeDescription;
 
-namespace SIXstrichLDPlugin
+namespace SIXPrimeLDPlugin
 {
     public class EntityConverter : JavaScriptConverter
     {
@@ -177,7 +190,7 @@ namespace SIXstrichLDPlugin
         public override string getAlternativeOPTIONSResponse()
         {
             var descriptionSerializer = new JavaScriptSerializer();
-            var dict = SIXCore.Description.LDContext.getDatapointBase();
+            var dict = SIXPrime.Core.Description.LDContext.getDatapointBase();
             dict.Add("serializer", serializer.getName());
             dict.Add("typeDescription", new Uri(typeBaseUri.OriginalString + typeof(T).Name));
             dict.Add("attributeType", new Uri(typeBaseUri.OriginalString + getTypeUriName(actualType)));
