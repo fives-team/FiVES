@@ -38,7 +38,7 @@ namespace SIXPrimeLDPlugin
             debugEntity = new Entity();
             debugEntity["location"]["position"].Suggest(new Vector(0, 0, 0));
             World.Instance.Add(debugEntity);
-            server.createEntityCollectionDatapoint(worldUri, World.Instance);
+            server.createEntityCollectionDatapoint(new JsonSerialization(), worldUri, World.Instance);
             Task.Factory.StartNew(fluctuate);
 
             debugEntity2 = new Entity();
