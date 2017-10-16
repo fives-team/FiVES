@@ -24,10 +24,11 @@ namespace SIXPrimeLDPlugin
 {
     public static class ECADatapointCreation
     {
-        public static void createEntityCollectionDatapoint(this Server server, Uri collectionUri, EntityCollection entityCollection)
+        public static void createEntityCollectionDatapoint(this Server server, ISerialization serializer,
+                                                           Uri collectionUri, EntityCollection entityCollection)
         {
             var datapoint = server.CreateServerDatapoint(
-                collectionUri, new EntityCollectionDatapointAdapter<UpdateInfo>(new JsonSerialization(), entityCollection)
+                collectionUri, new EntityCollectionDatapointAdapter<UpdateInfo>(serializer, entityCollection)
             );
 
             IObservable<UpdateInfo> observable = null;
@@ -39,7 +40,7 @@ namespace SIXPrimeLDPlugin
                     var tempObservable = entity.getUpdateObservable(args => true);
                     observable = observable == null ? tempObservable : observable.Merge(tempObservable);
                     datapoint.Subscribe(observable);
-                    server.createEntityDatapoint(collectionUri, entity);
+                    server.createEntityDatapoint(serializer, collectionUri, entity);
                 }
             }
             entityCollection.AddedEntity += (entity, eventArgs) =>
@@ -47,16 +48,18 @@ namespace SIXPrimeLDPlugin
                 var tempObservable = eventArgs.Entity.getUpdateObservable(args => true);
                 observable = observable == null ? tempObservable : observable.Merge(tempObservable);
                 datapoint.Subscribe(observable);
-                server.createEntityDatapoint(collectionUri, eventArgs.Entity);
+                server.createEntityDatapoint(serializer, collectionUri, eventArgs.Entity);
             };
         }
 
-        public static void createEntityDatapoint(this Server server, Uri baseUri, Entity entity)
+        public static void createEntityDatapoint(this Server server, ISerialization serializer, Uri baseUri, Entity entity)
         {
             var entityUri = new Uri(baseUri.OriginalString + "/" + entity.Guid);
             var datapoint = server.CreateServerDatapoint(
-                entityUri, new EntityDatapointAdapter<UpdateInfo>(new JsonSerialization(), entity)
+                entityUri, new EntityDatapointAdapter<UpdateInfo>(serializer, entity)
             );
+
+            IObservable<UpdateInfo> observable = null;
 
             lock (entity)
             {
@@ -79,19 +82,19 @@ namespace SIXPrimeLDPlugin
             };
         }
 
-        public static void createComponentDatapoint(this Server server, Uri entityUri, Component component)
+        public static void createComponentDatapoint(this Server server, ISerialization serializer, Uri entityUri, Component component)
         {
             var entity = component.ContainingEntity;
             var componentUri = new Uri(entityUri.OriginalString + "/" + component.Name);
             var datapoint = server.CreateServerDatapoint(
-                componentUri, new ComponentDatapointAdapter<UpdateInfo>(new JsonSerialization(), component)
+                componentUri, new ComponentDatapointAdapter<UpdateInfo>(serializer, component)
             );
 
             lock (component)
             {
                 foreach (var attribute in component.Definition.AttributeDefinitions)
                 {
-                    server.createAttributeDatapoint(componentUri, component[attribute.Name]);
+                    server.createAttributeDatapoint(serializer, componentUri, component[attribute.Name]);
                 }
             }
 
@@ -101,7 +104,8 @@ namespace SIXPrimeLDPlugin
             datapoint.Subscribe(observable);
         }
 
-        public static void createAttributeDatapoint(this Server server, Uri componentUri, FIVES.Attribute attribute)
+        public static void createAttributeDatapoint(this Server server, ISerialization serializer,
+                                                    Uri componentUri, FIVES.Attribute attribute)
         {
             var component = attribute.ParentComponent;
             var entity = component.ContainingEntity;
@@ -109,7 +113,7 @@ namespace SIXPrimeLDPlugin
             var attributeUri = new Uri(componentUri.OriginalString + "/" + attributeName);
             var attributeType = attribute.Type;
             var datapoint = server.CreateServerDatapoint(
-                attributeUri, new AttributeDatapointAdapter<UpdateInfo>(new JsonSerialization(), attribute, server.typeBaseUri, attributeType)
+                attributeUri, new AttributeDatapointAdapter<UpdateInfo>(serializer, attribute, server.typeBaseUri, attributeType)
             );
             server.registerDatapointType(attributeType, server.typeBaseUri);
             var observable = entity.getUpdateObservable(
