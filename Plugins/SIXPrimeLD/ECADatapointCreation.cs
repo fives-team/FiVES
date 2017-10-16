@@ -62,12 +62,21 @@ namespace SIXPrimeLDPlugin
             {
                 foreach (var component in entity.Components)
                 {
-                    server.createComponentDatapoint(entityUri, component);
+                    var tempObservable = entity.getUpdateObservable(args => args.Component.Name == component.Name);
+                    observable = observable == null ? tempObservable : observable.Merge(tempObservable);
+                    datapoint.Subscribe(observable);
+                    server.createComponentDatapoint(serializer, entityUri, component);
                 }
             }
-
-            var observable = entity.getUpdateObservable(args => true);
-            datapoint.Subscribe(observable);
+            entity.CreatedComponent += (sender, eventArgs) =>
+            {
+                var tempObservable = eventArgs.Component.ContainingEntity.getUpdateObservable(
+                    args => args.Component.Name == eventArgs.Component.Name
+                );
+                observable = observable == null ? tempObservable : observable.Merge(tempObservable);
+                datapoint.Subscribe(observable);
+                server.createComponentDatapoint(serializer, entityUri, eventArgs.Component);
+            };
         }
 
         public static void createComponentDatapoint(this Server server, Uri entityUri, Component component)
