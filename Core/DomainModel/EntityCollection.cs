@@ -127,28 +127,24 @@ namespace FIVES
             return entities[guid];
         }
 
-        public List<Entity> FindEntitiesByTag(string tag)
+        public List<Entity> FindEntityByTag(string tag)
+        {
+            return FindEntityByTag(new List<string> { tag });
+        }
+
+        public List<Entity> FindEntityByTag(List<string> tags)
         {
             List<Entity> results = new List<Entity>();
             lock (entities)
             {
-                foreach(var entry in entities)
+                foreach (var kvp in entities)
                 {
-                    if (entry.Value.Tags.Contains(tag))
+                    var entity = kvp.Value;
+                    if(entity.GetTags().Intersect(tags).Count() > 0)
                     {
-                        results.Add(entry.Value);
+                        results.Add(entity);
                     }
                 }
-            }
-            return results;
-        }
-
-        public List<Entity> FindEntitiesByTags(List<string> tags)
-        {
-            List<Entity> results = new List<Entity>();
-            foreach(string tag in tags)
-            {
-                results = (List<Entity>)results.Union(FindEntitiesByTag(tag));
             }
             return results;
         }
