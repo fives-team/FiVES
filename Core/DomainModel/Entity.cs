@@ -78,7 +78,16 @@ namespace FIVES
         /// <summary>
         /// The list of tags the entity is tagged with
         /// </summary>
-        public List<string> Tags { get; private set; }
+        private List<string> Tags;
+
+        /// <summary>
+        /// Returns the tag list as read only collection
+        /// </summary>
+        /// <returns>list of entity tags</returns>
+        public ReadOnlyCollection<string> GetTags()
+        {
+            return new ReadOnlyCollection<string>(Tags);
+        }
 
         /// <summary>
         /// A read-only collection of components that this entity has. New components are added automatically when 
