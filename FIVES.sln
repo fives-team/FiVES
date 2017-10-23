@@ -80,7 +80,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExternalProcess", "Core\Ext
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Diagnosis", "Plugins\Diagnosis\Diagnosis.csproj", "{03201C30-FA3C-42C3-A6E9-9ACC8A83B0EF}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SIXstrichLD", "Plugins\SIXstrichLD\SIXstrichLD.csproj", "{3821E4BF-356A-4978-B968-FBF9336F7B5C}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SIXPrimeLD", "Plugins\SIXPrimeLD\SIXPrimeLD.csproj", "{3821E4BF-356A-4978-B968-FBF9336F7B5C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
