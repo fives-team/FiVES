@@ -45,14 +45,17 @@ namespace SIXPrimeLDPlugin
         }
 
         public void Initialize()
-        {}
+        {
+            // TO SEE USAGE OF SIX'LD, AND SIX'LD IN ACTION, UNCOMMENT THE FOLLOWING LINE
+            // Demo.startDemo(server, worldUri);
+        }
 
         public void Shutdown()
         {
             Console.WriteLine("[SIXPrimeLD] shutdown");
         }
 
-        private static Uri baseUri = new Uri("http://172.16.7.224:12345/");
+        private static Uri baseUri = new Uri("http://localhost:12345/");
         private static Uri worldUri = new Uri(baseUri.OriginalString + "world");
         private static Server server = new Server();
     }
