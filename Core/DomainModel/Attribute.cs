@@ -164,7 +164,7 @@ namespace FIVES
             return false; // value-type
         }
 
-        private ReadOnlyAttributeDefinition Definition;
+        public ReadOnlyAttributeDefinition Definition;
         private object CurrentValue;
     }
 }
