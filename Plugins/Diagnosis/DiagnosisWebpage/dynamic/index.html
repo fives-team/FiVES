@@ -1,0 +1,64 @@
+﻿<!DOCTYPE html>
+
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8" />
+    <title>FiVES-Diagnosis</title>
+    <link rel="stylesheet" href="diagnosis/DiagnosisWebpage/bootstrap/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="diagnosis/DiagnosisWebpage/css/diag.css" />
+</head>
+<body>
+    <div class="container-fluid">
+        <div class="panel-group">
+            <div class="panel panel-primary">
+                <div class="panel-heading">FiVES Diagnosis Page</div>
+                <div class="panel-body">
+                    <div class="row">
+                        <div class="panel-group col-md-6 col-lg-3">
+                            <div class="panel panel-info">
+                                <div class="panel-heading">Entities</div>
+                                <div id="entities-body" class="panel-body"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="panel-group col-md-6">
+                            <div class="panel panel-success">
+                                <div class="panel-heading">Plugins (loaded)</div>
+                                <div class="panel-body">
+                                    <textarea rows="15" id="loaded-plugins-area" class="plugins" readonly="readonly"></textarea>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="panel-group col-md-6">
+                            <div class="panel panel-danger">
+                                <div class="panel-heading">Plugins (deferred)</div>
+                                <div class="panel-body">
+                                    <textarea rows="15" id="deferred-plugins-area" class="plugins" readonly="readonly"></textarea>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="panel-group">
+            <div class="panel panel-primary">
+                <div class="panel-heading">Registered Diagnosable Plugins</div>
+                <div class="panel-body">
+                    <div id="plugin-widgets">
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="diagnosis/DiagnosisWebpage/jquery-3.1.1.min.js"></script>
+    <script src="diagnosis/DiagnosisWebpage/bootstrap/js/bootstrap.min.js"></script>
+    <script src="diagnosis/DiagnosisWebpage/js/scripts.js"></script>
+</body>
+</html>

@@ -6,7 +6,7 @@ RUN apt-get update \
 	&& apt-get -y install git
 
 RUN cd ~ \
-	&& git clone https://github.com/fives-team/fives -b docker-linux-install-511
+	&& git clone https://github.com/fives-team/fives -b fiware-5.4
 
 RUN cd ~/fives \
 	&& nuget restore FIVES.sln \

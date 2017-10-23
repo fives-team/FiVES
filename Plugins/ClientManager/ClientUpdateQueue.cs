@@ -40,40 +40,64 @@ namespace ClientManagerPlugin
         /// <summary>
         /// Flushs the update queue. Takes the list of all updates queued for the client and calls the client's callback, passing this list as parameter
         /// </summary>
-        private void FlushUpdateQueue() {
+        private void FlushUpdateQueue()
+        {
             while (true)
             {
-                bool gotLock = false;
-                try
-                {
-                    QueueLock.Enter(ref gotLock);
 
-                    if (UpdateQueue.Count > 0)
-                    {
-                        InvokeClientCallbacks();
-                        UpdateQueue.Clear();
-                    }
-                }
-                finally
+                if (UpdateQueue.Count > 0)
                 {
-                    if (gotLock)
-                        QueueLock.Exit();
+                    FlushQueueToClients();
+                    ClearQueue();
                 }
-
                 // Wait for updates to accumulate (to send them in batches)
                 Thread.Sleep(10);
             }
         }
 
+        private void FlushQueueToClients()
+        {
+            bool gotLock = false;
+            try
+            {
+                QueueLock.Enter(ref gotLock);
+                UpdateInfo[] queueSnapshot = new UpdateInfo[UpdateQueue.Count];
+                UpdateQueue.CopyTo(queueSnapshot);
+                InvokeClientCallbacks(queueSnapshot);
+            }
+            finally
+            {
+                if (gotLock)
+                    QueueLock.Exit();
+            }
+        }
+
+
+        private void ClearQueue()
+        {
+            bool gotLock = false;
+            try
+            {
+                QueueLock.Enter(ref gotLock);
+                UpdateQueue.Clear();
+            }
+            finally
+            {
+                if (gotLock)
+                    QueueLock.Exit();
+            }
+        }
         /// <summary>
         /// Loops over all registered client callbacks and invokes them to inform clients about updates
         /// </summary>
-        private void InvokeClientCallbacks()
+        private void InvokeClientCallbacks(UpdateInfo[] updates)
         {
             lock (CallbackRegistryLock)
             {
-                foreach (ClientFunction callback in ClientCallbacks.Values)
-                    callback(UpdateQueue);
+                foreach (var clientQueue in ClientQueues.Values)
+                {
+                    clientQueue.AddUpdates(updates);
+                }
             }
         }
 
@@ -86,8 +110,8 @@ namespace ClientManagerPlugin
         {
             lock (CallbackRegistryLock)
             {
-                if(!ClientCallbacks.ContainsKey(connection))
-                    ClientCallbacks.Add(connection, clientCallback);
+                if (!ClientQueues.ContainsKey(connection))
+                    ClientQueues.Add(connection, new ClientQueue(clientCallback));
             }
         }
 
@@ -99,8 +123,11 @@ namespace ClientManagerPlugin
         {
             lock (CallbackRegistryLock)
             {
-                if (ClientCallbacks.ContainsKey(connection))
-                    ClientCallbacks.Remove(connection);
+                if (ClientQueues.ContainsKey(connection))
+                {
+                    ClientQueues[connection].Abort();
+                    ClientQueues.Remove(connection);
+                }
             }
         }
 
@@ -205,7 +232,7 @@ namespace ClientManagerPlugin
         /// <summary>
         /// Callback to be called on updates, provided by the client
         /// </summary>
-        private Dictionary<Connection, ClientFunction> ClientCallbacks = new Dictionary<Connection, ClientFunction>();
+        private Dictionary<Connection, ClientQueue> ClientQueues = new Dictionary<Connection, ClientQueue>();
 
         /// <summary>
         /// Mutex Object for the update queue
