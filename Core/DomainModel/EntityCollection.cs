@@ -127,12 +127,12 @@ namespace FIVES
             return entities[guid];
         }
 
-        public List<Entity> FindEntityByTag(string tag)
+        public List<Entity> FindEntityByTags(string tag)
         {
             return FindEntityByTag(new List<string> { tag });
         }
 
-        public List<Entity> FindEntityByTag(List<string> tags)
+        public List<Entity> FindEntityByTags(List<string> tags)
         {
             List<Entity> results = new List<Entity>();
             lock (entities)
