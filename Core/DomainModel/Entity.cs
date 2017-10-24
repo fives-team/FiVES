@@ -28,6 +28,16 @@ namespace FIVES
         {
             Guid = Guid.NewGuid();
             Owner = World.Instance.ID;
+            Tags = new List<string>();
+        }
+
+        /// <summary>
+        /// Constructor for a tagged entity
+        /// </summary>
+        /// <param name="guid">Unique Identifier of the entity object</param>
+        public Entity(List<string> tags) : this()
+        {
+            Tags = tags;
         }
 
         /// <summary>
@@ -40,6 +50,19 @@ namespace FIVES
         {
             Guid = guid;
             Owner = owner;
+            Tags = new List<string>();
+        }
+
+        /// <summary>
+        /// Copy constructor for an existing entity that may come from a remote server in a cluster.
+        /// As the entity was already created somewhere, it has assigned both ID and Owner
+        /// </summary>
+        /// <param name="guid">Unique Identifier of the entity object</param>
+        /// <param name="owner">Identifier of the owner world</param>
+        /// <param name="tags">Tag list of the entity object</param>
+        public Entity(Guid guid, Guid owner, List<String> tags) : this(guid, owner)
+        {
+            Tags = tags;
         }
 
         /// <summary>
@@ -51,6 +74,20 @@ namespace FIVES
         /// Server that maintains the entity
         /// </summary>
         public Guid Owner { get; private set; }
+
+        /// <summary>
+        /// The list of tags the entity is tagged with
+        /// </summary>
+        private List<string> Tags;
+
+        /// <summary>
+        /// Returns the tag list as read only collection
+        /// </summary>
+        /// <returns>list of entity tags</returns>
+        public ReadOnlyCollection<string> GetTags()
+        {
+            return new ReadOnlyCollection<string>(Tags);
+        }
 
         /// <summary>
         /// A read-only collection of components that this entity has. New components are added automatically when 
@@ -102,6 +139,30 @@ namespace FIVES
         public bool ContainsComponent(string name)
         {
             return components.ContainsKey(name);
+        }
+
+        /// <summary>
+        /// Add a tag, if it is not already present
+        /// </summary>
+        /// <param name="tag">The tag to be added</param>
+        public void addTag(string tag)
+        {
+            if (!Tags.Contains(tag))
+            {
+                Tags.Add(tag);
+            }
+        }
+
+        /// <summary>
+        /// Remove a tag, if it is present
+        /// </summary>
+        /// <param name="tag">The tag to be removed</param>
+        public void removeTag(string tag)
+        {
+            if (Tags.Contains(tag))
+            {
+                Tags.Remove(tag);
+            }
         }
 
         internal void PublishAttributeChangeSuggestion(ProposeAttributeChangeEventArgs e)
