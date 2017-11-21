@@ -129,7 +129,7 @@ namespace FIVES
 
         public List<Entity> FindEntityByTags(string tag)
         {
-            return FindEntityByTag(new List<string> { tag });
+            return FindEntityByTags(new List<string> { tag });
         }
 
         public List<Entity> FindEntityByTags(List<string> tags)
